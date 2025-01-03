@@ -1,6 +1,6 @@
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {RootState} from "../store";
-import {initialState, User} from "../../services/types";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../store";
+import { initialState, User } from "../../services/types";
 import AuthService from "../../services/api/authService";
 
 // Async thunk for login
@@ -19,12 +19,13 @@ export const login = createAsyncThunk(
 export const logout = createAsyncThunk(
     "auth/logout",
     async (_, { rejectWithValue }) => {
-    try {
-        await AuthService().logout();
-    } catch (error: any) {
-        return rejectWithValue(error?.response?.data?.message || error.message);
+        try {
+            await AuthService().logout();
+        } catch (error: any) {
+            return rejectWithValue(error?.response?.data?.message || error.message);
+        }
     }
-});
+);
 
 const authSlice = createSlice({
     name: "auth",

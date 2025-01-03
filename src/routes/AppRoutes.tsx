@@ -1,16 +1,24 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import {Home} from "../pages/Home.tsx";
-import {Login} from "../pages/Login.tsx";
-import {NotFound} from "../pages/NotFound.tsx";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Login } from "../pages/Login.tsx";
+import { NotFound } from "../pages/NotFound.tsx";
+import { ApplicantDashboard } from "../pages/ApplicantDashboard.tsx";
+import { useAuth } from "../hooks/useAuth"; // Import the useAuth hook
 
-const AppRoutes = () => (
-    <BrowserRouter>
-        <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="*" element={<NotFound />} />
-        </Routes>
-    </BrowserRouter>
-);
+const AppRoutes = () => {
+    const { isAuthenticated } = useAuth(); // Get the authentication status
+
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route
+                    path="/"
+                    element={isAuthenticated ? <ApplicantDashboard /> : <Navigate to="/login" />}
+                />
+                <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
+                <Route path="*" element={<NotFound />} />
+            </Routes>
+        </BrowserRouter>
+    );
+};
 
 export default AppRoutes;

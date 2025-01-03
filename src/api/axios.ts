@@ -46,22 +46,28 @@ const fetchPublic = async <T>(url: string, options: FetchOptions = {}): Promise<
     const config: FetchOptions = {
         ...options,
         headers,
+        credentials: 'include',  // This sends credentials (cookies or Authorization)
     };
 
     try {
         const response = await fetch(`${baseURL}${url}`, config);
         if (!response.ok) {
             const errorData = await response.json();
-            toast.error(errorData.message || 'Something went wrong');
+            toast.error(errorData.message || 'Something went wrong', {
+                position: 'top-center',
+            });
             throw new Error(errorData.message || 'Something went wrong');
         }
         return (await response.json()) as ApiResponse<T>;
     } catch (error: any) {
         console.error('Error during fetch:', error);
-        toast.error(error.message || 'Something went wrong');
+        toast.error(error.message || 'Something went wrong', {
+            position: 'top-left',
+        });
         throw error; // Rethrow the error so the caller handles it
     }
 };
+
 
 
 export const privateApiClient = {

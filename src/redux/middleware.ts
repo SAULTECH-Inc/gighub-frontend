@@ -9,7 +9,7 @@ const store = configureStore({
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({
             thunk: {
-                extraArgument: AuthService
+                extraArgument: AuthService // Not needed unless explicitly required
             }
         }),
     devTools: import.meta.env.NODE_ENV === 'development',
