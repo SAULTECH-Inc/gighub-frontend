@@ -10,12 +10,8 @@ const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={isAuthenticated ? <ApplicantDashboard /> : <Navigate to="/login" />}
-        />
-        <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
-        <Route path="/home" element={<Home />} />
+{/*         <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} /> */}
+        <Route path="/" element={<Home />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
