@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route} from "react-router-dom";
 // import { Login } from "../pages/Login.tsx";
 import { NotFound } from "../pages/NotFound.tsx";
 // import { ApplicantDashboard } from "../pages/ApplicantDashboard.tsx";
-import { useAuth } from "../hooks/useAuth"; // Import the useAuth hook
+// import { useAuth } from "../hooks/useAuth"; // Import the useAuth hook
 import { Home } from "../pages/Home.tsx";
 
 const AppRoutes = () => {
