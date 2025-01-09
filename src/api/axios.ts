@@ -20,7 +20,9 @@ const fetchWithAuth = async <T>(url: string, options: FetchOptions = {}): Promis
     const config: FetchOptions = {
         ...options,
         headers,
+        credentials: 'include',  // Necessary for cookies/auth headers
     };
+
 
     try {
         const response = await fetch(`${baseURL}${url}`, config);
@@ -46,13 +48,15 @@ const fetchPublic = async <T>(url: string, options: FetchOptions = {}): Promise<
     const config: FetchOptions = {
         ...options,
         headers,
-        credentials: 'include',  // This sends credentials (cookies or Authorization)
+        // credentials: 'include',  // Necessary for cookies/auth headers
     };
+
 
     try {
         const response = await fetch(`${baseURL}${url}`, config);
         if (!response.ok) {
             const errorData = await response.json();
+            console.log("RESPONSE DATA: " + errorData);
             toast.error(errorData.message || 'Something went wrong', {
                 position: 'top-center',
             });
