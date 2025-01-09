@@ -7,7 +7,6 @@ import { Home } from "../pages/Home.tsx";
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth(); // Get the authentication status
-
   return (
     <BrowserRouter>
       <Routes>
