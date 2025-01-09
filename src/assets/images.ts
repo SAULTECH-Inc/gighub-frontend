@@ -1,0 +1,9 @@
+export { default as Person1 } from "./images/image1.png";
+export { default as Person2 } from "./images/image2.png";
+export { default as Person3 } from "./images/image3.png";
+export { default as Person4 } from "./images/image4.png";
+export { default as Person5 } from "./images/image5.png";
+export { default as Person6 } from "./images/image6.png";
+export { default as Person7 } from "./images/image7.png";
+export { default as Testimonial } from "./images/testimonial.png";
+export { default as Human1 } from "./images/human1.png";
