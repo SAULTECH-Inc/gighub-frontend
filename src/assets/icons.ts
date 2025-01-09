@@ -3,7 +3,7 @@ export { default as Gighub } from "./icons/gighub.svg";
 export { default as Google } from "./icons/google.svg";
 export { default as Facebook } from "./icons/facebook.svg";
 export { default as Linkedin } from "./icons/linkedin.svg";
-export { default as Search } from "./icons/search.svg";
+export { default as Search } from "./icons/Search.svg";
 export { default as Person } from "./icons/person.svg";
 export { default as Paystack } from "./icons/paystack.svg";
 export { default as Playbutton } from "./icons/playbutton.svg";
