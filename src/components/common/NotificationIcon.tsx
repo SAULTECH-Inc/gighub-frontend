@@ -13,6 +13,7 @@ const NotificationIcon: React.FC<NotificationIconProps> = ({ count = 0 }) => {
                 viewBox="0 0 28 28"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                style={{ cursor: "pointer" }}
             >
                 <circle cx="14" cy="14" r="13.5" fill="white" stroke="#D9D9D9" />
                 <path
