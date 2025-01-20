@@ -15,6 +15,7 @@ const MessageNotificationIcon: React.FC<MessageNotificationIconProps> = ({
                 viewBox="0 0 153 455"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                style={{ cursor: "pointer" }}
             >
                 <circle cx="139" cy="14" r="13.5" fill="white" stroke="#AFAFAF" />
                 <path

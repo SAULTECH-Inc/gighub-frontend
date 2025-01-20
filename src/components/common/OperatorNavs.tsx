@@ -1,6 +1,7 @@
 import {FC} from "react";
 import NotificationIcon from "./NotificationIcon.tsx";
 import MessageNotificationIcon from "./MessageNotificationIcon.tsx";
+import SearchIcon from "./SearchIcon.tsx";
 
 const OperatorNavs: FC = ()=>{
     return (
@@ -11,6 +12,7 @@ const OperatorNavs: FC = ()=>{
             <button className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-orange hover:bg-gray-200 rounded-md">
                 Applications
             </button>
+            <SearchIcon/>
             <NotificationIcon count={2}/>
             <MessageNotificationIcon count={0}/>
         </div>
