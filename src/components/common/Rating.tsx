@@ -10,7 +10,7 @@ const Rating: FC<RatingProp> = ({ value }) => {
     const MAX_RATING = 5;
 
     return (
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+        <div className="cursor-pointer" style={{ display: "flex", alignItems: "center", gap: "4px" }}>
             {Array.from({ length: MAX_RATING }, (_, index) => (
                 <img
                     key={index}

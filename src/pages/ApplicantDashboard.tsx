@@ -10,18 +10,34 @@ export const ApplicantDashboard = () => {
     return (
         <>
             <div className="bg-[#F7F7F7]">
-                <ApplicantNavBar />
-                <div className="p-6 bg-gray-100 grid-cols-2 min-h-screen">
-                    <div className="w-full">
-                        <ApplicationStats/>
-                        <BelowApplicationStats/>
-                        <ApplicantRecentApplications/>
+                <ApplicantNavBar/>
+                <div
+                    className="px-6 py-6 bg-gray-100 grid grid-cols-[1024px_396px] gap-6 min-h-screen items-start justify-center">
+                    {/* First Column */}
+                    <div className="flex flex-col items-center space-y-6 w-full">
+                        <div className="w-full flex justify-center">
+                            <ApplicationStats/>
+                        </div>
+                        <div className="w-full flex justify-center">
+                            <BelowApplicationStats/>
+                        </div>
+                        <div className="w-full flex justify-center">
+                            <ApplicantRecentApplications/>
+                        </div>
                     </div>
-                    <div className="w-full">
-                        <ApplicantSchedules/>
-                        <ApplicantMessages/>
+
+                    {/* Second Column */}
+                    <div className="flex flex-col items-center space-y-6 w-full">
+                        <div className="w-full flex justify-center">
+                            <ApplicantSchedules/>
+                        </div>
+                        <div className="w-full flex justify-center">
+                            <ApplicantMessages/>
+                        </div>
                     </div>
                 </div>
+
+
             </div>
         </>
     );
