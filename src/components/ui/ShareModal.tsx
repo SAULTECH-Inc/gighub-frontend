@@ -10,25 +10,25 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
             onClick={onClose} // Close the modal when clicking outside of it
         >
             {/* Modal Content */}
             <div
-                className="bg-white w-[314px] h-[279px] rounded-[10px] shadow-lg p-6 relative"
+                className="bg-white w-[314px] h-[279px] rounded-[10px] shadow-lg p-6 flex flex-col justify-center relative"
                 onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
             >
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-2 right-2 text-[24px] text-gray-500 hover:text-gray-700"
+                    className="absolute top-2 right-2 text-[24px] text-gray-500 hover:text-gray-700 p-2"
                 >
                     ✕
                 </button>
 
                 {/* Copy Link Section */}
                 <div className="mb-4">
-                    <label className="block text-sm text-gray-600 mb-2">Copy link</label>
+                    <label className="block text-sm text-gray-600 mb-2 text-left">Copy link</label>
                     <div className="flex items-center border-[#E6E6E6] border-[1px] rounded-[10px] w-[262px] h-[43px] p-2">
                         <input
                             type="text"
@@ -47,7 +47,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
 
                 {/* Share Link Options */}
                 <div>
-                    <p className="text-sm text-gray-600 mb-2">Share Link</p>
+                    <p className="text-sm text-gray-600 mb-2 text-left">Share Link</p>
                     <div className="flex justify-between">
                         {/* WhatsApp */}
                         <a
