@@ -1,24 +1,58 @@
-import {FC} from "react";
+import { FC } from "react";
 
-const ApplicantMessages: FC = ()=>{
-    return <>
-        <div className="w-[100%]">
-            <div className="bg-white p-4 rounded-lg shadow">
-                <h2 className="text-xl font-semibold mb-4">Messages</h2>
-                <ul>
-                    <li className="flex justify-between items-center">
-                        <span>A.S Abubakar</span>
-                        <span className="text-sm text-gray-500">Yesterday</span>
-                    </li>
-                    <li className="flex justify-between items-center">
-                        <span>Jumaima Nuhu</span>
-                        <span className="text-sm text-gray-500">Today</span>
-                    </li>
-                </ul>
-                <button className="mt-4 text-purple-600">See all</button>
+const ApplicantMessages: FC = () => {
+    return (
+        <>
+            <div className="h-[365px] mx-auto">
+                <div className="bg-white p-4 w-full rounded-[16px] shadow">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-[20px] font-semibold">Messages</h2>
+                        <button className="text-[#6B5AED] text-sm">See all</button>
+                    </div>
+                    <ul>
+                        <li className="flex items-start justify-between mb-4">
+                            <div className="flex items-center space-x-3">
+
+                                <div className="w-[50px] h-[50px] bg-[#D9D9D9] rounded-full"></div>
+                                <div>
+                                    <h3 className="font-medium">A.S Abubakar</h3>
+                                    <p className="text-sm text-gray-500">
+                                        Hi sir, my name is A.s Abubakar
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <span className="text-[13px] text-[#56E5A1]">Yesterday</span>
+                                <span className="bg-[#6B5AED] text-white text-xs rounded-full px-2 py-1 ml-2">2</span>
+                            </div>
+                        </li>
+                        <li className="flex items-start justify-between mb-4">
+                            <div className="flex items-center space-x-3">
+                                <div className="w-[50px] h-[50px] bg-[#D9D9D9] rounded-full"></div>
+                                <div>
+                                    <h3 className="font-medium">Jumaima Nuhu</h3>
+                                    <p className="text-sm text-gray-500">
+                                        Yes I will do it and send tomorrow
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li className="flex items-start justify-between">
+                            <div className="flex items-center space-x-3">
+                                <div className="w-[50px] h-[50px] bg-[#D9D9D9] rounded-full"></div>
+                                <div>
+                                    <h3 className="font-medium">John Abel</h3>
+                                    <p className="text-sm text-gray-500">
+                                        No issue, catch you tomorrow
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </>
-}
+        </>
+    );
+};
 
 export default ApplicantMessages;

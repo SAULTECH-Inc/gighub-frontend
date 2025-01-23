@@ -123,11 +123,13 @@ const ApplicantNavBar: FC = () => {
                         <input
                             ref={searchInputRef}
                             type="text"
-                            className="w-64 px-2 py-1 border-[0.5px] border-[#8E8E8E] rounded-full shadow-sm text-sm focus:outline-none focus:ring-1 focus:ring-[#6438C2]"
+                            className="w-64 px-2 py-2 border-[0.5px] border-[#ccc] rounded-full shadow-sm text-sm focus:outline-none focus:border-[#ccc] active:border-[#ccc] focus:ring-0"
                             placeholder="Search..."
                         />
                     </div>
                 </div>
+
+
 
 
                 {/* Notification Icon */}

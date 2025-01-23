@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import checkAutoApplyRocket from "../../assets/icons/checkAutoApplyRocket.svg";
 import { JobDetails } from "../../pages/JobDetails";
+import SubscriptionModal from "./SubscriptionModal.tsx"; // Import the modal component
 
 export interface JobMatchCardProps {
     title: string;
@@ -23,8 +24,14 @@ const JobMatchCard: React.FC<JobMatchCardProps> = ({
                                                        applicants,
                                                        daysLeft,
                                                    }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+
+    const handleModalToggle = () => {
+        setIsModalOpen((prev) => !prev); // Toggle modal visibility
+    };
+
     return (
-        <div className="w-[596px] h-[382px] bg-white rounded-[16px] shadow-lg p-6 space-y-6">
+        <div className="w-[596px] h-[382px] bg-white rounded-[16px] shadow p-6 space-y-6">
             {/* Header Section */}
             <div className="flex justify-between items-center">
                 <div>
@@ -33,7 +40,10 @@ const JobMatchCard: React.FC<JobMatchCardProps> = ({
                         Job that matches your profile
                     </p>
                 </div>
-                <button className="flex items-center gap-2 bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white text-[13px] px-4 py-2 rounded-[16px] shadow-md">
+                <button
+                    onClick={handleModalToggle} // Open modal on click
+                    className="flex items-center gap-2 bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white text-[13px] px-4 py-2 rounded-[16px] shadow-md"
+                >
                     <span>Check Auto Apply</span>
                     <img src={checkAutoApplyRocket} alt="Rocket Icon" className="w-5 h-5" />
                 </button>
@@ -50,6 +60,9 @@ const JobMatchCard: React.FC<JobMatchCardProps> = ({
                 applicants={applicants}
                 daysLeft={daysLeft}
             />
+
+            {/* Subscription Modal */}
+            {isModalOpen && <SubscriptionModal onClose={handleModalToggle} />} {/* Conditionally render the modal */}
         </div>
     );
 };

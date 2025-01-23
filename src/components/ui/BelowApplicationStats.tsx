@@ -5,7 +5,7 @@ import ApplicationSummary from "./ApplicationSummary.tsx";
 const BelowApplicationStats: FC = ()=>{
     return <>
         <div className="w-full flex items-center justify-between">
-            <div className="h-[382px] w-[70%]">
+            <div className="h-[382px] w-full">
                 <JobMatchCard
                     title="Visual Designer"
                     company="Facebook"
@@ -17,9 +17,7 @@ const BelowApplicationStats: FC = ()=>{
                     daysLeft={4}
                 />
             </div>
-            <div className="h-[382px] w-[28%]">
-                <ApplicationSummary/>
-            </div>
+            <ApplicationSummary/>
         </div>
 
     </>
