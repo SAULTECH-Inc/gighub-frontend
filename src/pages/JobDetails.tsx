@@ -9,6 +9,7 @@ import bookmarkIcon from "../assets/icons/bookmarkIcon.svg";
 import Rating from "../components/common/Rating";
 import { JobMatchCardProps } from "../components/ui/JobMatchCard.tsx";
 import ShareModal from "../components/ui/ShareModal.tsx";
+import ApplicationModal from "../components/ui/ApplicationModal.tsx";
 
 export const JobDetails: React.FC<JobMatchCardProps> = ({
                                                             title,
@@ -21,6 +22,7 @@ export const JobDetails: React.FC<JobMatchCardProps> = ({
                                                             daysLeft,
                                                         }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isApplicationModalOpen, setIsApplicantModalOpen] = useState<boolean>(false);
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
@@ -78,9 +80,13 @@ export const JobDetails: React.FC<JobMatchCardProps> = ({
                     <img src={numberOfDaysRemaining} alt="Days Remaining Icon" className="w-4 h-4" />
                     <p className="text-[13px] text-gray-600">{daysLeft} days left</p>
                 </div>
-                <button className="w-92px] h-28px] text-[13px] text-black bg-[#FFFFFF] border-[#E6E6E6] border-[1px] px-4 py-1 rounded-[10px] font-medium">
+                <button onClick={() => setIsApplicantModalOpen(true)} className="w-92px] h-28px] text-[13px] text-black bg-[#FFFFFF] border-[#E6E6E6] border-[1px] px-4 py-1 rounded-[10px] font-medium">
                     Apply
                 </button>
+                <ApplicationModal
+                    isOpen={isApplicationModalOpen}
+                    onClose={() => setIsApplicantModalOpen(false)}
+                />
             </div>
         </div>
     );
