@@ -80,7 +80,7 @@ const ApplicantNavBar: FC = () => {
     const navItems = ["Dashboard", "Find Jobs", "Applications", "My Networks"];
 
     return (
-        <nav className="flex justify-between items-center px-6 py-4 bg-white shadow-sm">
+        <nav className="flex justify-between items-center px-6 py-4 bg-white border-b-[1px] border-b-[#E6E6E6]">
             {/* Left: Logo */}
             <div className="flex items-center gap-2">
                 <img src={GighubLogo} alt="Gighub Logo" className="h-10 w-auto" />

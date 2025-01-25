@@ -1,4 +1,6 @@
 import React from "react";
+import ViewApplicationMethodModal from "./ViewApplicationMethodModal.tsx";
+import useModalStore from "../../redux/modalStateStores.ts";
 
 
 interface ApplicationCardProps {
@@ -20,6 +22,8 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
                                                              statusColor,
                                                              buttonText,
                                                          }) => {
+    const {openModal } = useModalStore();
+
     return (
         <div className="grid grid-cols-3 items-center bg-[#F7F7F7] h-[58px] rounded-[16px] gap-x-6 w-full px-4">
             {/* Applicant Details */}
@@ -48,9 +52,10 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
 
             {/* Button */}
             <div className="flex justify-end items-center">
-                <button className="w-[127px] h-[35px] px-4 py-2 bg-[#6438C2] text-white rounded-[10px] font-lato text-[16px] font-medium leading-[19.2px]">
+                <button onClick={()=>openModal("view-application-method-modal")} className="w-[127px] h-[35px] px-4 py-2 bg-[#6438C2] text-white rounded-[10px] font-lato text-[16px] font-medium leading-[19.2px]">
                     {buttonText}
                 </button>
+                <ViewApplicationMethodModal modalId="view-application-method-modal"/>
             </div>
         </div>
     );

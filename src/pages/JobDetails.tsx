@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import jobTypeIcon from "../assets/icons/jobTypeIcon.svg";
 import locationIcon from "../assets/icons/locationIcon.svg";
 import peopleApplied from "../assets/icons/peopleApplied.svg";
@@ -10,6 +10,8 @@ import Rating from "../components/common/Rating";
 import { JobMatchCardProps } from "../components/ui/JobMatchCard.tsx";
 import ShareModal from "../components/ui/ShareModal.tsx";
 import ApplicationModal from "../components/ui/ApplicationModal.tsx";
+import useModalStore from "../redux/modalStateStores.ts";
+import ApplicationSuccessModal from "../components/ui/ApplicationSuccessModal.tsx";
 
 export const JobDetails: React.FC<JobMatchCardProps> = ({
                                                             title,
@@ -21,11 +23,11 @@ export const JobDetails: React.FC<JobMatchCardProps> = ({
                                                             applicants,
                                                             daysLeft,
                                                         }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isApplicationModalOpen, setIsApplicantModalOpen] = useState<boolean>(false);
+    const { openModal, isModalOpen } = useModalStore();
 
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+    const handleApplication = () => {
+        openModal("application");
+    };
     return (
         <div className="w-[556px] h-[249px] rounded-[16px] cursor-pointer bg-[#F7F8FA] p-4 flex flex-col space-y-6 mx-auto">
             {/* Header */}
@@ -51,8 +53,8 @@ export const JobDetails: React.FC<JobMatchCardProps> = ({
                 </div>
                 <div className="flex items-center space-x-3">
                     <Rating value={5.0} />
-                    <img onClick={openModal} src={shareIcon} alt="Share Icon" className="w-5 h-5 cursor-pointer" />
-                    <ShareModal isOpen={isModalOpen} onClose={closeModal} />
+                    <img onClick={()=>openModal("share")} src={shareIcon} alt="Share Icon" className="w-5 h-5 cursor-pointer" />
+                    <ShareModal modelId="share" />
                     <img src={bookmarkIcon} alt="Bookmark Icon" className="w-5 h-5 cursor-pointer" />
                 </div>
             </div>
@@ -80,13 +82,14 @@ export const JobDetails: React.FC<JobMatchCardProps> = ({
                     <img src={numberOfDaysRemaining} alt="Days Remaining Icon" className="w-4 h-4" />
                     <p className="text-[13px] text-gray-600">{daysLeft} days left</p>
                 </div>
-                <button onClick={() => setIsApplicantModalOpen(true)} className="w-92px] h-28px] text-[13px] text-black bg-[#FFFFFF] border-[#E6E6E6] border-[1px] px-4 py-1 rounded-[10px] font-medium">
+                <button onClick={handleApplication} className="w-92px] h-28px] text-[13px] text-black bg-[#FFFFFF] border-[#E6E6E6] border-[1px] px-4 py-1 rounded-[10px] font-medium">
                     Apply
                 </button>
-                <ApplicationModal
-                    isOpen={isApplicationModalOpen}
-                    onClose={() => setIsApplicantModalOpen(false)}
-                />
+                {/* Modals */}
+                {isModalOpen("application") && <ApplicationModal modalId="application" />}
+                {isModalOpen("application-success") && (
+                    <ApplicationSuccessModal modalId="application-success" />
+                )}
             </div>
         </div>
     );
