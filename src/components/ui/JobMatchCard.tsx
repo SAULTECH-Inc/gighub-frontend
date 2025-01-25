@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import checkAutoApplyRocket from "../../assets/icons/checkAutoApplyRocket.svg";
 import { JobDetails } from "../../pages/JobDetails";
-import SubscriptionModal from "./SubscriptionModal.tsx"; // Import the modal component
+import SubscriptionModal from "./SubscriptionModal.tsx";
+import useModalStore from "../../redux/modalStateStores.ts";
+import PaymentModal from "./PaymentModal.tsx"; // Import the modal component
 
 export interface JobMatchCardProps {
     title: string;
@@ -24,11 +26,12 @@ const JobMatchCard: React.FC<JobMatchCardProps> = ({
                                                        applicants,
                                                        daysLeft,
                                                    }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-
-    const handleModalToggle = () => {
-        setIsModalOpen((prev) => !prev); // Toggle modal visibility
-    };
+    const { modals, openModal } = useModalStore();
+    const isPaymentModalOpen = modals["payment-modal"];
+    const isSubscriptionModalOpen = modals["subscription-modal"];
+    const handleModalToggle = ()=>{
+        openModal("subscription-modal") // Close the modal when clicked
+    }
 
     return (
         <div className="w-[596px] h-[382px] bg-white rounded-[16px] shadow p-6 space-y-6">
@@ -42,7 +45,7 @@ const JobMatchCard: React.FC<JobMatchCardProps> = ({
                 </div>
                 <button
                     onClick={handleModalToggle} // Open modal on click
-                    className="flex items-center gap-2 bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white text-[13px] px-4 py-2 rounded-[16px] shadow-md"
+                    className="flex items-center gap-2 bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white text-[13px] px-4 py-2 rounded-[16px] shadow-sm"
                 >
                     <span>Check Auto Apply</span>
                     <img src={checkAutoApplyRocket} alt="Rocket Icon" className="w-5 h-5" />
@@ -62,7 +65,9 @@ const JobMatchCard: React.FC<JobMatchCardProps> = ({
             />
 
             {/* Subscription Modal */}
-            {isModalOpen && <SubscriptionModal onClose={handleModalToggle} />} {/* Conditionally render the modal */}
+            {isSubscriptionModalOpen && <SubscriptionModal modalId={"subscription-modal"} />} {/* Conditionally render the modal */}
+            {/* Payment Modal */}
+            {isPaymentModalOpen && <PaymentModal modalId="payment-modal" />}
         </div>
     );
 };

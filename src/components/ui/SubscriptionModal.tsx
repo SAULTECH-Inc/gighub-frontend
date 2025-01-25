@@ -1,15 +1,32 @@
 import React from "react";
+import useModalStore from "../../redux/modalStateStores.ts";
+import PaymentModal from "./PaymentModal.tsx";
 
-const SubscriptionModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+interface SubscriptionModalProps {
+    modalId: string;
+}
+
+const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ modalId }) => {
+    const { modals, openModal, closeModal } = useModalStore();
+    const isOpen = modals[modalId];
+
+    if (!isOpen) return null;
+
+    const handleSubscription = () => {
+        closeModal(modalId); // Close this modal
+        openModal("payment-modal"); // Open the PaymentModal
+    };
+
     return (
         <div className="fixed inset-0 bg-black bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-            {/* Modal Container with Animation */}
-            <div className="bg-[#F7F7F7] shadow-lg p-6 relative animate-zoomIn"
-                 style={{width: "806px", height: "706px"}}>
-
+            {/* Modal Container */}
+            <div
+                className="bg-[#F7F7F7] shadow-lg p-6 relative animate-zoomIn"
+                style={{ width: "806px", height: "706px" }}
+            >
                 {/* Close Button */}
                 <button
-                    onClick={onClose}
+                    onClick={() => closeModal(modalId)}
                     className="absolute top-4 right-4 text-gray-500 text-[32px] hover:text-gray-700 focus:outline-none"
                     aria-label="Close Modal"
                 >
@@ -17,15 +34,18 @@ const SubscriptionModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </button>
 
                 {/* Header */}
-                <h2 className="text-[24px] font-semibold text-left mb-6">Subscribe to Auto Apply</h2>
+                <h2 className="text-[24px] font-semibold text-left mb-6">
+                    Subscribe to Auto Apply
+                </h2>
 
                 {/* Content Section */}
                 <div
-                    className="flex gap-6 bg-white w-[728px] h-[580px] rounded-[16px] justify-around items-center mx-auto">
+                    className="flex gap-6 bg-white w-[728px] h-[580px] rounded-[16px] justify-around items-center mx-auto"
+                >
                     {/* Subscription Plans */}
                     <div className="w-[388px] h-[480px] flex flex-col space-y-10">
                         <div
-                            className="w-full h-[68px] cursor-pointer flex items-center justify-between p-4 rounded-[16px] bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white hover:scale-105 transition-transform duration-300 ease-in-out"
+                            onClick={handleSubscription} className="w-full h-[68px] cursor-pointer flex items-center justify-between p-4 rounded-[16px] bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white hover:scale-105 transition-transform duration-300 ease-in-out"
                         >
                             <div className="flex items-center">
                                 <div className="text-yellow-300 text-2xl mr-4">⭐</div>
@@ -38,6 +58,7 @@ const SubscriptionModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         </div>
 
                         <div
+                            onClick={handleSubscription}
                             className="w-full h-[68px] cursor-pointer flex items-center justify-between p-4 rounded-[16px] bg-gradient-to-r from-[#6438C2] to-[#65FF81] text-white hover:scale-105 transition-transform duration-300 ease-in-out"
                         >
                             <div className="flex items-center">
@@ -51,6 +72,7 @@ const SubscriptionModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         </div>
 
                         <div
+                            onClick={handleSubscription}
                             className="w-full h-[68px] cursor-pointer flex items-center justify-between p-4 rounded-[16px] bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white hover:scale-105 transition-transform duration-300 ease-in-out"
                         >
                             <div className="flex items-center">
@@ -70,11 +92,12 @@ const SubscriptionModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
                         {/* Footer */}
                         <button
-                            onClick={onClose}
+                            onClick={handleSubscription}
                             className="w-full h-[39px] bg-[#6438C2] text-white font-bold font-lato py-2 rounded-[10px] hover:bg-purple-700 hover:scale-105 transition-all duration-300 focus:outline-none"
                         >
                             Start Your 7 Days Free Trial
                         </button>
+                        <PaymentModal modalId="payment-modal" />
                     </div>
 
                     {/* Services Section */}
@@ -90,7 +113,7 @@ const SubscriptionModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                         without lifting a finger.
                                     </p>
                                 </div>
-                                <hr className="mt-4 border-gray-300"/>
+                                <hr className="mt-4 border-gray-300" />
                             </li>
                             <li className="flex flex-col">
                                 <span className="text-[#6438C2] font-bold text-[16px] mb-2">Quarterly</span>
@@ -101,7 +124,7 @@ const SubscriptionModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                         opportunities.
                                     </p>
                                 </div>
-                                <hr className="mt-4 border-gray-300"/>
+                                <hr className="mt-4 border-gray-300" />
                             </li>
                             <li className="flex flex-col">
                                 <span className="text-[#6438C2] font-bold text-[16px] mb-2">Yearly</span>

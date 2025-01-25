@@ -9,8 +9,8 @@ const ApplicantMessages: FC = () => {
                         <h2 className="text-[20px] font-semibold">Messages</h2>
                         <button className="text-[#6B5AED] text-sm">See all</button>
                     </div>
-                    <ul>
-                        <li className="flex items-start justify-between mb-4">
+                    <div>
+                        <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center space-x-3">
 
                                 <div className="w-[50px] h-[50px] bg-[#D9D9D9] rounded-full"></div>
@@ -25,8 +25,8 @@ const ApplicantMessages: FC = () => {
                                 <span className="text-[13px] text-[#56E5A1]">Yesterday</span>
                                 <span className="bg-[#6B5AED] text-white text-xs rounded-full px-2 py-1 ml-2">2</span>
                             </div>
-                        </li>
-                        <li className="flex items-start justify-between mb-4">
+                        </div>
+                        <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center space-x-3">
                                 <div className="w-[50px] h-[50px] bg-[#D9D9D9] rounded-full"></div>
                                 <div>
@@ -36,8 +36,8 @@ const ApplicantMessages: FC = () => {
                                     </p>
                                 </div>
                             </div>
-                        </li>
-                        <li className="flex items-start justify-between">
+                        </div>
+                        <div className="flex items-start justify-between">
                             <div className="flex items-center space-x-3">
                                 <div className="w-[50px] h-[50px] bg-[#D9D9D9] rounded-full"></div>
                                 <div>
@@ -47,8 +47,8 @@ const ApplicantMessages: FC = () => {
                                     </p>
                                 </div>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

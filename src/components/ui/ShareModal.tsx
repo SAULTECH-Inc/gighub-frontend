@@ -1,17 +1,18 @@
 import React from 'react';
+import useModalStore from "../../redux/modalStateStores.ts";
 
 interface ShareModalProps {
-    isOpen: boolean;
-    onClose: () => void;
+    modelId: string;
 }
 
-const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
-    if (!isOpen) return null;
+const ShareModal: React.FC<ShareModalProps> = ({ modelId }) => {
+    const { isModalOpen, closeModal } = useModalStore();
+    if (!isModalOpen(modelId)) return null;
 
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
-            onClick={onClose} // Close the modal when clicking outside of it
+            onClick={()=>closeModal(modelId)} // Close the modal when clicking outside of it
         >
             {/* Modal Content */}
             <div
@@ -20,7 +21,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
             >
                 {/* Close Button */}
                 <button
-                    onClick={onClose}
+                    onClick={()=>closeModal(modelId)}
                     className="absolute top-2 right-2 text-[24px] text-gray-500 hover:text-gray-700 p-2"
                 >
                     ✕
