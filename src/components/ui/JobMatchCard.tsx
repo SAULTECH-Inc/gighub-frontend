@@ -34,7 +34,7 @@ const JobMatchCard: React.FC<JobMatchCardProps> = ({
     }
 
     return (
-        <div className="w-[596px] h-[382px] bg-white rounded-[16px] shadow p-6 space-y-6">
+        <div className="flex-1 h-[382px] bg-white rounded-[16px] shadow p-6 space-y-6">
             {/* Header Section */}
             <div className="flex justify-between items-center">
                 <div>

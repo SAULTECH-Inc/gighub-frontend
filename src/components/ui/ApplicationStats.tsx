@@ -6,7 +6,7 @@ import {FC} from "react";
 const ApplicationStats: FC = ()=>{
     return <>
         <div
-            className="w-full h-[122px] bg-[#FFFFFF] grid grid-cols-3 gap-x-6 p-4 items-center justify-center">
+            className="w-full md:h-[122px] bg-[#FFFFFF] sm:grid-cols-1 grid md:grid-cols-3 gap-x-6 p-4 sm:items-baseline items-center justify-center">
             <div className="cursor-pointer bg-[#F7F7F7] p-4 flex justify-between items-center">
                 <div>
                     <h3 className="text-gray-700">Jobs Applied</h3>

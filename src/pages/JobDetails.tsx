@@ -12,6 +12,7 @@ import ShareModal from "../components/ui/ShareModal.tsx";
 import ApplicationModal from "../components/ui/ApplicationModal.tsx";
 import useModalStore from "../redux/modalStateStores.ts";
 import ApplicationSuccessModal from "../components/ui/ApplicationSuccessModal.tsx";
+import PaymentSuccessModal from "../components/ui/PaymentSuccessModal.tsx";
 
 export const JobDetails: React.FC<JobMatchCardProps> = ({
                                                             title,
@@ -90,6 +91,11 @@ export const JobDetails: React.FC<JobMatchCardProps> = ({
                 {isModalOpen("application-success") && (
                     <ApplicationSuccessModal modalId="application-success" />
                 )}
+                {
+                    isModalOpen("payment-success-modal") && (
+                        <PaymentSuccessModal modalId="payment-success-modal"/>
+                    )
+                }
             </div>
         </div>
     );

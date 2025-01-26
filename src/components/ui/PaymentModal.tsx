@@ -1,4 +1,4 @@
-import React, {useEffect } from "react";
+import React, { useEffect } from "react";
 import useModalStore from "../../redux/modalStateStores.ts";
 import gighubLogo from '../../assets/icons/gighubLogoSmall.svg';
 import cancelMedium from '../../assets/icons/cancelMedium.svg';
@@ -6,13 +6,14 @@ import check from  '../../assets/icons/check.svg';
 import { SiVisa } from "react-icons/si";
 import MasterCardLogo from "../common/MasterCardLogo.tsx";
 import { useForm, Controller } from "react-hook-form";
+import PaymentSuccessModal from "./PaymentSuccessModal.tsx";
 
 interface ModalProps {
     modalId: string;
 }
 
 interface FormValues {
-    cardNumber: string[];
+    cardNumber: [string, string, string, string]; // Explicitly define the cardNumber structure
     cvv: string;
     expiryMonth: string;
     expiryYear: string;
@@ -20,12 +21,12 @@ interface FormValues {
 }
 
 const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
-    const { modals, closeModal } = useModalStore(); // Access the modals state
+    const { modals, closeModal, isModalOpen, openModal } = useModalStore(); // Access the modals state
     const isOpen = modals[modalId];
 
     const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
         defaultValues: {
-            cardNumber: ["", "", "", ""],
+            cardNumber: ["", "", "", ""], // Define default values as a tuple
             cvv: "",
             expiryMonth: "",
             expiryYear: "",
@@ -44,6 +45,10 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
     const onSubmit = (data: FormValues) => {
         console.log("Payment Data Submitted", data);
         // Handle form submission logic (e.g., payment API call)
+    };
+    const handlePaymentSuccess = ()=>{
+        closeModal(modalId);
+        openModal("payment-success-modal");
     };
 
     if (!isOpen) return null;
@@ -91,7 +96,7 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                                 {cardNumber.map((_value, index) => (
                                     <div key={index} className="flex items-center">
                                         <Controller
-                                            name={`cardNumber[${index}]`}
+                                            name={`cardNumber.${index}`} // Use dot notation for indexing
                                             control={control}
                                             render={({ field }) => (
                                                 <input
@@ -189,6 +194,7 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                     </div>
 
                     <button
+                        onClick={handlePaymentSuccess}
                         type="submit"
                         className="w-[412px] h-[33px] mx-auto text-center block py-1 mt-4 text-white bg-[#6438C2] rounded-[10px] hover:bg-purple-800 focus:ring-2 focus:ring-purple-700 focus:outline-none"
                     >
@@ -196,6 +202,8 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                     </button>
                 </form>
             </div>
+
+
         </div>
     );
 };

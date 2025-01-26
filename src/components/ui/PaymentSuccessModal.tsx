@@ -1,10 +1,7 @@
-import React, {useRef, useState} from "react";
+import React from "react";
 import useModalStore from "../../redux/modalStateStores.ts";
-import gighubLogo from '../../assets/icons/gighubLogoSmall.svg';
 import cancelMedium from '../../assets/icons/cancelMedium.svg';
-import check from  '../../assets/icons/check.svg';
-import { SiVisa } from "react-icons/si";
-import MasterCardLogo from "../common/MasterCardLogo.tsx";
+import checkMarkBig from '../../assets/icons/checkMarkBig.svg';
 interface ModalProps {
     modalId: string;
 }
@@ -12,54 +9,6 @@ interface ModalProps {
 const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
     const { modals, closeModal } = useModalStore(); // Access the modals state
     const isOpen = modals[modalId];
-    const [cardNumber, setCardNumber] = useState("");
-    const [cvv, setCvv] = useState("");
-    const [expiryMonth, setExpiryMonth] = useState("");
-    const [expiryYear, setExpiryYear] = useState("");
-    const [password, setPassword] = useState("");
-
-    const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-    const [values, setValues] = useState<string[]>(["", "", "", ""]);
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-        const newValue = e.target.value;
-        const updatedValues = [...values];
-
-        // Allow only up to 4 digits and set the value
-        if (newValue.length <= 4 && /^[0-9]*$/.test(newValue)) {
-            updatedValues[index] = newValue;
-            setValues(updatedValues);
-
-            // Move to the next input if 4 digits are entered
-            if (newValue.length === 4 && inputRefs.current[index + 1]) {
-                inputRefs.current[index + 1]?.focus();
-            }
-        }
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-        if (e.key === "Backspace") {
-            const updatedValues = [...values];
-
-            // Clear the current input and move focus to the previous input if empty
-            if (!values[index] && inputRefs.current[index - 1]) {
-                updatedValues[index - 1] = "";
-                inputRefs.current[index - 1]?.focus();
-            } else {
-                updatedValues[index] = "";
-            }
-
-            setValues(updatedValues);
-        }
-    };
-
-    const handleFocus = (index: number) => {
-        // Prevent focusing on inputs out of sequence
-        if (index > 0 && values[index - 1] === "") {
-            inputRefs.current[index - 1]?.focus();
-        }
-    };
-
 
     if (!isOpen) return null;
 
@@ -70,123 +19,19 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                     <img className="cursor-pointer" onClick={() => closeModal(modalId)} src={cancelMedium} alt="cancel"/>
                 </div>
 
-                <div className="flex items-center justify-between mb-4">
-                    <img
-                        src={gighubLogo}
-                        alt="GigHub Logo"
-                        className="mr-2"
-                    />
-                    <button className="px-4 py-2 text-white text-[16px] bg-[#6438C2] rounded-[10px] w-[142px]">Card Payment</button>
-                    <button className="px-4 py-2 text-[#000000] text-[16px] border border-[#E6E6E6] rounded-[10px] w-[100px]">QR Code
-                    </button>
+                <div className="flex flex-col items-baseline mx-auto">
+                    <div className="mx-auto flex flex-col justify-center items-center">
+                        <img src={checkMarkBig} alt="check"/>
+                        <h2 className="text-[24px] font-semibold text-[#FA4E09] mt-4">Congratulations!</h2>
+                        <h2 className="text-[24px] font-semibold text-[#FA4E09] mt-4">Subscription Activated!</h2>
+                    </div>
+                    <p className="text-center text-gray-600 text-[13px] mt-8">
+                        our payment was successful, and your Auto Apply Monthly Subscription is
+                        now active—enjoy 200 Automatic Applications Per Month and effortless
+                        opportunity management!
+                    </p>
                 </div>
 
-                <form className="space-y-6 mx-auto">
-                    <div className="flex flex-col mx-auto gap-y-2">
-                        <div className="flex justify-between items-center w-[410px] h-[31px] mx-auto">
-                            <div className="block text-gray-700 font-medium mb-1">Selected Plan</div>
-                            <div className="text-right text-lg text-purple-700 font-semibold mb-4">$40</div>
-                        </div>
-                        <div
-                            className="bg-[#F7F8FA] flex justify-center items-center w-[410px] h-[31px] rounded-[10px] p-2 mx-auto">
-                            Quarterly
-                        </div>
-                    </div>
-
-                    <div className="mx-auto flex flex-col items-baseline gap-y-3 w-[412px]">
-                        <div className="flex flex-col items-baseline justify-start w-full">
-                            <p className="text-[16px] text-[#000000]">Card number</p>
-                            <p className="text-[13px] text-[#8E8E8E]">Enter the 16-digit card number on the card</p>
-                        </div>
-                        <div
-                            className="flex justify-evenly items-center w-full h-[37px] gap-x-5 bg-[#E6E6E6] px-3 py-3 rounded-[10px] mx-auto">
-                            {/* MasterCard logo */}
-                            <MasterCardLogo/>
-                            <div className="flex justify-evenly items-center py-0 w-[300px] mx-auto">
-                                {values.map((value, index) => (
-                                    <div key={index} className="flex items-center">
-                                        <input
-                                            ref={(el) => (inputRefs.current[index] = el)} // Attach refs
-                                            className="my-0 h-full w-[55px] text-[13px] bg-transparent text-left border-none outline-none focus:ring-0 focus:border-none active:border-none"
-                                            value={value}
-                                            placeholder="2412"
-                                            maxLength={4}
-                                            onChange={(e) => handleInputChange(e, index)} // Handle input change
-                                            onKeyDown={(e) => handleKeyDown(e, index)} // Handle backspace clearing
-                                            onFocus={() => handleFocus(index)} // Prevent skipping inputs
-                                            readOnly={index > 0 && values[index - 1] === ""} // Prevent editing out-of-sequence inputs
-                                        />
-                                        {index < values.length - 1 && (
-                                            <hr className="w-[12.5px] border-[#8E8E8E] border-[1px]"/>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                            {/* Digit complete icon */}
-                            <div
-                                className="bg-[#6438C2] flex justify-center items-center w-[15px] h-[15px] rounded-full">
-                                <img src={check} alt="digit complete"/>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div className="flex justify-evenly w-[412px] mx-auto">
-                        <div className="flex flex-col items-baseline justify-start w-full">
-                            <p className="text-[16px] text-[#000000]">CVV number</p>
-                            <p className="text-[13px] text-[#8E8E8E]">Enter the 3 or 4-digit number on the card</p>
-                        </div>
-                        <input
-                            type="text"
-                            value={cvv}
-                            onChange={(e) => setCvv(e.target.value)}
-                            placeholder="345"
-                            maxLength={3}
-                            className="w-[142px] h-[33px] px-4 py-2 border-[2px] border-[#E6E6E6] rounded-[10px] bg-[#F7F8FA] text-center outline-none focus:ring-0 focus:border-none active:border-none"
-                        />
-                    </div>
-                    <div className="flex justify-evenly w-[412px] mx-auto">
-                        <div className="flex flex-col items-baseline justify-start w-full">
-                            <p className="text-[16px] text-[#000000]">Expiry Date</p>
-                            <p className="text-[13px] text-[#8E8E8E]">Enter the expiration date of the card</p>
-                        </div>
-                        <div className="flex justify-evenly items-center">
-                            <input
-                                type="text"
-                                placeholder="09"
-                                maxLength={2}
-                                className="w-[84px] h-[33px] px-4 py-2 border-[2px] border-[#E6E6E6] rounded-[10px] bg-[#F7F8FA] text-center outline-none focus:ring-0 focus:border-none active:border-none"
-                            />
-                            <p className="mx-2">/</p>
-                            <input
-                                type="text"
-                                placeholder="09"
-                                maxLength={2}
-                                className="w-[84px] h-[33px] px-4 py-2 border-[2px] border-[#E6E6E6] rounded-[10px] bg-[#F7F8FA] text-center outline-none focus:ring-0 focus:border-none active:border-none"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex justify-evenly w-[412px] mx-auto">
-                        <div className="flex flex-col items-baseline justify-start w-full">
-                            <p className="text-[16px] text-[#000000]">Password</p>
-                            <p className="text-[13px] text-[#8E8E8E]">Enter your dynamic password</p>
-                        </div>
-                        <input
-                            type="password"
-                            placeholder="345"
-                            className="w-[203px] h-[33px] px-4 py-2 border-[2px] border-[#E6E6E6] rounded-[10px] bg-[#F7F8FA] text-center outline-none focus:ring-0 focus:border-none active:border-none"
-                        />
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        className="w-[412px] h-[33px] mx-auto text-center block py-1 mt-4 text-white bg-[#6438C2] rounded-[10px] hover:bg-purple-800 focus:ring-2 focus:ring-purple-700 focus:outline-none"
-                    >
-                        Pay Now
-                    </button>
-                </form>
             </div>
         </div>
     );

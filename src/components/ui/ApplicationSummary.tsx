@@ -2,15 +2,15 @@ import {FC} from "react";
 
 const ApplicationSummary: FC = () => {
     return (
-        <div className="bg-white p-4 rounded-[16px] shadow h-[382px] w-[329px] flex flex-col justify-between pb-20 px-8">
+        <div className="bg-white p-4 rounded-[16px] shadow h-[382px] w-full flex flex-col justify-between pb-20 px-8">
             <h2 className="justify-center flex text-xl font-lato font-[20px] font-bold-[700] mb-4">Application Summary</h2>
-            <hr className="w-[276px] mx-auto mb-4 border-t border-[#E6E6E6]"/>
+            <hr className="w-full mx-auto mb-4 border-t border-[#E6E6E6]"/>
 
             {/* Horizontal Bar */}
-            <div className="flex justify-center space-x-1 mb-6">
-                <span className="h-[12px] w-[92px] bg-[#6438C2] rounded-l-full"></span>
-                <span className="h-[12px] w-[68px] bg-[#FD7E14]"></span>
-                <span className="h-[12px] w-[116px] bg-[#56E5A1] rounded-r-full"></span>
+            <div className="flex justify-center space-x-1 mb-6 w-full">
+                <span className="h-[12px] w-[107px] bg-[#6438C2] rounded-l-full"></span>
+                <span className="h-[12px] w-[83px] bg-[#FD7E14]"></span>
+                <span className="h-[12px] w-[131px] bg-[#56E5A1] rounded-r-full"></span>
             </div>
 
             {/* List Items */}
