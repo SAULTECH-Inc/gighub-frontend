@@ -5,6 +5,7 @@ import BelowApplicationStats from "../components/ui/BelowApplicationStats.tsx";
 import ApplicantRecentApplications from "../components/ui/ApplicantRecentApplications.tsx";
 import ApplicantMessages from "../components/ui/ApplicantMessages.tsx";
 import ApplicantSchedules from "../components/ui/ApplicantSchedules.tsx";
+import ChatWindow from "../components/ui/ChatWindow.tsx";
 
 export const ApplicantDashboard = () => {
     return (
@@ -30,8 +31,7 @@ export const ApplicantDashboard = () => {
                         </div>
                     </div>
                 </div>
-
-
+                <ChatWindow/>
             </div>
         </>
     );
