@@ -50,6 +50,10 @@ interface MessageDropdownProps {
     onClose: () => void; // A callback to close the dropdown
 }
 
+const handleOpenMessage = ()=>{
+
+}
+
 const MessageDropdown: FC<MessageDropdownProps> = ({ onClose }) => {
     const dividerStyle = { borderColor: "#E6E6E6" }; // Faint divider color
 
@@ -88,7 +92,7 @@ const MessageDropdown: FC<MessageDropdownProps> = ({ onClose }) => {
                                 <p className="text-xs text-gray-600">{message.message}</p>
                                 <div className="flex items-center justify-between mt-1">
                                     <p className="text-xs text-gray-400">{message.time}</p>
-                                    <button className="text-xs text-purple-600 hover:underline">
+                                    <button onClick={handleOpenMessage} className="text-xs text-purple-600 hover:underline">
                                         See Message
                                     </button>
                                 </div>

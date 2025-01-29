@@ -6,7 +6,7 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const proceed = ()=>{
-    navigate("/applicant/dashboard")
+    navigate("/user-type-selection")
   }
 
   //   Get Header content based on current page route
