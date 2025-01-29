@@ -3,7 +3,7 @@ import { Experince, Gighub, Ratings, Search } from "../assets/icons";
 import { Person10, Person6, Person9 } from "../assets/images";
 import ApplicantSignupStep from "../components/onboardingSteps/ApplicantSignupStep";
 import CompanyDetailsStep from "../components/onboardingSteps/CompanyDetailsStep";
-import EmployerSignupStep from "../components/onboardingSteps/EmployerSignUpStep";
+import EmployerSignupStep from "../components/onboardingSteps/EmployerSignupStep";
 import GetStarted from "../components/onboardingSteps/GetStarted";
 import WorkExperienceStep from "../components/onboardingSteps/WorkExperienceStep";
 import { useSignupStore } from "../hooks/useSignupStore";
