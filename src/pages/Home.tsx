@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   Ad,
   Assignment,
@@ -33,7 +34,7 @@ export const Home = () => {
       <Header />
 
       {/* Hero Section */}
-      <div className="mt-10 md:mt-20">
+      <div className="mt-5 md:mt-20">
         <img
           src={Linkedin}
           alt="linkedin"
@@ -82,12 +83,9 @@ export const Home = () => {
             className="absolute top-[150px] left-[1050px] max-lg:hidden"
           />
 
-          <div className="mt-5 text-center">
-            <h1 className="font-black font-lato text-4xl md:text-5xl md:leading-[70px]">
-              Hunt, Search, Apply,
-            </h1>
-            <h1 className="font-black font-lato text-4xl md:text-5xl md:leading-[70px]">
-              & Get Your <span className="text-tertiary">Dream Job</span>
+          <div className="mt-3 md:mt-5 text-center">
+            <h1 className="w-[328px] md:w-[473px] font-black font-lato text-[32px] md:text-[47px] md:leading-[69px]">
+              Hunt, Search, Apply, & Get Your <span className="text-tertiary">Dream Job</span>
             </h1>
           </div>
 
@@ -99,19 +97,20 @@ export const Home = () => {
             className="absolute top-[300px] left-[950px] max-lg:hidden"
           />
 
-          <div className="mt-5 text-center">
-            <p className="font-lato font-black text-[#d9d9d9] text-sm md:leading-[30px]">
-              Discover life-changing career opportunities near you. Find your
-            </p>
-            <p className="font-lato font-black text-[#d9d9d9] text-sm md:leading-[30px]">
-              perfect match, get hired, and achieve your goals today!
+          <div className="w-[319px] md:w-[453px] mt-3 md:mt-5 mx-auto">
+            <p className="font-lato font-black text-[#d9d9d9] leading-5 md:leading-[30px] text-center">
+              Discover life-changing career opportunities near you. Find your perfect match, get
+              hired, and achieve your goals today!
             </p>
           </div>
 
-          <div className="mt-9 md:mt-[52px] flex items-center gap-9">
-            <Button className="font-bold py-3 px-5 md:py-[18px] md:px-[34px] rounded-[10px]">
+          <div className="mt-6 md:mt-[52px] flex items-center gap-9">
+            <Link
+              to="/onboarding"
+              className="bg-tertiary text-white font-bold py-[18px] px-[34px] rounded-[10px]"
+            >
               Get Started
-            </Button>
+            </Link>
             <div className="flex items-center gap-4">
               <img src={Playbutton} alt="play button" width={45} height={45} />
               <p className="text-[13px] font-sans">See how it works</p>
@@ -120,7 +119,7 @@ export const Home = () => {
         </div>
       </div>
 
-      <div className="mt-12 pl-3 md:pl-10 lg:pl-[90px] py-3 md:py-5 bg-tertiary max-lg:overflow-scroll">
+      <div className="mt-12 pl-5 md:pl-10 lg:pl-[90px] py-3 md:py-5 bg-tertiary max-lg:overflow-scroll">
         <div className="flex justify-between items-center max-lg:gap-2">
           <p className="text-tertiary font-lato text-[10px] md:text-[13px] py-[15px] px-5 text-center bg-white rounded-2xl whitespace-nowrap">
             Full stcak developer
@@ -148,18 +147,16 @@ export const Home = () => {
       {/* End of Hero Section */}
 
       {/* Get Hired Section */}
-      <div className="mt-[78px]">
-        <h1 className="font-lato font-black text-[40px] text-center">
+      <div className="mt-10 md:mt-[78px]">
+        <h1 className="font-lato font-black text-2xl md:text-[40px] text-center">
           Get Hired In <span className="text-tertiary">4 Quick Easy Steps</span>
         </h1>
-        <p className="font-lato font-black max-md:text-sm text-center text-[#d9d9d9]                                             ">
-          The quickest and most effective way to get hired by top firms working
-        </p>
-        <p className="font-lato font-black max-md:text-sm text-center text-[#d9d9d9]                                             ">
-          in your career interest area
+        <p className="w-[310px] md:w-[502px] mt-[10px] mx-auto font-lato font-black max-md:text-sm text-center text-[#d9d9d9]                                             ">
+          The quickest and most effective way to get hired by top firms working in your career
+          interest area
         </p>
 
-        <div className="px-3 md:px-10 lg:px-[90px] mt-[50px]">
+        <div className="px-10 md:px-10 lg:px-[90px] mt-[50px]">
           <div className="flex max-md:flex-col items-center gap-5">
             <div className="shadow-card p-5 rounded-[10px]">
               <img src={Person} alt="person" className="bg-orange bg-opacity-15 p-2 rounded-full" />
@@ -214,13 +211,13 @@ export const Home = () => {
       {/* End of Get Hired Section */}
 
       {/* Countless Career Section */}
-      <div className="px-3 md:px-10 lg:px-[90px] mt-24">
-        <h1 className="font-black font-lato text-[40px] text-center">
-          <span className="text-tertiary">Countless Career Options</span> Are Waiting <br />
-          For You to Explore
+      <div className="px-5 md:px-10 lg:px-[90px] mt-14 md:mt-24">
+        <h1 className="mx-auto md:w-[690px] font-black font-lato text-2xl md:text-[40px] text-center leading-[30px] md:leading-[60px]">
+          <span className="text-tertiary">Countless Career Options</span> Are Waiting For You to
+          Explore
         </h1>
 
-        <div className="mt-7 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="mt-7 md:grid md:grid-cols-2 lg:grid-cols-4 gap-5">
           <div className="shadow-card p-5 rounded-2xl">
             <img src={Design} alt="person" className="bg-orange bg-opacity-20 p-2 rounded-[10px]" />
             <h1 className="font-bold font-lato mt-5">Design</h1>
@@ -302,19 +299,18 @@ export const Home = () => {
           </div>
         </div>
         <div className="flex justify-center">
-          <Button className="mt-16 px-8 py-4">View all categories</Button>
+          <Button className="mt-12 md:mt-16 px-8 py-4">View all categories</Button>
         </div>
       </div>
       {/* End of countless career options */}
 
       {/* Latest jobs section */}
-      <div className="px-3 md:px-10 lg:px-[90px] mt-5 md:mt-[90px]">
-        <h1 className="font-lato font-black text-[40px]">
-          <span className="text-tertiary">Latest and Top</span>Jobs Openings
+      <div className="px-5 md:px-10 lg:px-[90px] mt-12 md:mt-[90px]">
+        <h1 className="font-lato font-black text-2xl md:text-[40px]">
+          <span className="text-tertiary">Latest and Top</span> Jobs Openings
         </h1>
-        <p className="font-lato font-black text-xs text-[#d9d9d9] mt-3">
+        <p className="font-lato font-black text-[13px] text-[#d9d9d9] mt-3 md:w-[495px]">
           Explore the latest and top job openings in your area. Discover exciting opportunities
-          <br />
           tailored to your skills and kickstart your career today!
         </p>
 
@@ -459,15 +455,15 @@ export const Home = () => {
 
       {/* What we offer section */}
       <div className="px-3 md:px-10 lg:px-[90px] mt-10 md:mt-20">
-        <h1 className="font-lato font-black text-[40px]">What We Offer</h1>
-        <p className="mt-2 font-lato font-black text-[#d9d9d9]">
-          Check out our services to discover how we help you hunt, search, and <br />
-          secure a job aligned with your interests.
+        <h1 className="font-lato font-black text-2xl md:text-[40px]">What We Offer</h1>
+        <p className="md:w-[494px] mt-2 font-lato font-black text-[#d9d9d9]">
+          Check out our services to discover how we help you hunt, search, and secure a job aligned
+          with your interests.
         </p>
         <div className="mt-[53px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 place-items-center">
           <div>
             <img src={Person1} alt="person" width={407} height={275} />
-            <div className="flex items-center gap-4 font-lato">
+            <div className="flex items-center max-md:justify-center gap-4 font-lato">
               <h1 className="text-[64px] text-tertiary">1</h1>
               <div className="border-l-8 border-tertiary border-opacity-50 pl-4">
                 <h1>Job Recommendation</h1>
@@ -481,7 +477,7 @@ export const Home = () => {
 
           <div>
             <img src={Person2} alt="person" width={407} height={275} />
-            <div className="flex items-center gap-4 font-lato">
+            <div className="flex items-center max-md:justify-center gap-4 font-lato">
               <h1 className="text-[64px] text-orange">2</h1>
               <div className="border-l-8 border-tertiary border-opacity-50 pl-4">
                 <h1>Create and build profile</h1>
@@ -491,7 +487,7 @@ export const Home = () => {
 
           <div>
             <img src={Person3} alt="person" width={407} height={275} />
-            <div className="flex items-center gap-4 font-lato">
+            <div className="flex items-center max-md:justify-center gap-4 font-lato">
               <h1 className="text-[64px] text-yellow">3</h1>
               <div className="border-l-8 border-tertiary border-opacity-50 pl-4">
                 <h1>Career</h1>
@@ -503,7 +499,7 @@ export const Home = () => {
       {/* What we offer end */}
 
       {/* Testimonials */}
-      <div className="px-3 md:px-10 lg:px-[90px] mt-14">
+      <div className="px-5 md:px-10 lg:px-[90px] mt-14">
         <h1 className="font-lato font-black text-[40px] text-tertiary text-center">Testimonial</h1>
         <p className="font-black text-[#d9d9d9] text-center mt-2">
           Explore our testimonials to see how we’ve helped professionals find jobs <br />
@@ -513,8 +509,8 @@ export const Home = () => {
       </div>
       {/* Testimonials End */}
 
-      <div className="max-md:px-3 md:w-[800px] lg:w-[874px] mt-20 md:mt-[152px] mx-auto">
-        <div className="relative bg-charcoal rounded-2xl p-9 font-lato font-black text-white flex items-center">
+      <div className="max-md:px-5 md:w-[800px] lg:w-[874px] mt-20 md:mt-[152px] mx-auto">
+        <div className="relative bg-charcoal rounded-2xl p-6 md:p-9 font-lato font-black text-white flex items-center">
           <div>
             <h1 className="text-[40px]">
               Get Latest Job

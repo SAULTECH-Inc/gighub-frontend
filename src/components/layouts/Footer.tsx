@@ -4,8 +4,8 @@ import { Gighub, Location, Phone } from "../../assets/icons";
 const Footer = () => {
   return (
     <>
-      <div className="px-3 md:px-10 lg:px-[90px] mb-20 flex justify-center">
-        <div className="grid grid-cols-2 md:grid-cols-6 lg:grid-cols-12 gap-10 md:gap-20">
+      <div className="px-5 md:px-10 lg:px-[90px] mb-20 flex justify-center">
+        <div className="grid grid-cols-2 md:grid-cols-6 lg:grid-cols-12 gap-y-10 gap-x-24 md:gap-20">
           <div className="col-span-2 md:col-span-3 lg:col-span-4">
             <div className="flex items-center gap-[10px]">
               <img src={Gighub} alt="Gighub" width={41} height={41} />
