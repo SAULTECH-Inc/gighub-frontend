@@ -89,5 +89,3 @@ export interface ProgressBarProps {
     color?: string; // e.g. "bg-blue-600" or "bg-green-500"
 }
 
-
-declare module 'emoji-mart-lite';
