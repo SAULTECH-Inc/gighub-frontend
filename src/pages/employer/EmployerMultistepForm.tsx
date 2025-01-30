@@ -1,8 +1,8 @@
 import React, {useState} from "react";
-import gighubLogo from "../assets/icons/gighubLogoSmall.svg";
-import employerSignupStep1 from "../assets/icons/applicantSignupStep1.svg";
-import {useFormStore} from "../redux/useFormStore.ts";
-import ApplicantSignupStepOne from "../components/ui/ApplicantSignupStepOne.tsx";
+import gighubLogo from "../../assets/icons/gighubLogoSmall.svg";
+import employerSignupStep1 from "../../assets/icons/applicantSignupStep1.svg";
+import {useFormStore} from "../../redux/useFormStore.ts";
+import ApplicantSignupStepOne from "../../components/features/signup/applicant/ApplicantSignupStepOne.tsx";
 
 const EmployerMultistepForm: React.FC = ()=>{
     const { formData, setFormData } = useFormStore();

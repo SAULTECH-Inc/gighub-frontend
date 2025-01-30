@@ -1,8 +1,10 @@
 import React, { useRef } from "react";
 import { motion } from "framer-motion"; // Import Framer Motion
-import { FormData } from "../../redux/useFormStore.ts";
-import code from "../../assets/icons/code.svg";
+import { FormData } from "../../../../redux/useFormStore.ts";
+import code from "../../../../assets/icons/code.svg";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import ApplicantSignupSuccessModal from "../../../ui/ApplicantSignupSuccessModal.tsx";
+import useModalStore from "../../../../redux/modalStateStores.ts";
 
 interface StepTwoProp {
     handleSubmit: () => void;
@@ -17,6 +19,7 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
                                                              formData,
                                                              handleOTP
                                                          }) => {
+    const { openModal,isModalOpen } = useModalStore();
     // Reference to OTP input fields
     const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -65,7 +68,7 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
             transition={{ duration: 0.5 }}
         >
             <motion.h1
-                className="text-[24px] text-center text-[#6B5AED]"
+                className="text-[24px] text-center text-[#6438C2] font-bold"
                 initial={{ y: -50 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -85,7 +88,7 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
 
             {/* OTP Input Fields */}
             <motion.div
-                className="flex justify-between items-center w-full gap-x-4"
+                className="flex justify-evenly items-center w-full gap-x-2"
                 initial={{ x: -50 }}
                 animate={{ x: 0 }}
                 transition={{ duration: 0.5 }}
@@ -134,19 +137,30 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
                 transition={{ duration: 0.5 }}
             >
                 <button
-                    className="mx-auto block w-full h-[50px] text-[16px] font-semibold text-[#FFFFFF] bg-[#6438C2] rounded-full hover:bg-[#5931A9] transition"
-                    onClick={handleSubmit}
+                    className="mx-auto block w-full h-[50px] text-[16px] font-semibold text-[#FFFFFF] bg-[#6438C2] rounded-[10px] hover:bg-[#5931A9] transition"
+                    onClick={()=>{
+                        openModal('application-signup-success-modal');
+                        // handleSubmit();  // Submit the form on successful OTP verification
+                    }}
                 >
                     Continue
                 </button>
                 <button
-                    className="flex justify-center items-center gap-x-2 mx-auto w-full h-[50px] text-[16px] font-semibold text-[#000000] border-[1px] border-[#CCC] bg-white rounded-full hover:bg-[#ccc] transition"
+                    className="flex justify-center items-center gap-x-2 mx-auto w-full h-[50px] text-[16px] font-semibold text-[#000000] border-[1px] border-[#CCC] bg-white rounded-[10px] hover:bg-[#ccc] transition"
                     onClick={handlePrev}
                 >
                     <FaArrowLeftLong className="text-purple-700"/>
                     Back
                 </button>
             </motion.div>
+            {
+                isModalOpen("application-signup-success-modal") && (
+                    <ApplicantSignupSuccessModal
+                        modelId="application-signup-success-modal"
+                        onSubmit={handleSubmit}
+                    />
+                )
+            }
         </motion.div>
     );
 };

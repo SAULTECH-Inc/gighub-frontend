@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import testimonials from "../../assets/dummyData";
+import testimonials from "../../utils/dummyData.ts";
 import { Arrowleft, Arrowright } from "../../assets/icons";
 
 const TestimonialCarousel = () => {

@@ -1,4 +1,4 @@
-import JobMatchCard from "./JobMatchCard.tsx";
+import JobMatchCard from "../features/JobMatchCard.tsx";
 import {FC} from "react";
 import ApplicationSummary from "./ApplicationSummary.tsx";
 
