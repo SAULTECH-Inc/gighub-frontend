@@ -1,0 +1,24 @@
+.ql-toolbar {
+    border: none;
+    background-color: #f7f8fa;
+    border-radius: 10px 10px 0 0;
+    padding: 8px;
+    font-family: "Lato",sans-serif;
+    font-size: 16px;
+    font-style: italic !important;
+}
+
+.ql-container {
+    border: none;
+    background-color: #f7f8fa;
+    border-radius: 0 0 10px 10px;
+    height: 100%;
+    padding: 12px;
+    font-family: "Lato", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.ql-editor {
+    min-height: 200px;
+}
