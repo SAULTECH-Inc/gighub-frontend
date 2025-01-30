@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion"; // Import Framer Motion
-import { FormData } from "../../redux/useFormStore.ts";
-import documentAttachment from "../../assets/icons/documentAttachment.svg";
-import videoAttachment from "../../assets/icons/videoAttachment.svg";
+import { FormData } from "../../../../redux/useFormStore.ts";
+import documentAttachment from "../../../../assets/icons/documentAttachment.svg";
+import videoAttachment from "../../../../assets/icons/videoAttachment.svg";
 
 interface StepTwoProp {
     handleChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => void;

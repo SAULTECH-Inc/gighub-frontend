@@ -1,4 +1,4 @@
-import { Person4, Person5, Person6, Person7 } from "./images";
+import { Person4, Person5, Person6, Person7 } from "../assets/images.ts";
 
 interface Testimonial {
   id: number;
