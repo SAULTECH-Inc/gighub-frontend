@@ -29,8 +29,6 @@ export default {
         128: "32rem",
       },
       fontFamily: {
-        sans: ["Inter", "Arial", "sans-serif"],
-        serif: ["Merriweather", "Georgia", "serif"],
         lato: ["Lato", "sans-serif"],
       },
       screens: {
@@ -43,20 +41,19 @@ export default {
         "3xl": "1920px",
       },
       animation: {
-        "bounce-slow": "bounce 4s infinite",
-        "bounce-fast": "bounce 2s infinite",
-        "flash-slow": "flash 1s infinite",
-        "flash-fast": "flash 0.5s infinite",
-        "pulse-slow": "pulse 2s infinite",
-        "pulse-fast": "pulse 0.5s infinite",
+        bounceSlow: "bounce 4s infinite",
+        bounceFast: "bounce 2s infinite",
+        fadeIn: "fadeIn 0.3s ease-out",
+        zoomIn: "zoomIn 0.3s ease-in-out",
       },
       keyframes: {
-        bounce: {
-          "0%, 100%": { transform: "translateY(0)" },
-          "25%": { transform: "translateY(-50%)" },
-          "50%": { transform: "translateY(-25%)" },
-          "75%": { transform: "translateY(-50%)" },
-          "100%": { transform: "translateY(0)" },
+        fadeIn: {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
+        zoomIn: {
+          "0%": { transform: "scale(0.8)", opacity: 0 },
+          "100%": { transform: "scale(1)", opacity: 1 },
         },
       },
       backgroundImage: {
