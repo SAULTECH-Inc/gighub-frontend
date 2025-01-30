@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FormData } from "../../redux/useFormStore.ts";
-import googleLogo from "../../assets/icons/googleLogo.svg";
-import microsoftLogo from "../../assets/icons/microsoftLogo.svg";
-import linkedinLogo from "../../assets/icons/linkedinLogo.svg";
-import { calculatePasswordStrength } from "../../utils/helpers.ts";
+import { FormData } from "../../../../redux/useFormStore.ts";
+import googleLogo from "../../../../assets/icons/googleLogo.svg";
+import microsoftLogo from "../../../../assets/icons/microsoftLogo.svg";
+import linkedinLogo from "../../../../assets/icons/linkedinLogo.svg";
+import { calculatePasswordStrength } from "../../../../utils/helpers.ts";
 
 interface StepOneProp {
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;

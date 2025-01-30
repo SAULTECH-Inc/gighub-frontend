@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion"; // Import Framer Motion
-import gighubLogo from "../assets/icons/gighubLogoSmall.svg";
-import applicantSignupStep1 from "../assets/icons/applicantSignupStep1.svg";
-import applicantSignupStep2 from "../assets/icons/applicantSignupStep2.svg";
-import { useFormStore } from "../redux/useFormStore.ts";
-import ApplicantSignupStepOne from "../components/ui/ApplicantSignupStepOne.tsx";
-import ApplicantSignupStepTwo from "../components/ui/ApplicantSignupStepTwo.tsx";
-import ApplicantSignupStepThree from "../components/ui/ApplicantSignupStepThree.tsx";
+import gighubLogo from "../../assets/icons/gighubLogoSmall.svg";
+import applicantSignupStep1 from "../../assets/icons/applicantSignupStep1.svg";
+import applicantSignupStep2 from "../../assets/icons/applicantSignupStep2.svg";
+import { useFormStore } from "../../redux/useFormStore.ts";
+import ApplicantSignupStepOne from "../../components/features/signup/applicant/ApplicantSignupStepOne.tsx";
+import ApplicantSignupStepTwo from "../../components/features/signup/applicant/ApplicantSignupStepTwo.tsx";
+import ApplicantSignupStepThree from "../../components/features/signup/applicant/ApplicantSignupStepThree.tsx";
 
 const ApplicantMultistepForm: React.FC = () => {
     const { formData, setFormData, resetFormData } = useFormStore();

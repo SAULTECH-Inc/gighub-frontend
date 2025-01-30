@@ -1,11 +1,10 @@
 
-import ApplicantNavBar from "../components/layouts/ApplicantNavBar.tsx";
-import ApplicationStats from "../components/ui/ApplicationStats.tsx";
-import BelowApplicationStats from "../components/ui/BelowApplicationStats.tsx";
-import ApplicantRecentApplications from "../components/ui/ApplicantRecentApplications.tsx";
-import ApplicantMessages from "../components/ui/ApplicantMessages.tsx";
-import ApplicantSchedules from "../components/ui/ApplicantSchedules.tsx";
-import ChatWindow from "../components/ui/ChatWindow.tsx";
+import ApplicantNavBar from "../../components/layouts/ApplicantNavBar.tsx";
+import ApplicationStats from "../../components/ui/ApplicationStats.tsx";
+import BelowApplicationStats from "../../components/ui/BelowApplicationStats.tsx";
+import ApplicantRecentApplications from "../../components/ui/ApplicantRecentApplications.tsx";
+import ApplicantMessages from "../../components/ui/ApplicantMessages.tsx";
+import ApplicantSchedules from "../../components/ui/ApplicantSchedules.tsx";
 
 export const ApplicantDashboard = () => {
     return (
@@ -31,7 +30,7 @@ export const ApplicantDashboard = () => {
                         </div>
                     </div>
                 </div>
-                <ChatWindow/>
+
             </div>
         </>
     );

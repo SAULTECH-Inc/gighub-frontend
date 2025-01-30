@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAuth } from "../hooks/useAuth"; // Import the hook
+import { useAuth } from "../../hooks/useAuth.ts"; // Import the hook
 
 export const Login = () => {
     const [credentials, setCredentials] = useState({
