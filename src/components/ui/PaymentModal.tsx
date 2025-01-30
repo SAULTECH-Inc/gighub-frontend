@@ -6,7 +6,6 @@ import check from  '../../assets/icons/check.svg';
 import { SiVisa } from "react-icons/si";
 import MasterCardLogo from "../common/MasterCardLogo.tsx";
 import { useForm, Controller } from "react-hook-form";
-import PaymentSuccessModal from "./PaymentSuccessModal.tsx";
 
 interface ModalProps {
     modalId: string;
@@ -21,7 +20,7 @@ interface FormValues {
 }
 
 const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
-    const { modals, closeModal, isModalOpen, openModal } = useModalStore(); // Access the modals state
+    const { modals, closeModal, openModal } = useModalStore(); // Access the modals state
     const isOpen = modals[modalId];
 
     const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
@@ -52,6 +51,7 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
     };
 
     if (!isOpen) return null;
+
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -94,9 +94,10 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                             {firstDigit === "4" ? <SiVisa size={24} /> : <MasterCardLogo />}
                             <div className="flex justify-evenly items-center py-0 w-[300px] mx-auto">
                                 {cardNumber.map((_value, index) => (
+
                                     <div key={index} className="flex items-center">
                                         <Controller
-                                            name={`cardNumber.${index}`} // Use dot notation for indexing
+                                            name={`cardNumber.${index}` as keyof FormValues} // Type assertion
                                             control={control}
                                             render={({ field }) => (
                                                 <input
