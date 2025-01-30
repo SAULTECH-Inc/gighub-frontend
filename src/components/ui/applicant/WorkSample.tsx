@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import FileIcon from '../../../assets/icons/File.svg'; // Adjust the path based on your folder structure
-import LinkIcon from '../../../assets/icons/Link.svg'; // Adjust the path based on your folder structure
+import LinkIcon from '../../../assets/icons/LinkIcon.svg'; // Adjust the path based on your folder structure
 
 const FileUploadForm: React.FC = () => {
     const [uploadMethod, setUploadMethod] = useState<string>(''); // Upload method state
