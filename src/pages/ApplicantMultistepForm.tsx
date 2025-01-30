@@ -1,51 +1,116 @@
-import React from "react";
+import React, { useState } from "react";
+import { motion } from "framer-motion"; // Import Framer Motion
 import gighubLogo from "../assets/icons/gighubLogoSmall.svg";
-import jobSeekerUser from "../assets/icons/jobSeekerUser.svg";
-import employerUser from "../assets/icons/employerUser.svg";
-import userSelection from "../assets/icons/userSelectionLeftSide.svg";
+import applicantSignupStep1 from "../assets/icons/applicantSignupStep1.svg";
+import applicantSignupStep2 from "../assets/icons/applicantSignupStep2.svg";
+import { useFormStore } from "../redux/useFormStore.ts";
+import ApplicantSignupStepOne from "../components/ui/ApplicantSignupStepOne.tsx";
+import ApplicantSignupStepTwo from "../components/ui/ApplicantSignupStepTwo.tsx";
+import ApplicantSignupStepThree from "../components/ui/ApplicantSignupStepThree.tsx";
 
-const ApplicantMultistepForm: React.FC = ()=>{
+const ApplicantMultistepForm: React.FC = () => {
+    const { formData, setFormData, resetFormData } = useFormStore();
+    const [step, setStep] = useState(1);
 
+    const handleNext = () => setStep(step + 1);
+    const handlePrev = () => setStep(step - 1);
+
+    const handleSubmit = () => {
+        console.log('Form Data Submitted:', formData);
+        alert('Form submitted successfully!');
+        resetFormData();
+        setStep(1);
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value, files } = e.target as HTMLInputElement & HTMLSelectElement;
+        setFormData({
+            ...formData,
+            [name]: files ? files[0] : value,
+        });
+    };
+
+    const handleOTP = (name: string, value: string) => {
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
 
     return (
-        <div className="flex justify-around items-center py-2 gap-x-0">
-            {/* Left Section */}
-            <div className="w-1/2 flex flex-col items-start">
-                <div className="w-full flex justify-start">
-                    <img src={gighubLogo} alt="logo"/>
-                </div>
-                <div className="w-full h-[824px] flex flex-col justify-evenly mx-auto">
-                    <div className="w-full text-center">
-                        <h1 className="text-[24px] font-bold text-gray-600">How are You Planning To Use Gighub</h1>
-                        <p className="text-[13px] text-gray-600">We will streamline your setup experience
-                            accordingly</p>
-                    </div>
-                    <div className="w-full flex justify-center gap-x-8">
+        <motion.div
+            className="relative flex flex-col md:flex-row justify-center items-center min-h-screen py-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+        >
+            {/* Logo */}
+            <motion.img
+                className="absolute top-5 left-[3%]"
+                src={gighubLogo}
+                alt="logo"
+                initial={{ x: -50 }}
+                animate={{ x: 0 }}
+                transition={{ duration: 0.5 }}
+            />
+
+            {/* Step Indicator */}
+            <div className="absolute top-10 md:top-5 left-1/2 transform -translate-x-1/2 md:left-1/2 md:transform flex flex-col gap-y-2">
+                <span className="block text-left">{step} of 3</span>
+                <div className="flex justify-evenly gap-x-2">
+                    {[1, 2, 3].map((stepNumber) => (
                         <div
-                            className="cursor-pointer w-[137px] h-[145px] flex flex-col items-center justify-evenly border-[1px] border-[#E6E6E6] rounded-[16px]">
-                            <img className="mx-auto" src={jobSeekerUser} alt="job seeker"/>
-                            <p>As a Job Seeker</p>
-                        </div>
-                        <div
-                            className="cursor-pointer w-[137px] h-[145px] flex flex-col items-center justify-evenly border-[1px] border-[#E6E6E6] rounded-[16px]">
-                            <img className="mx-auto" src={employerUser} alt="employer"/>
-                            <p>As an Employer</p>
-                        </div>
-                    </div>
-                    <div className="w-full flex justify-end text-right space-x-4">
-                        <button
-                            className="w-[131px] h-[43px] border-[1px] border-[#E6E6E6] bg-white text-black font-semibold text-[16px] rounded-[10px]">Back
-                        </button>
-                        <button
-                            className="w-[131px] h-[43px] bg-[#6438C2] text-white font-semibold text-[16px] rounded-[10px]">Proceed
-                        </button>
-                    </div>
+                            key={stepNumber}
+                            className={`w-[41px] h-[9px] rounded-[16px] ${
+                                stepNumber <= step ? "bg-[#6438C2]" : "bg-[#F9F9F9]"
+                            }`}
+                        ></div>
+                    ))}
                 </div>
             </div>
-            {/* Right Section */}
-            <img className="h-auto max-h-screen" src={userSelection} alt="user type selection right side"/>
-        </div>
+
+            {/* Left Section - Form */}
+            <div className="w-full md:w-1/2 flex justify-center items-center px-5 pt-[100px] md:pt-0 md:pl-32">
+                {/* Step 1: Personal Information */}
+                {step === 1 && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <ApplicantSignupStepOne handleChange={handleChange} formData={formData} handleNext={handleNext} />
+                    </motion.div>
+                )}
+                {/* Step 2: Education and Work Experience */}
+                {step === 2 && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <ApplicantSignupStepTwo handleChange={handleChange} formData={formData} handleNext={handleNext} handlePrev={handlePrev} />
+                    </motion.div>
+                )}
+                {step === 3 && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <ApplicantSignupStepThree handleOTP={handleOTP} formData={formData} handleSubmit={handleSubmit} handlePrev={handlePrev} />
+                    </motion.div>
+                )}
+            </div>
+
+            {/* Right Section - Image */}
+            <div className="hidden md:block w-1/2 pl-40">
+                {step === 1 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep1} alt="Step 1" />}
+                {step === 2 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep2} alt="Step 2" />}
+                {step === 3 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep2} alt="Step 3" />}
+            </div>
+        </motion.div>
     );
-}
+};
 
 export default ApplicantMultistepForm;
