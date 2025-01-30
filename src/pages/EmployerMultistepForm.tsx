@@ -5,18 +5,10 @@ import {useFormStore} from "../redux/useFormStore.ts";
 import ApplicantSignupStepOne from "../components/ui/ApplicantSignupStepOne.tsx";
 
 const EmployerMultistepForm: React.FC = ()=>{
-    const { formData, setFormData, resetFormData } = useFormStore();
+    const { formData, setFormData } = useFormStore();
     const [step, setStep] = useState(1);
 
     const handleNext = () => setStep(step + 1);
-    const handlePrev = () => setStep(step - 1);
-
-    const handleSubmit = () => {
-        console.log('Form Data Submitted:', formData);
-        alert('Form submitted successfully!');
-        resetFormData();
-        setStep(1);
-    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, files } = e.target;
@@ -26,13 +18,6 @@ const EmployerMultistepForm: React.FC = ()=>{
         });
     };
 
-    const handleOTP = (name: string, value: string)=>{
-        setFormData({
-           ...formData,
-            [name]: value,
-        });
-        console.log('OTP added:', value);
-    }
 
     return (
         <div className="relative flex justify-center items-center py-2 gap-x-[10px]">
