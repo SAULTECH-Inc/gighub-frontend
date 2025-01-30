@@ -1,61 +1,21 @@
-import { FC } from "react";
+import {FC, useState} from "react";
+import ChatWindow from "./ChatWindow.tsx";
+import {messages} from "../../utils/dumm.ts";
 
-interface MessageItem {
-    id: number;
-    avatar: string; // Avatar URL or path
-    name: string;
-    message: string;
-    time: string;
-}
 
-const messages: MessageItem[] = [
-    {
-        id: 1,
-        avatar: "https://via.placeholder.com/40", // Replace with actual avatar URL
-        name: "A.S Abubakar",
-        message: "Your job with us is more of...",
-        time: "2 hours ago",
-    },
-    {
-        id: 2,
-        avatar: "https://via.placeholder.com/40", // Replace with actual avatar URL
-        name: "Umar M Ahmad",
-        message: "Your job with us is more of...",
-        time: "2 hours ago",
-    },
-    {
-        id: 3,
-        avatar: "https://via.placeholder.com/40", // Replace with actual avatar URL
-        name: "Jawad Umar",
-        message: "Your job with us is more of...",
-        time: "2 hours ago",
-    },
-    {
-        id: 4,
-        avatar: "https://via.placeholder.com/40", // Replace with actual avatar URL
-        name: "David Rose",
-        message: "Your job with us is more of...",
-        time: "2 hours ago",
-    },
-    {
-        id: 5,
-        avatar: "https://via.placeholder.com/40", // Replace with actual avatar URL
-        name: "Khadija Umar",
-        message: "Your job with us is more of...",
-        time: "2 days ago",
-    },
-];
 
 interface MessageDropdownProps {
     onClose: () => void; // A callback to close the dropdown
 }
 
-const handleOpenMessage = ()=>{
 
-}
 
 const MessageDropdown: FC<MessageDropdownProps> = ({ onClose }) => {
     const dividerStyle = { borderColor: "#E6E6E6" }; // Faint divider color
+    const [isChatWindowOpened, setChatWindowOpened] = useState(false);
+    const handleOpenMessage = ()=>{
+        setChatWindowOpened(true);
+    }
 
     return (
         <div className="absolute right-0 top-14 w-[352px] bg-white shadow-lg rounded-[16px] z-50 font-lato p-6">
@@ -116,6 +76,12 @@ const MessageDropdown: FC<MessageDropdownProps> = ({ onClose }) => {
                     </button>
                 </div>
             </div>
+            {
+                // Chat Window
+                isChatWindowOpened && (
+                    <ChatWindow/>
+                )
+            }
         </div>
     );
 };
