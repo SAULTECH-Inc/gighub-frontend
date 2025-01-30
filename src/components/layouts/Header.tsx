@@ -1,9 +1,13 @@
-import { Link, useLocation } from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import { Gighub } from "../../assets/icons";
 import Button from "../common/Button";
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const proceed = ()=>{
+    navigate("/user-type-selection")
+  }
 
   //   Get Header content based on current page route
   const getHeaderContent = () => {
@@ -44,7 +48,7 @@ const Header = () => {
 
           <div className="flex items-center gap-4 lg:gap-9">
             <h1 className="font-lato font-bold max-lg:text-[13px]">Login</h1>
-            <Button className="max-lg:py-2 max-lg:px-5 lg:py-[10px] lg:px-10">Try it now</Button>
+            <Button onClick={()=>proceed()} className="max-lg:py-2 max-lg:px-5 lg:py-[10px] lg:px-10">Try it now</Button>
           </div>
         </div>
       </header>
