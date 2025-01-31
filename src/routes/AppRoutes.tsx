@@ -22,6 +22,7 @@ const AppRoutes = () => {
       <Route path="/employer/profile" element={<EmployerProfile/>}/>
           <Route path="/applicant/profile" element={<ApplicantProfile/>}/>
           <Route path="/dashboard/dashboard" element={<PublicProfile/>}/>
+          <Route path="/applicant/public-profile" element={<PublicProfile/>}/>
       </Routes>
     </BrowserRouter>
   );
