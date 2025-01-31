@@ -1,4 +1,4 @@
-import Rating from "../common/Rating.tsx";
+import Rating from "../../../common/Rating.tsx";
 
 const RatingsAndReviews = () => {
     return (
