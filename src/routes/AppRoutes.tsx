@@ -7,7 +7,7 @@ import EmployerProfile from "../pages/EmployerProfile.tsx";
 import ApplicantProfile from "../pages/ApplicantProfile.tsx";
 import ApplicantMultistepForm from "../pages/applicant/ApplicantMultistepForm.tsx";
 import EmployerMultistepForm from "../pages/employer/EmployerMultistepForm.tsx";
-import PublicProfile from "../pages/applicant/PublicProfiles.tsx";
+import EmployerPublicProfile from "../pages/employer/EmployerPublicProfiles.tsx";
 
 const AppRoutes = () => {
   return (
@@ -21,8 +21,8 @@ const AppRoutes = () => {
           <Route path="/employer/signup" element={<EmployerMultistepForm/>}/>
       <Route path="/employer/profile" element={<EmployerProfile/>}/>
           <Route path="/applicant/profile" element={<ApplicantProfile/>}/>
-          <Route path="/dashboard/dashboard" element={<PublicProfile/>}/>
-          <Route path="/applicant/public-profile" element={<PublicProfile/>}/>
+          <Route path="/dashboard/dashboard" element={<EmployerPublicProfile/>}/>
+          <Route path="/employer/public-profile" element={<EmployerPublicProfile/>}/>
       </Routes>
     </BrowserRouter>
   );

@@ -1,5 +1,5 @@
 import React from "react";
-import Image7 from "../../assets/images/image7.png";
+import Image7 from "../../../../assets/images/image7.png";
 
 
 const PublicProfileCard: React.FC = () => {
@@ -13,8 +13,8 @@ const PublicProfileCard: React.FC = () => {
                         {/* Company logo or image */}
                         <img
                             src={Image7} // Replace with your logo URL
-                            alt="Jumia Logo"
-                            className="w-[95px] h-[95px] rounded-full border-[4px] bg-white border-white"
+                            alt="Company Logo"
+                            className="w-fit h-fit border-[4px] bg-white border-white"
                         />
                     </div>
                     <div>
