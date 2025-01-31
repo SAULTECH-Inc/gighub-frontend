@@ -6,7 +6,8 @@ import NotificationIcon from "../common/NotificationIcon.tsx";
 import MessageNotificationIcon from "../common/MessageNotificationIcon.tsx";
 import ProfileDropdown from "../common/ProfileDropdown.tsx";
 import NotificationDropdown from "../ui/NotificationDropdown.tsx";
-import MessageDropdown from "../ui/MessageDropdown.tsx"; // Import MessageDropdown
+import MessageDropdown from "../ui/MessageDropdown.tsx";
+import {useNavigate} from "react-router-dom"; // Import MessageDropdown
 
 const ApplicantNavBar: FC = () => {
     const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -79,6 +80,7 @@ const ApplicantNavBar: FC = () => {
     const [activeItem, setActiveItem] = useState<string>("Dashboard");
 
     const navItems = ["Dashboard", "Find Jobs", "Applications", "My Networks"];
+    const navigate = useNavigate();
 
     return (
         <>
@@ -93,7 +95,10 @@ const ApplicantNavBar: FC = () => {
                     {navItems.map((item) => (
                         <li
                             key={item}
-                            onClick={() => setActiveItem(item)} // Set the active item on click
+                            onClick={() => {
+                                setActiveItem(item);
+                                navigate('/applicant/dashboard')
+                            }} // Set the active item on click
                             className={`cursor-pointer font-medium border-b-4 ${
                                 activeItem === item
                                     ? "text-[#6438C2] border-[#6438C2] border-b-[7px]"

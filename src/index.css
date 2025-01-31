@@ -11,3 +11,20 @@ body {
     margin: 0;
     padding: 0;
 }
+
+   /* Custom CSS for the dropdown arrow */
+ .custom-select-wrapper::after {
+   content: '▼';
+   position: absolute;
+   top: 50%;
+   right: 1rem;
+   transform: translateY(-50%);
+   pointer-events: none;
+   color: white;
+ }
+
+/* Custom CSS for the dropdown options */
+.custom-select option {
+  background-color: #f0f0f0; /* Light gray background */
+  color: black; /* Black text */
+}
