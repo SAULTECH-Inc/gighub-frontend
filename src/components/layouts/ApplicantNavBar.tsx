@@ -1,4 +1,4 @@
-import { FC, useState, useRef, useEffect } from "react";
+import {FC, useState, useRef, useEffect} from "react";
 import GighubLogo from "../../assets/icons/GighubLogo.svg";
 import Avatar from "../common/Avatar.tsx";
 import SearchIcon from "../common/SearchIcon.tsx";
@@ -8,6 +8,15 @@ import ProfileDropdown from "../common/ProfileDropdown.tsx";
 import NotificationDropdown from "../ui/NotificationDropdown.tsx";
 import MessageDropdown from "../ui/MessageDropdown.tsx";
 import {useNavigate} from "react-router-dom"; // Import MessageDropdown
+import {AiOutlineDashboard, AiOutlineUser} from "react-icons/ai";
+import {FaPeopleGroup} from "react-icons/fa6";
+import {BsGear, BsPersonWorkspace} from "react-icons/bs";
+import {MdOutlineContentPasteSearch} from "react-icons/md";
+import {FaPowerOff} from "react-icons/fa";
+import {GrCircleQuestion} from "react-icons/gr";
+import hamburger from '../../assets/icons/hamburger.svg';
+import avatarIcon from "../../assets/icons/avatar.svg";
+import {RiCloseLargeFill} from "react-icons/ri";
 
 const ApplicantNavBar: FC = () => {
     const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -80,14 +89,40 @@ const ApplicantNavBar: FC = () => {
     const [activeItem, setActiveItem] = useState<string>("Dashboard");
 
     const navItems = ["Dashboard", "Find Jobs", "Applications", "My Networks"];
+    const navItemsMobile = ["Dashboard", "Find Jobs", "Applications", "My Networks", "Profile", "Settings", "Help & Support"];
+
     const navigate = useNavigate();
+
+    const handleSetItems = (item: string) => {
+        console.log(JSON.stringify(item));
+        setActiveItem(item);
+        switch (item) {
+            case "Dashboard":
+                navigate("/applicant/dashboard");
+                break;
+            case "Find Jobs":
+                navigate("/find-jobs");
+                break;
+            case "Applications":
+                navigate("/applications");
+                break;
+            case "My Networks":
+                navigate("/my-networks");
+                break;
+            default:
+                break;
+        }
+    };
+    const handleNavigateHome = () => {
+        navigate("/");
+    };
 
     return (
         <>
             <nav className="flex justify-between items-center px-6 py-4 bg-white border-b-[1px] border-b-[#E6E6E6]">
                 {/* Left: Logo */}
-                <div className="flex items-center gap-2">
-                    <img src={GighubLogo} alt="Gighub Logo" className="h-10 w-auto" />
+                <div className="hidden md:flex items-center gap-2">
+                    <img src={GighubLogo} alt="Gighub Logo" className="h-10 w-auto" onClick={handleNavigateHome}/>
                 </div>
 
                 {/* Center: Navigation Links (Desktop) */}
@@ -95,10 +130,7 @@ const ApplicantNavBar: FC = () => {
                     {navItems.map((item) => (
                         <li
                             key={item}
-                            onClick={() => {
-                                setActiveItem(item);
-                                navigate('/applicant/dashboard')
-                            }} // Set the active item on click
+                            onClick={() => handleSetItems(item)} // Set the active item on click
                             className={`cursor-pointer font-medium border-b-4 ${
                                 activeItem === item
                                     ? "text-[#6438C2] border-[#6438C2] border-b-[7px]"
@@ -118,17 +150,17 @@ const ApplicantNavBar: FC = () => {
                 </div>
 
                 {/* Right: Notifications, Messages, and Profile (Desktop Only) */}
-                <div className="hidden md:flex items-center gap-8">
+                <div className="hidden md:flex items-start gap-8">
                     {/* Search Icon and Input */}
                     <div className="relative">
                         <div
-                            className="cursor-pointer"
+                            className="cursor-pointer flex justify-center items-center border-[1px] border-[#ccc]  rounded-full p-1"
                             onClick={handleSearchToggle}
                         >
                             <SearchIcon/>
                         </div>
                         <div
-                            className={`absolute right-0 top-[-10px] transform transition-all duration-300 ${
+                            className={`absolute right-[-1px] top-[-6px] transform transition-all duration-300 ${
                                 isSearchOpen
                                     ? "opacity-100 translate-x-0"
                                     : "opacity-0 translate-x-[200px] pointer-events-none"
@@ -137,7 +169,7 @@ const ApplicantNavBar: FC = () => {
                             <input
                                 ref={searchInputRef}
                                 type="text"
-                                className="w-64 px-2 py-2 border-[0.5px] border-[#ccc] rounded-full shadow-sm text-sm focus:outline-none focus:border-[#ccc] active:border-[#ccc] focus:ring-0"
+                                className="w-64 px-4 py-2 border-[0.5px] border-[#ccc] rounded-full shadow-sm text-sm focus:outline-none focus:border-[#ccc] active:border-[#ccc] focus:ring-0"
                                 placeholder="Search..."
                             />
                         </div>
@@ -162,30 +194,111 @@ const ApplicantNavBar: FC = () => {
                     {/* Profile Dropdown */}
                     <div className="relative ml-10" ref={profileDropdownRef}>
                         <div className="cursor-pointer" onClick={toggleProfileDropdown}>
-                            <Avatar/>
+                            <Avatar isMobile={false}/>
                         </div>
-                        {isProfileDropdownOpen && <ProfileDropdown onClose={closeDropdowns}/>}
+                        {isProfileDropdownOpen && <ProfileDropdown onClose={closeDropdowns} isMobile={false}/>}
                     </div>
                 </div>
             </nav>
 
-            {/* Mobile Drawer Sidebar */}
-            <div className={`fixed inset-0 bg-gray-800 bg-opacity-50 z-40 md:hidden ${isMobileNavOpen ? "block" : "hidden"}`} onClick={() => setMobileNavOpen(false)}></div>
+             {/*Mobile Drawer Sidebar */}
+            <img className={`absolute top-2 left-4 z-40 md:hidden ${
+                isMobileNavOpen? "hidden" : "block"
+            }`}
+                 onClick={() => setMobileNavOpen(true)} src={hamburger} alt="hamrburger"/>
 
-            <div className={`fixed top-0 left-0 bg-white w-64 h-full z-50 transform transition-transform duration-300 ${isMobileNavOpen ? "translate-x-0" : "-translate-x-full"}`}>
-                <div className="flex flex-col items-center mt-6">
-                    {navItems.map((item) => (
-                        <div
-                            key={item}
-                            onClick={() => {
-                                setActiveItem(item);
-                                setMobileNavOpen(false);
-                            }}
-                            className={`py-2 px-4 w-full text-center text-gray-600 font-lato text-[16px] cursor-pointer border-b-2 border-transparent hover:border-[#6438C2] hover:text-[#6438C2]`}
-                        >
-                            {item}
+            <div
+                className={`fixed top-0 left-0 bg-white w-64 h-full z-50 transform transition-transform duration-300 border-r-[1px] border-r-[#ccc] ${
+                    isMobileNavOpen ? "translate-x-0" : "-translate-x-full"
+                }`}
+            >
+                <RiCloseLargeFill className="absolute right-5 top-5 cursor-pointer font-bold" onClick={() => setMobileNavOpen(false)} />
+                {/* Logo Section */}
+                <div className="p-4">
+                    <div className="flex items-center gap-2">
+                        <img
+                            src={GighubLogo}
+                            alt="Gighub Logo"
+                            className="h-10 w-auto cursor-pointer"
+                            onClick={handleNavigateHome}
+                        />
+                    </div>
+                </div>
+
+                {/* Profile Section */}
+                <div className="p-4 border-b border-[#ccc]">
+                    <div className="flex flex-col items-center gap-4 cursor-pointer">
+                        <img
+                            src={avatarIcon}
+                            alt="Avatar"
+                            className="h-[50px] w-[50px] bg-gray rounded-full flex items-center justify-center"
+                        />
+                        <div>
+                            <h3 className="text-lg font-bold text-gray-800">Shadrach Adamu</h3>
+                            <p className="text-sm text-gray-500">Software engineer</p>
                         </div>
-                    ))}
+                    </div>
+
+                    {/* Auto Apply Section */}
+                    <div className="mt-4">
+                        <div
+                            className="bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white rounded-[16px] p-4 flex items-center gap-3 mb-6 cursor-pointer">
+                            <span className="text-xl">👑</span>
+                            <div>
+                                <p className="font-bold text-sm">Auto Apply</p>
+                                <p className="text-xs">Getjobs applied for you</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                {/* Navigation Items */}
+                <div className="p-4">
+                    <div className="flex flex-col space-y-2">
+                        {navItemsMobile.map((item) => (
+                            <div
+                                key={item}
+                                onClick={() => {
+                                    setActiveItem(item);
+                                    setMobileNavOpen(false);
+                                }}
+                                className={`py-2 px-4 flex items-center gap-3 text-gray-600 font-lato text-[16px] cursor-pointer rounded-lg hover:bg-[#6438C2]/10 hover:text-[#6438C2] transition-colors duration-200`}
+                            >
+                                {item === "Dashboard" && (
+                                    <AiOutlineDashboard className="text-lg"/>
+                                )}
+                                {item === "Find Jobs" && (
+                                    <MdOutlineContentPasteSearch className="text-lg"/>
+                                )}
+                                {item === "Applications" && (
+                                    <BsPersonWorkspace className="text-lg"/>
+                                )}
+                                {item === "My Networks" && (
+                                    <FaPeopleGroup className="text-lg"/>
+                                )}
+                                {item === "Profile" && (
+                                    <AiOutlineUser className="text-lg"/>
+                                )}
+                                {item === "Settings" && (
+                                    <BsGear className="text-lg"/>
+                                )}
+                                {item === "Help & Support" && (
+                                    <GrCircleQuestion className="text-lg"/>
+                                )}
+
+                                <span>{item}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Logout */}
+                    <div
+                        className="pl-4 mt-10 flex items-center gap-3 cursor-pointer text-red-500 hover:text-red-700"
+
+                    >
+                        <FaPowerOff className="text-lg"/> Logout
+                    </div>
                 </div>
             </div>
         </>
