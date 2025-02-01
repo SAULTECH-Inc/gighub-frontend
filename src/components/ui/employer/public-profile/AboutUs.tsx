@@ -20,7 +20,7 @@ const AboutUs = () => {
                 </div>
 
                 {/* Right Section */}
-                <div className="flex-1 bg-[#F7F7F7] w-[482px] h-[208px] p-4 space-y-4 text-[#7F7F7F] font-lato text-[16px] font-[700] leading-[19.2px] text-left underline-offset-4 text-decoration-skip-ink">
+                <div className="flex-1 flex flex-col justify-between bg-[#F7F7F7] w-[482px] h-[208px] p-4 space-y-4 text-[#7F7F7F] font-lato text-[16px] font-[700] leading-[19.2px] text-left underline-offset-4 text-decoration-skip-ink">
                     <div className="flex items-center space-x-2">
                         <div className="w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center">
                             <span className="text-xs">💼</span>
