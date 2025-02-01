@@ -6,23 +6,29 @@ import { CiUser } from "react-icons/ci";
 import avatarIcon from "../../assets/icons/avatar.svg";
 
 interface ProfileDropdownProps {
-    onClose: () => void; // A callback to close the dropdown
+    onClose: () => void;
+    isMobile: boolean;
 }
 
-const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose }) => {
+const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
     return (
-        <div className="absolute right-0 top-14 w-[352px] bg-white shadow-lg rounded-[16px] z-50 font-lato p-6">
+        <div
+            className={`absolute ${isMobile ? "left-0" : "right-0"} top-14 w-[352px] bg-white shadow-lg rounded-[16px] z-50 font-lato p-6`}
+        >
             {/* User Info */}
             <div className="flex items-center gap-4 mb-6">
-                <img src={avatarIcon} alt="Avatar" className="h-[50px] w-[50px] bg-gray rounded-full  flex items-center justify-center"/>
+                <img
+                    src={avatarIcon}
+                    alt="Avatar"
+                    className="h-[50px] w-[50px] bg-gray rounded-full flex items-center justify-center"
+                />
                 <div>
                     <h3 className="text-lg font-bold text-gray-800">Shadrach Adamu</h3>
                     <p className="text-sm text-gray-500">Software engineer</p>
                 </div>
             </div>
 
-
-
+            {/* Auto Apply Section */}
             <div className="bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white rounded-[16px] p-4 flex items-center gap-3 mb-6 cursor-pointer">
                 <span className="text-xl">👑</span>
                 <div>
