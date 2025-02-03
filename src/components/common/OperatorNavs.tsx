@@ -11,7 +11,7 @@ const OperatorNavs: FC = ()=>{
             <SearchIcon/>
             <NotificationIcon count={2}/>
             <MessageNotificationIcon count={8}/>
-            <Avatar/>
+            <Avatar isMobile={true}/>
         </div>
     );
 }
