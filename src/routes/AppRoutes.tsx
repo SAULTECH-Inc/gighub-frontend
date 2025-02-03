@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route} from "react-router-dom";
 import { NotFound } from "../pages/NotFound.tsx";
 import { Home } from "../pages/Home.tsx";
 import {ApplicantDashboard} from "../pages/applicant/ApplicantDashboard.tsx";
+import {ApplicantNetwork} from "../pages/applicant/ApplicantNetwork.tsx";
 import UserTypeSelection from "../pages/UserTypeSelection.tsx";
 import EmployerProfile from "../pages/EmployerProfile.tsx";
 import ApplicantProfile from "../pages/ApplicantProfile.tsx";
@@ -15,6 +16,7 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="*" element={<NotFound />} />
+      <Route path="/applicant/dashboard/network" element={<ApplicantNetwork/>}/>
       <Route path="/applicant/dashboard" element={<ApplicantDashboard/>}/>
           <Route path="/user-type-selection" element={<UserTypeSelection/>} />
           <Route path="/applicant/signup" element={<ApplicantMultistepForm/>}/>
