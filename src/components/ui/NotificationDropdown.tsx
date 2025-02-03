@@ -61,7 +61,7 @@ const NotificationDropdown: FC<NotificationDropdownProps> = ({ onClose }) => {
     const dividerStyle = { borderColor: "#E6E6E6" }; // Using the exact hex color
 
     return (
-        <div className="absolute right-0 top-14 w-[352px] bg-white shadow-lg rounded-[16px] z-50 font-lato p-6">
+        <div className="absolute -right-10 md:right-0 top-14 w-[352px] bg-white shadow-lg rounded-[16px] z-50 font-lato p-6">
             {/* Header */}
             <div>
                 <div className="flex justify-between items-center mb-4">
