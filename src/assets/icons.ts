@@ -27,3 +27,4 @@ export { default as Arrowleft } from "./icons/arrow-left.svg";
 export { default as Arrowright } from "./icons/arrow-right.svg";
 export { default as Phone } from "./icons/Phone.svg";
 export { default as Location } from "./icons/Location.svg";
+export { default as Chat } from "./icons/bubble-chat.svg";
