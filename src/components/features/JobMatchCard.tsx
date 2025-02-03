@@ -34,12 +34,12 @@ const JobMatchCard: React.FC<JobMatchCardProps> = ({
     }
 
     return (
-        <div className="flex-1 h-[382px] bg-white rounded-[16px] shadow p-6 space-y-6">
+        <div className="w-full md:flex-1 h-[382px] bg-white rounded-[16px] shadow p-4 md:p-6 flex flex-col justify-between">
             {/* Header Section */}
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center mb-2">
                 <div>
-                    <h3 className="text-[20px] font-bold text-black">Job Match</h3>
-                    <p className="text-[13px] text-[#8E8E8E] font-medium">
+                    <h3 className="text-[16px] md:text-[20px] font-bold text-black">Job Match</h3>
+                    <p className="text-[10px] md:text-[13px] text-[#8E8E8E] font-medium">
                         Job that matches your profile
                     </p>
                 </div>
