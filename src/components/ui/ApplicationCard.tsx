@@ -25,38 +25,40 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
     const {openModal } = useModalStore();
 
     return (
-        <div className="grid grid-cols-3 items-center bg-[#F7F7F7] h-[58px] rounded-[16px] gap-x-6 w-full px-4">
+        <div
+            className="grid grid-cols-[1fr_30px_100px] md:grid-cols-3 md:justify-between items-center bg-[#F7F7F7] h-[58px] rounded-[16px] md:gap-x-6 gap-x-2 w-full px-4">
             {/* Applicant Details */}
             <div className="flex items-center space-x-4">
                 <img
                     src={image}
                     alt="Applicant"
-                    className="w-[40px] h-[40px] rounded-[10px] object-cover"
+                    className="w-[35px] h-[35px] md:w-[40px] md:h-[40px] rounded-[10px] object-cover"
                 />
                 <div>
-                    <h3 className="text-base font-semibold text-black">{jobTitle}</h3>
-                    <p className="text-sm text-gray-500">
+                    <h3 className="text-[11px] md:text-base font-semibold text-black">{jobTitle}</h3>
+                    <p className="text-[9px] md:text-sm text-gray-500">
                         {location} - <span className="text-purple-600">{companyName}</span>
                     </p>
                 </div>
             </div>
 
             {/* Status */}
-            <div className="flex items-center space-x-2">
+            <div className="flex justify-start items-center space-x-2">
                 <span
-                    className="w-[16px] h-[16px] rounded-full flex-shrink-0"
-                    style={{ backgroundColor: statusColor }}
+                    className="w-[14px] h-[14px] md:w-[16px] md:h-[16px] rounded-full flex-shrink-0"
+                    style={{backgroundColor: statusColor}}
                 ></span>
-                <span className="text-black whitespace-nowrap">{status}</span>
+                <span className="hidden md:flex text-black whitespace-nowrap">{status}</span>
             </div>
 
             {/* Button */}
-            <div className="flex justify-end items-center">
-                <button onClick={()=>openModal("view-application-method-modal")} className="w-[127px] h-[35px] px-4 py-2 bg-[#6438C2] text-white rounded-[10px] font-lato text-[16px] font-medium leading-[19.2px]">
+            <div className="flex justify-end">
+                <button onClick={() => openModal("view-application-method-modal")}
+                        className="md:w-[127px] md:h-[35px] p-2 md:px-4 md:py-2 bg-[#6438C2] flex justify-center items-center text-white rounded-[10px] font-lato text-[11px] md:text-[16px] font-medium ">
                     {buttonText}
                 </button>
-                <ViewApplicationMethodModal modalId="view-application-method-modal"/>
             </div>
+            <ViewApplicationMethodModal modalId="view-application-method-modal"/>
         </div>
     );
 };

@@ -12,7 +12,7 @@ export const ApplicantDashboard = () => {
             <div className="bg-[#F7F7F7]">
                 <ApplicantNavBar/>
                 <div
-                    className="py-6 bg-gray-100 grid grid-cols-[1024px_396px] gap-6 min-h-screen items-start justify-center">
+                    className="py-6 bg-gray-100 px-3 md:grid md:grid-cols-[1024px_396px] gap-6 min-h-screen items-start justify-center">
                     {/* First Column */}
                     <div className="flex flex-col items-center space-y-6 w-full">
                         <ApplicationStats/>
@@ -21,7 +21,7 @@ export const ApplicantDashboard = () => {
                     </div>
 
                     {/* Second Column */}
-                    <div className="flex flex-col items-center space-y-6 w-full">
+                    <div className="flex flex-col items-center gap-y-4 w-full">
                         <div className="w-full flex justify-center">
                             <ApplicantSchedules/>
                         </div>
