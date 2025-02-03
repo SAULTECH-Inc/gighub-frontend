@@ -119,14 +119,15 @@ const ApplicantNavBar: FC = () => {
 
     return (
         <>
-            <nav className="flex justify-between items-center px-6 py-4 bg-white border-b-[1px] border-b-[#E6E6E6]">
+            <nav
+                className="flex justify-between items-center px-6 py-4 bg-white border-b-[1px] border-b-[#E6E6E6] h-[calc(70px-5px)]">
                 {/* Left: Logo */}
                 <div className="hidden md:flex items-center gap-2">
-                    <img src={GighubLogo} alt="Gighub Logo" className="h-10 w-auto" onClick={handleNavigateHome}/>
+                    <img src={GighubLogo} alt="Gighub Logo" className="h-10 w-auto cursor-pointer" onClick={handleNavigateHome}/>
                 </div>
 
                 {/* Center: Navigation Links (Desktop) */}
-                <ul className="hidden md:flex gap-8 text-gray-600 font-lato text-[16px]">
+                <ul className="hidden md:flex gap-8 text-gray-600 font-lato text-[16px] absolute left-1/2 transform -translate-x-1/2">
                     {navItems.map((item) => (
                         <li
                             key={item}
@@ -142,19 +143,12 @@ const ApplicantNavBar: FC = () => {
                     ))}
                 </ul>
 
-                {/* Hamburger Icon for Mobile */}
-                <div className="md:hidden flex items-center" onClick={() => setMobileNavOpen(!isMobileNavOpen)}>
-                    <div className="w-6 h-1 bg-gray-600 mb-1"></div>
-                    <div className="w-6 h-1 bg-gray-600 mb-1"></div>
-                    <div className="w-6 h-1 bg-gray-600"></div>
-                </div>
-
                 {/* Right: Notifications, Messages, and Profile (Desktop Only) */}
-                <div className="hidden md:flex items-start gap-8">
+                <div className="flex items-center gap-4 md:gap-8 ml-auto md:ml-0"> {/* ml-auto only on mobile */}
                     {/* Search Icon and Input */}
                     <div className="relative">
                         <div
-                            className="cursor-pointer flex justify-center items-center border-[1px] border-[#ccc]  rounded-full p-1"
+                            className="cursor-pointer flex justify-center items-center border-[1px] border-[#ccc] rounded-full p-1 mb-2"
                             onClick={handleSearchToggle}
                         >
                             <SearchIcon/>
@@ -169,7 +163,7 @@ const ApplicantNavBar: FC = () => {
                             <input
                                 ref={searchInputRef}
                                 type="text"
-                                className="w-64 px-4 py-2 border-[0.5px] border-[#ccc] rounded-full shadow-sm text-sm focus:outline-none focus:border-[#ccc] active:border-[#ccc] focus:ring-0"
+                                className="w-[calc(220px+5px)] px-4 py-2 border-[0.5px] border-[#ccc] rounded-full shadow-sm text-sm focus:outline-none focus:border-[#ccc] active:border-[#ccc] focus:ring-0"
                                 placeholder="Search..."
                             />
                         </div>
@@ -191,8 +185,8 @@ const ApplicantNavBar: FC = () => {
                         {isMessageDropdownOpen && <MessageDropdown onClose={closeDropdowns}/>}
                     </div>
 
-                    {/* Profile Dropdown */}
-                    <div className="relative ml-10" ref={profileDropdownRef}>
+                    {/* Profile Dropdown (Hidden on Mobile) */}
+                    <div className="relative hidden md:flex" ref={profileDropdownRef}>
                         <div className="cursor-pointer" onClick={toggleProfileDropdown}>
                             <Avatar isMobile={false}/>
                         </div>
@@ -201,9 +195,9 @@ const ApplicantNavBar: FC = () => {
                 </div>
             </nav>
 
-             {/*Mobile Drawer Sidebar */}
+            {/*Mobile Drawer Sidebar */}
             <img className={`absolute top-2 left-4 z-40 md:hidden ${
-                isMobileNavOpen? "hidden" : "block"
+                isMobileNavOpen ? "hidden" : "block"
             }`}
                  onClick={() => setMobileNavOpen(true)} src={hamburger} alt="hamrburger"/>
 
@@ -212,7 +206,8 @@ const ApplicantNavBar: FC = () => {
                     isMobileNavOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
             >
-                <RiCloseLargeFill className="absolute right-5 top-5 cursor-pointer font-bold" onClick={() => setMobileNavOpen(false)} />
+                <RiCloseLargeFill className="absolute right-5 top-6 cursor-pointer font-bold"
+                                  onClick={() => setMobileNavOpen(false)}/>
                 {/* Logo Section */}
                 <div className="p-4">
                     <div className="flex items-center gap-2">
@@ -260,7 +255,7 @@ const ApplicantNavBar: FC = () => {
                             <div
                                 key={item}
                                 onClick={() => {
-                                    setActiveItem(item);
+                                    handleSetItems(item)
                                     setMobileNavOpen(false);
                                 }}
                                 className={`py-2 px-4 flex items-center gap-3 text-gray-600 font-lato text-[16px] cursor-pointer rounded-lg hover:bg-[#6438C2]/10 hover:text-[#6438C2] transition-colors duration-200`}

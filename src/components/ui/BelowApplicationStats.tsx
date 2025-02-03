@@ -4,7 +4,7 @@ import ApplicationSummary from "./ApplicationSummary.tsx";
 
 const BelowApplicationStats: FC = ()=>{
     return <>
-        <div className="w-full flex items-center justify-evenly gap-x-6">
+        <div className="w-full flex flex-col md:flex-row md:items-center md:justify-evenly gap-x-6 gap-y-3">
             <JobMatchCard
                 title="Visual Designer"
                 company="Facebook"

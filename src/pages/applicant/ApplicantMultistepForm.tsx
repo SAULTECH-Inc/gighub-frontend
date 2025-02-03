@@ -3,39 +3,16 @@ import { motion } from "framer-motion"; // Import Framer Motion
 import gighubLogo from "../../assets/icons/gighubLogoSmall.svg";
 import applicantSignupStep1 from "../../assets/icons/applicantSignupStep1.svg";
 import applicantSignupStep2 from "../../assets/icons/applicantSignupStep2.svg";
-import { useFormStore } from "../../redux/useFormStore.ts";
 import ApplicantSignupStepOne from "../../components/features/signup/applicant/ApplicantSignupStepOne.tsx";
 import ApplicantSignupStepTwo from "../../components/features/signup/applicant/ApplicantSignupStepTwo.tsx";
 import ApplicantSignupStepThree from "../../components/features/signup/applicant/ApplicantSignupStepThree.tsx";
 
 const ApplicantMultistepForm: React.FC = () => {
-    const { formData, setFormData, resetFormData } = useFormStore();
     const [step, setStep] = useState(1);
 
     const handleNext = () => setStep(step + 1);
     const handlePrev = () => setStep(step - 1);
 
-    const handleSubmit = () => {
-        console.log('Form Data Submitted:', formData);
-        alert('Form submitted successfully!');
-        resetFormData();
-        setStep(1);
-    };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-        const { name, value, files } = e.target as HTMLInputElement & HTMLSelectElement;
-        setFormData({
-            ...formData,
-            [name]: files ? files[0] : value,
-        });
-    };
-
-    const handleOTP = (name: string, value: string) => {
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
-    };
 
     return (
         <motion.div
@@ -79,7 +56,7 @@ const ApplicantMultistepForm: React.FC = () => {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <ApplicantSignupStepOne handleChange={handleChange} formData={formData} handleNext={handleNext} />
+                        <ApplicantSignupStepOne handleNext={handleNext} />
                     </motion.div>
                 )}
                 {/* Step 2: Education and Work Experience */}
@@ -89,7 +66,7 @@ const ApplicantMultistepForm: React.FC = () => {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <ApplicantSignupStepTwo handleChange={handleChange} formData={formData} handleNext={handleNext} handlePrev={handlePrev} />
+                        <ApplicantSignupStepTwo handleNext={handleNext} handlePrev={handlePrev} />
                     </motion.div>
                 )}
                 {step === 3 && (
@@ -98,7 +75,7 @@ const ApplicantMultistepForm: React.FC = () => {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <ApplicantSignupStepThree handleOTP={handleOTP} formData={formData} handleSubmit={handleSubmit} handlePrev={handlePrev} />
+                        <ApplicantSignupStepThree handlePrev={handlePrev} />
                     </motion.div>
                 )}
             </div>
