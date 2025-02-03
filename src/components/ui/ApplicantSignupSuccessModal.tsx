@@ -6,12 +6,12 @@ import { useNavigate } from "react-router-dom";
 
 interface ApplicantSignupSuccessModalProd {
     modelId: string;
-    onSubmit: () => void;
+    route: string;
 }
 
 const ApplicantSignupSuccessModal: React.FC<ApplicantSignupSuccessModalProd> = ({
                                                                                     modelId,
-    onSubmit,
+    route,
                                                                                     // Other props...
                                                                                 }) => {
     const navigate = useNavigate();
@@ -21,8 +21,7 @@ const ApplicantSignupSuccessModal: React.FC<ApplicantSignupSuccessModalProd> = (
 
     const handleProfileCompletion = () => {
         closeModal(modelId);
-        onSubmit(); // Trigger form submission
-        navigate('/applicant/profile');
+        navigate(route);
     };
 
     return (

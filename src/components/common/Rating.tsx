@@ -16,9 +16,8 @@ const Rating: FC<RatingProp> = ({ value }) => {
                     key={index}
                     src={ratingIcon}
                     alt={`star-${index + 1}`}
+                    className="w-[17px] h-[17px] md:w-[20px] md:h-[20px]"
                     style={{
-                        width: "20px",
-                        height: "20px",
                         opacity: index < value ? 1 : 0.3, // Highlight based on value
                     }}
                 />

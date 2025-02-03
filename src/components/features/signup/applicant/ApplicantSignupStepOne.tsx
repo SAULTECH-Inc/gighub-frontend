@@ -1,37 +1,52 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FormData } from "../../../../redux/useFormStore.ts";
 import googleLogo from "../../../../assets/icons/googleLogo.svg";
 import microsoftLogo from "../../../../assets/icons/microsoftLogo.svg";
 import linkedinLogo from "../../../../assets/icons/linkedinLogo.svg";
 import { calculatePasswordStrength } from "../../../../utils/helpers.ts";
+import {useFormStore} from "../../../../redux/useFormStore.ts";
 
 interface StepOneProp {
-    handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleNext: () => void;
-    formData: FormData;
 }
 
-const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleChange, handleNext, formData }) => {
+const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
+    const { formData, setFormData } = useFormStore();
     const [passwordStrength, setPasswordStrength] = useState(0);
     const [passwordVisible, setPasswordVisible] = useState(false); // for toggling password visibility
     const [confirmPassword, setConfirmPassword] = useState(""); // for confirm password
     const [passwordMatch, setPasswordMatch] = useState(true); // for password match validation
 
+
+    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setConfirmPassword(e.target.value);
+        setPasswordMatch(e.target.value === formData.applicant.password); // validate password match
+    };
+    const togglePasswordVisibility = () => {
+        setPasswordVisible(!passwordVisible);
+    };
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const { name, value } = e.target;
+        setFormData({
+            applicant: {
+                ...formData.applicant,
+                [name]: value,
+            }
+        });
+    };
+
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
         handleChange(e);
         const strength = calculatePasswordStrength(e.target.value);
         setPasswordStrength(strength);
     };
 
-    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setConfirmPassword(e.target.value);
-        setPasswordMatch(e.target.value === formData.password); // validate password match
-    };
 
-    const togglePasswordVisibility = () => {
-        setPasswordVisible(!passwordVisible);
-    };
+
+
 
     return (
         <motion.div
@@ -66,7 +81,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleChange, handleNex
                     <input
                         type="text"
                         name="firstName"
-                        value={formData.firstName}
+                        value={formData.applicant.firstName}
                         onChange={handleChange}
                         className="w-full py-2 px-5 mb-4 rounded-[16px] h-[45px] border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6]"
                     />
@@ -76,7 +91,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleChange, handleNex
                     <input
                         type="text"
                         name="surname"
-                        value={formData.surname}
+                        value={formData.applicant.surname}
                         onChange={handleChange}
                         className="w-full py-2 px-5 mb-4 border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6] rounded-[16px] h-[45px]"
                     />
@@ -94,7 +109,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleChange, handleNex
                     <input
                         type="text"
                         name="middleName"
-                        value={formData.middleName}
+                        value={formData.applicant.middleName}
                         onChange={handleChange}
                         className="w-full py-2 px-5 mb-4 border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6] rounded-[16px] h-[45px]"
                     />
@@ -104,7 +119,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleChange, handleNex
                     <input
                         type="text"
                         name="email"
-                        value={formData.email}
+                        value={formData.applicant.email}
                         onChange={handleChange}
                         className="w-full py-2 px-5 mb-4 border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6] rounded-[16px] h-[45px]"
                     />
@@ -123,7 +138,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleChange, handleNex
                     <input
                         type={passwordVisible ? "text" : "password"}
                         name="password"
-                        value={formData.password}
+                        value={formData.applicant.password}
                         onChange={handlePasswordChange}
                         className="w-full py-2 px-5 mb-4 border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6] rounded-[16px] h-[45px]"
                     />

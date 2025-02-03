@@ -30,21 +30,22 @@ export const JobDetails: React.FC<JobMatchCardProps> = ({
         openModal("application");
     };
     return (
-        <div className="w-[556px] h-[249px] rounded-[16px] cursor-pointer bg-[#F7F8FA] p-4 flex flex-col space-y-6 mx-auto">
+        <div
+            className="w-full md:w-[556px] h-[280px] rounded-[16px] cursor-pointer bg-[#F7F8FA] p-4 flex flex-col space-y-6 mx-auto">
             {/* Header */}
-            <div className="flex justify-between items-center">
+            <div className="relative flex justify-between items-center">
                 <div className="flex space-x-3 items-center">
-                    <img src={jobMatchFacebook} alt={`${company} Logo`} className="w-10 h-10" />
-                    <div>
-                        <div className="flex items-center space-x-2">
-                            <h3 className="font-bold text-[20px] text-black">{title}</h3>
-                            <p className="text-[13px] text-gray-700 font-semibold">{company}</p>
+                    <img src={jobMatchFacebook} alt={`${company} Logo`} className="w-8 h-8 md:w-10 md:h-10"/>
+                    <div className="mt-5 flex flex-col gap-y-2">
+                        <div className="w-full flex items-center gap-x-2 gap-y-2 justify-evenly">
+                            <h3 className="font-bold text-[15px] md:text-[20px] text-black">{title}</h3>
+                            <p className="text-[10px] md:text-[13px] text-gray-700 font-semibold">{company}</p>
                         </div>
                         <div className="flex space-x-2 mt-1">
                             {tags.map((tag, index) => (
                                 <span
                                     key={index}
-                                    className="px-3 py-1 bg-[#6E4AED1F] text-[#6E4AED] rounded-full text-[13px] font-medium"
+                                    className="px-3 py-1 bg-[#6E4AED1F] text-[#6E4AED] rounded-full text-[9px] md:text-[13px] font-medium"
                                 >
                                     {tag}
                                 </span>
@@ -52,50 +53,58 @@ export const JobDetails: React.FC<JobMatchCardProps> = ({
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                    <Rating value={5.0} />
-                    <img onClick={()=>openModal("share")} src={shareIcon} alt="Share Icon" className="w-5 h-5 cursor-pointer" />
-                    <ShareModal modelId="share" />
-                    <img src={bookmarkIcon} alt="Bookmark Icon" className="w-5 h-5 cursor-pointer" />
+                <div className="absolute -right-2 -top-1 flex items-center space-x-3">
+                    <Rating value={5.0}/>
+                    <img onClick={() => openModal("share")} src={shareIcon} alt="Share Icon"
+                         className="w-4 h-4 md:w-5 md:h-5 cursor-pointer"/>
+                    <ShareModal modelId="share"/>
+                    <img src={bookmarkIcon} alt="Bookmark Icon" className="w-4 h-4 md:w-5 md:h-5 cursor-pointer"/>
                 </div>
             </div>
 
             {/* Description */}
-            <p className="text-[13px] text-gray-700 leading-5 font-lato">
+            <p className="text-[12px] md:text-[13px] text-gray-700 leading-5 font-lato">
                 {description}
             </p>
 
             {/* Job Info */}
-            <div className="flex justify-between items-center">
+            <div className="w-full flex flex-wrap md:justify-between items-center md:gap-2 gap-x-4 gap-y-3 justify-start">
                 <div className="flex items-center space-x-2">
-                    <img src={jobTypeIcon} alt="Job Type Icon" className="w-4 h-4" />
-                    <p className="text-[13px] text-gray-600">{type}</p>
+                    <img src={jobTypeIcon} alt="Job Type Icon" className="w-4 h-4"/>
+                    <p className="text-[11px] md:text-[13px] text-gray-600">{type}</p>
                 </div>
                 <div className="flex items-center space-x-2">
-                    <img src={locationIcon} alt="Location Icon" className="w-4 h-4" />
-                    <p className="text-[13px] text-gray-600">{location}</p>
+                    <img src={locationIcon} alt="Location Icon" className="w-4 h-4"/>
+                    <p className="text-[11px] md:text-[13px] text-gray-600">{location}</p>
                 </div>
                 <div className="flex items-center space-x-2">
-                    <img src={peopleApplied} alt="People Applied Icon" className="w-4 h-4" />
-                    <p className="text-[13px] text-gray-600">{applicants} Applied</p>
+                    <img src={peopleApplied} alt="People Applied Icon" className="w-4 h-4"/>
+                    <p className="text-[11px] md:text-[13px] text-gray-600">{applicants} Applied</p>
                 </div>
                 <div className="flex items-center space-x-2">
-                    <img src={numberOfDaysRemaining} alt="Days Remaining Icon" className="w-4 h-4" />
-                    <p className="text-[13px] text-gray-600">{daysLeft} days left</p>
+                    <img src={numberOfDaysRemaining} alt="Days Remaining Icon" className="w-4 h-4"/>
+                    <p className="text-[11px] md:text-[13px] text-gray-600">{daysLeft} days left</p>
                 </div>
-                <button onClick={handleApplication} className="w-92px] h-28px] text-[13px] text-black bg-[#FFFFFF] border-[#E6E6E6] border-[1px] px-4 py-1 rounded-[10px] font-medium">
-                    Apply
-                </button>
-                {/* Modals */}
-                {isModalOpen("application") && <ApplicationModal modalId="application" />}
-                {isModalOpen("application-success") && (
-                    <ApplicationSuccessModal modalId="application-success" />
-                )}
-                {
-                    isModalOpen("payment-success-modal") && (
-                        <PaymentSuccessModal modalId="payment-success-modal"/>
-                    )
-                }
+                <div className="flex justify-evenly gap-x-2">
+                    <button onClick={handleApplication}
+                            className="text-[11px] md:text-[13px] text-[#6E4AED] bg-[#ffffff] border-[#E6E6E6] border-[1px] px-4 py-1 rounded-[10px] font-medium">
+                        Refer
+                    </button>
+                    <button onClick={handleApplication}
+                            className="text-[11px] md:text-[13px] text-black bg-[#FFFFFF] border-[#E6E6E6] border-[1px] px-4 py-1 rounded-[10px] font-medium">
+                        Apply
+                    </button>
+                    {/* Modals */}
+                    {isModalOpen("application") && <ApplicationModal modalId="application"/>}
+                    {isModalOpen("application-success") && (
+                        <ApplicationSuccessModal modalId="application-success"/>
+                    )}
+                    {
+                        isModalOpen("payment-success-modal") && (
+                            <PaymentSuccessModal modalId="payment-success-modal"/>
+                        )
+                    }
+                </div>
             </div>
         </div>
     );
