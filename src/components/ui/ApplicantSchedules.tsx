@@ -93,7 +93,7 @@ const ApplicantSchedules: React.FC = () => {
                                 key={index}
                                 className={`flex flex-col items-center ${
                                     day.isToday
-                                        ? "text-white bg-[#6438C2] rounded-[10px] w-[41px] h-[61px] p-2"
+                                        ? "text-white bg-[#6438C2] rounded-[10px] w-[41px] h-[61px] pb-3"
                                         : "text-gray-600"
                                 }`}
                             >
