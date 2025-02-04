@@ -10,6 +10,7 @@ import ApplicantMultistepForm from "../pages/applicant/ApplicantMultistepForm.ts
 import EmployerMultistepForm from "../pages/employer/EmployerMultistepForm.tsx";
 import EmployerPublicProfile from "../pages/employer/EmployerPublicProfiles.tsx";
 import ApplicantNavBar from "../components/layouts/ApplicantNavBar.tsx";
+import ManageApplicant from "../pages/applicant/ManageApplicant.tsx";
 
 const AppRoutes = () => {
   return (
@@ -18,6 +19,7 @@ const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="*" element={<NotFound />} />
       <Route path="/applicant/dashboard/network" element={<ApplicantNetwork/>}/>
+      <Route path="/applicant/dashboard/manageapplicant" element={<ManageApplicant/>}/>
       <Route path="/applicant/dashboard" element={<ApplicantDashboard/>}/>
           <Route path="/user-type-selection" element={<UserTypeSelection/>} />
           <Route path="/applicant/signup" element={<ApplicantMultistepForm/>}/>
