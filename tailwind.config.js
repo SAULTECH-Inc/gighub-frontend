@@ -62,4 +62,5 @@ export default {
     },
   },
   plugins: [forms, typography, aspectRatio],
+    plugins: [require("tailwind-scrollbar-hide")],
 };
