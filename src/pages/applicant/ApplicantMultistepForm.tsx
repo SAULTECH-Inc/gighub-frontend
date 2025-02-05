@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion"; // Import Framer Motion
 import gighubLogo from "../../assets/icons/gighubLogoSmall.svg";
-import applicantSignupStep1 from "../../assets/icons/applicantSignupStep1.svg";
-import applicantSignupStep2 from "../../assets/icons/applicantSignupStep2.svg";
+import applicantSignupStep1 from "../../assets/icons/applicantSignup1.svg";
+import applicantSignupStep2 from "../../assets/icons/applicantSignup2.svg";
 import ApplicantSignupStepOne from "../../components/features/signup/applicant/ApplicantSignupStepOne.tsx";
 import ApplicantSignupStepTwo from "../../components/features/signup/applicant/ApplicantSignupStepTwo.tsx";
 import ApplicantSignupStepThree from "../../components/features/signup/applicant/ApplicantSignupStepThree.tsx";
@@ -81,7 +81,7 @@ const ApplicantMultistepForm: React.FC = () => {
             </div>
 
             {/* Right Section - Image */}
-            <div className="hidden md:block w-1/2 pl-40">
+            <div className="hidden md:hidden lg:block w-1/2 pl-40">
                 {step === 1 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep1} alt="Step 1" />}
                 {step === 2 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep2} alt="Step 2" />}
                 {step === 3 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep2} alt="Step 3" />}
