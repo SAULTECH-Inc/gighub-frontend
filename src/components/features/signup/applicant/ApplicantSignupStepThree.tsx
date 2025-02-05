@@ -74,7 +74,7 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
 
     return (
         <motion.div
-            className="w-full max-w-[436px] mx-5 flex flex-col justify-evenly items-center gap-y-[50px] border-2"
+            className="w-full max-w-[436px] mx-auto md:mx-5 px-10 md:px-0 flex flex-col justify-evenly items-center gap-y-[50px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -134,7 +134,7 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
                 transition={{ duration: 0.5 }}
             >
                 <img src={code} alt="code" />
-                <div className="flex gap-x-2">
+                <div className="flex gap-x-1 md:gap-x-2 text-sm md:text-lg">
                     Haven't Received a Code?
                     <a className="text-[#56E5A1] decoration-0" href={"#"}>
                         Send me another one

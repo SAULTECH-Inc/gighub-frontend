@@ -50,7 +50,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
 
     return (
         <motion.div
-            className="w-full max-w-[436px] mx-5"
+            className="w-full max-w-[436px] mx-auto md:mx-5 px-10 md:px-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
