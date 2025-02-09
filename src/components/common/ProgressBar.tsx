@@ -1,4 +1,4 @@
-import {ProgressBarProps} from "../../services/types";
+import {ProgressBarProps} from "../../utils/types";
 import {FC} from "react";
 
 const ProgressBar: FC<ProgressBarProps> = ({

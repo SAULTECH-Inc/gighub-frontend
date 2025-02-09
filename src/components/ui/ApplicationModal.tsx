@@ -4,7 +4,7 @@ import work from "../../assets/icons/work.svg";
 import documentValidation from "../../assets/icons/documentValidation.svg";
 import applyAvatar from "../../assets/images/applyAvatar.png";
 import ApplicationSuccessModal from "./ApplicationSuccessModal.tsx";
-import useModalStore from "../../redux/modalStateStores.ts";
+import useModalStore from "../../store/modalStateStores.ts";
 
 interface ApplicationModalProps {
     modalId: string;

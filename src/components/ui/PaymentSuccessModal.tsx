@@ -1,5 +1,5 @@
 import React from "react";
-import useModalStore from "../../redux/modalStateStores.ts";
+import useModalStore from "../../store/modalStateStores.ts";
 import cancelMedium from '../../assets/icons/cancelMedium.svg';
 import checkMarkBig from '../../assets/icons/checkMarkBig.svg';
 interface ModalProps {

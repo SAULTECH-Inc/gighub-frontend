@@ -122,12 +122,12 @@ const ApplicantNavBar: FC = () => {
             <nav
                 className="flex justify-between items-center px-6 py-4 bg-white border-b-[1px] border-b-[#E6E6E6] h-[calc(70px-5px)]">
                 {/* Left: Logo */}
-                <div className="hidden md:flex items-center gap-2">
+                <div className="hidden lg:flex items-center gap-2">
                     <img src={GighubLogo} alt="Gighub Logo" className="h-10 w-auto cursor-pointer" onClick={handleNavigateHome}/>
                 </div>
 
                 {/* Center: Navigation Links (Desktop) */}
-                <ul className="hidden md:flex gap-8 text-gray-600 font-lato text-[16px] absolute left-1/2 transform -translate-x-1/2">
+                <ul className="hidden lg:flex gap-8 text-gray-600 font-lato text-[16px] absolute left-1/2 transform -translate-x-1/2">
                     {navItems.map((item) => (
                         <li
                             key={item}
@@ -144,7 +144,7 @@ const ApplicantNavBar: FC = () => {
                 </ul>
 
                 {/* Right: Notifications, Messages, and Profile (Desktop Only) */}
-                <div className="flex items-center gap-4 md:gap-8 ml-auto md:ml-0"> {/* ml-auto only on mobile */}
+                <div className="flex items-center gap-4 lg:gap-8 ml-auto lg:ml-0"> {/* ml-auto only on mobile */}
                     {/* Search Icon and Input */}
                     <div className="relative">
                         <div
@@ -196,7 +196,7 @@ const ApplicantNavBar: FC = () => {
             </nav>
 
             {/*Mobile Drawer Sidebar */}
-            <img className={`absolute top-2 left-4 z-40 md:hidden ${
+            <img className={`absolute top-2 left-4 z-40 lg:hidden ${
                 isMobileNavOpen ? "hidden" : "block"
             }`}
                  onClick={() => setMobileNavOpen(true)} src={hamburger} alt="hamrburger"/>

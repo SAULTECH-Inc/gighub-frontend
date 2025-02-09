@@ -1,10 +1,10 @@
 import React, { useRef } from "react";
 import { motion } from "framer-motion"; // Import Framer Motion
-import {useFormStore} from "../../../../redux/useFormStore.ts";
+import {useFormStore} from "../../../../store/useFormStore.ts";
 import code from "../../../../assets/icons/code.svg";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import ApplicantSignupSuccessModal from "../../../ui/ApplicantSignupSuccessModal.tsx";
-import useModalStore from "../../../../redux/modalStateStores.ts";
+import useModalStore from "../../../../store/modalStateStores.ts";
 
 interface StepTwoProp {
     handlePrev: () => void;
@@ -74,7 +74,7 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
 
     return (
         <motion.div
-            className="w-full max-w-[436px] mx-auto md:mx-5 px-10 md:px-0 flex flex-col justify-evenly items-center gap-y-[50px]"
+            className="w-[310px] md:w-[680px] lg:w-[500px] mt-5 md:mr-28 md:mt-32 px-[10px] lg:px-0 space-y-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -89,7 +89,7 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
                 OTP Verification
             </motion.h1>
             <motion.p
-                className="text-[16px] text-center"
+                className="text-[16px] text-justify lg:text-center"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
@@ -101,7 +101,7 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
 
             {/* OTP Input Fields */}
             <motion.div
-                className="flex justify-evenly items-center w-full gap-x-2"
+                className="flex justify-center lg:justify-evenly items-center w-full gap-x-2"
                 initial={{ x: -50 }}
                 animate={{ x: 0 }}
                 transition={{ duration: 0.5 }}
@@ -114,7 +114,7 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
                             maxLength={1}
                             name={`otp[${index}]`}  // Dynamically bind input name
                             value={formData.applicant.otp[index] || ''}  // Bind OTP value from formData
-                            className="w-[47px] h-[42px] text-center rounded-[10px] border-[1px] border-[#5E5E5E] focus:outline-none focus:ring-0 focus:border-[1px] focus:border-[#5E5E5E]"
+                            className="w-[40px] h-[40px] lg:w-[47px] lg:h-[42px] text-center rounded-[10px] border-[1px] border-[#5E5E5E] focus:outline-none focus:ring-0 focus:border-[1px] focus:border-[#5E5E5E]"
                             onChange={(e) => handleOTPChange(e, index)}  // Handle change for each input
                             onKeyDown={(e) => handleBackspace(e, index)} // Handle backspace key press for focus shift
                             onPaste={(e) => handlePaste(e, index)} // Handle paste event to auto-fill OTP

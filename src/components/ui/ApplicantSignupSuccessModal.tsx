@@ -1,8 +1,9 @@
 import React from 'react';
 import check from '../../assets/icons/checkWhite.svg';
 import cancel from '../../assets/icons/cancelMedium.svg';
-import useModalStore from "../../redux/modalStateStores.ts";
+import useModalStore from "../../store/modalStateStores.ts";
 import { useNavigate } from "react-router-dom";
+import {useFormStore} from "../../store/useFormStore.ts";
 
 interface ApplicantSignupSuccessModalProd {
     modelId: string;
@@ -15,6 +16,7 @@ const ApplicantSignupSuccessModal: React.FC<ApplicantSignupSuccessModalProd> = (
                                                                                     // Other props...
                                                                                 }) => {
     const navigate = useNavigate();
+    const {formData} = useFormStore();
     const { closeModal } = useModalStore();
     const isOpen = useModalStore().modals[modelId];
     if (!isOpen) return null;
@@ -41,7 +43,7 @@ const ApplicantSignupSuccessModal: React.FC<ApplicantSignupSuccessModalProd> = (
                 />
                 <h1 className="text-[24px] text-[#FA4E09] font-bold">Congratulations!</h1>
                 <p className="text-[13px] text-[#000000] text-center px-12">
-                    Congratulations, Shadrach! 🎉 Click "Complete Your Profile" to update your details,
+                    Congratulations, <b>{formData.employer.companyName.toUpperCase()}! 🎉</b> Click "Complete Your Profile" to update your details,
                     unlock tailored job recommendations, and take bold steps toward your career goals!
                 </p>
                 <button

@@ -81,7 +81,7 @@ const ApplicantMultistepForm: React.FC = () => {
             </div>
 
             {/* Right Section - Image */}
-            <div className="hidden md:hidden lg:block w-1/2 pl-40">
+            <div className="hidden lg:block w-1/2 pl-40">
                 {step === 1 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep1} alt="Step 1" />}
                 {step === 2 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep2} alt="Step 2" />}
                 {step === 3 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep2} alt="Step 3" />}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import {useFormStore} from "../../../../redux/useFormStore.ts";
+import {useFormStore} from "../../../../store/useFormStore.ts";
 import { calculatePasswordStrength } from "../../../../utils/helpers.ts";
 
 interface StepOneProp {
@@ -42,9 +42,16 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
         setPasswordVisible(!passwordVisible);
     };
 
+    const handleProceed = ()=>{
+        setPasswordMatch(confirmPassword === formData.employer.password);
+        if (passwordMatch) {
+            handleNext();
+        }
+    }
+
     return (
         <motion.div
-            className="w-full max-w-[436px] mx-5 px-10 md:px-0 "
+            className="w-[310px] md:w-[680px] lg:w-[500px] mt-5 md:mr-28 md:mt-32 px-[10px] lg:px-0"
             initial={{opacity: 0}}
             animate={{opacity: 1}}
             exit={{opacity: 0}}
@@ -90,8 +97,8 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
                     <label className="block text-[#000000] text-[13px] font-medium mb-2">Email Address</label>
                     <input
                         type="text"
-                        name="email"
-                        value={formData.employer.email}
+                        name="companyEmail"
+                        value={formData.employer.companyEmail}
                         onChange={handleChange}
                         className="w-full py-2 px-5 mb-4 border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6] rounded-[16px] h-[45px]"
                     />
@@ -194,7 +201,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
             >
                 <button
                     type="button"
-                    onClick={handleNext}
+                    onClick={handleProceed}
                     className="w-full py-3 text-white font-[13px] rounded-[16px] bg-[#6E4AED] hover:bg-[#5931A9] focus:outline-none focus:ring-0 focus:border-none"
                     disabled={!passwordMatch}
                 >
