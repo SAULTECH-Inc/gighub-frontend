@@ -1,4 +1,4 @@
-import {DatePickerProps} from "../../services/types";
+import {DatePickerProps} from "../../utils/types";
 import {FC} from "react";
 
 const DatePicker: FC<DatePickerProps> = ({
