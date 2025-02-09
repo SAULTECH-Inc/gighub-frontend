@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion"; // Import Framer Motion
-import {useFormStore} from "../../../../redux/useFormStore.ts";
+import {useFormStore} from "../../../../store/useFormStore.ts";
 import documentAttachment from "../../../../assets/icons/documentAttachment.svg";
 import videoAttachment from "../../../../assets/icons/videoAttachment.svg";
 
@@ -129,7 +129,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
 
     return (
         <motion.div
-            className="w-full max-w-[436px] mx-5"
+            className="w-[310px] md:w-[680px] lg:w-[500px] mt-5 md:mr-28 md:mt-32 px-[10px] lg:px-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

@@ -2,7 +2,7 @@ import React from "react";
 import checkAutoApplyRocket from "../../assets/icons/checkAutoApplyRocket.svg";
 import { JobDetails } from "./JobDetails.tsx";
 import SubscriptionModal from "../ui/SubscriptionModal.tsx";
-import useModalStore from "../../redux/modalStateStores.ts";
+import useModalStore from "../../store/modalStateStores.ts";
 import PaymentModal from "../ui/PaymentModal.tsx"; // Import the modal component
 
 export interface JobMatchCardProps {

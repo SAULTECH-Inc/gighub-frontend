@@ -4,7 +4,7 @@ import profilepics from "../../assets/images/profilepics.png";
 import video from "../../assets/icons/videoThick.svg";
 import userProfile from "../../assets/icons/userProfile.svg";
 import documentAttachement from "../../assets/icons/documentAttachement.svg";
-import useModalStore from "../../redux/modalStateStores.ts";
+import useModalStore from "../../store/modalStateStores.ts";
 
 interface ModalProps {
     modalId: string;
