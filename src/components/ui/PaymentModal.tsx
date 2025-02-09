@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import useModalStore from "../../redux/modalStateStores.ts";
+import useModalStore from "../../store/modalStateStores.ts";
 import gighubLogo from '../../assets/icons/gighubLogoSmall.svg';
 import cancelMedium from '../../assets/icons/cancelMedium.svg';
 import check from  '../../assets/icons/check.svg';

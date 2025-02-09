@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAuth } from "../../hooks/useAuth.ts"; // Import the hook
+import {useAuth} from "../../store/useAuth.ts";
 
 export const Login = () => {
     const [credentials, setCredentials] = useState({
@@ -11,7 +11,7 @@ export const Login = () => {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        login(credentials.email, credentials.password);  // Call login function
+        login(credentials);  // Call login function
     };
 
     return (

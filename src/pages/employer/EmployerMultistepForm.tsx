@@ -12,7 +12,10 @@ import EmployerSignupStepFour from "../../components/ui/employer/signup/Employer
 const EmployerMultistepForm: React.FC = ()=>{
     const [step, setStep] = useState(1);
 
-    const handleNext = () => setStep(step + 1);
+
+    const handleNext = () => {
+        setStep(step + 1);
+    };
     const handlePrev = () => setStep(step - 1);
     return (
         <motion.div
@@ -91,7 +94,7 @@ const EmployerMultistepForm: React.FC = ()=>{
             </div>
 
             {/* Right Section - Image */}
-            <div className="hidden md:block w-1/2 pl-40">
+            <div className="hidden lg:block w-1/2 pl-40">
                 {step === 1 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep1} alt="Step 1" />}
                 {step === 2 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep2} alt="Step 2" />}
                 {step === 3 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep2} alt="Step 3" />}

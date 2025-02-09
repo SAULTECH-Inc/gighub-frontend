@@ -23,7 +23,7 @@ const RichTextEditor: React.FC = () => {
     ];
 
     return (
-        <div className="relative p-0 bg-gray-100 rounded-[10px] w-full h-[390px] mx-auto">
+        <div className="relative p-0 bg-gray-100 rounded-[10px] w-full mx-auto">
             <p className="absolute right-9 text-[#6438C2] mt-4 text-right text-[16px]">{value.length}/500</p>
             <ReactQuill
                 value={value}
@@ -31,7 +31,7 @@ const RichTextEditor: React.FC = () => {
                 modules={modules}
                 formats={formats}
                 placeholder="Start typing..."
-                className="rounded-[10px] h-[356px] font-lato font-light bg-[#F7F8FA]"
+                className="rounded-[10px] max-h-[356px] font-lato font-light bg-[#F7F8FA]"
             />
         </div>
     );

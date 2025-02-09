@@ -4,7 +4,7 @@ import googleLogo from "../../../../assets/icons/googleLogo.svg";
 import microsoftLogo from "../../../../assets/icons/microsoftLogo.svg";
 import linkedinLogo from "../../../../assets/icons/linkedinLogo.svg";
 import { calculatePasswordStrength } from "../../../../utils/helpers.ts";
-import {useFormStore} from "../../../../redux/useFormStore.ts";
+import {useFormStore} from "../../../../store/useFormStore.ts";
 
 interface StepOneProp {
     handleNext: () => void;
@@ -50,7 +50,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
 
     return (
         <motion.div
-            className="w-full max-w-[436px] mx-auto md:mx-5 px-10 md:px-0"
+            className="w-[310px] md:w-[680px] lg:w-[500px] mt-5 md:mr-28 md:mt-32 px-[10px] lg:px-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -58,13 +58,13 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
         >
             {/* Form Fields */}
             <motion.div
-                className="mx-auto flex flex-col text-center mb-[30px]"
+                className="w-full mx-auto flex flex-col text-center mb-[30px]"
                 initial={{ y: -50 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-                <h2 className="text-[24px] font-semibold mb-4">Welcome!</h2>
-                <p className="text-[13px]">
+                <h2 className="text-[20px] lg:text-[24px] font-semibold mb-4">Welcome!</h2>
+                <p className="text-sm lg:text-[13px]">
                     Welcome! Let’s start building your career profile. We’ll ask a few quick questions to tailor opportunities just for you.
                 </p>
             </motion.div>
@@ -224,7 +224,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
 
             {/* Social Login Buttons */}
             <motion.div
-                className="flex justify-evenly items-center mx-auto mt-8 mb-4"
+                className="flex justify-evenly items-center mx-auto mt-8 mb-4 gap-x-2"
                 initial={{ y: 50 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5 }}

@@ -1,5 +1,5 @@
 import {FC} from "react";
-import {SelectProps} from "../../services/types";
+import {SelectProps} from "../../utils/types";
 
 const DropDown: FC<SelectProps> = ({
                                      label,

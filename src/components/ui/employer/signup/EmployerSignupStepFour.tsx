@@ -2,8 +2,9 @@ import React from "react";
 import { motion } from "framer-motion"; // Import Framer Motion
 import { FaArrowLeftLong } from "react-icons/fa6";
 import ApplicantSignupSuccessModal from "../../../ui/ApplicantSignupSuccessModal.tsx";
-import useModalStore from "../../../../redux/modalStateStores.ts";
-import {useFormStore} from "../../../../redux/useFormStore.ts";
+import useModalStore from "../../../../store/modalStateStores.ts";
+import {useFormStore} from "../../../../store/useFormStore.ts";
+import {useAuth} from "../../../../store/useAuth.ts";
 
 interface StepTwoProp {
     handlePrev: () => void;
@@ -11,8 +12,9 @@ interface StepTwoProp {
 
 const EmployerSignupStepFour: React.FC<StepTwoProp> = ({handlePrev,
                                                          }) => {
-    const { openModal,isModalOpen } = useModalStore();
-    const {formData, setFormData} = useFormStore();
+    const {  signup, error } = useAuth();
+    const {openModal, isModalOpen } = useModalStore();
+    const {formData, setFormData, resetFormData} = useFormStore();
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>)=> {
         const { name, value } = e.target as HTMLTextAreaElement;
         setFormData({
@@ -24,11 +26,21 @@ const EmployerSignupStepFour: React.FC<StepTwoProp> = ({handlePrev,
     }
     const handleSubmit = () => {
         console.log('Form Data Submitted:', formData);
+        signup(formData.employer, "employer");
+        if(!error){
+            setTimeout(
+                () => {
+                    openModal('application-signup-success-modal');
+                    resetFormData();
+                },
+                2000,
+            )
+        }
     }
 
     return (
         <motion.div
-            className="min-w-96 md:w-full md:max-w-[500px] mx-auto md:mx-5 flex flex-col justify-evenly items-center gap-y-[50px] px-4 md:px-0"
+            className="w-[310px] md:w-[680px] lg:w-[500px] mt-5 md:mr-28 md:mt-32 px-[10px] lg:px-0 space-y-5"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -60,7 +72,7 @@ const EmployerSignupStepFour: React.FC<StepTwoProp> = ({handlePrev,
                         Company Description
                     </motion.label>
                     <textarea
-                        className="resize-none border-[1px] border-[#ccc] rounded-[16px] focus:outline-none focus:ring-0 focus:border-[1px] focus:border-[#ccc] w-full h-[182px] text-[16px] placeholder-gray-500"
+                        className="resize-none border-[1px] p-5 border-[#ccc] rounded-[16px] focus:outline-none focus:ring-0 focus:border-[1px] focus:border-[#ccc] w-full h-[182px] text-[16px] placeholder-gray-500"
                         placeholder="Write here..."
                         id="company-description"
                         value={formData.employer.companyDescription}
@@ -77,15 +89,14 @@ const EmployerSignupStepFour: React.FC<StepTwoProp> = ({handlePrev,
                 transition={{ duration: 0.5 }}
             >
                 <button
+                    type="button"
                     className="mx-auto block w-full h-[50px] text-[16px] font-semibold text-[#FFFFFF] bg-[#6438C2] rounded-[10px] hover:bg-[#5931A9] transition"
-                    onClick={()=>{
-                        openModal('application-signup-success-modal');
-                        handleSubmit();
-                    }}
+                    onClick={handleSubmit}
                 >
                     Submit
                 </button>
                 <button
+                    type="button"
                     className="flex justify-center items-center gap-x-2 mx-auto w-full h-[50px] text-[16px] font-semibold text-[#000000] border-[1px] border-[#CCC] bg-white rounded-[10px] hover:bg-[#ccc] transition"
                     onClick={handlePrev}
                 >
