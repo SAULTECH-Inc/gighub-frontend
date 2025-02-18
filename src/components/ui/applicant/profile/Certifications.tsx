@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import {CertParams} from "./SkillAndCompetences.tsx";
 
 interface CertificationProps {
-    handleCertificationRemove: (certification: string) => void;
-    addCertification: (certification: string) => void;
-    certifications: string[];
+    handleCertificationRemove: (certification: CertParams) => void;
+    addCertification: (certification: CertParams) => void;
+    certifications: CertParams[];
 }
 
 const Certifications: React.FC<CertificationProps> = ({
@@ -20,14 +21,18 @@ const Certifications: React.FC<CertificationProps> = ({
         event.preventDefault(); // Prevents page reload
 
         if (certName && institution && year) {
-            const newCertification = `${certName} - ${institution} (${year})`;
-            addCertification(newCertification);
-            setIsModalOpen(false);
+
+            addCertification({certName: certName, institution: institution, year: year});
             setCertName("");
             setInstitution("");
             setYear("");
         }
+
+
     };
+    const formatCertification = (certification: CertParams) => {
+        return `${certification.certName} - ${certification.institution} (${certification.year})`;
+    }
 
     return (
         <div className="flex-1 w-full md:w-1/2">
@@ -50,12 +55,12 @@ const Certifications: React.FC<CertificationProps> = ({
                         </button>
                     </div>
 
-                    {certifications.map((certification) => (
+                    {certifications.map((certification,i) => (
                         <div
-                            key={certification}
+                            key={i}
                             className="px-4 py-2 bg-[#FA4E09] text-white rounded-[10px] flex items-center space-x-2"
                         >
-                            <span>{certification}</span>
+                            <span>{formatCertification(certification)}</span>
                             <button
                                 onClick={() => handleCertificationRemove(certification)}
                                 className="text-white font-semibold hover:bg-red-600 rounded-full"

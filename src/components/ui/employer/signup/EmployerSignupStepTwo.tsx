@@ -15,7 +15,7 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
                                                           handleNext,
                                                           handlePrev,
                                                       }) => {
-    const {formData, setFormData} = useFormStore();
+    const {employer, setEmployerData} = useFormStore();
     const {sendOtp} = useOtp();
     const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
     const [documentType, setDocumentType] = useState<string | undefined>('');
@@ -34,11 +34,9 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
         if (name === "documentType") {
             setDocumentType(value);
         } else {
-            setFormData({
-                employer: {
-                   ...formData.employer,
-                    [name]: value,
-                }
+            setEmployerData({
+                ...employer,
+                [name]: value,
             });
         }
     }
@@ -56,18 +54,14 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
 
             // Update formData based on documentType
             if (documentType === "coverPage") {
-                setFormData({
-                    employer: {
-                        ...formData.employer,
-                        [documentType]: newFiles[0].file,
-                    },
+                setEmployerData({
+                    ...employer,
+                    [documentType]: newFiles[0].file,
                 });
             } else if (documentType === "companyLogo") {
-                setFormData({
-                    employer: {
-                        ...formData.employer,
-                        [documentType]: newFiles[0].file,
-                    },
+                setEmployerData({
+                    ...employer,
+                    [documentType]: newFiles[0].file,
                 });
             }
 
@@ -110,7 +104,7 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
     };
 
     const handleSendOtp = ()=>{
-        sendOtp({ email: formData.employer.companyEmail, name: formData.employer.companyName}, {
+        sendOtp({ email: employer.email, name: employer.companyName}, {
             onSuccess: (data) => {
                 if (data.statusCode === 200) {
                     toast.success(data.message);
@@ -165,7 +159,7 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
                             type="text"
                             className="w-full px-4 py-2 border-[2px] border-[#E6E6E6] rounded-[16px] bg-[#F7F8FA]  outline-none focus:ring-0 focus:border-[2px] focus:border-[#E6E6E6]"
                             name="companyWebsite"
-                            value={formData.employer.companyWebsite}
+                            value={employer.companyWebsite}
                             placeholder="https://example.com"
                             onChange={handleChange}
                             id="company-website"

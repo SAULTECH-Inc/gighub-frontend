@@ -15,7 +15,7 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
                                                             handleNext,
                                                             handlePrev
                                                         }) => {
-    const { formData, setFormData } = useFormStore();
+    const { employer, setEmployerData } = useFormStore();
     const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
     const { verifyOtp,sendOtp, isVerifyingOtp } = useOtp();
     const [isInvalid, setIsInvalid] = useState(false);
@@ -23,13 +23,11 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
         ? { x: [-5, 5, -5, 5, 0] }  // Shake effect, ends smoothly at 0
         : { x: 0 }; // Normal state
     const handleOTPChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-        const updatedOTP = [...formData.employer.otp];
+        const updatedOTP = [...employer.otp];
         updatedOTP[index] = e.target.value;
-        setFormData({
-            employer: {
-                ...formData.employer,
-                ['otp']: updatedOTP.join(''),
-            }
+        setEmployerData({
+            ...employer,
+            ['otp']: updatedOTP.join(''),
         });
 
         if (e.target.value && index < otpRefs.current.length - 1) {
@@ -38,7 +36,7 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
     };
 
     const handleBackspace = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-        if (e.key === "Backspace" && !formData.employer.otp[index] && index > 0) {
+        if (e.key === "Backspace" && !employer.otp[index] && index > 0) {
             otpRefs.current[index - 1]?.focus();
         }
     };
@@ -47,21 +45,23 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
         console.log(index)
         const pastedText = e.clipboardData.getData("Text");
         if (pastedText.length === 6) {
-            const updatedOTP = [...formData.employer.otp];
+            const updatedOTP = [...employer.otp];
             for (let i = 0; i < 6; i++) {
                 updatedOTP[i] = pastedText[i];
             }
-            setFormData({
-                employer: {
-                    ...formData.employer,
-                    ['otp']: updatedOTP.join(''),
-                }
+            setEmployerData({
+                ...employer,
+                ['otp']: updatedOTP.join(''),
             });
         }
     };
 
     const handleContinue = () => {
-        const otp = formData.employer.otp;
+        const otp = employer.otp;
+        if (otp === "") {
+            toast.error("All OTP fields are required.");
+            return;
+        }
 
         verifyOtp({ otp }, {
             onSuccess: (data) => {
@@ -77,11 +77,9 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
                 toast.error(error.message);
                 setTimeout(() => {
                     setIsInvalid(false);
-                    setFormData({
-                        employer: {
-                            ...formData.employer,
-                            otp: "", // Reset OTP field to an empty string
-                        },
+                    setEmployerData({
+                        ...employer,
+                        otp: "", // Reset OTP field to an empty string
                     });
                 }, 500);
             }
@@ -89,7 +87,7 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
     };
 
     const handleOtpResend = ()=>{
-        sendOtp({ email: formData.employer.companyEmail, name: formData.employer.companyName }, {
+        sendOtp({ email: employer.email, name: employer.companyName }, {
             onSuccess: (data) => {
                 if (data.statusCode === 200) {
                     toast.success(data.message);
@@ -126,7 +124,7 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
             >
                 We’ve sent a verification code to your email. Please enter the code to confirm
                 your account and start exploring GigHub.{" "}
-                <span className="text-purple-700">{formData.employer.companyEmail}</span>
+                <span className="text-purple-700">{employer.email}</span>
             </motion.p>
 
             <motion.div
@@ -142,7 +140,7 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
                             key={index}
                             maxLength={1}
                             name={`otp[${index}]`}
-                            value={formData.employer.otp[index] || ''}
+                            value={employer.otp[index] || ''}
                             className="w-[40px] h-[40px] lg:w-[47px] lg:h-[42px] text-center rounded-[10px] border-[1px] border-[#5E5E5E] focus:outline-none focus:ring-0 focus:border-[1px] focus:border-[#5E5E5E]"
                             onChange={(e) => handleOTPChange(e, index)}
                             onKeyDown={(e) => handleBackspace(e, index)}

@@ -1,8 +1,20 @@
 import React from "react";
 import Image7 from '../../../../assets/images/image7.png';
 import Camera from '../../../../assets/icons/Camera.svg';
+import {useAuth} from "../../../../store/useAuth.ts";
+import {useJobPreferenceStore} from "../../../../store/useJobPreferenceStore.ts";
 
 const ApplicantProfileCard: React.FC = () => {
+    const {applicant,updateProfile} = useAuth();
+    const {preferences, addPreference} = useJobPreferenceStore();
+    const handleSaveChanges = async () => {
+        if(applicant){
+            if(preferences){
+                await addPreference(preferences);
+            }
+            await updateProfile(applicant);
+        }
+    }
     return (
 
         <div className="flex items-center justify-between bg-[#6438C2] text-white p-4 rounded-t-[16px] w-full h-[123px] mx-auto">
@@ -22,14 +34,19 @@ const ApplicantProfileCard: React.FC = () => {
                 </div>
                 {/* Details */}
                 <div className="flex flex-col gap-y-1 lg:gap-y-2">
-                    <h2 className="text-[11px] md:text-[20px] lg:text-lg font-semibold">A.S ABUBAKAR</h2>
+                    <h2 className="text-[11px] md:text-[20px] lg:text-lg font-semibold">
+                        {
+                        applicant?.firstName + " " + applicant?.lastName
+                    }</h2>
                     <p className="text-[10px] md:text-[15px] lg:text-sm text-gray-200">Lagos Nigeria</p>
                 </div>
 
             </div>
 
             {/* Save Changes Button */}
-            <button className="bg-white font-lato  p-2 md:py-3 md:px-5 rounded-[16px] lg:py-2 shadow lg:px-6 hover:bg-gray-200 text-[11px] md:text-lg lg:text-[20px] text-[#000000] transition">
+            <button
+                onClick={handleSaveChanges}
+                className="bg-white font-lato  p-2 md:py-3 md:px-5 rounded-[16px] lg:py-2 shadow lg:px-6 hover:bg-gray-200 text-[11px] md:text-lg lg:text-[20px] text-[#000000] transition">
                 Update Profile
             </button>
         </div>

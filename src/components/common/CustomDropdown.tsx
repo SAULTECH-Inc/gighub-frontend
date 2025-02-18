@@ -1,46 +1,42 @@
+// CustomDropdown.tsx
 import React, { useState, useRef, useEffect } from "react";
-
-interface Option {
-    label: string;
-    value: string;
-}
+import {Option} from "../../utils/types";
 
 interface DropdownProps {
     placeholder?: string;
     className?: string;
-
+    options: Option[];
+    handleSelect: (selected: Option) =>void
 }
-const options = [
-    { label: "Apple", value: "apple" },
-    { label: "Banana", value: "banana" },
-    { label: "Cherry", value: "cherry" },
-    { label: "Grapes", value: "grapes" },
-    { label: "Mango", value: "mango" },
-];
-
 
 const CustomDropdown: React.FC<DropdownProps> = ({
                                                      placeholder = "Select an option...",
                                                      className,
+                                                     options,
+                                                 handleSelect,
                                                  }) => {
-
-    const handleSelect = (selected: { label: string; value: string }) => {
-        console.log("Selected:", selected);
-    };
+    // Local state inside the dropdown component
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState("");
     const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
     const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Filter options based on search input
     useEffect(() => {
-        setFilteredOptions(
-            options.filter((option) =>
-                option.label.toLowerCase().includes(search.toLowerCase())
-            )
-        );
+        if (Array.isArray(options)) {
+            setFilteredOptions(
+                options.filter((option) =>
+                    option.label.toLowerCase().includes(search.toLowerCase())
+                )
+            );
+        } else {
+            setFilteredOptions([]); // Fallback for undefined or non-array
+        }
     }, [search, options]);
+
+
 
     // Handle clicking outside the dropdown
     useEffect(() => {
@@ -68,7 +64,7 @@ const CustomDropdown: React.FC<DropdownProps> = ({
 
             {/* Dropdown menu */}
             {isOpen && (
-                <div className="absolute mt-2 w-full bg-white shadow-lg z-10 rounded-[10px] p-3 border-[1px] border-[#E3E6F3] focus:ring-0 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none">
+                <div className="absolute mt-2 w-full bg-white shadow-lg z-10 rounded-[10px] p-3 border-[1px] border-[#E3E6F3]">
                     {/* Search input */}
                     <input
                         type="text"
