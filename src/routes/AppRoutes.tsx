@@ -11,6 +11,10 @@ import EmployerMultistepForm from "../pages/employer/EmployerMultistepForm.tsx";
 import EmployerPublicProfile from "../pages/employer/EmployerPublicProfiles.tsx";
 import ApplicantNavBar from "../components/layouts/ApplicantNavBar.tsx";
 import ManageApplicant from "../pages/applicant/ManageApplicant.tsx";
+import AccountSettings from "../pages/AccountSettings.tsx";
+import PrivacySettings from "../pages/PrivacySettings.tsx";
+import NotificationSettings from "../pages/NotificationSettings.tsx";
+import SubscriptionSettings from "../pages/SubscriptionSettings.tsx";
 import {Login} from "../pages/auth/Login.tsx";
 import PrivateRoute from "../pages/auth/PrivateRoute.tsx";
 
@@ -31,6 +35,10 @@ const AppRoutes = () => {
                 <Route path="/employer/public-profile" element={<EmployerPublicProfile/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/employer/manage-applicants" element={<ManageApplicant/>}/>
+                <Route path="/settings/account-settings" element={<AccountSettings/>}/>
+                <Route path="/settings/privacy-settings" element={<PrivacySettings/>}/>
+                <Route path="/settings/notification-settings" element={<NotificationSettings/>}/>
+                <Route path="/settings/subscription-settings" element={<SubscriptionSettings/>}/>
             </Routes>
         </BrowserRouter>
     );
