@@ -3,9 +3,38 @@ import {MdKeyboardArrowDown, MdKeyboardArrowUp} from "react-icons/md";
 import {AnimatePresence, motion} from "framer-motion";
 import EducationUpdateForm from "./EducationUpdateForm.tsx";
 import {FaRegTrashAlt} from "react-icons/fa";
-
-const EducationDetails: React.FC = ()=>{
+import {ApplicantData, CvResponseDto, EducationResponseDto} from "../../../../utils/types";
+import moment from "moment";
+import {useAuth} from "../../../../store/useAuth.ts";
+import useEducationFormStore from "../../../../store/useEducationFormStore.tsx";
+import {toast} from "react-toastify";
+export interface EductionDetailsProps{
+    education: EducationResponseDto
+}
+const EducationDetails: React.FC<EductionDetailsProps> = ({education})=>{
     const [educationCollapse, setEducationCollapse] = useState<boolean>(false);
+    const {applicant, setProfileData} = useAuth();
+    const {deleteEducation} = useEducationFormStore();
+    const handleDeleteEducation = async ()=>{
+        try {
+            const success = await deleteEducation(education.id || 0, applicant?.id || 0, applicant?.cv?.id || 0);
+            if (success) {
+                toast.success("Education deleted successfully!");
+                const educations: EducationResponseDto[] = [...applicant?.cv?.educations || []];
+                const updatedEducations = educations.filter(edu => edu.id !== education.id);
+                setProfileData({
+                    ...applicant,
+                    cv: {
+                        ...applicant?.cv,
+                        educations: updatedEducations
+                    } as CvResponseDto
+                } as ApplicantData);
+            }
+        } catch (e) {
+            console.error("Failed to delete education:", e);
+            toast.error("Failed to delete education: "+e);
+        }
+    }
     return (<div>
         <div className="relative">
             {/* Education Section */}
@@ -15,8 +44,8 @@ const EducationDetails: React.FC = ()=>{
             >
                 {/* Left Content */}
                 <div className="w-full mb-5">
-                    <p className="text-sm font-semibold">BSc, Mechanical Engineering</p>
-                    <p className="text-sm font-light text-gray-100">Dec 2025 - Dec 2025</p>
+                    <p className="text-sm font-semibold">{education?.degree}, {education?.fieldOfStudy?.toLocaleUpperCase()}</p>
+                    <p className="text-sm font-light text-gray-100">{moment(education?.startDate).format('MMM YYYY')} - {moment(education?.startDate).format('MMM YYYY')}</p>
                 </div>
 
                 {/* Dropdown Button with Options */}
@@ -40,12 +69,12 @@ const EducationDetails: React.FC = ()=>{
                             transition={{duration: 0.5, ease: "easeInOut"}}
                             className="w-full overflow-hidden"
                         >
-                            <EducationUpdateForm/>
+                            <EducationUpdateForm educationData={education}/>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
-            <FaRegTrashAlt className="absolute -right-4 lg:-right-6 text-[11px] top-8 font-light cursor-pointer"/>
+            <FaRegTrashAlt className="absolute -right-4 lg:-right-6 text-[11px] top-8 font-light cursor-pointer" onClick={handleDeleteEducation}/>
         </div>
     </div>);
 }

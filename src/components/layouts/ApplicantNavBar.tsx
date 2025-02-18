@@ -17,8 +17,10 @@ import {GrCircleQuestion} from "react-icons/gr";
 import hamburger from '../../assets/icons/hamburger.svg';
 import avatarIcon from "../../assets/icons/avatar.svg";
 import {RiCloseLargeFill} from "react-icons/ri";
+import {useAuth} from "../../store/useAuth.ts";
 
 const ApplicantNavBar: FC = () => {
+    const {logout} = useAuth();
     const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
     const [isNotificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
     const [isMessageDropdownOpen, setMessageDropdownOpen] = useState(false); // State for MessageDropdown
@@ -29,6 +31,12 @@ const ApplicantNavBar: FC = () => {
     const notificationDropdownRef = useRef<HTMLDivElement>(null);
     const messageDropdownRef = useRef<HTMLDivElement>(null); // Ref for MessageDropdown
     const searchInputRef = useRef<HTMLInputElement>(null); // Ref for Search Input
+    const [activeItem, setActiveItem] = useState<string>("Dashboard");
+
+    const navItems = ["Dashboard", "Find Jobs", "Applications", "My Networks"];
+    const navItemsMobile = ["Dashboard", "Find Jobs", "Applications", "My Networks", "Profile", "Settings", "Help & Support"];
+
+    const navigate = useNavigate();
 
     const toggleProfileDropdown = () => {
         setProfileDropdownOpen((prev) => !prev);
@@ -86,12 +94,7 @@ const ApplicantNavBar: FC = () => {
         };
     }, []);
 
-    const [activeItem, setActiveItem] = useState<string>("Dashboard");
 
-    const navItems = ["Dashboard", "Find Jobs", "Applications", "My Networks"];
-    const navItemsMobile = ["Dashboard", "Find Jobs", "Applications", "My Networks", "Profile", "Settings", "Help & Support"];
-
-    const navigate = useNavigate();
 
     const handleSetItems = (item: string) => {
         console.log(JSON.stringify(item));
@@ -116,6 +119,12 @@ const ApplicantNavBar: FC = () => {
     const handleNavigateHome = () => {
         navigate("/");
     };
+
+    const handleLogout = async ()=>{
+        logout();
+        navigate("/login");
+    }
+
 
     return (
         <>
@@ -289,6 +298,8 @@ const ApplicantNavBar: FC = () => {
 
                     {/* Logout */}
                     <div
+                        onClick={handleLogout}
+
                         className="pl-4 mt-10 flex items-center gap-3 cursor-pointer text-red-500 hover:text-red-700"
 
                     >

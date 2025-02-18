@@ -1,8 +1,15 @@
 import React from "react";
 import JumiaProfile from '../../../../assets/images/JumiaProfile.png';
 import Camera from '../../../../assets/icons/Camera.svg';
+import {useAuth} from "../../../../store/useAuth.ts";
 
 const ProfileCard: React.FC = () => {
+    const {employer, role, updateProfile} = useAuth();
+    const handleSaveChanges = () => {
+        if(employer && role){
+            updateProfile(employer,role);
+        }
+    }
     return (
 
         <div className="flex items-center justify-between bg-[#6438C2] text-white p-4 rounded-t-[16px] w-full h-[123px] mx-auto">
@@ -12,7 +19,7 @@ const ProfileCard: React.FC = () => {
                 {/* Logo */}
                 <div className="relative">
                     <img
-                        src={JumiaProfile} // Replace with your logo URL
+                        src={employer?.companyLogo ? employer.companyLogo : JumiaProfile} // Replace with your logo URL
                         alt="Jumia Logo"
                         className="w-[55px] h-[55px] lg:w-[95px] lg:h-[95px] rounded-full border-[4px] bg-white border-white"
                     />
@@ -22,14 +29,16 @@ const ProfileCard: React.FC = () => {
                 </div>
                 {/* Details */}
                 <div>
-                    <h2 className="text-sm lg:text-lg font-semibold">Jumia Africa</h2>
+                    <h2 className="text-sm lg:text-lg font-semibold">{
+                        employer?.companyName ? employer.companyName : "Jumia Africa"
+                    }</h2>
                     <p className="text-xs lg:text-sm text-gray-200">Lagos Nigeria</p>
                 </div>
 
             </div>
 
             {/* Save Changes Button */}
-            <button className="bg-white font-lato p-2 lg:px-[10px]  rounded-[16px] lg:w-[150px] lg:h-[44px] hover:bg-gray-200 text-sm lg:text-[20px] text-[#000000] transition">
+            <button onClick={handleSaveChanges} className="bg-white font-lato p-2 lg:px-[10px]  rounded-[16px] lg:w-[150px] lg:h-[44px] hover:bg-gray-200 text-sm lg:text-[20px] text-[#000000] transition">
                 Save Changes
             </button>
         </div>

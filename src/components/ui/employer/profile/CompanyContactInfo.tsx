@@ -1,6 +1,8 @@
 import React from "react";
+import {useAuth} from "../../../../store/useAuth.ts";
 
 const CompanyContactInfo: React.FC = ()=>{
+    const {employer} = useAuth();
     return (<section className="mt-4 pt-5 border-t-[2px] border-t-[#E6E6E6]">
         <h3 className="font-lato text-[20px] text-gray-700 mb-4">
             Contact Information
@@ -10,6 +12,7 @@ const CompanyContactInfo: React.FC = ()=>{
                 <label className="text-[16px] text-gray-600 mb-1">Email Address</label>
                 <input
                     type="email"
+                    value={employer?.email || ""}
                     className="rounded-[10px]  bg-[#F7F8FA] w-full p-3 border-[1px] border-[#E3E6F3] focus:ring-0 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none"
                 />
             </div>
@@ -17,6 +20,7 @@ const CompanyContactInfo: React.FC = ()=>{
                 <label className="text-[16px] text-gray-600 mb-1">Phone Number</label>
                 <input
                     type="tel"
+                    value={employer?.companyPhone || ""}
                     className="rounded-[10px]  bg-[#F7F8FA] w-full p-3 border-[1px] border-[#E3E6F3] focus:ring-0 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none"
                 />
             </div>
@@ -24,6 +28,7 @@ const CompanyContactInfo: React.FC = ()=>{
                 <label className="text-[16px] text-gray-600 mb-1">Manager Email</label>
                 <input
                     type="email"
+                    value={employer?.managerEmail || ""}
                     className="rounded-[10px]  bg-[#F7F8FA] w-full p-3 border-[1px] border-[#E3E6F3] focus:ring-0 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none"
                 />
             </div>
@@ -31,6 +36,7 @@ const CompanyContactInfo: React.FC = ()=>{
                 <label className="text-[16px] text-gray-600 mb-1">Manager Phone Number</label>
                 <input
                     type="tel"
+                    value={employer?.managerPhoneNumber || ""}
                     className="rounded-[10px]  bg-[#F7F8FA] w-full p-3 border-[1px] border-[#E3E6F3] focus:ring-0 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none"
                 />
             </div>

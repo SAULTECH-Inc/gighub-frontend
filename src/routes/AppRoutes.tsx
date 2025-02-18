@@ -11,6 +11,8 @@ import EmployerMultistepForm from "../pages/employer/EmployerMultistepForm.tsx";
 import EmployerPublicProfile from "../pages/employer/EmployerPublicProfiles.tsx";
 import ApplicantNavBar from "../components/layouts/ApplicantNavBar.tsx";
 import ManageApplicant from "../pages/applicant/ManageApplicant.tsx";
+import {Login} from "../pages/auth/Login.tsx";
+import PrivateRoute from "../pages/auth/PrivateRoute.tsx";
 
 const AppRoutes = () => {
     return (
@@ -23,10 +25,11 @@ const AppRoutes = () => {
                 <Route path="/user-type-selection" element={<UserTypeSelection/>}/>
                 <Route path="/applicant/signup" element={<ApplicantMultistepForm/>}/>
                 <Route path="/employer/signup" element={<EmployerMultistepForm/>}/>
-                <Route path="/employer/profile" element={<EmployerProfile/>}/>
-                <Route path="/applicant/profile" element={<ApplicantProfile/>}/>
+                <Route path="/employer/profile" element={<PrivateRoute><EmployerProfile/></PrivateRoute>}/>
+                <Route path="/applicant/profile" element={<PrivateRoute><ApplicantProfile/></PrivateRoute>}/>
                 <Route path="/navbar/demo" element={<ApplicantNavBar/>}/>
                 <Route path="/employer/public-profile" element={<EmployerPublicProfile/>}/>
+                <Route path="/login" element={<Login/>}/>
                 <Route path="/employer/manage-applicants" element={<ManageApplicant/>}/>
             </Routes>
         </BrowserRouter>

@@ -1,9 +1,12 @@
-import RichTextEditor from "./RichTextEditor.tsx";
+import RichTextEditor, {RichTextEditorProps} from "./RichTextEditor.tsx";
 import React from "react";
 
-const TextEditor: React.FC = ()=> {
+const TextEditor: React.FC<RichTextEditorProps> = ({
+    value,
+    onChange
+                                                   })=> {
     return (<div className="relative w-full">
-        <RichTextEditor/>
+        <RichTextEditor value={value} onChange={onChange}/>
 
     </div>);
 }

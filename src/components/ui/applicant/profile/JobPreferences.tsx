@@ -1,63 +1,82 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import PreferredLocationSelector from "./PreferedLocationSelector.tsx";
-
-interface JobLocation {
-    country: string;
-    city: string;
-}
-
-export interface JobPreferences {
-    categories: string[];
-    jobType: string[];
-    locations: JobLocation[];
-    salaryExpectation: string;
-}
+import {useJobPreferenceStore} from "../../../../store/useJobPreferenceStore.ts";
+import {JobPreference, Location, SalaryRange} from "../../../../utils/types";
+import {useAuth} from "../../../../store/useAuth.ts";
 
 const JobPreferencesForm: React.FC = () => {
-    const [preferences, setPreferences] = useState<JobPreferences>({
-        categories: [],
-        jobType: [],
-        locations: [],
-        salaryExpectation: "",
-    });
-
+    const {applicant} = useAuth();
+    const {preferences, fetchPreferences, setPreference} = useJobPreferenceStore();
     const categoryOptions = ["UI/UX", "Graphic Design", "Software Engineering", "Marketing"];
     const jobTypeOptions = ["Full Time", "Remote", "Part Time", "Freelance"];
     const countryOptions = ["Nigeria", "USA", "UK", "Canada"];
     const cityOptions = ["Apapa", "Ikeja", "Victoria Island", "Abuja"];
-    const [salaryExpectations, setSalaryExpectations] = useState<{ currency: string; from: number; to: number }[]>([]);
 
-    const [salary, setSalary] = useState({ currency: "NGN", from: 0, to: 0 });
+    const [salary, setSalary] = useState<SalaryRange>({ currency: "NGN", minAmount: 0, maxAmount: 0 });
 
-    const handleCategorySelect = (category: string) => {
-        if (category && !preferences.categories.includes(category)) {
-            setPreferences((prev) => ({
-                ...prev,
-                categories: [...prev.categories, category],
-            }));
+    useEffect(() => {
+        const fetchData = async () => {
+            const success = await fetchPreferences(Number(applicant?.id) || 0);
+            if (success && preferences) {
+                setPreference({
+                    roles: preferences.roles || [],
+                    jobTypes: preferences.jobTypes || [],
+                    locations: preferences.locations || [],
+                    salaryRange: preferences.salaryRange || [],
+                    applicantId: Number(applicant?.id) || 0,
+                });
+            }else{
+                setPreference({
+                    roles: [],
+                    jobTypes: [],
+                    locations: [],
+                    salaryRange: [],
+                    applicantId: Number(applicant?.id) || 0,
+                });
+            }
+        };
+
+        if (applicant?.id) {
+            fetchData();
+        }
+    }, [applicant?.id]);
+
+
+
+
+    const handleRoleSelect = async (category: string) => {
+        if (category && !preferences?.roles?.includes(category)) {
+            setPreference({
+                ...preferences,
+                applicantId: Number(applicant?.id) || 0,
+                roles: [...preferences?.roles as string[], category]
+            });
+        }
+
+
+    };
+
+    const handleJobTypeSelect = async (type: string) => {
+        if (type && !preferences?.jobTypes?.includes(type)) {
+            setPreference({
+                ...preferences,
+                applicantId: Number(applicant?.id) || 0,
+                jobTypes: [...preferences?.jobTypes as string[], type],
+            });
         }
     };
 
-    const handleJobTypeSelect = (type: string) => {
-        if (type && !preferences.jobType.includes(type)) {
-            setPreferences((prev) => ({
-                ...prev,
-                jobType: [...prev.jobType, type],
-            }));
-        }
-    };
-
-    const handleLocationSelect = (country: string, city: string) => {
-        // Only add location if both country and city are selected
+    const handleLocationSelect = async (country: string, city: string) => {
         if (country && city) {
-            const locationExists = preferences.locations.some(
+            const locationExists = preferences?.locations?.some(
                 (loc) => loc.country === country && loc.city === city
             );
             if (!locationExists) {
-                setPreferences((prev) => ({
-                    ...prev,
-                    locations: [...prev.locations, { country, city }],
-                }));
+                setPreference({
+                    applicantId: Number(applicant?.id) || 0,
+                    ...preferences,
+                    locations: [...preferences?.locations as Location[], { country, city }],
+                });
             }
         }
     };
@@ -70,36 +89,48 @@ const JobPreferencesForm: React.FC = () => {
         }));
     };
 
-    const handleAddSalary = () => {
-        if (salary.from > 0 && salary.to > salary.from) {
-            setSalaryExpectations((prev) => [...prev, salary]);
-            setSalary({ currency: "NGN", from: 0, to: 0 });
+    const handleAddSalary = async () => {
+        if (salary.minAmount > 0 && salary.maxAmount > salary.minAmount) {
+            setSalary({ currency: "NGN", minAmount: 0, maxAmount: 0 });
+            setPreference({
+                applicantId: Number(applicant?.id) || 0,
+                ...preferences,
+                salaryRange: [...preferences?.salaryRange as SalaryRange[], salary],
+            });
         }
     };
 
-    const removeSalary = (index: number) => {
-        setSalaryExpectations((prev) => prev.filter((_, i) => i !== index));
+    const removeSalary = async (index: number) => {
+        // setSalaryExpectations((prev) => prev.filter((_, i) => i !== index));
+        setPreference({
+            applicantId: Number(applicant?.id) || 0,
+           ...preferences,
+            salaryRange: preferences?.salaryRange?.filter((_, i) => i!== index),
+        });
     };
 
-    const removeCategory = (index: number) => {
-        setPreferences((prev) => ({
-            ...prev,
-            categories: prev.categories.filter((_, i) => i !== index),
-        }));
+    const removeRole = async (index: number) => {
+        setPreference({
+            applicantId: Number(applicant?.id) || 0,
+           ...preferences,
+            roles: preferences?.roles?.filter((_, i) => i!== index),
+        });
     };
 
-    const removeJobType = (index: number) => {
-        setPreferences((prev) => ({
-            ...prev,
-            jobType: prev.jobType.filter((_, i) => i !== index),
-        }));
+    const removeJobType = async (index: number) => {
+        setPreference({
+            applicantId: Number(applicant?.id) || 0,
+           ...preferences,
+            jobTypes: preferences?.jobTypes?.filter((_, i) => i!== index),
+        });
     };
 
-    const removeLocation = (index: number) => {
-        setPreferences((prev) => ({
-            ...prev,
-            locations: prev.locations.filter((_, i) => i !== index),
-        }));
+    const removeLocation = async (index: number) => {
+        setPreference({
+            applicantId: Number(applicant?.id) || 0,
+           ...preferences,
+            locations: preferences?.locations?.filter((_, i) => i!== index),
+        });
     };
 
     return (
@@ -111,15 +142,17 @@ const JobPreferencesForm: React.FC = () => {
                 {/* Preferred Job Categories */}
                 <div>
                     <label className="block text-lg font-lato text-gray-700 mb-2">
-                        Preferred Job Categories
+                        Preferred Job Roles
                     </label>
                     <div className="border-[1px]  w-full border-[#E6E6E6] rounded-[16px] bg-white p-4">
                         <select
                             className="w-full p-2 border border-[#E6E6E6] rounded-[10px] bg-[#F7F8FA]"
                             value=""
                             onChange={(e) => {
-                                handleCategorySelect(e.target.value);
-                                e.target.value = ""; // Reset to keep the placeholder visible
+                                handleRoleSelect(e.target.value).then(() => {
+                                    e.target.value = "";
+                                });
+
                             }}
                         >
                             <option value="" disabled>
@@ -132,14 +165,15 @@ const JobPreferencesForm: React.FC = () => {
                         </select>
 
                         <div className="mt-4 flex flex-wrap gap-2">
-                            {preferences.categories.map((category, index) => (
+                            {preferences?.roles?.map((category, index) => (
                                 <div
                                     key={index}
                                     className="w-[168px] h-[38px] bg-[#56E5A1] text-white text-sm font-medium flex items-center justify-between px-4 rounded-[10px]"
                                 >
                                     <span>{category}</span>
                                     <button
-                                        onClick={() => removeCategory(index)}
+                                        type="button"
+                                        onClick={() => removeRole(index)}
                                         className="text-white font-bold text-lg"
                                     >
                                         &times;
@@ -150,7 +184,7 @@ const JobPreferencesForm: React.FC = () => {
                     </div>
                 </div>
                 {/*Preferred location selector*/}
-                <PreferredLocationSelector preferences={preferences} cityOptions={cityOptions} handleLocationSelect={handleLocationSelect} removeLocation={removeLocation} countryOptions={countryOptions}/>
+                <PreferredLocationSelector preferences={preferences as JobPreference} cityOptions={cityOptions} handleLocationSelect={handleLocationSelect} removeLocation={removeLocation} countryOptions={countryOptions}/>
 
                 {/* Preferred Job Type */}
                 <div>
@@ -177,13 +211,14 @@ const JobPreferencesForm: React.FC = () => {
                         </select>
 
                         <div className="mt-4 flex flex-wrap gap-2">
-                            {preferences.jobType.map((type, index) => (
+                            {preferences?.jobTypes?.map((type, index) => (
                                 <div
                                     key={index}
                                     className="w-[168px] h-[38px] bg-[#56E5A1] text-white text-sm font-medium flex items-center justify-between px-4 rounded-[10px]"
                                 >
                                     <span>{type}</span>
                                     <button
+                                        type="button"
                                         onClick={() => removeJobType(index)}
                                         className="text-white font-bold text-lg"
                                     >
@@ -216,16 +251,16 @@ const JobPreferencesForm: React.FC = () => {
                             className="w-[30%] md:w-[35%] px-4"
                             type="number"
                             min="10"
-                            value={salary.from || ""}
-                            onChange={(e) => handleSalaryChange("from", e.target.value)}
+                            value={salary.minAmount || ""}
+                            onChange={(e) => handleSalaryChange("minAmount", e.target.value)}
                         />
                         <input
                             placeholder="To"
                             className="w-[30%] md:w-[35%] px-4"
                             type="number"
                             min="10"
-                            value={salary.to || ""}
-                            onChange={(e) => handleSalaryChange("to", e.target.value)}
+                            value={salary.maxAmount || ""}
+                            onChange={(e) => handleSalaryChange("maxAmount", e.target.value)}
                         />
                         <button type="button" className="w-[20%] px-4 bg-[#E6E6E6] text-xs md:text-sm text-purple-950 font-bold text-center" onClick={handleAddSalary}>
                             ADD
@@ -234,10 +269,10 @@ const JobPreferencesForm: React.FC = () => {
 
                     {/* Display Selected Salaries */}
                     <div className="mt-4 flex flex-wrap gap-2">
-                        {salaryExpectations.map((salary, index) => (
+                        {preferences?.salaryRange?.map((salary, index) => (
                             <div key={index} className="w-[250px] h-[38px] bg-[#56E5A1] text-white text-sm font-medium flex items-center justify-between px-4 rounded-[10px]">
                 <span>
-                    {salary.currency} {salary.from} - {salary.to}
+                    {salary.currency} {salary.minAmount} - {salary.maxAmount}
                 </span>
                                 <button type="button" onClick={() => removeSalary(index)} className="text-white font-bold text-lg">
                                     &times;

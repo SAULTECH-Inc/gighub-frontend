@@ -5,27 +5,38 @@ import jobSeekerUser from '../assets/icons/jobSeekerUser.svg'
 import employerUser from '../assets/icons/employerUser.svg'
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import {useAuth} from "../store/useAuth.ts";
+import {UserType} from "../utils/types/enums.ts";
 
 const UserTypeSelection: React.FC = () => {
+    const {isAuthenticated, role} = useAuth();
     const [selectedUserType, setSelectedUserType] = useState<string | null>(null);
     const[userType, setUserType] = useState<string | null>(null);
     const navigator = useNavigate();
 
+    React.useEffect(() => {
+        if (isAuthenticated && role) {
+            navigator(
+                `/${role}/profile`
+            )
+        }
+    }, [isAuthenticated, role]);
+
     const handleAsJobSeeker = () => {
-        setSelectedUserType("jobSeeker");
-        setUserType("jobSeeker");
-        localStorage.setItem("userType", "jobSeeker");
+        setSelectedUserType(UserType.APPLICANT);
+        setUserType(UserType.APPLICANT);
+        localStorage.setItem("userType", UserType.APPLICANT);
     };
 
     const handleAsEmployer = () => {
-        setSelectedUserType("employer");
-        setUserType("employer");
-        localStorage.setItem("userType", "employer");
+        setSelectedUserType(UserType.EMPLOYER);
+        setUserType(UserType.EMPLOYER);
+        localStorage.setItem("userType", UserType.EMPLOYER);
     };
 
     const handleProceed = () => {
         // Navigate to the next step of the application process
-        const route = userType === "jobSeeker" ? "/applicant/signup" : "/employer/signup";
+        const route = userType === UserType.APPLICANT ? "/applicant/signup" : "/employer/signup";
         navigator(route);
     };
 
@@ -60,7 +71,7 @@ const UserTypeSelection: React.FC = () => {
                     >
                         <motion.div
                             onClick={handleAsJobSeeker}
-                            className={`cursor-pointer w-[calc(130px+5px)] lg:w-[137px] h-[145px] flex flex-col items-center justify-evenly border-[1px] rounded-[16px] ${selectedUserType === "jobSeeker" ? "border-purple-600" : "border-[#E6E6E6]"}`}
+                            className={`cursor-pointer w-[calc(130px+5px)] lg:w-[137px] h-[145px] flex flex-col items-center justify-evenly border-[1px] rounded-[16px] ${selectedUserType === "applicant" ? "border-purple-600" : "border-[#E6E6E6]"}`}
                             whileHover={{ scale: 1.05 }}
                         >
                             <img className="mx-auto" src={jobSeekerUser} alt="job seeker" />

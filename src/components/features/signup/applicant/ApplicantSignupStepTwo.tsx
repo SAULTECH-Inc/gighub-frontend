@@ -3,6 +3,7 @@ import { motion } from "framer-motion"; // Import Framer Motion
 import {useFormStore} from "../../../../store/useFormStore.ts";
 import documentAttachment from "../../../../assets/icons/documentAttachment.svg";
 import videoAttachment from "../../../../assets/icons/videoAttachment.svg";
+import {useOtp} from "../../../../hooks/useOtpVerify.ts";
 
 interface StepTwoProp {
     handleNext: () => void;
@@ -13,9 +14,10 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
                                                            handleNext,
                                                            handlePrev,
                                                        }) => {
-    const {formData, setFormData} = useFormStore();
+    const { applicant, setApplicantData } = useFormStore();
+    const {sendOtp} = useOtp();
     const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
-    const [documentType, setDocumentType] = useState<string | undefined>(formData.applicant.documentType);
+    const [documentType, setDocumentType] = useState<string | undefined>(applicant.documentType);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleBrowseClick = () => {
@@ -37,32 +39,24 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
 
             // Update formData based on documentType
             if (documentType === "resume") {
-                setFormData({
-                    applicant: {
-                        ...formData.applicant,
-                        [documentType]: newFiles[0].file,
-                    },
+                setApplicantData({
+                    ...applicant,
+                    [documentType]: newFiles[0].file,
                 });
             } else if (documentType === "coverLetter") {
-                setFormData({
-                    applicant: {
-                        ...formData.applicant,
-                        [documentType]: newFiles[0].file,
-                    },
+                setApplicantData({
+                    ...applicant,
+                    [documentType]: newFiles[0].file,
                 });
             }else if (documentType === "portfolio") {
-                setFormData({
-                    applicant: {
-                        ...formData.applicant,
-                        [documentType]: newFiles[0].file,
-                    },
+                setApplicantData({
+                    ...applicant,
+                    [documentType]: newFiles[0].file,
                 });
             }else if (documentType === "videoCv") {
-                setFormData({
-                    applicant: {
-                        ...formData.applicant,
-                        [documentType]: newFiles[0].file,
-                    },
+                setApplicantData({
+                    ...applicant,
+                    [documentType]: newFiles[0].file,
                 });
             }
 
@@ -112,20 +106,25 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
         if (name === "documentType") {
             setDocumentType(value);
         } else {
-            setFormData({
-                applicant: {
-                    ...formData.applicant,
-                    [name]: value,
-                }
+            setApplicantData({
+                ...applicant,
+                [name]: value,
             });
         }
     }
 
-   
-
-
-
-    
+    const handleProceed =  ()=>{
+        sendOtp({
+            email: applicant.email,
+            name: applicant.firstName + " " + applicant.middleName + " " + applicant.surname,
+        });
+        setTimeout(
+            () => {
+                handleNext();
+            },
+            1000
+        )
+    }
 
     return (
         <motion.div
@@ -265,7 +264,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
                     Back
                 </button>
                 <button
-                    onClick={handleNext}
+                    onClick={handleProceed}
                     className="w-[162px] h-[44px] text-white font-[13px] rounded-[16px] bg-[#6438C2] hover:bg-[#5931A9] focus:outline-none focus:ring-0 focus:border-none"
                 >
                     Proceed

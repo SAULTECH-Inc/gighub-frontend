@@ -13,8 +13,20 @@ import WorkSample from "../../components/ui/applicant/profile/WorkSample.tsx";
 import Verification from "../../components/ui/applicant/profile/Verification.tsx";
 import ApplicantProfileCard from "../../components/ui/applicant/profile/ApplicantProfileCard.tsx";
 import ApplicantProfileSidebar from "../../components/ui/applicant/profile/ApplicantProfileSidebar.tsx";
+import {useAuth} from "../../store/useAuth.ts";
+import {useJobPreferenceStore} from "../../store/useJobPreferenceStore.ts";
 
 const ApplicantProfile: FC = () => {
+    const {applicant,updateProfile} = useAuth();
+    const {preferences, addPreference} = useJobPreferenceStore();
+    const handleSaveChanges = async () => {
+        if(preferences){
+            await addPreference(preferences);
+        }
+        if(applicant){
+            updateProfile(applicant);
+        }
+    }
     return (
         <div className="bg-[#F7F8FA] min-h-screen">
             <ApplicantNavBar />
@@ -46,7 +58,8 @@ const ApplicantProfile: FC = () => {
                         <div className="flex justify-between items-center space-x-4 mt-4 pt-5 border-t-[2px] border-t-[#E6E6E6]">
                             <p className="text-[#6438C2] text-xl font-lato font-semibold">Your profile is 80% Done</p>
                             <button
-                                type="submit"
+                                type="button"
+                                onClick={handleSaveChanges}
                                 className="bg-[#6438C2] block text-white px-6 py-3 rounded-[10px] font-lato text-[20px] text-xl hover:bg-purple-700"
                             >
                                 Update Profile
