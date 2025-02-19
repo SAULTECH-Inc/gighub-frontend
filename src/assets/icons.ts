@@ -35,3 +35,5 @@ export { default as Calendar } from "./icons/calendar-04.svg";
 export { default as Work } from "./icons/work (1).svg";
 export { default as Eye } from "./icons/eye.svg";
 export { default as Download } from "./icons/download-04.svg"; 
+export { default as Delete } from "./icons/delete-02.svg"; 
+export { default as Setting } from "./icons/settings icon.svg"; 

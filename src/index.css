@@ -28,3 +28,13 @@ body {
   background-color: #f0f0f0; /* Light gray background */
   color: black; /* Black text */
 }
+
+
+Add the following CSS in your styles (global or component-specific)
+.truncate-message {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limit to 3 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

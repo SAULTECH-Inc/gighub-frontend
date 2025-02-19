@@ -7,3 +7,6 @@ export { default as Person6 } from "./images/image6.png";
 export { default as Person7 } from "./images/image7.png";
 export { default as Testimonial } from "./images/testimonial.png";
 export { default as Human1 } from "./images/human1.png";
+export { default as Referrer1 } from "./images/referrer1.svg";
+export { default as Referrer2 } from "./images/referrer2.svg";
+export { default as Referrer3 } from "./images/referrer3.svg";
