@@ -9,26 +9,50 @@ import {
   Eye,
   Download,
 } from "../../assets/icons.ts";
-import { Person7 } from "../../assets/images.ts";
+import {
+  Person7,
+  Referrer1,
+  Referrer2,
+  Referrer3,
+} from "../../assets/images.ts";
 import { FaCheck } from "react-icons/fa";
 import { FC } from "react";
+import useModalStore from "../../redux/modalStateStores.ts";
+import ManageApplicantModal from "../../components/ui/ManageApplicantModal.tsx";
+
 
 const ManageApplicant: FC = () => {
+  const { openModal } = useModalStore(); // Access the modals state
+
+  const handleOpenApplicantDetails = ()=>{
+    openModal("manage-applicaint-modal");
+};
+
   return (
     <div className="w-full bg-[#F7F8FA] min-h-screen">
       <ApplicantNavBar />
 
       <div className="w-full flex flex-col items-center">
-        <div className="w-[96%] bg-white rounded-[16px] mt-5">
-          <div className="flex justify-between items-center py-3 px-5">
-            <div className="">
-              <h1 className="text-[#000000] text-[32px] font-bold">
+        <div className="flex  flex-col md:flex-row md:justify-between w-[95%] bg-white rounded-[16px] mt-5">
+          <div className="flex flex-col py-3 px-5">
+            <div className="w-full flex flex-col">
+              <h1 className="text-[#000000] text-[32px] font-bold leading-[28.8px]">
                 Product Designer
               </h1>
               <p className="text-[#8E8E8E]">
                 Open Hiring / Product Designer / Applied
               </p>
             </div>
+            <div className="flex gap-4 py-5">
+              <button className="bg-[#6438C2] text-white py-[9px] px-5 rounded-[10px]">
+                All Applied
+              </button>
+              <button className="text-[#8E8E8E] py-[9px] px-5 rounded-[10px] border border-[#E6E6E6]">
+                Schedule Interview
+              </button>
+            </div>
+          </div>
+          <div className="hidden sm:flex md:flex-col md:items-end md:py-4 items-center justify-between">
             <div className="flex justify-between items-center p-5 gap-4">
               <button className="text-white bg-[#6438C2] py-[9px] px-5 rounded-[10px] transition-all duration-300 ease-out active:scale-95">
                 Close job
@@ -37,28 +61,34 @@ const ManageApplicant: FC = () => {
                 Listed job
               </button>
             </div>
-          </div>
-          <div className="flex justify-between items-center py-3 px-5">
-            <div className="flex gap-4">
-              <button className="bg-[#6438C2] text-white py-[9px] px-5 rounded-[10px]">
-                All Applied
-              </button>
-              <button className="text-[#8E8E8E] py-[9px] px-5 rounded-[10px] border border-[#E6E6E6]">
-                Schedule Interview
-              </button>
-            </div>
-            <div>
-              <button className="flex gap-2 items-center py-3 px-9 rounded-[10px] border border-[#E6E6E6]">
-                <img src={FilterIcon} alt="FilterIcon" />
-                <p className="text-[#8E8E8E] font-extrabold">Filter</p>
-              </button>
-            </div>
+            <button className="min-w-[78px] flex gap-2 items-center py-3 px-9 rounded-[10px] border border-[#E6E6E6] mr-3">
+              <img src={FilterIcon} alt="FilterIcon" />
+              <p className="hidden md:block text-[#8E8E8E] font-extrabold ">
+                Filter
+              </p>
+            </button>
           </div>
         </div>
+        <div className="w-full sm:hidden flex items-center justify-between">
+            <div className="flex justify-between items-center p-5 gap-4">
+              <button className="text-white text-[14px] sm:text-base bg-[#6438C2] py-[9px] px-5 rounded-[10px] transition-all duration-300 ease-out active:scale-95">
+                Close job
+              </button>
+              <button className="text-white text-[14px] sm:text-base bg-[#6438C2] py-[9px] px-5 rounded-[10px] transition-all duration-300 ease-out active:scale-95">
+                Listed job
+              </button>
+            </div>
+            <button className="min-w-[78px] flex gap-2 items-center py-3 px-9 rounded-[10px] border border-[#E6E6E6] mr-3">
+              <img src={FilterIcon} alt="FilterIcon" />
+              <p className="hidden md:block text-[#8E8E8E] font-extrabold ">
+                Filter
+              </p>
+            </button>
+          </div>
       </div>
       <div className="w-full flex flex-col items-center">
-        <div className="flex w-[96%] mt-5 justify-between">
-          <div className="w-[60%] rounded-[16px] bg-white p-4">
+        <div className="flex w-[95%] flex-col md:flex-row my-5 justify-between">
+          <div className="md:w-[60%] rounded-[16px] bg-white p-4">
             <div className="w-full flex flex-col gap-4">
               <p className="font-extrabold text-[20px] text-[#000000]">
                 Application
@@ -82,7 +112,7 @@ const ManageApplicant: FC = () => {
                 </div>
               </div>
               <div className="w-full flex flex-col gap-4">
-                <button className="bg-[#6438C2] rounded-[10px] text-white flex items-center justify-between p-3">
+                <button onClick={handleOpenApplicantDetails} className="bg-[#6438C2] rounded-[10px] text-white flex items-center justify-between p-3">
                   <div className="flex gap-2 items-center">
                     <div className="relative">
                       <div className="absolute right-0 w-[10px] h-[10px] rounded-full bg-[#FA4E09]"></div>
@@ -201,34 +231,45 @@ const ManageApplicant: FC = () => {
                 <img src={Person7} alt="Person7" className="w-full h-full" />
               </div>
             </div>
-            <div className="w-[95%] flex flex-col mx-auto mt-4">
-              <div className="max-w-[364px] bg-[#F4F7FA] rounded-[10px] px-4 py-1 flex self-end gap-4">
-                <p className="text-[#000000] font-extrabold">Referrer</p>
-                <div>
-                  <img src="" alt="" />
-                </div>
-                <p className="text-[#6438C2] font-extrabold">+5 more</p>
-              </div>
-              <div className="flex justify-between my-4">
-                <div className="">
-                  <div className="relative text-[#000000] font-extrabold text-2xl">
-                    A.S Abubakar
-                    <div className="absolute right-[80px] top-0 w-[10px] h-[10px] rounded-full bg-[#FA4E09]"></div>
+            <div className="w-[95%] flex flex-col mx-auto mt-[50px] lg:mt-4">
+              <div className="flex flex-row flex-wrap lg:flex-col-reverse md:justify-between gap-4 md:mb-[35px]">
+                <div className="flex flex-wrap justify-between gap-3">
+                  <div className="min-w-[247px] flex flex-col">
+                    <div className="relative text-[#000000] font-extrabold text-2xl">
+                      A.S Abubakar
+                      <div className="absolute left-[150px] top-0 w-[10px] h-[10px] rounded-full bg-[#FA4E09]"></div>
+                    </div>
+                    <p className="text-[#8E8E8E]  text-[13px]">
+                      I am a Product designer based in yobe state
+                    </p>
                   </div>
-                  <p className="text-[#8E8E8E]  text-[13px]">
-                    I am a Product designer based in yobe state
-                  </p>
+                  <div className="flex gap-2 md:gap-[200px] md:justify-between">
+                  <button className="max-w-[194px] border border-[#6438C2] px-5 rounded-[10px] text-sm md:text-[16px] text-[#6438C2] font-medium">
+                      Watch my video Pitch
+                    </button>
+                    <button className="max-w-[194px] bg-[#6438C2] px-5 py-[9px] rounded-[10px] text-sm md:text-[16px] text-white font-bold">
+                      Schedule Interview
+                    </button>
+                  </div>
                 </div>
-                <button className="border border-[#6438C2] px-5 py-[9px] rounded-[10px] text-[#6438C2] font-medium">
-                  Watch my video Pitch
-                </button>
-                <button className="bg-[#6438C2] px-5 py-[9px] rounded-[10px] text-white font-bold">
-                  Schedule Interview
-                </button>
+                <div className="md:min-w-[364px] mb-4 bg-[#F4F7FA] rounded-[10px] px-4 py-1 flex flex-wrap lg:self-end items-center gap-4">
+                  <p className="text-[#000000] font-extrabold">Referrer</p>
+                  <div className="flex gap-2">
+                    <img src={Referrer1} alt="Referrer1" />
+                    <img src={Referrer2} alt="Referrer2" />
+                    <img src={Referrer2} alt="Referrer3" />
+                    <img src={Referrer3} alt="Referrer4" />
+                    <img src={Referrer1} alt="Referrer5" />
+                    <p className="text-[#6438C2] font-extrabold">+5 </p>
+                    <span className="hidden md:block text-[#6438C2] font-extrabold">
+                      more
+                    </span>
+                  </div>
+                </div>
               </div>
               <hr className="border-[#E6E6E6]" />
               <div className="flex flex-wrap lg:flex-nowrap lg:justify-between gap-4 mt-4">
-                <div className="w-[60%]">
+                <div className="lg:w-[60%]">
                   <div>
                     <h2 className="font-medium text-[20px] text-[#000000]">
                       About Me
@@ -300,7 +341,7 @@ const ManageApplicant: FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="min-w-[319px] h-fit bg-[#F7F8FA] rounded-[16px] p-4 flex flex-col gap-4">
+                <div className="w-[100%] lg:max-w-[319px] h-fit bg-[#F7F8FA] rounded-[16px] p-4 mt-5 flex flex-col gap-4">
                   <h2 className="text-[#000000] text-[20px] font-medium">
                     Application Overview
                   </h2>
@@ -341,22 +382,38 @@ const ManageApplicant: FC = () => {
                     </h2>
                     <div className="bg-white rounded-[10px] py-2 px-4 flex justify-between">
                       <div>
-                        <p className="text-[#8E8E8E] text-[13px] font-medium">AS-cv-updated</p>
-                        <p className="text-[#8E8E8E] text-[13px] font-medium">File Pdf - 9.3 MB</p>
+                        <p className="text-[#8E8E8E] text-[13px] font-medium">
+                          AS-cv-updated
+                        </p>
+                        <p className="text-[#8E8E8E] text-[13px] font-medium">
+                          File Pdf - 9.3 MB
+                        </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <img src={Eye} alt="Eye Icon" className="w-6 h-6"/>
-                        <img src={Download} alt="Download Icon" className="w-6 h-6"/>
+                        <img src={Eye} alt="Eye Icon" className="w-6 h-6" />
+                        <img
+                          src={Download}
+                          alt="Download Icon"
+                          className="w-6 h-6"
+                        />
                       </div>
                     </div>
                     <div className="bg-white rounded-[10px] py-2 px-4 flex justify-between">
                       <div>
-                        <p className="text-[#8E8E8E] text-[13px] font-medium">AS-cv-updated</p>
-                        <p className="text-[#8E8E8E] text-[13px] font-medium">File Pdf - 9.3 MB</p>
+                        <p className="text-[#8E8E8E] text-[13px] font-medium">
+                          AS-cv-updated
+                        </p>
+                        <p className="text-[#8E8E8E] text-[13px] font-medium">
+                          File Pdf - 9.3 MB
+                        </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <img src={Eye} alt="Eye Icon" className="w-6 h-6"/>
-                        <img src={Download} alt="Download Icon" className="w-6 h-6"/>
+                        <img src={Eye} alt="Eye Icon" className="w-6 h-6" />
+                        <img
+                          src={Download}
+                          alt="Download Icon"
+                          className="w-6 h-6"
+                        />
                       </div>
                     </div>
                   </div>
@@ -366,6 +423,7 @@ const ManageApplicant: FC = () => {
           </div>
         </div>
       </div>
+      <ManageApplicantModal modalId="manage-applicaint-modal"/>
     </div>
   );
 };
