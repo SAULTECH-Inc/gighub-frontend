@@ -11,6 +11,8 @@ import EmployerMultistepForm from "../pages/employer/EmployerMultistepForm.tsx";
 import EmployerPublicProfile from "../pages/employer/EmployerPublicProfiles.tsx";
 import ApplicantNavBar from "../components/layouts/ApplicantNavBar.tsx";
 import ManageApplicant from "../pages/applicant/ManageApplicant.tsx";
+import JobSelection from "../pages/applicant/JobSelection.tsx";
+import Notification from "../pages/Notification.tsx"
 import AccountSettings from "../pages/AccountSettings.tsx";
 import PrivacySettings from "../pages/PrivacySettings.tsx";
 import NotificationSettings from "../pages/NotificationSettings.tsx";
@@ -21,6 +23,27 @@ import FilterJob from "../pages/FilterJob.tsx";
 
 
 const AppRoutes = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="*" element={<NotFound />} />
+      <Route path="/applicant/dashboard/network" element={<ApplicantNetwork/>}/>
+      <Route path="/applicant/dashboard/manageapplicant" element={<ManageApplicant/>}/>
+      <Route path="/applicant/dashboard/jobselection" element={<JobSelection/>}/>
+      <Route path="/notification" element={<Notification/>}/>
+      <Route path="/applicant/dashboard" element={<ApplicantDashboard/>}/>
+          <Route path="/user-type-selection" element={<UserTypeSelection/>} />
+          <Route path="/applicant/signup" element={<ApplicantMultistepForm/>}/>
+          <Route path="/employer/signup" element={<EmployerMultistepForm/>}/>
+      <Route path="/employer/profile" element={<EmployerProfile/>}/>
+          <Route path="/applicant/profile" element={<ApplicantProfile/>}/>
+          <Route path="/navbar/demo" element={<ApplicantNavBar/>}/>
+          <Route path="/dashboard/dashboard" element={<EmployerPublicProfile/>}/>
+          <Route path="/employer/public-profile" element={<EmployerPublicProfile/>}/>
+      </Routes>
+    </BrowserRouter>
+  );
     return (
         <BrowserRouter>
             <Routes>
