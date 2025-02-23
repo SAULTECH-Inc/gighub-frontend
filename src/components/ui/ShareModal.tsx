@@ -1,5 +1,5 @@
 import React from 'react';
-import useModalStore from "../../redux/modalStateStores.ts";
+import useModalStore from "../../store/modalStateStores.ts";
 
 interface ShareModalProps {
     modelId: string;

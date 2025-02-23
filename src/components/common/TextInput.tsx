@@ -1,4 +1,4 @@
-import {TextInputProps} from "../../services/types";
+import {TextInputProps} from "../../utils/types";
 import {FC} from "react";
 
 const TextInput: FC<TextInputProps> = ({

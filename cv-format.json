@@ -1,0 +1,99 @@
+{
+  "professionalTitle": "",
+  "professionalSummary": "",
+  "headline": "",
+  "cvLink": "",
+  "coverLetter": "",
+  "applicantNotes": "",
+  "applicationMode": "",
+  "contact": {
+    "email": "",
+    "phone": "",
+    "website": ""
+  },
+  "addresses": [
+    {
+      "street": "",
+      "city": "",
+      "state": "",
+      "zipCode": "",
+      "country": ""
+    }
+  ],
+  "socials": [
+    {
+      "platform": "",
+      "link": ""
+    }
+  ],
+  "educations": [
+    {
+      "institution": "",
+      "degree": "",
+      "startDate": "",
+      "endDate": "",
+      "fieldOfStudy": "",
+      "grade": "",
+      "description": ""
+    }
+  ],
+  "experiences": [
+    {
+      "company": "",
+      "position": "",
+      "startDate": "",
+      "endDate": "",
+      "description": ""
+    }
+  ],
+  "skills": [
+    {
+      "skill": "",
+      "level": "",
+      "description": "",
+      "yearsOfExperience": "",
+      "proficiency": ""
+    }
+  ],
+  "languages": [
+    {
+      "language": "",
+      "level": "",
+      "proficiency": ""
+    }
+  ],
+  "certifications": [
+    {
+      "certification": "",
+      "institution": "",
+      "dateObtained": "",
+      "description": ""
+    }
+  ],
+  "awards": [
+    {
+      "title": "",
+      "recipient": "",
+      "date": "",
+      "description": ""
+    }
+  ],
+  "references": [
+    {
+      "name": "",
+      "title": "",
+      "company": "",
+      "email": "",
+      "phone": "",
+      "relationship": "",
+      "address": ""
+    }
+  ],
+  "testimonials": [
+    {
+      "content": "",
+      "author": "",
+      "jobTitle": ""
+    }
+  ]
+}

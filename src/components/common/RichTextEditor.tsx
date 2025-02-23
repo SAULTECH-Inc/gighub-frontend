@@ -1,11 +1,15 @@
 // RichTextEditor.tsx
-import React, { useState } from "react";
+import React from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Quill's default CSS
 import "./RichTextEditor.css"; // Custom styles if needed
 
-const RichTextEditor: React.FC = () => {
-    const [value, setValue] = useState<string>("");
+export interface RichTextEditorProps{
+    onChange:  React.Dispatch<React.SetStateAction<string>>;
+    value: string;
+}
+const RichTextEditor: React.FC<RichTextEditorProps> = ({onChange, value}) => {
+
 
     const modules = {
         toolbar: [
@@ -23,15 +27,15 @@ const RichTextEditor: React.FC = () => {
     ];
 
     return (
-        <div className="relative p-0 bg-gray-100 rounded-[10px] w-full h-[390px] mx-auto">
-            <p className="absolute right-9 text-[#6438C2] mt-4 text-right text-[16px]">{value.length}/500</p>
+        <div className="relative p-0 bg-gray-100 rounded-[10px] w-full mx-auto">
+            <p className="absolute right-9 text-[#6438C2] mt-4 text-right text-[16px]">{value ? value.length : 0}/500</p>
             <ReactQuill
                 value={value}
-                onChange={setValue}
+                onChange={onChange}
                 modules={modules}
                 formats={formats}
                 placeholder="Start typing..."
-                className="rounded-[10px] h-[356px] font-lato font-light bg-[#F7F8FA]"
+                className="rounded-[10px] max-h-[356px] font-lato font-light bg-[#F7F8FA]"
             />
         </div>
     );

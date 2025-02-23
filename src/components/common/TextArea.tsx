@@ -1,5 +1,5 @@
 import {FC} from "react";
-import {TextAreaProps} from "../../services/types";
+import {TextAreaProps} from "../../utils/types";
 
 const TextArea: FC<TextAreaProps> = ({
                                          label,

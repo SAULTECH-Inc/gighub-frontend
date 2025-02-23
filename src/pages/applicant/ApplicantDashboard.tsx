@@ -5,12 +5,16 @@ import BelowApplicationStats from "../../components/ui/BelowApplicationStats.tsx
 import ApplicantRecentApplications from "../../components/ui/ApplicantRecentApplications.tsx";
 import ApplicantMessages from "../../components/ui/ApplicantMessages.tsx";
 import ApplicantSchedules from "../../components/ui/ApplicantSchedules.tsx";
+import {
+    applicantNavBarItemMap,
+    applicantNavItems, applicantNavItemsMobile,
+} from "../../utils/constants.ts";
 
 export const ApplicantDashboard = () => {
     return (
         <>
             <div className="bg-[#F7F7F7]">
-                <ApplicantNavBar/>
+                <ApplicantNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile} navbarItemsMap={applicantNavBarItemMap}/>
                 <div
                     className="py-6 bg-gray-100 px-3 md:grid md:grid-cols-[1024px_396px] gap-6 min-h-screen items-start justify-center">
                     {/* First Column */}

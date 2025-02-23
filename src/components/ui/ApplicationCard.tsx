@@ -1,6 +1,6 @@
 import React from "react";
 import ViewApplicationMethodModal from "./ViewApplicationMethodModal.tsx";
-import useModalStore from "../../redux/modalStateStores.ts";
+import useModalStore from "../../store/modalStateStores.ts";
 
 
 interface ApplicationCardProps {

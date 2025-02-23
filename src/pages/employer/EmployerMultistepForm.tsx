@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import gighubLogo from "../../assets/icons/gighubLogoSmall.svg";
 import {motion} from "framer-motion";
 import applicantSignupStep1 from "../../assets/icons/applicantSignupStep1.svg";
@@ -8,11 +8,26 @@ import EmployerSignupStepOne from "../../components/ui/employer/signup/EmployerS
 import EmployerSignupStepTwo from "../../components/ui/employer/signup/EmployerSignupStepTwo.tsx";
 import EmployerSignupStepThree from "../../components/ui/employer/signup/EmployerSignupStepThree.tsx";
 import EmployerSignupStepFour from "../../components/ui/employer/signup/EmployerSignupStepFour.tsx";
+import {useAuth} from "../../store/useAuth.ts";
+import {useNavigate} from "react-router-dom";
+import {UserType} from "../../utils/types/enums.ts";
 
 const EmployerMultistepForm: React.FC = ()=>{
     const [step, setStep] = useState(1);
 
-    const handleNext = () => setStep(step + 1);
+    const {isAuthenticated, userType} = useAuth();
+    const navigate = useNavigate();
+    useEffect(
+        () => {
+            if (isAuthenticated && userType === UserType.EMPLOYER) {
+                navigate(`/employer/profile`, { replace: true });
+            }
+        },
+        [isAuthenticated, navigate, userType]
+    );
+    const handleNext = () => {
+        setStep(step + 1);
+    };
     const handlePrev = () => setStep(step - 1);
     return (
         <motion.div
@@ -91,7 +106,7 @@ const EmployerMultistepForm: React.FC = ()=>{
             </div>
 
             {/* Right Section - Image */}
-            <div className="hidden md:block w-1/2 pl-40">
+            <div className="hidden lg:block w-1/2 pl-40">
                 {step === 1 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep1} alt="Step 1" />}
                 {step === 2 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep2} alt="Step 2" />}
                 {step === 3 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep2} alt="Step 3" />}
