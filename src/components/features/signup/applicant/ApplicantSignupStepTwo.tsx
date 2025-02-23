@@ -116,7 +116,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
     const handleProceed =  ()=>{
         sendOtp({
             email: applicant.email,
-            name: applicant.firstName + " " + applicant.middleName + " " + applicant.surname,
+            name: applicant.firstName + " " + applicant.middleName + " ",
         });
         setTimeout(
             () => {

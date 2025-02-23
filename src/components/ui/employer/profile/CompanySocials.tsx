@@ -10,7 +10,7 @@ const CompanySocials: React.FC = ()=>{
         const updatedApplicant: Partial<ApplicantData> = {...applicant as ApplicantData, [name]: value};
         await setProfileData(updatedApplicant);
     }
-    return (<section className="mt-4 pt-5 border-t-[2px] border-t-[#E6E6E6] ">
+    return (<section id="work-sample" className="mt-4 pt-5 border-t-[2px] border-t-[#E6E6E6] ">
 
         <h3 className="font-lato text-[20px] text-gray-700 mb-4">
             Social and Professional Links

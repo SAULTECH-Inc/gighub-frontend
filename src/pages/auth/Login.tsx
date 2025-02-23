@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import loginRight from '../../assets/icons/loginRight.png';
 import googleLogo from '../../assets/icons/gLogo.svg';
 import linkedInLogo from '../../assets/icons/lLogo.svg';
@@ -7,24 +7,32 @@ import gighubLogo from '../../assets/icons/gighubLogoSmall.svg';
 import {useAuth} from "../../store/useAuth.ts";
 import {Link, useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
+import {UserType} from "../../utils/types/enums.ts";
 export const Login = () => {
     const [credentials, setCredentials] = useState({
         email: '',
         password: '',
         rememberMe: false,
     });
-    const {login, userType, error} = useAuth();
+    const {login} = useAuth();
     const navigate = useNavigate();
+    const userType = localStorage.getItem("userType") as UserType;
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         const success = await login(credentials);
         if(success) {
+            console.log("LOGIN AS ::: "+userType);
             const path = `/${userType}/profile`;
-            navigate(path, { replace: true });
+            navigate(path);
         }else{
-            toast.error(error);
+            toast.error("Invalid email or password. Please try again.");
         }
     };
+
+    const handleRememberMe = ()=>{
+        setCredentials((prevState) => ({...prevState, rememberMe:!prevState.rememberMe}));
+    }
+
 
     return (
         <>
@@ -67,8 +75,8 @@ export const Login = () => {
                                 }}
                                 className="bg-[#6438C2] p-3 md focus:outline-none focus:ring-0"
                                 type="checkbox"/>
-                                <span>Remember me</span></div>
-                            <p>Forgot Password?</p>
+                                <span onClick={handleRememberMe}>Remember me</span></div>
+                            <Link to="/forgot-password" className="cursor-pointer">Forgot Password?</Link>
                         </div>
                         <button
                             onClick={handleLogin}

@@ -30,7 +30,7 @@ const ProfessionalSummary: React.FC = () => {
 
 
     return (
-        <section className="mt-4 pt-5 border-t-[2px] border-t-[#E6E6E6] space-y-2">
+        <section id="professional-summary" className="mt-4 pt-5 border-t-[2px] border-t-[#E6E6E6] space-y-2">
             <h3 className="font-lato text-[20px] mb-4">
                 Professional Summary
             </h3>

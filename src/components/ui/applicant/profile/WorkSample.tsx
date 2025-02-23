@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import FileIcon from '../../../../assets/icons/File.svg';
-import LinkIcon from '../../../../assets/icons/LinkIcon.svg';
+import FileIcon from '../../../../assets/icons/fileUploaded.svg';
+import LinkIcon from '../../../../assets/icons/linkedin.svg';
 
 const FileUploadForm: React.FC = () => {
     const [files, setFiles] = useState<File[]>([]);

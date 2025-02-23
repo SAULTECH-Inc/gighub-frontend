@@ -471,3 +471,24 @@ export interface JobPreference {
     salaryRange?: SalaryRange[];
     applicantId?: number;
 }
+
+export interface FileUploadResponse{
+    url?: string;
+    userId?: number;
+    userType?: string;
+}
+
+
+export interface FileUploadRequest {
+    file: File | string;
+    userId: number;
+    userType: string;
+    action: string;
+    whatIsTheItem: string;
+}
+
+export interface PasswordResetRequest{
+    email?: string;
+    password?: string;
+    confirmPassword?: string;
+}

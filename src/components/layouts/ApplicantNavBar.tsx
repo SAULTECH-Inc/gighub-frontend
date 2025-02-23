@@ -1,4 +1,4 @@
-import {FC, useState, useRef, useEffect} from "react";
+import {FC, useEffect, useRef, useState} from "react";
 import GighubLogo from "../../assets/icons/GighubLogo.svg";
 import Avatar from "../common/Avatar.tsx";
 import SearchIcon from "../common/SearchIcon.tsx";
@@ -7,7 +7,7 @@ import MessageNotificationIcon from "../common/MessageNotificationIcon.tsx";
 import ProfileDropdown from "../common/ProfileDropdown.tsx";
 import NotificationDropdown from "../ui/NotificationDropdown.tsx";
 import MessageDropdown from "../ui/MessageDropdown.tsx";
-import {useNavigate} from "react-router-dom"; // Import MessageDropdown
+import {useLocation, useNavigate} from "react-router-dom"; // Import MessageDropdown
 import {AiOutlineDashboard, AiOutlineUser} from "react-icons/ai";
 import {FaPeopleGroup} from "react-icons/fa6";
 import {BsGear, BsPersonWorkspace} from "react-icons/bs";
@@ -18,8 +18,20 @@ import hamburger from '../../assets/icons/hamburger.svg';
 import avatarIcon from "../../assets/icons/avatar.svg";
 import {RiCloseLargeFill} from "react-icons/ri";
 import {useAuth} from "../../store/useAuth.ts";
+import {applicantNavBarItemMap} from "../../utils/constants.ts";
 
-const ApplicantNavBar: FC = () => {
+interface ApplicantNavBarProps {
+    navbarItemsMap: typeof applicantNavBarItemMap;
+    navItems: string[];
+    navItemsMobile: string[];
+
+}
+
+const ApplicantNavBar: FC<ApplicantNavBarProps> = ({
+    navbarItemsMap,
+    navItems,
+    navItemsMobile,
+                                                   }) => {
     const {logout} = useAuth();
     const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
     const [isNotificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
@@ -31,12 +43,12 @@ const ApplicantNavBar: FC = () => {
     const notificationDropdownRef = useRef<HTMLDivElement>(null);
     const messageDropdownRef = useRef<HTMLDivElement>(null); // Ref for MessageDropdown
     const searchInputRef = useRef<HTMLInputElement>(null); // Ref for Search Input
-    const [activeItem, setActiveItem] = useState<string>("Dashboard");
+    const [activeItem, setActiveItem] = useState<string>();
 
-    const navItems = ["Dashboard", "Find Jobs", "Applications", "My Networks"];
-    const navItemsMobile = ["Dashboard", "Find Jobs", "Applications", "My Networks", "Profile", "Settings", "Help & Support"];
+
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const toggleProfileDropdown = () => {
         setProfileDropdownOpen((prev) => !prev);
@@ -94,27 +106,17 @@ const ApplicantNavBar: FC = () => {
         };
     }, []);
 
-
+    useEffect(() => {
+        if(activeItem){
+            navigate(navbarItemsMap.get(activeItem) || location.pathname);
+        }
+    },[activeItem]);
 
     const handleSetItems = (item: string) => {
         console.log(JSON.stringify(item));
-        setActiveItem(item);
-        switch (item) {
-            case "Dashboard":
-                navigate("/applicant/dashboard");
-                break;
-            case "Find Jobs":
-                navigate("/find-jobs");
-                break;
-            case "Applications":
-                navigate("/applications");
-                break;
-            case "My Networks":
-                navigate("/my-networks");
-                break;
-            default:
-                break;
-        }
+        setActiveItem(() => {
+            return item;
+        });
     };
     const handleNavigateHome = () => {
         navigate("/");

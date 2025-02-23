@@ -19,7 +19,7 @@ export const privateApiClient: AxiosInstance = axios.create({
 
 privateApiClient.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('auth-token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -33,14 +33,14 @@ privateApiClient.interceptors.response.use(
     async (error) => {
         if (error.response && error.response.status === 401) {
             try {
-                const refreshResponse = await publicApiClient.post('/refresh-token', {}, { withCredentials: true });
+                const refreshResponse = await publicApiClient.post('/auth/refresh-token', {}, { withCredentials: true });
                 const newAccessToken = refreshResponse.data.data.token;
-                localStorage.setItem('token', newAccessToken);
+                localStorage.setItem('auth-token', newAccessToken);
                 error.config.headers.Authorization = `Bearer ${newAccessToken}`;
                 return privateApiClient.request(error.config);
             } catch (error: any) {
-                localStorage.removeItem('token');
-                window.location.href = '/login';
+                localStorage.removeItem('auth-token');
+                window.location.href = 'login';
                 throw error;
             }
         }

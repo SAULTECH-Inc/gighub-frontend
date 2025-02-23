@@ -9,29 +9,26 @@ import {useAuth} from "../store/useAuth.ts";
 import {UserType} from "../utils/types/enums.ts";
 
 const UserTypeSelection: React.FC = () => {
-    const {isAuthenticated, role} = useAuth();
+    const {isAuthenticated, userType, setUserType} = useAuth();
     const [selectedUserType, setSelectedUserType] = useState<string | null>(null);
-    const[userType, setUserType] = useState<string | null>(null);
     const navigator = useNavigate();
 
     React.useEffect(() => {
-        if (isAuthenticated && role) {
+        if (isAuthenticated && userType) {
             navigator(
-                `/${role}/profile`
+                `/${userType}/profile`
             )
         }
-    }, [isAuthenticated, role]);
+    }, [isAuthenticated, userType]);
 
     const handleAsJobSeeker = () => {
         setSelectedUserType(UserType.APPLICANT);
         setUserType(UserType.APPLICANT);
-        localStorage.setItem("userType", UserType.APPLICANT);
     };
 
     const handleAsEmployer = () => {
         setSelectedUserType(UserType.EMPLOYER);
         setUserType(UserType.EMPLOYER);
-        localStorage.setItem("userType", UserType.EMPLOYER);
     };
 
     const handleProceed = () => {

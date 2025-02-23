@@ -43,15 +43,12 @@ const EmployerSignupStepFour: React.FC<StepTwoProp> = ({ handlePrev }) => {
         console.log("DATA TO BE SUBMITTED ::: ", employer);
 
         // Call signup function (no need to pass employer data, Zustand store handles it)
-        await signup(UserType.EMPLOYER);
+        const success = await signup(UserType.EMPLOYER);
 
-        // ✅ Ensure state updates before checking success
-        setTimeout(() => {
-            if (useAuth.getState().signupSuccess) {
-                openModal("application-signup-success-modal");
-                resetFormData();
-            }
-        }, 100);
+        if(success){
+            openModal("employer-signup-success-modal");
+            resetFormData();
+        }
     };
 
     return (
@@ -121,9 +118,9 @@ const EmployerSignupStepFour: React.FC<StepTwoProp> = ({ handlePrev }) => {
             </motion.div>
 
             {/* Success Modal */}
-            {isModalOpen("application-signup-success-modal") && (
+            {isModalOpen("employer-signup-success-modal") && (
                 <ApplicantSignupSuccessModal
-                    modelId="application-signup-success-modal"
+                    modelId="employer-signup-success-modal"
                     route="/employer/profile"
                 />
             )}

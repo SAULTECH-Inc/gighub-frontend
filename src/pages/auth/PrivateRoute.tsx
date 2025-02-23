@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../store/useAuth.ts";
 import React from "react";
 import {UserType} from "../../utils/types/enums.ts";
@@ -9,20 +9,21 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, allowedTypes }) => {
-    const { isAuthenticated, userType, setRedirectPath } = useAuth();
-    const location = useLocation();
-
-    if (!isAuthenticated) {
+    const { isAuthenticated, setRedirectPath } = useAuth();
+    const userType = localStorage.getItem("userType") as UserType;
+    const isAllowed = allowedTypes ? allowedTypes.includes(userType) : true;
+    console.log("UserType :: ", userType);
+    console.log("Is Allowed :: ", isAllowed);
+    const navigate = useNavigate();
+    React.useEffect(() => {
+        if (!isAuthenticated && userType) {
+            navigate(`/login`);
+        }
+    }, [isAuthenticated, navigate, userType]);
+    React.useEffect(() => {
         setRedirectPath(location.pathname);
-        return <Navigate to="/login" replace />;
-    }
-
-    if (allowedTypes && (!userType || !allowedTypes.includes(userType))) {
-        const userRole = allowedTypes[0] === UserType.APPLICANT? "/applicant/dashboard" : "/dashboard";
-        return <Navigate to={`${userRole}`} replace />;
-    }
-
-    return children;
+    }, [location.pathname]);
+    return isAllowed? children : null;
 };
 
 export default PrivateRoute;

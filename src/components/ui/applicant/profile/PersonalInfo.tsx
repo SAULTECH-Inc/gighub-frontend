@@ -56,7 +56,7 @@ const PersonalInfo: React.FC = () => {
         await setProfileData(updatedApplicant);
     }
     return (
-        <section className="mt-4 pt-5 border-t-[2px] border-t-[#E6E6E6]">
+        <section id="personal-info" className="mt-4 pt-5 border-t-[2px] border-t-[#E6E6E6]">
             <h3 className="font-lato text-[20px] mb-4">
                 Personal Information
             </h3>
@@ -124,8 +124,7 @@ const PersonalInfo: React.FC = () => {
                         <label className="text-sm text-gray-600 mb-1">Country</label>
                         <CustomDropdown
                             options={countries}
-                            value={country}
-                            onChange={setCountry}
+                            handleSelect={setCountry}
                             placeholder={applicant?.country || ""}
                             className="rounded-[10px] h-12 text-start  bg-[#F7F8FA] w-full p-3 border-[1px] border-[#E3E6F3] focus:ring-0 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none"
                         />
@@ -135,8 +134,7 @@ const PersonalInfo: React.FC = () => {
                         <label className="text-sm text-gray-600 mb-1">City</label>
                         <CustomDropdown
                             options={cities}
-                            value={city}
-                            onChange={setCity}
+                            handleSelect={setCity}
                             placeholder={applicant?.city || ""}
                             className="rounded-[10px] h-12 text-start  bg-[#F7F8FA] w-full p-3 border-[1px] border-[#E3E6F3] focus:ring-0 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none"
                         />

@@ -5,6 +5,7 @@ import { calculatePasswordStrength } from "../../../../utils/helpers.ts";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import {Link} from "react-router-dom";
 
 // Define the Zod schema
 const schema = z.object({
@@ -247,7 +248,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-                Already have an account? <span className="font-bold text-[#6E4AEDEE]">Sign-in</span>
+                Already have an account? <Link className="font-bold text-[#6E4AEDEE]" to="/login">Sign-in</Link>
             </motion.div>
         </motion.div>
     );
