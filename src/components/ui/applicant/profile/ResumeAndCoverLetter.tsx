@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import videoIcon from '../../../../assets/icons/video.svg';
-import fileIcon from '../../../../assets/icons/File.svg';
+import fileIcon from '../../../../assets/icons/fileUploaded.svg';
 
 const ResumeAndCoverLetter: React.FC = () => {
     const [documentName, setDocumentName] = useState<string>("");
@@ -39,7 +39,7 @@ const ResumeAndCoverLetter: React.FC = () => {
     };
 
     return (
-        <section className="w-full pt-5 border-t-[2px] border-t-[#E6E6E6] space-y-3">
+        <section id="resume-cover-letter" className="w-full pt-5 border-t-[2px] border-t-[#E6E6E6] space-y-3">
             <h3 className="text-xl">Resume and Cover Letter</h3>
 
             <div className="w-full space-y-6">

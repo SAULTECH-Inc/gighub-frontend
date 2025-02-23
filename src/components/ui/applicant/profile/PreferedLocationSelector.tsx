@@ -1,9 +1,9 @@
 import React, {useState} from "react";
-import {JobPreferences} from "./JobPreferences.tsx";
+import {JobPreference} from "../../../../utils/types";
 interface LocationSelectorProp{
     countryOptions: string[];
     cityOptions: string[];
-    preferences: JobPreferences;
+    preferences: JobPreference;
     handleLocationSelect: (country: string, city: string) => void;
     removeLocation: (index: number) => void;
 }
@@ -73,7 +73,7 @@ const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                    {preferences.locations.map((location, index) => (
+                    {preferences?.locations?.map((location, index) => (
                         <div
                             key={index}
                             className="w-[168px] h-[38px] bg-[#56E5A1] text-white text-sm font-medium flex items-center justify-between px-4 rounded-[10px]"

@@ -16,7 +16,7 @@ const ApplicantSignupSuccessModal: React.FC<ApplicantSignupSuccessModalProd> = (
                                                                                     // Other props...
                                                                                 }) => {
     const navigate = useNavigate();
-    const {formData} = useFormStore();
+    const {employer} = useFormStore();
     const { closeModal } = useModalStore();
     const isOpen = useModalStore().modals[modelId];
     if (!isOpen) return null;
@@ -43,7 +43,7 @@ const ApplicantSignupSuccessModal: React.FC<ApplicantSignupSuccessModalProd> = (
                 />
                 <h1 className="text-[24px] text-[#FA4E09] font-bold">Congratulations!</h1>
                 <p className="text-[13px] text-[#000000] text-center px-12">
-                    Congratulations, <b>{formData.employer.companyName.toUpperCase()}! 🎉</b> Click "Complete Your Profile" to update your details,
+                    Congratulations, <b>{employer.companyName.toUpperCase()}! 🎉</b> Click "Complete Your Profile" to update your details,
                     unlock tailored job recommendations, and take bold steps toward your career goals!
                 </p>
                 <button

@@ -1,8 +1,7 @@
-import axios, {AxiosInstance, InternalAxiosRequestConfig} from 'axios';
+import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5173';
 
-// Public API Client (No Authentication)
 export const publicApiClient: AxiosInstance = axios.create({
     baseURL,
     headers: {
@@ -10,7 +9,6 @@ export const publicApiClient: AxiosInstance = axios.create({
     },
 });
 
-// Private API Client (Requires Authentication)
 export const privateApiClient: AxiosInstance = axios.create({
     baseURL,
     headers: {
@@ -21,11 +19,31 @@ export const privateApiClient: AxiosInstance = axios.create({
 
 privateApiClient.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('auth-token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
     (error) => Promise.reject(error)
+);
+
+privateApiClient.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        if (error.response && error.response.status === 401) {
+            try {
+                const refreshResponse = await publicApiClient.post('/auth/refresh-token', {}, { withCredentials: true });
+                const newAccessToken = refreshResponse.data.data.token;
+                localStorage.setItem('auth-token', newAccessToken);
+                error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+                return privateApiClient.request(error.config);
+            } catch (error: any) {
+                localStorage.removeItem('auth-token');
+                window.location.href = 'login';
+                throw error;
+            }
+        }
+        return Promise.reject(error);
+    }
 );

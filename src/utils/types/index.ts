@@ -1,4 +1,5 @@
 import React, {ButtonHTMLAttributes, ChangeEvent} from "react";
+import {UserType} from "./enums.ts";
 
 export type User = {
     id: string;
@@ -90,19 +91,14 @@ export interface ProgressBarProps {
 }
 
 
-export enum UserType{
-    EMPLOYER='EMPLOYER',
-    APPLICANT='APPLICANT'
-}
-
 export interface EmployerSignupRequest{
     companyName: string;
     companyDescription: string;
     companyWebsite: string;
-    companyEmail: string;
+    email: string;
     password: string;
     otp: string;
-    phone: string;
+    companyPhone: string;
     coverPage: File | null;
     companyLogo: File | null;
 }
@@ -126,4 +122,373 @@ export interface ApplicantSignupRequest{
 export interface LoginRequest{
     email: string;
     password: string;
+}
+
+export interface Permission{
+    id: number;
+    name: string;
+    description: string;
+}
+
+
+export interface Role {
+    id: number;
+    name: string;
+    description: string;
+    permissions: Permission[];
+}
+
+export interface EmployerData {
+    companyName: string;
+    companyDescription: string;
+    email: string;
+    companyWebsite: string;
+    companySize: number;
+    country: string;
+    city: string;
+    isVerified: boolean;
+    isActive: boolean;
+    isBlocked: boolean;
+    role: Role;
+    userType: UserType | null;
+    token: string | null;
+    companyPhone: string | null;
+    companyAddress: string | null;
+    industry: string | null;
+    numberOfEmployees: number | null;
+    companyLogo: string | null;
+    coverPage: string | null;
+    aboutCompany: string | null;
+    companyRegistrationNumber: string | null;
+    governmentIdentificationNumber: string | null;
+    taxIdentificationNumber: string | null;
+    brandAndVisuals: string | null;
+    facebookProfile: string | null;
+    linkedInProfile: string | null;
+    twitterProfile: string | null;
+    instagramProfile: string | null;
+    youtubeProfile: string | null;
+    githubProfile: string | null;
+    managerRole: string | null;
+    managerEmail: string | null;
+    managerPhoneNumber: string | null;
+    id: string;
+    createdBy: string;
+    updatedBy: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface ApplicantData {
+    firstName: string | null;
+    lastName: string  | null;
+    middleName: string | null;
+    email: string | null;
+    phoneNumber: string | null;
+    country: string | null;
+    city: string | null;
+    dateOfBirth: string | null;
+    address: string | null;
+    professionalTitle: string | null;
+    isVerified: boolean;
+    isActive: boolean;
+    isBlocked: boolean;
+    role: Partial<Role>;
+    userType: Partial<UserType>;
+    cv: CvResponseDto;
+    token: string | null;
+    profilePicture: string | null;
+    coverLetter: string | null;
+    governmentIdentificationNumber: string | null;
+    facebookProfile: string | null;
+    linkedInProfile: string | null;
+    twitterProfile: string | null;
+    instagramProfile: string | null;
+    youtubeProfile: string | null;
+    githubProfile: string | null;
+    id: number;
+    createdBy: string;
+    updatedBy: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+
+
+
+export interface ContactResponseDto {
+    email: string;
+    phone: string;
+    website: string;
+}
+
+
+export interface AddressResponseDto {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+}
+
+
+export interface EducationResponseDto {
+    id?: number;
+    institution?: string;
+    degree?: string;
+    country?: string;
+    city?: string;
+    startDate?: Date;
+    endDate?: Date;
+    fieldOfStudy?: string;
+    grade?: string;
+    description?: string;
+}
+
+export interface AddEducationRequestDto {
+    education: EducationResponseDto;
+    applicantId: number;
+    cvId: number;
+}
+
+
+export interface ExperienceResponseDto {
+    company: string;
+    position: string;
+    startDate: Date;
+    endDate: Date;
+    description: string;
+}
+
+
+export interface SkillsResponseDto {
+    id?: number;
+    skill?: string;
+    level?: string;
+    description?: string;
+    yearsOfExperience?: string;
+    proficiency?: string;
+}
+
+
+export interface LanguageResponseDto {
+    language: string;
+    level: string;
+    proficiency: string;
+}
+
+
+export interface CertificationResponseDto {
+    id?: number;
+    certification?: string;
+    institution?: string;
+    dateObtained?: string;
+    description?: string;
+    yearsOfExperience?: string;
+    proficiency?: string;
+}
+
+
+export interface AwardResponseDto {
+
+    title: string;
+
+
+    recipient: string;
+
+
+    date: Date;
+
+
+    description: string;
+}
+
+
+export interface ReferenceResponseDto {
+
+    name: string;
+
+
+    title: string;
+
+
+    company: string;
+
+
+    email: string;
+
+
+    phone: string;
+
+
+    relationship: string;
+
+
+    address: string;
+}
+
+export interface TestimonialResponseDto {
+    content: string;
+    author: string;
+    jobTitle: string;
+}
+
+export interface SocialsResponseDto {
+    platform: string;
+    link: string;
+}
+
+
+
+export interface CvResponseDto {
+    id: number;
+    professionalTitle: string | null;
+    professionalSummary: string | null;
+    headline: string | null;
+    cvLink: string | null;
+    coverLetter: string | null;
+    applicantNotes: string | null;
+    applicationMode: CVType | null;
+    contact: ContactResponseDto | null;
+    addresses: AddressResponseDto[] | null;
+    socials: SocialsResponseDto[] | null;
+    educations: EducationResponseDto[] | null;
+    experiences: ExperienceResponseDto[] | null;
+    skills: SkillsResponseDto[] | null;
+    languages: LanguageResponseDto[] | null;
+    certifications: CertificationResponseDto[] | null;
+    awards: AwardResponseDto[] | null;
+    references: ReferenceResponseDto[] | null;
+    testimonials: TestimonialResponseDto[] | null;
+}
+
+export enum CVType {
+    UPLOADED='uploaded',
+    LINKED='linked',
+    EXTERNAL='external',
+    OTHER='other',
+    FILLED_FORM='filled form',
+}
+
+export const institutions: Option[] = [
+    {label: "Stanford University", value: "Stanford"},
+    {label: "Harvard University", value: "Harvard"},
+    {label: "MIT", value: "MIT"},
+    {label: "UCLA", value: "UCLA"},
+    {label: "Berkeley", value: "Berkeley"},
+    {label: "Princeton University", value: "Princeton"},
+    {label: "UCI", value: "UCI"},
+    {label: "Yale University", value: "Yale"},
+    {label: "Columbia University", value: "Columbia"},
+    {label: "Dartmouth College", value: "Dartmouth"},
+    {label: "Cornell University", value: "Cornell"},
+    {label: "Oxford University", value: "Oxford"},
+];
+export const countries: Option[] = [
+    {label: "Australia", value: "Australia"},
+    {label: "Nigeria", value: "Nigeria"},
+    {label: "India", value: "India"},
+    {label: "United States", value: "United States"},
+    {label: "United Kingdom", value: "United Kingdom"},
+    {label: "Canada", value: "Canada"},
+];
+export const cities: Option[] = [
+    {label: "New York City", value: "NYC"},
+    {label: "Los Angeles", value: "LA"},
+    {label: "Chicago", value: "Chicago"},
+    {label: "Houston", value: "Houston"},
+    {label: "Philadelphia", value: "Philadelphia"},
+    {label: "San Francisco", value: "SF"},
+    {label: "Seattle", value: "Seattle"},
+    {label: "Boston", value: "Boston"},
+    {label: "Washington D.C.", value: "Washington"},
+    {label: "Atlanta", value: "Atlanta"},
+    {label: "Dallas", value: "Dallas"},
+    {label: "San Diego", value: "San Diego"},
+    {label: "San Jose", value: "San Jose"},
+]
+export const fieldsOfStudies: Option[] = [
+    {label: "Computer Science", value: "Computer Science"},
+    {label: "Business Administration", value: "Business Administration"},
+    {label: "Engineering", value: "Engineering"},
+    {label: "Humanities", value: "Humanities"},
+    {label: "Psychology", value: "Psychology"},
+    {label: "Marketing", value: "Marketing"},
+];
+export const classOfDegrees: Option[] = [
+    {label: "B.ENG", value: "B.ENG"},
+    {label: "B.SC", value: "B.SC"},
+    {label: "B.A.", value: "B.A."},
+    {label: "B.COM", value: "B.COM"},
+    {label: "M.ENG", value: "M.ENG"},
+    {label: "M.SC", value: "M.SC"},
+    {label: "M.A.", value: "M.A."},
+    {label: "M.COM", value: "M.COM"},
+    {label: "Ph.D.", value: "Ph.D."},
+    {label: "Other", value: "Other"},
+];
+
+
+export interface Location {
+    country: string;
+    city: string;
+}
+
+export interface SalaryRange {
+    currency: string;
+    minAmount: number;
+    maxAmount: number;
+}
+
+export interface JobPreferenceRequest {
+    id?: number; // Optional for creating a new preference
+    roles?: string[];
+    jobTypes?: string[];
+    locations?: Location[];
+    salaryRange?: SalaryRange[];
+    applicantId: number;
+}
+
+
+export interface JobPreferenceResponse {
+    id: number;
+    roles: string[] | [];
+    jobTypes: string[] | [];
+    locations: Location[] | [];
+    salaryRange: SalaryRange[] | [];
+}
+
+export interface Location {
+    country: string;
+    city: string;
+}
+
+
+export interface JobPreference {
+    roles?: string[];
+    jobTypes?: string[];
+    locations?: Location[];
+    salaryRange?: SalaryRange[];
+    applicantId?: number;
+}
+
+export interface FileUploadResponse{
+    url?: string;
+    userId?: number;
+    userType?: string;
+}
+
+
+export interface FileUploadRequest {
+    file: File | string;
+    userId: number;
+    userType: string;
+    action: string;
+    whatIsTheItem: string;
+}
+
+export interface PasswordResetRequest{
+    email?: string;
+    password?: string;
+    confirmPassword?: string;
 }
