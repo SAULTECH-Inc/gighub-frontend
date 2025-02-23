@@ -47,7 +47,7 @@ const Header = () => {
           {getHeaderContent()}
 
           <div className="flex items-center gap-4 lg:gap-9">
-            <h1 className="font-lato font-bold max-lg:text-[13px]">Login</h1>
+            <Link className="font-lato font-bold max-lg:text-[13px] cursor-pointer" to="login">Login</Link>
             <Button onClick={()=>proceed()} className="max-lg:py-2 max-lg:px-5 lg:py-[10px] lg:px-10">Try it now</Button>
           </div>
         </div>

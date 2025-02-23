@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { publicApiClient } from "../api/axios.ts";
+import {toast} from "react-toastify";
 
 interface VerifyOtpParams {
     otp: string;
@@ -37,10 +38,10 @@ const verifyOtp = async (data: VerifyOtpParams): Promise<VerifyOtpResponse> => {
         params: data,
     })
         .then((response) => {
-            return response.data;
+            return response?.data;
         })
         .catch((error) => {
-            throw error.response?.data || new Error("Unknown error occurred");
+            throw error?.response?.data || new Error("Unknown error occurred");
         });
 };
 
@@ -48,9 +49,11 @@ export const useOtp = () => {
     const sendOtpMutation = useMutation({
         mutationFn: sendOtp,
         onSuccess: (data) => {
+            toast.success(data?.message)
             console.log("OTP Sent:", data);
         },
         onError: (error) => {
+            toast.error(error?.message)
             console.error("OTP Sending Failed:", error);
         },
     });

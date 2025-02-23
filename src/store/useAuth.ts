@@ -1,160 +1,410 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { ApplicantSignupRequest, EmployerSignupRequest } from "../utils/types";
+import {create} from "zustand";
+import {persist} from "zustand/middleware";
 import {toast} from "react-toastify";
+import {useFormStore} from "./useFormStore";
+import {ApplicantData, EmployerData, PasswordResetRequest, Role} from "../utils/types";
+import {UserType} from "../utils/types/enums.ts";
+import {privateApiClient, publicApiClient} from "../api/axios.ts";
+import {immer} from "zustand/middleware/immer";
+import secureLocalStorage from "react-secure-storage";
+
+
+// ✅ Import the form store
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5173";
-
-export type UserRole = "employer" | "applicant";
 
 export interface LoginRequest {
     email: string;
     password: string;
 }
 
-export type SignupRequest = EmployerSignupRequest | ApplicantSignupRequest;
-
 export interface AuthData {
     isAuthenticated: boolean;
-    user: any | null;
-    role: UserRole | null;
+    redirectPath: string | null;
+    employer: EmployerData | null;
+    email: string | null;
+    otp: string | null;
+    applicant: ApplicantData | null;
+    loginRequest: LoginRequest | null;
+    passwordResetRequest: PasswordResetRequest | null;
+    role: Role | null;
+    userType: UserType | null ;
     loading: boolean;
     error: string | null;
-    login: (data: LoginRequest, role: UserRole) => void;
-    signup: (data: SignupRequest, role: UserRole) => void;
-    logout: () => void;
+    signupSuccess: boolean;
+    login: (data: LoginRequest) => Promise<boolean>;
+    signup: (userType: UserType) => Promise<boolean>;
+    updateProfile: (data: Partial<EmployerData> | Partial<ApplicantData>)=> void;
+    setProfileData: (data: Partial<EmployerData> | Partial<ApplicantData>)=>void;
+    setUserType: (userType: UserType)=>void;
+    setEmail: (email: string)=>void;
+    setOtp: (otp: string)=>void;
+    verifyAccount: (email: string, action: string) => Promise<boolean>;
+    verifyOtp: (email: string, otp: string) => Promise<boolean>;
+    sendOtp: (email: string) => Promise<boolean>;
+    setPasswordResetRequest: (data: PasswordResetRequest)=>void;
+    resetPassword: (data: PasswordResetRequest) => Promise<boolean>;
+    logout: () => Promise<boolean>;
+    setRedirectPath: (path: string)=>void;
 }
 
-// Zustand Store
 export const useAuth = create<AuthData>()(
     persist(
-        (set) => {
-            // Get initial token and role from localStorage
-            const token = localStorage.getItem("auth-token");
-            const role = localStorage.getItem("auth-role") as UserRole | null;
+        immer<AuthData>((set, ) => ({
+            isAuthenticated: !!secureLocalStorage.getItem("auth-token"),
+            redirectPath: null,
+            signupSuccess: false,
+            employer: null,
+            applicant: null,
+            role: secureLocalStorage.getItem("auth-role") as Role | null,
+            userType: secureLocalStorage.getItem("userType") as UserType | null,
+            email: null,
+            otp: null,
+            loginRequest: null,
+            passwordResetRequest: null,
+            loading: false,
+            error: null,
 
-            return {
-                isAuthenticated: !!token,
-                user: null,
-                role,
-                loading: false,
-                error: null,
+            login: async (data) => {
+                set((state) => {
+                    state.loading = true;
+                    state.error = null;
+                });
 
-                // Login Function
-                login: async (data, role) => {
-                    set({ loading: true, error: null });
+                try {
+                    const response = await privateApiClient.post(`${API_BASE_URL}/auth/login`, data);
+                    const userData: ApplicantData | EmployerData = response.data.data;
+                    set((state) => {
+                        state.isAuthenticated = true;
+                        state.role = userData.role as Role;
+                        state.userType = userData.userType;
 
-                    try {
-                        const response = await axios.post(`${API_BASE_URL}/auth/${role}/login`, data);
-                        const userData = response.data.user;
-
-                        set({
-                            isAuthenticated: true,
-                            user: userData,
-                            role,
-                            loading: false,
-                        });
-
-                        // ✅ Store in localStorage
-                        localStorage.setItem("auth-token", userData.token);
-                        localStorage.setItem("auth-role", role);
-                    } catch (err: any) {
-                        set({ error: err.response?.data?.message || "Login failed", loading: false });
-                    }
-                },
-
-                // Signup Function
-                signup: async (data, role) => {
-                    set({ loading: true, error: null });
-
-                    try {
-                        const employer = data as EmployerSignupRequest;
-                        const form = new FormData();
-
-                        form.append("companyName", employer.companyName);
-                        form.append("companyDescription", employer.companyDescription);
-                        form.append("companyWebsite", employer.companyWebsite);
-                        form.append("companyEmail", employer.companyEmail);
-                        form.append("password", employer.password);
-                        form.append("otp", employer.otp);
-                        form.append("phone", employer.phone);
-
-                        if (employer.coverPage instanceof File) {
-                            form.append("coverPage", employer.coverPage);
+                        if (userData.userType === UserType.EMPLOYER) {
+                            state.employer = userData as EmployerData;
+                            state.applicant = null;
                         } else {
-                            console.error("coverPage is not a valid file");
+                            state.applicant = userData as ApplicantData;
+                            state.employer = null;
                         }
 
-                        if (employer.companyLogo instanceof File) {
-                            form.append("companyLogo", employer.companyLogo);
+                        state.loading = false;
+                    });
+
+                    secureLocalStorage.setItem("auth-token", userData.token as string);
+                    secureLocalStorage.setItem("auth-role", JSON.stringify(userData.role));
+                    secureLocalStorage.setItem("userType", userData.userType as  string);
+                    return true;
+                } catch (err: any) {
+                    set((state) => {
+                        state.error = err.response?.data?.message || "Login failed";
+                        state.loading = false;
+                    });
+
+                    toast.error(err.response?.data?.message || "Login failed");
+                }
+                return false;
+            },
+
+            signup: async (userType) => {
+                const { applicant, employer } = useFormStore.getState();
+                set((state) => {
+                    state.loading = true;
+                    state.error = null;
+                    state.signupSuccess = false;
+                });
+
+                try {
+                    const form = new FormData();
+                    const formData = userType === UserType.EMPLOYER ? employer : applicant;
+
+                    Object.entries(formData).forEach(([key, value]) => {
+                        if(key !== "otp" && key!== "confirmPassword"){
+                            if (value !== null) form.append(key, value);
+                        }
+                    });
+
+                    const response = await publicApiClient.post(
+                        `${API_BASE_URL}/auth/${userType}/signup`,
+                        form,
+                        { headers: { "Content-Type": "multipart/form-data" } }
+                    );
+
+                    const userData: ApplicantData | EmployerData = response.data.data;
+                    set((state) => {
+                        state.isAuthenticated = true;
+                        state.role = userData.role as Role;
+                        state.userType = userData.userType as UserType;
+
+                        if (userData.userType === UserType.EMPLOYER) {
+                            state.employer = userData as EmployerData;
+                            state.applicant = null;
                         } else {
-                            console.error("companyLogo is not a valid file");
+                            state.applicant = userData as ApplicantData;
+                            state.employer = null;
                         }
 
-                        const response = await axios.post(`${API_BASE_URL}/auth/${role}/signup`, form, {
-                            headers: {
-                                "Content-Type": "multipart/form-data",
+                        state.loading = false;
+                    });
+
+                    secureLocalStorage.setItem("auth-token", userData.token as string);
+                    secureLocalStorage.setItem("auth-role", JSON.stringify(userData.role));
+                    secureLocalStorage.setItem("userType", JSON.stringify(userData.userType));
+                    return true;
+                } catch (err: any) {
+                    toast.error(err.response?.data?.message || "Signup failed");
+
+                    set((state) => {
+                        state.error = err.response?.data?.message || "Signup failed";
+                        state.signupSuccess = false;
+                        state.isAuthenticated = false;
+                        state.loading = false;
+                    });
+                }
+                return false;
+            },
+
+            updateProfile: async (data: Partial<EmployerData> | Partial<ApplicantData>) => {
+                set((state) => {
+                    state.loading = true;
+                    state.error = null;
+                });
+
+                try {
+                    const app = data as ApplicantData;
+                    console.log("FORM DATA ::: " + JSON.stringify(app));
+                    const form = new FormData();
+
+                    Object.entries(app).forEach(([key, value]) => {
+                        if (value !== null && value !== undefined) {
+                            if (typeof value === "object") {
+                                // Handle nested objects/arrays
+                                form.append(key, JSON.stringify(value));
+                            } else {
+                                form.append(key, value as any);
+                            }
+                        }
+                    });
+
+                    console.log("FORM DATA :: " + JSON.stringify(form));
+
+
+
+                    const response = await privateApiClient.patch(
+                        `${API_BASE_URL}/auth/update-profile`,
+                        form,
+                        { headers: { "Content-Type": "multipart/form-data" } }
+                    );
+
+                    toast.success(response.data.message);
+
+                    set((state) => {
+                        state.loading = false;
+                        state.error = null;
+
+                        if (state.userType === UserType.EMPLOYER) {
+                            state.employer = {
+                                ...state.employer,
+                                ...response.data.data,
+                            };
+                        } else {
+                            state.applicant = {
+                                ...state.applicant,
+                                ...response.data.data,
+                            };
+                        }
+
+                    });
+                } catch (err: any) {
+                    toast.error(err.response?.data?.message || "Profile update failed");
+
+                    set((state) => {
+                        state.error = err.response?.data?.message || "Profile update failed";
+                        state.loading = false;
+                    });
+                }
+            },
+
+            setProfileData: (data) => {
+                set((state) => {
+                    if (state.userType === UserType.APPLICANT && state.applicant) {
+                        const asApplicant = data as ApplicantData;
+                        return {
+                            applicant: {
+                                ...state.applicant,
+                                ...asApplicant,
+                                // Ensure nested CV and role updates are safely merged
+                                cv: {
+                                    ...state.applicant.cv,
+                                    ...asApplicant.cv,
+                                },
+                                role: {
+                                    ...state.applicant.role,
+                                    ...asApplicant.role,
+                                },
                             },
-                        });
-
-                        console.log("Signup success:", response.data);
-                    } catch (err: any) {
-                        console.log("Signup error:", err);
-                        toast.error(err.response?.data?.message || "Signup failed")
-                        set({ error: err.response?.data?.message || "Signup failed" });
-                    } finally {
-                        set({ loading: false });
+                        };
                     }
-                },
+                    return {};
+                });
+            },
+            setUserType: (userType) => {
+                secureLocalStorage.setItem("userType", JSON.stringify(userType));
+                set((state) => {
+                    state.userType = userType;
+                });
+            },
+            setEmail: (email) => {
+                set((state) => {
+                    state.email = email;
+                    secureLocalStorage.setItem("email", email);
+                });
+            },
+            setOtp: (otp) => {
+                set((state) => {
+                    state.otp = otp;
+                    secureLocalStorage.setItem("otp", otp);
+                });
+            },
+            verifyAccount: async (email: string, action: string) => {
+                set((state) => {
+                    state.loading = true;
+                    state.error = null;
+                });
 
-                // Logout Function
-                logout: async () => {
-                    try {
-                        await axios.post(`${API_BASE_URL}/auth/logout`);
-                    } catch (err) {
-                        console.error("Logout error:", err);
-                    }
+                try {
+                    await publicApiClient.get(`${API_BASE_URL}/auth/send-verification-otp?email=${email}&action=${action}`);
+                    toast.success("Account verification link sent successfully.");
+                    return true;
+                } catch (err: any) {
+                    toast.error(err.response?.data?.message || "Verification failed");
+                    set((state) => {
+                        state.error = err.response?.data?.message || "Verification failed";
+                        state.loading = false;
+                    });
+                }
+                return false;
+            },
+            verifyOtp: async (email: string, otp: string) => {
+                set((state) => {
+                    state.loading = true;
+                    state.error = null;
+                });
 
-                    // ✅ Remove from localStorage
-                    localStorage.removeItem("auth-token");
-                    localStorage.removeItem("auth-role");
+                try {
+                    await publicApiClient.get(`${API_BASE_URL}/auth/otp/verify`, {
+                        params: { email: email, otp: otp },
+                    });
+                    secureLocalStorage.setItem("email", email);
+                    set((state) => {
+                        state.email = email;
+                        state.loading = false;
+                    });
+                    toast.success("OTP verified successfully.");
+                    return true;
+                } catch (err: any) {
+                    toast.error(err.response?.data?.message || "OTP verification failed");
+                    set((state) => {
+                        state.error = err.response?.data?.message || "OTP verification failed";
+                        state.loading = false;
+                    });
+                }
+                return false;
+            },
+            sendOtp: async (email: string) => {
+                set((state) => {
+                    state.loading = true;
+                    state.error = null;
+                });
 
-                    set({ isAuthenticated: false, user: null, role: null });
-                },
-            };
-        },
+                try {
+                    await publicApiClient.post(`${API_BASE_URL}/auth/send-otp`, { email: email });
+                    toast.success("OTP sent successfully.");
+                    return true;
+                } catch (err: any) {
+                    toast.error(err.response?.data?.message || "OTP sending failed");
+                    set((state) => {
+                        state.error = err.response?.data?.message || "OTP sending failed";
+                        state.loading = false;
+                    });
+                }
+                return false;
+            },
+            setPasswordResetRequest: async (data: PasswordResetRequest) => {
+                set((state) => {
+                    state.passwordResetRequest = data;
+                });
+            },
+            resetPassword: async (data: PasswordResetRequest) => {
+                set((state) => {
+                    state.loading = true;
+                    state.error = null;
+                });
+
+                try {
+                    await publicApiClient.post(`${API_BASE_URL}/auth/reset-password`, data);
+                    toast.success("Password reset successful.");
+                    return true;
+                } catch (err: any) {
+                    toast.error(err.response?.data?.message || "Password reset failed");
+                    set((state) => {
+                        state.error = err.response?.data?.message || "Password reset failed";
+                        state.loading = false;
+                    });
+                }
+                return false;
+            },
+
+            logout: async () => {
+                try {
+                    await privateApiClient.post(`${API_BASE_URL}/auth/logout`);
+                    secureLocalStorage.removeItem("auth-token");
+                    secureLocalStorage.removeItem("auth-role");
+                    secureLocalStorage.removeItem("userType");
+                    secureLocalStorage.removeItem("auth-storage");
+                    secureLocalStorage.removeItem("job-preference-store");
+                    secureLocalStorage.removeItem("redirectPath");
+
+
+                    set((state) => {
+                        state.isAuthenticated = false;
+                        state.employer = null;
+                        state.applicant = null;
+                        state.role = null;
+                        state.userType = null;
+                        state.loading = false;
+                        state.error = null;
+                    });
+                    return true;
+                } catch (error: any) {
+                    console.error("Logout error:", error);
+                    set((state)=>{
+                        state.error = error.response?.data?.message || "Error while logging out"
+                    })
+                }
+                return false;
+
+            },
+
+            setRedirectPath: (path) => {
+                set((state) => {
+                    state.redirectPath = path;
+                });
+            },
+        })),
         {
             name: "auth-storage",
             partialize: (state) => ({
                 isAuthenticated: state.isAuthenticated,
-                user: state.user,
+                employer: state.employer,
+                applicant: state.applicant,
+                signupSuccess: state.signupSuccess,
+                email: state.email,
+                otp: state.otp,
+                passwordResetRequest: state.passwordResetRequest,
+                redirectPath: state.redirectPath,
+                userType: state.userType,
                 role: state.role,
             }),
         }
     )
 );
-
-// Fetch User Session (React Query)
-export const useUser = () => {
-    const token = localStorage.getItem("auth-token");
-
-    return useQuery({
-        queryKey: ["user"],
-        queryFn: async () => {
-            if (!token) return null;
-
-            try {
-                const { data } = await axios.get(`${API_BASE_URL}/me`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                return data;
-            } catch (error: any) {
-                localStorage.removeItem("auth-token"); // Remove invalid token
-                throw new Error("Session expired. Please log in again." + JSON.stringify(error));
-            }
-        },
-        enabled: !!token,
-    });
-};

@@ -1,143 +1,176 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import {useFormStore} from "../../../../store/useFormStore.ts";
+import { useFormStore } from "../../../../store/useFormStore.ts";
 import { calculatePasswordStrength } from "../../../../utils/helpers.ts";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {Link} from "react-router-dom";
+
+// Define the Zod schema
+const schema = z.object({
+    companyName: z.string().min(1, "Company Name is required"),
+    email: z.string().email("Invalid email address"),
+    companyPhone: z.string().min(1, "Phone is required"),
+    password: z
+        .string()
+        .min(8, "Password must be at least 8 characters long")
+        .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+        .regex(/[0-9]/, "Password must contain at least one number")
+        .regex(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least one special character")
+    ,
+    confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"], // Attach error to the confirmPassword field
+});
+
+// Infer the type of the form data from the schema
+type FormData = z.infer<typeof schema>;
 
 interface StepOneProp {
     handleNext: () => void;
 }
 
-const EmployerSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
-    const { formData, setFormData } = useFormStore();
+const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
+    const { employer, setEmployerData } = useFormStore();
     const [passwordStrength, setPasswordStrength] = useState(0);
-    const [passwordVisible, setPasswordVisible] = useState(false); // for toggling password visibility
-    const [confirmPassword, setConfirmPassword] = useState(""); // for confirm password
-    const [passwordMatch, setPasswordMatch] = useState(true); // for password match validation
+    const [passwordVisible, setPasswordVisible] = useState(false);
+
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm<FormData>({
+        resolver: zodResolver(schema),
+        defaultValues: {
+            companyName: employer.companyName,
+            email: employer.email,
+            companyPhone: employer.companyPhone,
+            password: employer.password,
+            confirmPassword: employer.confirmPassword,
+        },
+    });
+
+   const password = watch("password");
+
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault();
-        handleChange(e);
         const strength = calculatePasswordStrength(e.target.value);
         setPasswordStrength(strength);
-    };
-
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        const { name, value } = e.target;
-        setFormData({
-            employer: {
-                ...formData.employer,
-                [name]: value,
-            }
-        });
-    };
-
-    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setConfirmPassword(e.target.value);
-        setPasswordMatch(e.target.value === formData.employer.password); // validate password match
     };
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
     };
 
-    const handleProceed = ()=>{
-        setPasswordMatch(confirmPassword === formData.employer.password);
-        if (passwordMatch) {
-            handleNext();
-        }
-    }
+    const onSubmit = (data: FormData) => {
+        // Update the global form store
+        setEmployerData({
+            ...employer,
+            companyName: data.companyName,
+            email: data.email,
+            companyPhone: data.companyPhone,
+            password: data.password,
+            confirmPassword: data.confirmPassword,
+        });
+
+        // Proceed to the next step
+        handleNext();
+    };
 
     return (
         <motion.div
             className="w-[310px] md:w-[680px] lg:w-[500px] mt-5 md:mr-28 md:mt-32 px-[10px] lg:px-0"
-            initial={{opacity: 0}}
-            animate={{opacity: 1}}
-            exit={{opacity: 0}}
-            transition={{duration: 0.5}}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
         >
             {/* Form Fields */}
             <motion.div
                 className="mx-auto flex flex-col text-center mb-[30px]"
-                initial={{y: -50}}
-                animate={{y: 0}}
-                transition={{duration: 0.5}}
+                initial={{ y: -50 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.5 }}
             >
                 <h2 className="text-[24px] font-semibold mb-4">Company Profile Setup</h2>
             </motion.div>
 
-            {/* Name Fields */}
+            {/* Name Field */}
             <motion.div
                 className="w-full flex gap-2"
-                initial={{x: -50}}
-                animate={{x: 0}}
-                transition={{duration: 0.5}}
+                initial={{ x: -50 }}
+                animate={{ x: 0 }}
+                transition={{ duration: 0.5 }}
             >
-                <div className="flex flex-col flex-1">
+                <div className="flex flex-col flex-1 mb-4">
                     <label className="block text-[#000000] text-[13px] font-medium mb-2">Company Name</label>
                     <input
                         type="text"
-                        name="companyName"
-                        value={formData.employer.companyName}
-                        onChange={handleChange}
-                        className="w-full py-2 px-5 mb-4 rounded-[16px] h-[45px] border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6]"
+                        {...register("companyName")}
+                        className={`w-full py-2 px-5 rounded-[16px] h-[45px] border-[1px] focus:ring-0 focus:outline-none focus:border-[1px] ${
+                            errors.companyName ? "border-red-500" : "border-[#E6E6E6]"
+                        }`}
                     />
                 </div>
             </motion.div>
 
-
+            {/* Email Field */}
             <motion.div
                 className="w-full flex gap-2"
-                initial={{x: -50}}
-                animate={{x: 0}}
-                transition={{duration: 0.5}}
+                initial={{ x: -50 }}
+                animate={{ x: 0 }}
+                transition={{ duration: 0.5 }}
             >
-                <div className="flex flex-col flex-1">
+                <div className="flex flex-col flex-1 mb-4">
                     <label className="block text-[#000000] text-[13px] font-medium mb-2">Email Address</label>
                     <input
                         type="text"
-                        name="companyEmail"
-                        value={formData.employer.companyEmail}
-                        onChange={handleChange}
-                        className="w-full py-2 px-5 mb-4 border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6] rounded-[16px] h-[45px]"
+                        {...register("email")}
+                        className={`w-full py-2 px-5 rounded-[16px] h-[45px] border-[1px] focus:ring-0 focus:outline-none focus:border-[1px] ${
+                            errors.email ? "border-red-500" : "border-[#E6E6E6]"
+                        }`}
                     />
                 </div>
             </motion.div>
 
+            {/* Phone Field */}
             <motion.div
                 className="w-full flex gap-2"
-                initial={{x: -50}}
-                animate={{x: 0}}
-                transition={{duration: 0.5}}
+                initial={{ x: -50 }}
+                animate={{ x: 0 }}
+                transition={{ duration: 0.5 }}
             >
-                <div className="flex flex-col flex-1">
+                <div className="flex flex-col flex-1 mb-4">
                     <label className="block text-[#000000] text-[13px] font-medium mb-2">Phone</label>
                     <input
                         type="text"
-                        name="phone"
-                        value={formData.employer.phone}
-                        onChange={handleChange}
-                        className="w-full py-2 px-5 mb-4 rounded-[16px] h-[45px] border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6]"
+                        {...register("companyPhone")}
+                        className={`w-full py-2 px-5 rounded-[16px] h-[45px] border-[1px] focus:ring-0 focus:outline-none focus:border-[1px] ${
+                            errors.companyPhone ? "border-red-500" : "border-[#E6E6E6]"
+                        }`}
                     />
                 </div>
             </motion.div>
 
             {/* Password Field */}
             <motion.div
-                className="w-full flex flex-col"
-                initial={{x: -50}}
-                animate={{x: 0}}
-                transition={{duration: 0.5}}
+                className="w-full flex flex-col mb-4"
+                initial={{ x: -50 }}
+                animate={{ x: 0 }}
+                transition={{ duration: 0.5 }}
             >
                 <label className="block text-[#000000] text-[13px] font-medium mb-2">Password</label>
                 <div className="relative">
                     <input
                         type={passwordVisible ? "text" : "password"}
-                        name="password"
-                        value={formData.employer.password}
+                        {...register("password")}
                         onChange={handlePasswordChange}
-                        className="w-full py-2 px-5 mb-4 border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6] rounded-[16px] h-[45px]"
+                        className={`w-full py-2 px-5 rounded-[16px] h-[45px] border-[1px] focus:ring-0 focus:outline-none focus:border-[1px] ${
+                            errors.password ? "border-red-500" : "border-[#E6E6E6]"
+                        }`}
                     />
                     <button
                         type="button"
@@ -151,32 +184,32 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
 
             {/* Confirm Password Field */}
             <motion.div
-                className="w-full flex flex-col"
-                initial={{x: -50}}
-                animate={{x: 0}}
-                transition={{duration: 0.5}}
+                className="w-full flex flex-col mb-4"
+                initial={{ x: -50 }}
+                animate={{ x: 0 }}
+                transition={{ duration: 0.5 }}
             >
                 <label className="block text-[#000000] text-[13px] font-medium mb-2">Confirm Password</label>
                 <div className="relative">
                     <input
+
                         type={passwordVisible ? "text" : "password"}
+                        {...register("confirmPassword")}
+                        className={`w-full py-2 px-5 rounded-[16px] h-[45px] border-[1px] focus:ring-0 focus:outline-none focus:border-[1px] ${
+                            errors.confirmPassword ? "border-red-500" : "border-[#E6E6E6]"
+                        }`}
+                        disabled={!password}
                         name="confirmPassword"
-                        value={confirmPassword}
-                        onChange={handleConfirmPasswordChange}
-                        className="w-full py-2 px-5 mb-4 border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6] rounded-[16px] h-[45px]"
                     />
-                    {!passwordMatch && (
-                        <p className="text-red-500 text-xs mt-1">Passwords do not match</p>
-                    )}
                 </div>
             </motion.div>
 
             {/* Password Strength Indicator */}
             <motion.div
                 className="mt-[2px] mb-[30px]"
-                initial={{y: 50}}
-                animate={{y: 0}}
-                transition={{duration: 0.5}}
+                initial={{ y: 50 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.5 }}
             >
                 <div className="flex justify-evenly gap-x-2">
                     {[1, 2, 3, 4, 5].map((index) => (
@@ -195,15 +228,14 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
 
             {/* Proceed Button */}
             <motion.div
-                initial={{opacity: 0}}
-                animate={{opacity: 1}}
-                transition={{duration: 0.5}}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
             >
                 <button
                     type="button"
-                    onClick={handleProceed}
+                    onClick={handleSubmit(onSubmit)}
                     className="w-full py-3 text-white font-[13px] rounded-[16px] bg-[#6E4AED] hover:bg-[#5931A9] focus:outline-none focus:ring-0 focus:border-none"
-                    disabled={!passwordMatch}
                 >
                     Proceed
                 </button>
@@ -212,11 +244,11 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
             {/* Sign-in Link */}
             <motion.div
                 className="mt-[20px] text-[13px] text-center text-[#737373]"
-                initial={{y: 50}}
-                animate={{y: 0}}
-                transition={{duration: 0.5}}
+                initial={{ y: 50 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.5 }}
             >
-                Already have an account? <span className="font-bold text-[#6E4AEDEE]">Sign-in</span>
+                Already have an account? <Link className="font-bold text-[#6E4AEDEE]" to="/login">Sign-in</Link>
             </motion.div>
         </motion.div>
     );
