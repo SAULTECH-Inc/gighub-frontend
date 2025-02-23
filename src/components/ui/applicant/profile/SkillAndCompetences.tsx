@@ -126,7 +126,7 @@ const SkillsAndCompetences: React.FC = () => {
 
 
     return (
-        <section className="w-full pt-5 border-t-[2px] border-t-[#E6E6E6] space-y-3">
+        <section id="skills-competences" className="w-full pt-5 border-t-[2px] border-t-[#E6E6E6] space-y-3">
             <div className="w-full space-y-6">
                 <h3 className="text-xl">Skills and Competences</h3>
                 <div className="w-full flex flex-col md:flex-row md:justify-evenly md:items-start md:gap-x-8 space-y-4 md:space-y-0">

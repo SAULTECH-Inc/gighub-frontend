@@ -15,7 +15,7 @@ const Education: React.FC = () => {
         }
     }, [applicant, educations]);
     return (
-        <section className="mt-4 pt-5 border-t-[2px] border-t-[#E6E6E6] space-y-3">
+        <section id="education" className="mt-4 pt-5 border-t-[2px] border-t-[#E6E6E6] space-y-3">
             <h3 className="font-lato text-[20px] mb-4">
                 Education
             </h3>

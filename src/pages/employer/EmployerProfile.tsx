@@ -1,5 +1,5 @@
 import {FC} from "react";
-import EmployerProfileSidebar from "../../components/ui/EmployerProfileSidebar.tsx";
+import EmployerProfileSidebar from "../../components/ui/employer/profile/EmployerProfileSidebar.tsx";
 import CompanyInfo from "../../components/ui/employer/profile/CompanyInfo.tsx";
 import CompanyContactInfo from "../../components/ui/employer/profile/CompanyContactInfo.tsx";
 import CompanyBrandingVisualIdentity from "../../components/ui/employer/profile/CompanyBrandingVisualIdentity.tsx";
@@ -8,10 +8,11 @@ import CompanySocials from "../../components/ui/employer/profile/CompanySocials.
 import ComplianceAndVerification from "../../components/ui/employer/profile/ComplianceAndVerification.tsx";
 import ProfileCard from "../../components/ui/employer/profile/ProfileCard.tsx";
 import ApplicantNavBar from "../../components/layouts/ApplicantNavBar.tsx";
+import {employerNavBarItemMap, employerNavItems, employerNavItemsMobile} from "../../utils/constants.ts";
 const EmployerProfile: FC = () => {
     return (
         <div className="bg-[#F7F8FA] mx-auto">
-            <ApplicantNavBar/>
+            <ApplicantNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
             <div className="flex justify-center bg-gray-100 min-h-screen pt-6 mx-auto gap-x-10 px-2 lg:px-5">
                 {/* Sidebar */}
                 <EmployerProfileSidebar/>

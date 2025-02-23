@@ -134,7 +134,7 @@ const JobPreferencesForm: React.FC = () => {
     };
 
     return (
-        <section className="pt-5 border-t-[2px] border-t-[#E6E6E6] space-y-3">
+        <section id="job-preferences" className="pt-5 border-t-[2px] border-t-[#E6E6E6] space-y-3">
         <div className="w-full bg-white rounded-lg mx-auto space-y-3">
             <h2 className="text-2xl font-bold font-lato text-gray-800">Job Preferences</h2>
 

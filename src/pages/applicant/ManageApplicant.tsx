@@ -17,8 +17,9 @@ import {
 } from "../../assets/images.ts";
 import { FaCheck } from "react-icons/fa";
 import { FC } from "react";
-import useModalStore from "../../redux/modalStateStores.ts";
 import ManageApplicantModal from "../../components/ui/ManageApplicantModal.tsx";
+import useModalStore from "../../store/modalStateStores.ts";
+import {employerNavBarItemMap, employerNavItems, employerNavItemsMobile} from "../../utils/constants.ts";
 
 
 const ManageApplicant: FC = () => {
@@ -30,7 +31,7 @@ const ManageApplicant: FC = () => {
 
   return (
     <div className="w-full bg-[#F7F8FA] min-h-screen">
-      <ApplicantNavBar />
+      <ApplicantNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
 
       <div className="w-full flex flex-col items-center">
         <div className="flex  flex-col md:flex-row md:justify-between w-[95%] bg-white rounded-[16px] mt-5">

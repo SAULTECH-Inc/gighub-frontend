@@ -1,6 +1,7 @@
-import JobMatchCard from "../features/JobMatchCard.tsx";
 import {FC} from "react";
 import ApplicationSummary from "./ApplicationSummary.tsx";
+import JobMatchCard from "../features/JobMatchCard.tsx";
+
 
 const BelowApplicationStats: FC = ()=>{
     return <>

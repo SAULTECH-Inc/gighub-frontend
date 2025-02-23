@@ -2,10 +2,11 @@ import {FC} from "react";
 import ApplicantNavBar from "../components/layouts/ApplicantNavBar.tsx";
 import Privacy from "./settings/privacy/Privacy.tsx";
 import PrivacySidebar from "./settings/privacy/PrivacySidebar.tsx";
+import {employerNavBarItemMap, employerNavItems, employerNavItemsMobile} from "../utils/constants.ts";
 const EmployerProfile: FC = () => {
     return (
         <div className="mx-auto">
-            <ApplicantNavBar/>
+            <ApplicantNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
             <div className="flex justify-center  min-h-screen pt-6 mx-auto gap-x-10 px-2 lg:px-5">
                 {/* Sidebar */}
                 <PrivacySidebar/>

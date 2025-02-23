@@ -15,12 +15,14 @@ import ApplicantProfileCard from "../../components/ui/applicant/profile/Applican
 import ApplicantProfileSidebar from "../../components/ui/applicant/profile/ApplicantProfileSidebar.tsx";
 import {useAuth} from "../../store/useAuth.ts";
 import {useJobPreferenceStore} from "../../store/useJobPreferenceStore.ts";
+import {applicantNavBarItemMap, applicantNavItems, applicantNavItemsMobile} from "../../utils/constants.ts";
 
 const ApplicantProfile: FC = () => {
     const {applicant,updateProfile} = useAuth();
     const {preferences, addPreference} = useJobPreferenceStore();
     const handleSaveChanges = async () => {
         if(preferences){
+            console.log("Adding job preferences: ", preferences);
             await addPreference(preferences);
         }
         if(applicant){
@@ -29,7 +31,7 @@ const ApplicantProfile: FC = () => {
     }
     return (
         <div className="bg-[#F7F8FA] min-h-screen">
-            <ApplicantNavBar />
+            <ApplicantNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile} navbarItemsMap={applicantNavBarItemMap}/>
             <div className="flex justify-center bg-gray-100 min-h-screen pt-6 mx-auto gap-x-10 px-2 lg:px-5">
                 {/* Sidebar */}
                 <ApplicantProfileSidebar/>

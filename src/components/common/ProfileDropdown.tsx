@@ -6,6 +6,7 @@ import { CiUser } from "react-icons/ci";
 import avatarIcon from "../../assets/icons/avatar.svg";
 import {useAuth} from "../../store/useAuth.ts";
 import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
 
 interface ProfileDropdownProps {
     onClose: () => void;
@@ -13,12 +14,17 @@ interface ProfileDropdownProps {
 }
 
 const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
-    const {logout} = useAuth();
+    const {logout, error} = useAuth();
     const navigate = useNavigate();
     const handleLogout = async ()=>{
-        await logout();
-        onClose();
-        navigate("/login");
+        const success = await logout();
+        if(success){
+            onClose();
+            navigate("/login");
+        }else{
+            toast.error(error);
+        }
+
     }
     return (
         <div

@@ -107,8 +107,7 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
         sendOtp({ email: employer.email, name: employer.companyName}, {
             onSuccess: (data) => {
                 if (data.statusCode === 200) {
-                    toast.success(data.message);
-                    handleNext(); // Proceed to the next step if OTP verification is successful
+                    handleNext();
                 }
             },
             onError: (error) => {

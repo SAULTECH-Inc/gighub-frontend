@@ -6,7 +6,7 @@ function App() {
   return (
     <>
         <AppRoutes/>
-        <ToastContainer />
+        <ToastContainer pauseOnFocusLoss={false} autoClose={1000} hideProgressBar={true} pauseOnHover={false} />
     </>
   )
 }

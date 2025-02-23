@@ -1,5 +1,4 @@
 import React from "react";
-import useModalStore from "../../redux/modalStateStores";
 import { Teams, Calendar, Work, Eye, Download } from "../../assets/icons.ts";
 import cancelMedium from "../../assets/icons/cancelMedium.svg";
 import {
@@ -9,6 +8,7 @@ import {
   Referrer3,
 } from "../../assets/images.ts";
 import { FaCheck } from "react-icons/fa";
+import useModalStore from "../../store/modalStateStores.ts";
 
 interface ModalProps {
   modalId: string;
