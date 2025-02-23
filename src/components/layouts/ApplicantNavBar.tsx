@@ -1,4 +1,4 @@
-import {FC, useState, useRef, useEffect} from "react";
+import {FC, useEffect, useRef, useState} from "react";
 import GighubLogo from "../../assets/icons/GighubLogo.svg";
 import Avatar from "../common/Avatar.tsx";
 import SearchIcon from "../common/SearchIcon.tsx";
@@ -7,7 +7,7 @@ import MessageNotificationIcon from "../common/MessageNotificationIcon.tsx";
 import ProfileDropdown from "../common/ProfileDropdown.tsx";
 import NotificationDropdown from "../ui/NotificationDropdown.tsx";
 import MessageDropdown from "../ui/MessageDropdown.tsx";
-import {useNavigate} from "react-router-dom"; // Import MessageDropdown
+import {useLocation, useNavigate} from "react-router-dom"; // Import MessageDropdown
 import {AiOutlineDashboard, AiOutlineUser} from "react-icons/ai";
 import {FaPeopleGroup} from "react-icons/fa6";
 import {BsGear, BsPersonWorkspace} from "react-icons/bs";
@@ -17,8 +17,22 @@ import {GrCircleQuestion} from "react-icons/gr";
 import hamburger from '../../assets/icons/hamburger.svg';
 import avatarIcon from "../../assets/icons/avatar.svg";
 import {RiCloseLargeFill} from "react-icons/ri";
+import {useAuth} from "../../store/useAuth.ts";
+import {applicantNavBarItemMap} from "../../utils/constants.ts";
 
-const ApplicantNavBar: FC = () => {
+interface ApplicantNavBarProps {
+    navbarItemsMap: typeof applicantNavBarItemMap;
+    navItems: string[];
+    navItemsMobile: string[];
+
+}
+
+const ApplicantNavBar: FC<ApplicantNavBarProps> = ({
+    navbarItemsMap,
+    navItems,
+    navItemsMobile,
+                                                   }) => {
+    const {logout} = useAuth();
     const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
     const [isNotificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
     const [isMessageDropdownOpen, setMessageDropdownOpen] = useState(false); // State for MessageDropdown
@@ -29,6 +43,12 @@ const ApplicantNavBar: FC = () => {
     const notificationDropdownRef = useRef<HTMLDivElement>(null);
     const messageDropdownRef = useRef<HTMLDivElement>(null); // Ref for MessageDropdown
     const searchInputRef = useRef<HTMLInputElement>(null); // Ref for Search Input
+    const [activeItem, setActiveItem] = useState<string>();
+
+
+
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const toggleProfileDropdown = () => {
         setProfileDropdownOpen((prev) => !prev);
@@ -86,48 +106,39 @@ const ApplicantNavBar: FC = () => {
         };
     }, []);
 
-    const [activeItem, setActiveItem] = useState<string>("Dashboard");
-
-    const navItems = ["Dashboard", "Find Jobs", "Applications", "My Networks"];
-    const navItemsMobile = ["Dashboard", "Find Jobs", "Applications", "My Networks", "Profile", "Settings", "Help & Support"];
-
-    const navigate = useNavigate();
+    useEffect(() => {
+        if(activeItem){
+            navigate(navbarItemsMap.get(activeItem) || location.pathname);
+        }
+    },[activeItem]);
 
     const handleSetItems = (item: string) => {
         console.log(JSON.stringify(item));
-        setActiveItem(item);
-        switch (item) {
-            case "Dashboard":
-                navigate("/applicant/dashboard");
-                break;
-            case "Find Jobs":
-                navigate("/find-jobs");
-                break;
-            case "Applications":
-                navigate("/applications");
-                break;
-            case "My Networks":
-                navigate("/my-networks");
-                break;
-            default:
-                break;
-        }
+        setActiveItem(() => {
+            return item;
+        });
     };
     const handleNavigateHome = () => {
         navigate("/");
     };
+
+    const handleLogout = async ()=>{
+        logout();
+        navigate("/login");
+    }
+
 
     return (
         <>
             <nav
                 className="flex justify-between items-center px-6 py-4 bg-white border-b-[1px] border-b-[#E6E6E6] h-[calc(70px-5px)]">
                 {/* Left: Logo */}
-                <div className="hidden md:flex items-center gap-2">
+                <div className="hidden lg:flex items-center gap-2">
                     <img src={GighubLogo} alt="Gighub Logo" className="h-10 w-auto cursor-pointer" onClick={handleNavigateHome}/>
                 </div>
 
                 {/* Center: Navigation Links (Desktop) */}
-                <ul className="hidden md:flex gap-8 text-gray-600 font-lato text-[16px] absolute left-1/2 transform -translate-x-1/2">
+                <ul className="hidden lg:flex gap-8 text-gray-600 font-lato text-[16px] absolute left-1/2 transform -translate-x-1/2">
                     {navItems.map((item) => (
                         <li
                             key={item}
@@ -144,7 +155,7 @@ const ApplicantNavBar: FC = () => {
                 </ul>
 
                 {/* Right: Notifications, Messages, and Profile (Desktop Only) */}
-                <div className="flex items-center gap-4 md:gap-8 ml-auto md:ml-0"> {/* ml-auto only on mobile */}
+                <div className="flex items-center gap-4 lg:gap-8 ml-auto lg:ml-0"> {/* ml-auto only on mobile */}
                     {/* Search Icon and Input */}
                     <div className="relative">
                         <div
@@ -196,7 +207,7 @@ const ApplicantNavBar: FC = () => {
             </nav>
 
             {/*Mobile Drawer Sidebar */}
-            <img className={`absolute top-2 left-4 z-40 md:hidden ${
+            <img className={`absolute top-2 left-4 z-40 lg:hidden ${
                 isMobileNavOpen ? "hidden" : "block"
             }`}
                  onClick={() => setMobileNavOpen(true)} src={hamburger} alt="hamrburger"/>
@@ -289,6 +300,8 @@ const ApplicantNavBar: FC = () => {
 
                     {/* Logout */}
                     <div
+                        onClick={handleLogout}
+
                         className="pl-4 mt-10 flex items-center gap-3 cursor-pointer text-red-500 hover:text-red-700"
 
                     >

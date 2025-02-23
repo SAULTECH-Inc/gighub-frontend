@@ -1,3 +1,5 @@
+import {Option} from "../components/ui/applicant/profile/Skills.tsx";
+
 export interface MessageItem {
     id: number;
     avatar: string; // Avatar URL or path
@@ -42,4 +44,37 @@ export const messages: MessageItem[] = [
         message: "Your job with us is more of...",
         time: "2 days ago",
     },
+];
+
+export const skills: Option[] = [
+    {
+        label: "Java", value: "Java"
+    },
+    {
+        label: "Python", value: "Python"
+    },
+    {
+        label: "JavaScript", value: "JavaScript"
+    },
+    {
+        label: "C++", value: "C++"
+    },
+    {
+        label: "React", value: "React"
+    },
+    {
+        label: "Node.js", value: "Node.js"
+    },
+    {
+        label: "TypeScript", value: "TypeScript"
+    },
+    {
+        label: "SQL", value: "SQL"
+    },
+    {
+        label: "Docker", value: "Docker"
+    },
+    {
+        label: "AWS", value: "AWS"
+    }
 ];

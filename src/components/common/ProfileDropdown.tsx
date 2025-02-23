@@ -4,6 +4,9 @@ import { PiGearSixLight } from "react-icons/pi";
 import { GrCircleQuestion } from "react-icons/gr";
 import { CiUser } from "react-icons/ci";
 import avatarIcon from "../../assets/icons/avatar.svg";
+import {useAuth} from "../../store/useAuth.ts";
+import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
 
 interface ProfileDropdownProps {
     onClose: () => void;
@@ -11,6 +14,18 @@ interface ProfileDropdownProps {
 }
 
 const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
+    const {logout, error} = useAuth();
+    const navigate = useNavigate();
+    const handleLogout = async ()=>{
+        const success = await logout();
+        if(success){
+            onClose();
+            navigate("/login");
+        }else{
+            toast.error(error);
+        }
+
+    }
     return (
         <div
             className={`absolute ${isMobile ? "left-0" : "right-0"} top-14 w-[352px] bg-white shadow-lg rounded-[16px] z-50 font-lato p-6`}
@@ -67,7 +82,7 @@ const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
             {/* Logout */}
             <div
                 className="flex items-center gap-3 cursor-pointer text-red-500 hover:text-red-700"
-                onClick={onClose}
+                onClick={handleLogout}
             >
                 <FaPowerOff className="text-lg" /> Logout
             </div>

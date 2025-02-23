@@ -1,8 +1,10 @@
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import {useFormStore} from "../../../../redux/useFormStore.ts";
+import {useFormStore} from "../../../../store/useFormStore.ts";
 import documentAttachment from "../../../../assets/icons/documentAttachment.svg";
 import videoAttachment from "../../../../assets/icons/videoAttachment.svg";
+import {useOtp} from "../../../../hooks/useOtpVerify.ts";
+import {toast} from "react-toastify";
 
 interface StepTwoProp {
     handleNext: () => void;
@@ -13,7 +15,8 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
                                                           handleNext,
                                                           handlePrev,
                                                       }) => {
-    const {formData, setFormData} = useFormStore();
+    const {employer, setEmployerData} = useFormStore();
+    const {sendOtp} = useOtp();
     const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
     const [documentType, setDocumentType] = useState<string | undefined>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -31,11 +34,9 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
         if (name === "documentType") {
             setDocumentType(value);
         } else {
-            setFormData({
-                employer: {
-                   ...formData.employer,
-                    [name]: value,
-                }
+            setEmployerData({
+                ...employer,
+                [name]: value,
             });
         }
     }
@@ -53,18 +54,14 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
 
             // Update formData based on documentType
             if (documentType === "coverPage") {
-                setFormData({
-                    employer: {
-                        ...formData.employer,
-                        [documentType]: newFiles[0].file,
-                    },
+                setEmployerData({
+                    ...employer,
+                    [documentType]: newFiles[0].file,
                 });
             } else if (documentType === "companyLogo") {
-                setFormData({
-                    employer: {
-                        ...formData.employer,
-                        [documentType]: newFiles[0].file,
-                    },
+                setEmployerData({
+                    ...employer,
+                    [documentType]: newFiles[0].file,
                 });
             }
 
@@ -106,9 +103,23 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
         setUploadedFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
     };
 
+    const handleSendOtp = ()=>{
+        sendOtp({ email: employer.email, name: employer.companyName}, {
+            onSuccess: (data) => {
+                if (data.statusCode === 200) {
+                    handleNext();
+                }
+            },
+            onError: (error) => {
+                console.error("OTP Verification Failed:", error);
+                toast.error(error.message);
+            }
+        });
+    }
+
     return (
         <motion.div
-            className="w-full max-w-[500px] mx-auto md:mx-5"
+            className="w-[310px] md:w-[680px] lg:w-[500px] mt-5 md:mr-28 md:mt-32 px-[10px] lg:px-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -147,7 +158,7 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
                             type="text"
                             className="w-full px-4 py-2 border-[2px] border-[#E6E6E6] rounded-[16px] bg-[#F7F8FA]  outline-none focus:ring-0 focus:border-[2px] focus:border-[#E6E6E6]"
                             name="companyWebsite"
-                            value={formData.employer.companyWebsite}
+                            value={employer.companyWebsite}
                             placeholder="https://example.com"
                             onChange={handleChange}
                             id="company-website"
@@ -267,7 +278,7 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
                     Back
                 </button>
                 <button
-                    onClick={handleNext}
+                    onClick={handleSendOtp}
                     className="w-[162px] h-[44px] text-white font-[13px] rounded-[16px] bg-[#6438C2] hover:bg-[#5931A9] focus:outline-none focus:ring-0 focus:border-none"
                 >
                     Proceed

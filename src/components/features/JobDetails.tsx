@@ -10,7 +10,7 @@ import Rating from "../common/Rating.tsx";
 import { JobMatchCardProps } from "./JobMatchCard.tsx";
 import ShareModal from "../ui/ShareModal.tsx";
 import ApplicationModal from "../ui/ApplicationModal.tsx";
-import useModalStore from "../../redux/modalStateStores.ts";
+import useModalStore from "../../store/modalStateStores.ts";
 import ApplicationSuccessModal from "../ui/ApplicationSuccessModal.tsx";
 import PaymentSuccessModal from "../ui/PaymentSuccessModal.tsx";
 
