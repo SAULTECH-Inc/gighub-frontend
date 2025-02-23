@@ -11,12 +11,6 @@ import SalaryRangeSelector from "../components/common/SalaryRangeSelector.tsx";
 const JobSearch: React.FC = () => {
     const [isChecked, setIsChecked] = React.useState(false);
     const [selectedOption, setSelectedOption] = useState("option1");
-    const [, setSalaryData] = useState({
-        currency: "USD",
-        min: 3000,
-        max: 7000,
-        period: "Year",
-    });
     return <>
         <ApplicantNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile}
                          navbarItemsMap={applicantNavBarItemMap}/>
@@ -47,12 +41,11 @@ const JobSearch: React.FC = () => {
                 size={19}
                 color="#6E4AED"
             />
-            {/*<SalaryRangeSelector*/}
-            {/*    label="Desired Salary"*/}
-            {/*    min={30000}*/}
-            {/*    max={150000}*/}
-            {/*    onChange={(value) => console.log(value)}*/}
-            {/*/>*/}
+            <SalaryRangeSelector
+                baseMin={30000}
+                baseMax={150000}
+                onChange={(values) => console.log(values)}
+            />
         </div>
     </>
 }
