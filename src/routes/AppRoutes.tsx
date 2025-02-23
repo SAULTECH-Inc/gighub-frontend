@@ -13,6 +13,7 @@ import ApplicantNavBar from "../components/layouts/ApplicantNavBar.tsx";
 import ManageApplicant from "../pages/applicant/ManageApplicant.tsx";
 import JobSelection from "../pages/applicant/JobSelection.tsx";
 import Notification from "../pages/Notification.tsx"
+import EmployerJobMultistepForm from "../pages/employer/EmployerJobMultistepForm.tsx";
 
 const AppRoutes = () => {
   return (
@@ -24,6 +25,7 @@ const AppRoutes = () => {
       <Route path="/applicant/dashboard/manageapplicant" element={<ManageApplicant/>}/>
       <Route path="/applicant/dashboard/jobselection" element={<JobSelection/>}/>
       <Route path="/notification" element={<Notification/>}/>
+      <Route path="/employerJobMultistepForm" element={<EmployerJobMultistepForm />}/>
       <Route path="/applicant/dashboard" element={<ApplicantDashboard/>}/>
           <Route path="/user-type-selection" element={<UserTypeSelection/>} />
           <Route path="/applicant/signup" element={<ApplicantMultistepForm/>}/>
