@@ -6,7 +6,7 @@ import employerUser from '../assets/icons/employerUser.svg'
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {useAuth} from "../store/useAuth.ts";
-import {UserType} from "../utils/types/enums.ts";
+import { UserType } from "../utils/enums.ts";
 
 const UserTypeSelection: React.FC = () => {
     const {isAuthenticated, userType, setUserType} = useAuth();

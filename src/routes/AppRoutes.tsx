@@ -32,6 +32,7 @@ import JobSearch from "../pages/JobSearch.tsx";
 import {useAuth} from "../store/useAuth.ts";
 import {useEffect} from "react";
 
+import EmployerJobMultistepForm from "../pages/employer/EmployerJobMultistepForm.tsx";
 
 const AppRoutes = () => {
     const {setRedirectPath} = useAuth();
@@ -71,6 +72,11 @@ const AppRoutes = () => {
                 <Route path="/reset-password" element={<ResetPassword/>}/>
                 <Route path="/password-reset-success" element={<PasswordResetSuccess/>}/>
                 <Route path="/applicant/find-jobs" element={<JobSearch/>}/>
+      <Route path="/applicant/dashboard/network" element={<ApplicantNetwork/>}/>
+      <Route path="/applicant/dashboard/jobselection" element={<JobSelection/>}/>
+      <Route path="/notification" element={<Notification/>}/>
+      <Route path="/employerJobMultistepForm" element={<EmployerJobMultistepForm />}/>
+
             </Routes>
     );
 };
