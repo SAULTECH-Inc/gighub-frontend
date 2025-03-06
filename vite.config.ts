@@ -15,4 +15,7 @@ export default defineConfig({
         jsxImportSource: "@emotion/react",
       },
     }), react()],
+    server: {
+        host: true
+    }
 });

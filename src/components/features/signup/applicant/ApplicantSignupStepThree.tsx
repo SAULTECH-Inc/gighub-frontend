@@ -1,15 +1,14 @@
 import React, {useRef, useState} from "react";
-import { motion } from "framer-motion"; // Import Framer Motion
-import {useFormStore} from "../../../../store/useFormStore.ts";
+import { motion } from "framer-motion";
 import code from "../../../../assets/icons/code.svg";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import ApplicantSignupSuccessModal from "../../../ui/ApplicantSignupSuccessModal.tsx";
 import useModalStore from "../../../../store/modalStateStores.ts";
-import {useOtp} from "../../../../hooks/useOtpVerify.ts";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../../../store/useAuth.ts";
 import {UserType} from "../../../../utils/types/enums.ts";
+import {ApplicantSignupRequest} from "../../../../utils/types";
 
 interface StepTwoProp {
     handlePrev: () => void;
@@ -18,11 +17,9 @@ interface StepTwoProp {
 const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
                                                              handlePrev
                                                          }) => {
-    const {applicant, setApplicantData, resetFormData} = useFormStore();
+    const {otp,userType,signup, applicantSignupRequest, sendVerificationOtp, resetSignupRequest, setOtp, verifyOtp} = useAuth();
     const { openModal,isModalOpen } = useModalStore();
-    const {signup} = useAuth();
     const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
-    const { verifyOtp,sendOtp } = useOtp();
     const [isInvalid, setIsInvalid] = useState(false);
     const shakeAnimation = isInvalid
         ? { x: [-5, 5, -5, 5, 0] }  // Shake effect, ends smoothly at 0
@@ -31,93 +28,61 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
     const navigate = useNavigate();
 
     const handleOTPChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-        const updatedOTP = [...applicant.otp];
+        const updatedOTP = [...otp];
         updatedOTP[index] = e.target.value;
-        setApplicantData({
-            ...applicant,
-            ['otp']: updatedOTP.join(''),
-        });
-
+        setOtp(updatedOTP.join(''));
         if (e.target.value && index < otpRefs.current.length - 1) {
             otpRefs.current[index + 1]?.focus();
         }
     };
 
     const handleBackspace = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-        if (e.key === "Backspace" && !applicant.otp[index] && index > 0) {
+        if (e.key === "Backspace" && !otp[index] && index > 0) {
             otpRefs.current[index - 1]?.focus();
         }
     };
 
     const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>, index: number) => {
-        console.log(index)
+        console.log(index);
         const pastedText = e.clipboardData.getData("Text");
         if (pastedText.length === 6) {
-            const updatedOTP = [...applicant.otp];
+            const updatedOTP = [...otp];
             for (let i = 0; i < 6; i++) {
                 updatedOTP[i] = pastedText[i];
             }
-            setApplicantData({
-                ...applicant,
-                ['otp']: updatedOTP.join(''),
-            });
+            setOtp(updatedOTP.join(''));
         }
     };
 
-    const handleContinue = () => {
-        const otp = applicant.otp;
+    const handleContinue = async () => {
         if (otp === "") {
             toast.error("All OTP fields are required.");
             return;
         }
 
-        verifyOtp({ otp }, {
-            onSuccess: (data) => {
-                if (data.statusCode === 200) {
-                    setIsInvalid(false);
-                    setTimeout(
-                        async () => {
-                            await signup(UserType.APPLICANT);
-                            if (useAuth.getState().signupSuccess) {
-                                setTimeout(
-                                    ()=>{
-                                        openModal("application-signup-success-modal");
-                                        resetFormData();
-                                    }, 500
-                                )
-                                setApplicantData({
-                                    ...applicant,
-                                    otp: "",
-                                });
-                                resetFormData();
-                                navigate("/applicant/profile")
-
-
-                            }
-                        }, 500
-                    )
-                }
-            },
-            onError: (error) => {
-                console.error("OTP Verification Failed:", JSON.stringify(error));
-                setIsInvalid(true);
-                toast.error(error.message);
-                setTimeout(() => {
-                    setIsInvalid(false);
-                    setApplicantData({
-                        ...applicant,
-                        otp: "",
-                    });
-                }, 500);
+        const success = await verifyOtp(applicantSignupRequest?.email as string, otp);
+        if(success) {
+            setIsInvalid(false);
+            const isSuccessFul = await signup(userType as UserType, applicantSignupRequest as ApplicantSignupRequest);
+            if(isSuccessFul) {
+                setTimeout(
+                    ()=>{
+                        openModal("application-signup-success-modal");
+                        resetSignupRequest();
+                    }, 500
+                )
+                resetSignupRequest();
+                navigate("/applicant/profile");
             }
-        });
+        }
     };
 
-    const handleOtpResend = ()=>{
-        sendOtp({ email: applicant.email, name: applicant.firstName });
+    const handleOtpResend = async ()=>{
+        const success = await sendVerificationOtp(applicantSignupRequest?.email as string, "SIGNUP");
+        if(success) {
+            toast.success("Verification OTP sent successfully!");
+        }
     }
-
-
 
 
     return (
@@ -145,7 +110,7 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
                 We’ve sent a verification code to your email. Please enter the code to confirm
                 your account and start exploring GigHub.{" "}
                 <span className="text-purple-700">
-                    {applicant.email}
+                    {applicantSignupRequest?.email}
                 </span>
             </motion.p>
 
@@ -163,7 +128,7 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
                             key={index}
                             maxLength={1}
                             name={`otp[${index}]`}  // Dynamically bind input name
-                            value={applicant.otp[index] || ''}  // Bind OTP value from formData
+                            value={otp[index] || ''}  // Bind OTP value from formData
                             className="w-[40px] h-[40px] lg:w-[47px] lg:h-[42px] text-center rounded-[10px] border-[1px] border-[#5E5E5E] focus:outline-none focus:ring-0 focus:border-[1px] focus:border-[#5E5E5E]"
                             onChange={(e) => handleOTPChange(e, index)}  // Handle change for each input
                             onKeyDown={(e) => handleBackspace(e, index)} // Handle backspace key press for focus shift

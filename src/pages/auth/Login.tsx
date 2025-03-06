@@ -6,8 +6,10 @@ import microsoftLogo from '../../assets/icons/mLogo.svg';
 import gighubLogo from '../../assets/icons/gighubLogoSmall.svg';
 import {useAuth} from "../../store/useAuth.ts";
 import {Link, useNavigate} from "react-router-dom";
-import {toast} from "react-toastify";
+
+import CustomCheckbox from "../../components/common/CustomCheckbox.tsx";
 import {UserType} from "../../utils/types/enums.ts";
+import secureLocalStorage from "react-secure-storage";
 export const Login = () => {
     const [credentials, setCredentials] = useState({
         email: '',
@@ -16,16 +18,13 @@ export const Login = () => {
     });
     const {login} = useAuth();
     const navigate = useNavigate();
-    const userType = localStorage.getItem("userType") as UserType;
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         const success = await login(credentials);
         if(success) {
-            console.log("LOGIN AS ::: "+userType);
-            const path = `/${userType}/profile`;
+            const storedUserType = secureLocalStorage.getItem("userType") as UserType;
+            const path = `/${storedUserType}/profile`;
             navigate(path);
-        }else{
-            toast.error("Invalid email or password. Please try again.");
         }
     };
 
@@ -57,25 +56,29 @@ export const Login = () => {
                                     onChange={(e)=>{
                                         setCredentials({...credentials, email: e.target.value })
                                     }}
-                                    className="bg-[#F4F7FA] p-3 md:p-4 w-full rounded-[16px] focus:ring-0 focus:border-none focus:outline-none"
+                                    className="bg-[#F4F7FA] p-3 md:p-4 w-full rounded-[16px] border-none focus:ring-0 focus:border-none focus:outline-none"
                                     type="email" placeholder="Email" required/>
                                 <input
                                     onChange={(e)=>{
                                         setCredentials({...credentials, password: e.target.value })
                                     }}
-                                    className="bg-[#F4F7FA] p-3 md:p-4 w-full rounded-[16px] focus:ring-0 focus:border-none focus:outline-none"
+                                    className="bg-[#F4F7FA] p-3 md:p-4 w-full rounded-[16px] border-none focus:ring-0 focus:border-none focus:outline-none"
                                     type="password" placeholder="Password" required/>
                             </div>
                         </div>
                         <div className="w-full flex flex-row justify-between items-center mb-10">
-                            <div className="flex flex-row justify-evenly items-center gap-x-2 cursor-pointer"><input
-                                checked={credentials.rememberMe}
-                                onChange={(e) => {
-                                    setCredentials({...credentials, rememberMe: e.target.checked })
-                                }}
-                                className="bg-[#6438C2] p-3 md focus:outline-none focus:ring-0"
-                                type="checkbox"/>
-                                <span onClick={handleRememberMe}>Remember me</span></div>
+                            <div className="flex flex-row justify-evenly items-center gap-x-2 cursor-pointer">
+                                <CustomCheckbox
+                                    checked={credentials.rememberMe}
+                                    onChange={() => {
+                                        handleRememberMe();
+                                    }}
+                                    label="Remember me"
+                                    size={19}
+                                    borderColor="#D9D9D9"
+                                    checkColor="#6E4AED"
+                                />
+                             </div>
                             <Link to="/forgot-password" className="cursor-pointer">Forgot Password?</Link>
                         </div>
                         <button

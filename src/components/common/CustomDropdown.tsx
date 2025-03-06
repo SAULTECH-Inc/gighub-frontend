@@ -7,6 +7,7 @@ interface DropdownProps {
     className?: string;
     options: Option[];
     handleSelect: (selected: Option) =>void
+    disabled?: boolean
 }
 
 const CustomDropdown: React.FC<DropdownProps> = ({
@@ -14,6 +15,7 @@ const CustomDropdown: React.FC<DropdownProps> = ({
                                                      className,
                                                      options,
                                                  handleSelect,
+    disabled
                                                  }) => {
     // Local state inside the dropdown component
     const [isOpen, setIsOpen] = useState(false);
@@ -56,6 +58,7 @@ const CustomDropdown: React.FC<DropdownProps> = ({
             {/* Dropdown button */}
             <button
                 type="button"
+                disabled={disabled!== undefined? disabled: false}
                 className={`${className}`}
                 onClick={() => setIsOpen(!isOpen)}
             >
@@ -68,9 +71,10 @@ const CustomDropdown: React.FC<DropdownProps> = ({
                     {/* Search input */}
                     <input
                         type="text"
-                        className="w-full px-3 py-2 border-b border-[#E3E6F3] focus:outline-none"
+                        className="w-full px-3 py-2 border-b border-[#E3E6F3] focus:outline-none focus:ring-0 focus:border-inherit"
                         placeholder="Search..."
                         value={search}
+                        disabled={disabled !== undefined ? disabled: false}
                         onChange={(e) => setSearch(e.target.value)}
                     />
 

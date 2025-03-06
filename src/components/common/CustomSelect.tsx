@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import {MdKeyboardArrowDown, MdKeyboardArrowUp} from "react-icons/md";
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 interface Option {
     label: string;
@@ -10,18 +10,21 @@ interface DropdownProps {
     placeholder?: string;
     className?: string;
     options: Option[];
-    onChange?: (option: Option) => void; // Added onChange prop
+    onChange?: (option: Option) => void;
+    disabled?: boolean;
 }
 
 const CustomSelect: React.FC<DropdownProps> = ({
-                                                     placeholder = "Select an option...",
-                                                     className,
-                                                     options,
-                                                     onChange,
-                                                 }) => {
+                                                   placeholder = "Select an option...",
+                                                   className,
+                                                   options,
+                                                   onChange,
+                                                   disabled,
+                                               }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState("");
     const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
+    const [selectedOption, setSelectedOption] = useState<Option | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Filter options based on search input
@@ -40,6 +43,7 @@ const CustomSelect: React.FC<DropdownProps> = ({
                 setIsOpen(false);
             }
         }
+
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
@@ -47,6 +51,7 @@ const CustomSelect: React.FC<DropdownProps> = ({
     }, []);
 
     const handleSelect = (option: Option) => {
+        setSelectedOption(option); // Store selected option
         if (onChange) {
             onChange(option); // Call the onChange callback
         }
@@ -58,17 +63,16 @@ const CustomSelect: React.FC<DropdownProps> = ({
             {/* Dropdown button */}
             <button
                 type="button"
+                disabled={disabled}
                 className={`${className}`}
                 onClick={() => setIsOpen(!isOpen)}
             >
-                {placeholder}
-                {
-                    isOpen ?  (
-                        <MdKeyboardArrowUp className="absolute right-3 top-3 cursor-pointer text-[30px]"/>
-                    ) : (
-                        <MdKeyboardArrowDown className="absolute right-3 top-2 cursor-pointer text-[30px]"/>
-                    )
-                }
+                {selectedOption ? selectedOption.label : placeholder}
+                {isOpen ? (
+                    <MdKeyboardArrowUp className="absolute right-3 top-3 cursor-pointer text-[30px]" />
+                ) : (
+                    <MdKeyboardArrowDown className="absolute right-3 top-2 cursor-pointer text-[30px]" />
+                )}
             </button>
 
             {/* Dropdown menu */}
@@ -80,6 +84,7 @@ const CustomSelect: React.FC<DropdownProps> = ({
                         className="w-full px-3 py-2 border-b border-gray-300 focus:outline-none"
                         placeholder="Search..."
                         value={search}
+                        disabled={disabled}
                         onChange={(e) => setSearch(e.target.value)}
                     />
 

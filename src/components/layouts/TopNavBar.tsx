@@ -19,6 +19,8 @@ import avatarIcon from "../../assets/icons/avatar.svg";
 import {RiCloseLargeFill} from "react-icons/ri";
 import {useAuth} from "../../store/useAuth.ts";
 import {applicantNavBarItemMap} from "../../utils/constants.ts";
+import {toast} from "react-toastify";
+import ChatWindow from "../ui/ChatWindow.tsx";
 
 interface ApplicantNavBarProps {
     navbarItemsMap: typeof applicantNavBarItemMap;
@@ -27,7 +29,7 @@ interface ApplicantNavBarProps {
 
 }
 
-const ApplicantNavBar: FC<ApplicantNavBarProps> = ({
+const TopNavBar: FC<ApplicantNavBarProps> = ({
     navbarItemsMap,
     navItems,
     navItemsMobile,
@@ -44,6 +46,7 @@ const ApplicantNavBar: FC<ApplicantNavBarProps> = ({
     const messageDropdownRef = useRef<HTMLDivElement>(null); // Ref for MessageDropdown
     const searchInputRef = useRef<HTMLInputElement>(null); // Ref for Search Input
     const [activeItem, setActiveItem] = useState<string>();
+    const [isChatWindowOpened, setChatWindowOpened] = useState(false);
 
 
 
@@ -123,15 +126,19 @@ const ApplicantNavBar: FC<ApplicantNavBarProps> = ({
     };
 
     const handleLogout = async ()=>{
-        logout();
-        navigate("/login");
+        const success = await logout();
+        if(success){
+            navigate("/login");
+        } else{
+            toast.error("Failed to logout. Please try again.");
+        }
     }
 
 
     return (
         <>
             <nav
-                className="flex justify-between items-center px-6 py-4 bg-white border-b-[1px] border-b-[#E6E6E6] h-[calc(70px-5px)]">
+                className="relative flex justify-between items-center px-6 py-4 bg-white border-b-[1px] border-b-[#E6E6E6] h-[calc(70px-5px)]">
                 {/* Left: Logo */}
                 <div className="hidden lg:flex items-center gap-2">
                     <img src={GighubLogo} alt="Gighub Logo" className="h-10 w-auto cursor-pointer" onClick={handleNavigateHome}/>
@@ -193,7 +200,7 @@ const ApplicantNavBar: FC<ApplicantNavBarProps> = ({
                         <div className="cursor-pointer" onClick={toggleMessageDropdown}>
                             <MessageNotificationIcon count={8}/>
                         </div>
-                        {isMessageDropdownOpen && <MessageDropdown onClose={closeDropdowns}/>}
+                        {isMessageDropdownOpen && <MessageDropdown setChatWindowOpened={setChatWindowOpened} onClose={closeDropdowns}/>}
                     </div>
 
                     {/* Profile Dropdown (Hidden on Mobile) */}
@@ -204,6 +211,11 @@ const ApplicantNavBar: FC<ApplicantNavBarProps> = ({
                         {isProfileDropdownOpen && <ProfileDropdown onClose={closeDropdowns} isMobile={false}/>}
                     </div>
                 </div>
+                {
+                    isChatWindowOpened && (
+                        <ChatWindow />
+                    )
+                }
             </nav>
 
             {/*Mobile Drawer Sidebar */}
@@ -313,4 +325,4 @@ const ApplicantNavBar: FC<ApplicantNavBarProps> = ({
     );
 };
 
-export default ApplicantNavBar;
+export default TopNavBar;
