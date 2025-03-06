@@ -9,7 +9,7 @@ import {useOtp} from "../../../../hooks/useOtpVerify.ts";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../../../store/useAuth.ts";
-import {UserType} from "../../../../utils/types/enums.ts";
+import { UserType } from "../../../../utils/enums.ts";
 
 interface StepTwoProp {
     handlePrev: () => void;
