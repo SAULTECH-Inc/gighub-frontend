@@ -7,7 +7,7 @@ import MessageNotificationIcon from "../common/MessageNotificationIcon.tsx";
 import ProfileDropdown from "../common/ProfileDropdown.tsx";
 import NotificationDropdown from "../ui/NotificationDropdown.tsx";
 import MessageDropdown from "../ui/MessageDropdown.tsx";
-import {useLocation, useNavigate} from "react-router-dom"; // Import MessageDropdown
+import {useLocation, useNavigate} from "react-router-dom";
 import {AiOutlineDashboard, AiOutlineUser} from "react-icons/ai";
 import {FaPeopleGroup} from "react-icons/fa6";
 import {BsGear, BsPersonWorkspace} from "react-icons/bs";
