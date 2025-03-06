@@ -21,7 +21,6 @@ import JobList from "../pages/JobList.tsx";
 import FilterJob from "../pages/FilterJob.tsx";
 import {Login} from "../pages/auth/Login.tsx";
 import PrivateRoute from "../middleware/PrivateRoute.tsx";
-import {UserType} from "../utils/types/enums.ts";
 import NotAuthorized from "../pages/auth/NotAuthorized.tsx";
 import ForgotPassword from "../pages/auth/ForgotPassword.tsx";
 import VerifyOtpToResetPassword from "../pages/auth/VerifyOtpToResetPassword.tsx";
@@ -33,6 +32,7 @@ import {useAuth} from "../store/useAuth.ts";
 import {useEffect} from "react";
 
 import EmployerJobMultistepForm from "../pages/employer/EmployerJobMultistepForm.tsx";
+import {UserType} from "../utils/enums.ts";
 
 const AppRoutes = () => {
     const {setRedirectPath} = useAuth();
