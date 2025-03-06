@@ -28,30 +28,30 @@ const ChatWindow: React.FC = () => {
             const newMessage: Message = { id: messages.length + 1, text: inputText, sender: "me" };
             setMessages([...messages, newMessage]);
             setInputText("");
-            setFile(null); // Clear file after sending
+            setFile(null);
         }
     };
 
     const handleEmojiClick = (emoji: string) => {
         setInputText(inputText + emoji);
-        setIsEmojiPickerVisible(false); // Hide emoji picker after selection
+        setIsEmojiPickerVisible(false);
     };
 
     const toggleEmojiPicker = () => {
         setIsEmojiPickerVisible(!isEmojiPickerVisible);
     };
 
-    if (isClosed) return null; // If the window is closed, return nothing
+    if (isClosed) return null;
 
     return (
         <Draggable handle=".drag-handle">
             <div
-                className={`fixed bottom-5 right-5 w-[396px] ${
+                className={`fixed bottom-5 right-5 w-[396px] z-20 ${
                     isMinimized ? "h-16" : "h-[634px]"
-                } bg-white rounded-lg shadow-lg flex flex-col`}
+                } bg-white rounded-t-[16px] shadow-lg flex flex-col p-0`}
             >
                 {/* Header */}
-                <div className="relative drag-handle bg-[#6438C2] p-4 text-white text-lg font-semibold cursor-move flex justify-between items-center rounded-t-[16px] h-[100px]">
+                <div className="relative drag-handle bg-[#6438C2] p-4 text-white text-lg font-semibold cursor-move flex justify-between items-center rounded-t-[16px] w-full h-[100px]">
                     <div className="right-2 top-2 absolute flex justify-evenly items-center gap-x-1">
                         <FaWindowMinimize
                             onClick={() => setIsMinimized(!isMinimized)}
@@ -123,6 +123,12 @@ const ChatWindow: React.FC = () => {
                         <textarea
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                    e.preventDefault(); // Prevents a new line from being added
+                                    sendMessage();
+                                }
+                            }}
                             rows={1}
                             className="w-full p-3 border bg-[#F7F8FA] rounded-[10px] border-[#E3E6F3] resize-none"
                             placeholder="Write here"
@@ -139,6 +145,7 @@ const ChatWindow: React.FC = () => {
                         </label>
 
                         <button
+                            tabIndex={0}
                             onClick={sendMessage}
                             className="w-[50px] h-[44px] px-4 py-2 bg-indigo-700 text-white rounded-[10px]"
                         >

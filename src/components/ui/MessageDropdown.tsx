@@ -1,18 +1,18 @@
-import {FC, useState} from "react";
-import ChatWindow from "./ChatWindow.tsx";
+import React, {FC} from "react";
 import {messages} from "../../utils/dumm.ts";
 
 
 
 interface MessageDropdownProps {
-    onClose: () => void; // A callback to close the dropdown
+    onClose: () => void;
+    setChatWindowOpened: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 
 
-const MessageDropdown: FC<MessageDropdownProps> = ({ onClose }) => {
+const MessageDropdown: FC<MessageDropdownProps> = ({ onClose, setChatWindowOpened }) => {
     const dividerStyle = { borderColor: "#E6E6E6" }; // Faint divider color
-    const [isChatWindowOpened, setChatWindowOpened] = useState(false);
+
     const handleOpenMessage = ()=>{
         setChatWindowOpened(true);
     }
@@ -76,12 +76,6 @@ const MessageDropdown: FC<MessageDropdownProps> = ({ onClose }) => {
                     </button>
                 </div>
             </div>
-            {
-                // Chat Window
-                isChatWindowOpened && (
-                    <ChatWindow/>
-                )
-            }
         </div>
     );
 };

@@ -1,37 +1,42 @@
 import React, { useState } from "react";
-import {CertParams} from "./SkillAndCompetences.tsx";
+import {CertificationResponseDto} from "../../../../utils/types";
 
 interface CertificationProps {
-    handleCertificationRemove: (certification: CertParams) => void;
-    addCertification: (certification: CertParams) => void;
-    certifications: CertParams[];
+    handleCertificationRemove: (certification: CertificationResponseDto) => void;
+    addCertification: (certification: CertificationResponseDto) => void;
+    certifications: CertificationResponseDto[];
+    isEditable: boolean;
 }
 
 const Certifications: React.FC<CertificationProps> = ({
                                                           handleCertificationRemove,
                                                           addCertification,
                                                           certifications,
+    isEditable
                                                       }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [certName, setCertName] = useState("");
-    const [institution, setInstitution] = useState("");
-    const [year, setYear] = useState("");
+    const [certificationResponseDto, setCertificationResponseDto] = useState({
+        certification: "",
+        institution: "",
+        yearObtained: "",
+    });
 
     const handleAddCertification = (event: React.FormEvent) => {
-        event.preventDefault(); // Prevents page reload
+        event.preventDefault();
 
-        if (certName && institution && year) {
-
-            addCertification({certName: certName, institution: institution, year: year});
-            setCertName("");
-            setInstitution("");
-            setYear("");
+        if (certificationResponseDto.certification && certificationResponseDto.institution && certificationResponseDto.yearObtained) {
+            addCertification(certificationResponseDto);
+            setCertificationResponseDto({
+                certification: "",
+                institution: "",
+                yearObtained: "",
+            });
         }
 
 
     };
-    const formatCertification = (certification: CertParams) => {
-        return `${certification.certName} - ${certification.institution} (${certification.year})`;
+    const formatCertification = (certification: CertificationResponseDto) => {
+        return `${certification.certification} - ${certification.institution} (${certification.yearObtained})`;
     }
 
     return (
@@ -45,6 +50,7 @@ const Certifications: React.FC<CertificationProps> = ({
                         {/* Button replacing dropdown */}
                         <button
                             type="button"
+                            disabled={!isEditable}
                             className="p-2 w-full border border-[#E6E6E6] rounded-[10px] bg-[#F7F8FA] text-left"
                             onClick={(e) => {
                                 e.preventDefault();
@@ -55,7 +61,7 @@ const Certifications: React.FC<CertificationProps> = ({
                         </button>
                     </div>
 
-                    {certifications.map((certification,i) => (
+                    {certifications?.map((certification,i) => (
                         <div
                             key={i}
                             className="px-4 py-2 bg-[#FA4E09] text-white rounded-[10px] flex items-center space-x-2"
@@ -63,6 +69,7 @@ const Certifications: React.FC<CertificationProps> = ({
                             <span>{formatCertification(certification)}</span>
                             <button
                                 onClick={() => handleCertificationRemove(certification)}
+                                disabled={!isEditable}
                                 className="text-white font-semibold hover:bg-red-600 rounded-full"
                             >
                                 &times;
@@ -79,6 +86,7 @@ const Certifications: React.FC<CertificationProps> = ({
                         {/* Close Button */}
                         <button
                             type="button"
+                            disabled={!isEditable}
                             className="absolute top-2 right-3 text-2xl font-bold text-gray-600 hover:text-gray-900"
                             onClick={() => setIsModalOpen(false)}
                         >
@@ -93,8 +101,11 @@ const Certifications: React.FC<CertificationProps> = ({
                             <input
                                 type="text"
                                 placeholder="Certification Name"
-                                value={certName}
-                                onChange={(e) => setCertName(e.target.value)}
+                                value={certificationResponseDto.certification}
+                                onChange={(e) => setCertificationResponseDto({
+                                    ...certificationResponseDto,
+                                    certification: e.target.value
+                                })}
                                 className="w-full p-2 rounded mb-2 text-start  bg-[#F7F8FA] text-sm md:p-3 border-[1px] border-[#E3E6F3] focus:ring-0 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none"
                             />
 
@@ -102,8 +113,11 @@ const Certifications: React.FC<CertificationProps> = ({
                             <input
                                 type="text"
                                 placeholder="Institution"
-                                value={institution}
-                                onChange={(e) => setInstitution(e.target.value)}
+                                value={certificationResponseDto.institution}
+                                onChange={(e) => setCertificationResponseDto({
+                                    ...certificationResponseDto,
+                                    institution: e.target.value
+                                })}
                                 className="w-full p-2 rounded mb-2 text-start  bg-[#F7F8FA] text-sm md:p-3 border-[1px] border-[#E3E6F3] focus:ring-0 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none"
                             />
 
@@ -111,8 +125,11 @@ const Certifications: React.FC<CertificationProps> = ({
                             <input
                                 type="text"
                                 placeholder="Year Obtained"
-                                value={year}
-                                onChange={(e) => setYear(e.target.value)}
+                                value={certificationResponseDto.yearObtained}
+                                onChange={(e) => setCertificationResponseDto({
+                                    ...certificationResponseDto,
+                                    yearObtained: e.target.value
+                                })}
                                 className="w-full p-2 rounded mb-2 text-start  bg-[#F7F8FA] text-sm md:p-3 border-[1px] border-[#E3E6F3] focus:ring-0 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none"
                             />
 

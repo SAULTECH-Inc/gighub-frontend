@@ -6,40 +6,40 @@
 
 
 html {
-  scroll-behavior: smooth;
+    scroll-behavior: smooth;
+  font-family: "Lato", sans-serif;
+    line-height: 1.6;
+
 }
 
 body {
-  font-family: "Lato", sans-serif;
-    line-height: 1.6;
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-   /* Custom CSS for the dropdown arrow */
- .custom-select-wrapper::after {
-   content: '▼';
-   position: absolute;
-   top: 50%;
-   right: 1rem;
-   transform: translateY(-50%);
-   pointer-events: none;
-   color: white;
- }
+/* Custom CSS for the dropdown arrow */
+.custom-select-wrapper::after {
+    content: '▼';
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: white;
+}
 
 /* Custom CSS for the dropdown options */
 .custom-select option {
-  background-color: #f0f0f0; /* Light gray background */
-  color: black; /* Black text */
+    background-color: #f0f0f0; /* Light gray background */
+    color: black; /* Black text */
 }
 
 
-
 .truncate-message {
-  display: -webkit-box;
-  -webkit-line-clamp: 3; /* Limit to 3 lines */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

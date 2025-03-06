@@ -6,6 +6,7 @@ interface LocationSelectorProp{
     preferences: JobPreference;
     handleLocationSelect: (country: string, city: string) => void;
     removeLocation: (index: number) => void;
+    isEditable: boolean;
 }
 const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
                                                                        countryOptions,
@@ -13,6 +14,7 @@ const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
                                                                        preferences,
                                                                        handleLocationSelect,
                                                                        removeLocation,
+    isEditable
                                                                    }: LocationSelectorProp) => {
     const [selectedCountry, setSelectedCountry] = useState<string>("");
     const [selectedCity, setSelectedCity] = useState<string>("");
@@ -44,6 +46,7 @@ const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
                     <select
                         className="w-1/2 p-2 border border-[#E6E6E6] rounded-[10px] bg-[#F7F8FA]"
                         value={selectedCountry}
+                        disabled={!isEditable}
                         onChange={handleCountryChange}
                     >
                         <option value="" disabled>
@@ -81,6 +84,7 @@ const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
                             <span>{location.country}/{location.city}</span>
                             <button
                                 onClick={() => removeLocation(index)}
+                                disabled={!isEditable}
                                 className="text-white font-bold text-lg"
                             >
                                 &times;

@@ -37,3 +37,4 @@ export { default as Eye } from "./icons/eye.svg";
 export { default as Download } from "./icons/download-04.svg"; 
 export { default as Delete } from "./icons/delete-02.svg"; 
 export { default as Setting } from "./icons/settings icon.svg"; 
+export { default as ArrowDown } from "./icons/arrow-down-01.svg"; 

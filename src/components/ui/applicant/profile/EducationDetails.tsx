@@ -1,51 +1,114 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {MdKeyboardArrowDown, MdKeyboardArrowUp} from "react-icons/md";
 import {AnimatePresence, motion} from "framer-motion";
 import EducationUpdateForm from "./EducationUpdateForm.tsx";
 import {FaRegTrashAlt} from "react-icons/fa";
-import {ApplicantData, CvResponseDto, EducationResponseDto} from "../../../../utils/types";
+import {CvResponseDto, EducationResponseDto} from "../../../../utils/types";
 import moment from "moment";
-import {useAuth} from "../../../../store/useAuth.ts";
-import useEducationFormStore from "../../../../store/useEducationFormStore.tsx";
 import {toast} from "react-toastify";
-export interface EductionDetailsProps{
-    education: EducationResponseDto
+import {useSectionEditable} from "../../../../store/useEditable.ts";
+import {useApplicantJobProfile} from "../../../../store/useApplicantJobProfile.ts";
+
+export interface EductionDetailsProps {
+    education: EducationResponseDto;
 }
-const EducationDetails: React.FC<EductionDetailsProps> = ({education})=>{
+
+const EducationDetails: React.FC<EductionDetailsProps> = ({education}) => {
+    const {isEditable, toggleEdit} = useSectionEditable("education");
     const [educationCollapse, setEducationCollapse] = useState<boolean>(false);
-    const {applicant, setProfileData} = useAuth();
-    const {deleteEducation} = useEducationFormStore();
-    const handleDeleteEducation = async ()=>{
+
+    const {
+        deleteEducation,
+        applicantEducation,
+        educations,
+        setEducations,
+        setApplicantEducation,
+        updatedApplicantEducation,
+        cvDetails,
+        setCvDetails
+    } = useApplicantJobProfile();
+    useEffect(() => {
+        setApplicantEducation(education);
+    }, [education]);
+    const handleDeleteEducation = async () => {
         try {
-            const success = await deleteEducation(education.id || 0, applicant?.id || 0, applicant?.cv?.id || 0);
+            console.log("ID of Education to be deleted is ::: " + education.id)
+            const success = await deleteEducation(education.id as number);
             if (success) {
                 toast.success("Education deleted successfully!");
-                const educations: EducationResponseDto[] = [...applicant?.cv?.educations || []];
                 const updatedEducations = educations.filter(edu => edu.id !== education.id);
-                setProfileData({
-                    ...applicant,
-                    cv: {
-                        ...applicant?.cv,
-                        educations: updatedEducations
-                    } as CvResponseDto
-                } as ApplicantData);
+                setEducations(updatedEducations);
+                setCvDetails({
+                    ...cvDetails,
+                    educations: updatedEducations,
+                } as CvResponseDto);
+
             }
         } catch (e) {
             console.error("Failed to delete education:", e);
-            toast.error("Failed to delete education: "+e);
+            toast.error("Failed to delete education: " + e);
         }
     }
+    const handleUpdateEducation = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
+        try {
+            console.log("EDUCATION TO BE UPDATED ::: " + JSON.stringify(applicantEducation));
+            const response = await updatedApplicantEducation(applicantEducation);
+
+            if (response) {
+                toast.success("Education updated successfully!");
+                const updatedEducations = educations.map((edu) => {
+                        if (edu.id === applicantEducation.id) {
+                            return response;
+                        }
+                        return edu;
+                    }
+                );
+                toggleEdit();
+                setApplicantEducation(response);
+                setEducations(updatedEducations);
+                setCvDetails({
+                   ...cvDetails,
+                    educations: updatedEducations,
+                } as CvResponseDto);
+            }
+        } catch (error) {
+            toast.error("Failed to update education.");
+            console.error("Error updating education:", error);
+        }
+    };
+    const handleToggleEdit = () => {
+        console.log("🔄 Button Clicked! Before toggle: ", isEditable);
+        toggleEdit();
+        console.log("After toggle: ", isEditable);
+    };
+
+
     return (<div>
         <div className="relative">
-            {/* Education Section */}
+            {
+                educationCollapse && (
+                    <div
+                        className="absolute z-10 top-16 right-10 md:top-5 md:right-24 flex justify-evenly items-center text-xs gap-x-2">
+                        <button type="button" onClick={handleToggleEdit}
+                                className="bg-[#F6F6F7] w-12 rounded-[5px] border-[#ccc] border-[1px] p-1">Edit
+                        </button>
+                        <button type="button"
+                                onClick={handleUpdateEducation}
+                                className={`${!isEditable ? "cursor-not-allowed" : "cursor-pointer"} bg-[#F6F6F7] w-12 rounded-[5px] border-[#ccc] border-[1px] p-1`}>Save
+                        </button>
+                    </div>
+                )
+            }
 
             <div
                 className="relative w-full flex-col p-3 md:p-4 border-[1px] border-[#E6E6E6] rounded-[16px] bg-gray-50 flex justify-between items-center"
             >
                 {/* Left Content */}
                 <div className="w-full mb-5">
-                    <p className="text-sm font-semibold">{education?.degree}, {education?.fieldOfStudy?.toLocaleUpperCase()}</p>
-                    <p className="text-sm font-light text-gray-100">{moment(education?.startDate).format('MMM YYYY')} - {moment(education?.startDate).format('MMM YYYY')}</p>
+                    <p className="text-sm font-semibold">{applicantEducation?.degree}, {applicantEducation?.fieldOfStudy}</p>
+                    <p className="text-sm font-light text-gray-100">{moment(applicantEducation?.startDate).format('MMM YYYY')} - {moment(applicantEducation?.startDate).format('MMM YYYY')}</p>
                 </div>
 
                 {/* Dropdown Button with Options */}
@@ -67,14 +130,15 @@ const EducationDetails: React.FC<EductionDetailsProps> = ({education})=>{
                             animate={{opacity: 1, height: "auto"}}
                             exit={{opacity: 0, height: 0}}
                             transition={{duration: 0.5, ease: "easeInOut"}}
-                            className="w-full overflow-hidden"
+                            className="relative w-full overflow-hidden"
                         >
-                            <EducationUpdateForm educationData={education}/>
+                            <EducationUpdateForm isEditable={isEditable} educationData={education}/>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
-            <FaRegTrashAlt className="absolute -right-4 lg:-right-6 text-[11px] top-8 font-light cursor-pointer" onClick={handleDeleteEducation}/>
+            <FaRegTrashAlt className="absolute -right-4 lg:-right-6 text-[11px] top-8 font-light cursor-pointer"
+                           onClick={handleDeleteEducation}/>
         </div>
     </div>);
 }

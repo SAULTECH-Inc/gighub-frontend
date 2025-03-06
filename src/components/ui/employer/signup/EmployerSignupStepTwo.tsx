@@ -1,10 +1,10 @@
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import {useFormStore} from "../../../../store/useFormStore.ts";
 import documentAttachment from "../../../../assets/icons/documentAttachment.svg";
 import videoAttachment from "../../../../assets/icons/videoAttachment.svg";
-import {useOtp} from "../../../../hooks/useOtpVerify.ts";
 import {toast} from "react-toastify";
+import {useAuth} from "../../../../store/useAuth.ts";
+import {EmployerSignupRequest} from "../../../../utils/types";
 
 interface StepTwoProp {
     handleNext: () => void;
@@ -15,8 +15,7 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
                                                           handleNext,
                                                           handlePrev,
                                                       }) => {
-    const {employer, setEmployerData} = useFormStore();
-    const {sendOtp} = useOtp();
+    const {error, employerSignupRequest, setEmployerSignupRequest, sendVerificationOtp} = useAuth();
     const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
     const [documentType, setDocumentType] = useState<string | undefined>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -34,10 +33,10 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
         if (name === "documentType") {
             setDocumentType(value);
         } else {
-            setEmployerData({
-                ...employer,
+            setEmployerSignupRequest({
+                ...employerSignupRequest,
                 [name]: value,
-            });
+            } as EmployerSignupRequest);
         }
     }
 
@@ -54,15 +53,15 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
 
             // Update formData based on documentType
             if (documentType === "coverPage") {
-                setEmployerData({
-                    ...employer,
+                setEmployerSignupRequest({
+                    ...employerSignupRequest,
                     [documentType]: newFiles[0].file,
-                });
+                } as EmployerSignupRequest);
             } else if (documentType === "companyLogo") {
-                setEmployerData({
-                    ...employer,
+                setEmployerSignupRequest({
+                    ...employerSignupRequest,
                     [documentType]: newFiles[0].file,
-                });
+                } as EmployerSignupRequest);
             }
 
             // Simulate file upload progress (replace with actual upload logic)
@@ -103,18 +102,15 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
         setUploadedFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
     };
 
-    const handleSendOtp = ()=>{
-        sendOtp({ email: employer.email, name: employer.companyName}, {
-            onSuccess: (data) => {
-                if (data.statusCode === 200) {
-                    handleNext();
-                }
-            },
-            onError: (error) => {
-                console.error("OTP Verification Failed:", error);
-                toast.error(error.message);
-            }
-        });
+    const handleSendOtp = async()=>{
+        const success = await sendVerificationOtp(employerSignupRequest?.email as string, "SIGNUP");
+        if(success) {
+            toast.success("Verification OTP sent successfully!");
+            handleNext();
+        } else {
+            toast.error(error || "Failed to send verification OTP. Please try again later.");
+            return false;
+        }
     }
 
     return (
@@ -158,7 +154,7 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
                             type="text"
                             className="w-full px-4 py-2 border-[2px] border-[#E6E6E6] rounded-[16px] bg-[#F7F8FA]  outline-none focus:ring-0 focus:border-[2px] focus:border-[#E6E6E6]"
                             name="companyWebsite"
-                            value={employer.companyWebsite}
+                            value={employerSignupRequest?.companyWebsite}
                             placeholder="https://example.com"
                             onChange={handleChange}
                             id="company-website"

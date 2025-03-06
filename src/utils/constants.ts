@@ -1,3 +1,7 @@
+import {Option} from "./types";
+import {StateStorage} from "zustand/middleware";
+import secureLocalStorage from "react-secure-storage";
+
 export const emojiList = [
     '😀', '😁', '😂', '🤣', '😃', '😄', '😅', '😆', '😉', '😊', '😋', '😎', '😍', '🥰', '😘', '😗', '😙', '😚',
     '🙂', '🙃', '🫣', '🤗', '🤩', '🤔', '🤨', '😐', '😑', '😶', '😏', '😒', '🙄', '😬', '😳', '🤐', '😌', '😴',
@@ -38,3 +42,24 @@ export const applicantNavItemsMobile = ["Dashboard", "Find Jobs", "Applications"
 
 export const employerNavItems = ["Dashboard", "Manage Applicants", "My Networks", "Job List", "My Schedules"];
 export const employerNavItemsMobile = ["Dashboard", "Manage Applicants", "My Networks", "Profile", "Settings", "Help & Support"];
+
+export const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5173";
+export const jobLocation: Option[] = [
+    {label: "On-Site", value: "On-Site"},
+    {label: "Remote", value: "Remote"},
+    {label: "Hybrid", value: "Hybrid"},
+];
+export const secureStorageWrapper: StateStorage = {
+    getItem: (key) => {
+        const value = secureLocalStorage.getItem(key);
+        if (typeof value === "string") return value;
+        if (value === null) return null;
+        return JSON.stringify(value); // Convert non-string values to string
+    },
+    setItem: (key, value) => {
+        secureLocalStorage.setItem(key, value);
+    },
+    removeItem: (key) => {
+        secureLocalStorage.removeItem(key);
+    },
+};

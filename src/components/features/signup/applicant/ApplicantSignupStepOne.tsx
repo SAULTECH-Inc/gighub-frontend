@@ -4,14 +4,16 @@ import googleLogo from "../../../../assets/icons/googleLogo.svg";
 import microsoftLogo from "../../../../assets/icons/microsoftLogo.svg";
 import linkedinLogo from "../../../../assets/icons/linkedinLogo.svg";
 import { calculatePasswordStrength } from "../../../../utils/helpers.ts";
-import {useFormStore} from "../../../../store/useFormStore.ts";
+import {useAuth} from "../../../../store/useAuth.ts";
+import {ApplicantSignupRequest} from "../../../../utils/types";
+import {Link} from "react-router-dom";
 
 interface StepOneProp {
     handleNext: () => void;
 }
 
 const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
-    const { applicant, setApplicantData } = useFormStore();
+    const {applicantSignupRequest, setApplicantSignupRequest} = useAuth();
     const [passwordStrength, setPasswordStrength] = useState(0);
     const [passwordVisible, setPasswordVisible] = useState(false); // for toggling password visibility
     const [confirmPassword, setConfirmPassword] = useState(""); // for confirm password
@@ -20,7 +22,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
 
     const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setConfirmPassword(e.target.value);
-        setPasswordMatch(e.target.value === applicant.password); // validate password match
+        setPasswordMatch(e.target.value === applicantSignupRequest?.password); // validate password match
     };
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
@@ -29,10 +31,10 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         const { name, value } = e.target;
-        setApplicantData({
-            ...applicant,
+        setApplicantSignupRequest({
+            ...applicantSignupRequest,
             [name]: value,
-        });
+        } as ApplicantSignupRequest);
     };
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,7 +82,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
                     <input
                         type="text"
                         name="firstName"
-                        value={applicant.firstName}
+                        value={applicantSignupRequest?.firstName}
                         onChange={handleChange}
                         className="w-full py-2 px-5 mb-4 rounded-[16px] h-[45px] border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6]"
                     />
@@ -90,7 +92,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
                     <input
                         type="text"
                         name="lastName"
-                        value={applicant.lastName}
+                        value={applicantSignupRequest?.lastName}
                         onChange={handleChange}
                         className="w-full py-2 px-5 mb-4 border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6] rounded-[16px] h-[45px]"
                     />
@@ -108,7 +110,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
                     <input
                         type="text"
                         name="middleName"
-                        value={applicant.middleName}
+                        value={applicantSignupRequest?.middleName}
                         onChange={handleChange}
                         className="w-full py-2 px-5 mb-4 border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6] rounded-[16px] h-[45px]"
                     />
@@ -118,7 +120,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
                     <input
                         type="text"
                         name="email"
-                        value={applicant.email}
+                        value={applicantSignupRequest?.email}
                         onChange={handleChange}
                         className="w-full py-2 px-5 mb-4 border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6] rounded-[16px] h-[45px]"
                     />
@@ -136,7 +138,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
                     <input
                         type="text"
                         name="phoneNumber"
-                        value={applicant.phoneNumber}
+                        value={applicantSignupRequest?.phoneNumber}
                         onChange={handleChange}
                         className="w-full py-2 px-5 mb-4 border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6] rounded-[16px] h-[45px]"
                     />
@@ -155,7 +157,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
                     <input
                         type={passwordVisible ? "text" : "password"}
                         name="password"
-                        value={applicant.password}
+                        value={applicantSignupRequest?.password}
                         onChange={handlePasswordChange}
                         className="w-full py-2 px-5 mb-4 border-[1px] border-[#E6E6E6] focus:ring-0 focus:outline-none focus:border-[1px] focus:border-[#E6E6E6] rounded-[16px] h-[45px]"
                     />
@@ -236,7 +238,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
                 animate={{y: 0}}
                 transition={{duration: 0.5}}
             >
-                Already have an account? <span className="font-bold text-[#6E4AEDEE]">Sign-in</span>
+                Already have an account? <Link to="/login" className="font-bold text-[#6E4AEDEE]">Sign-in</Link>
             </motion.div>
 
             {/* Social Login Buttons */}

@@ -14,7 +14,7 @@ interface ProfileDropdownProps {
 }
 
 const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
-    const {logout, error} = useAuth();
+    const {logout, error } = useAuth();
     const navigate = useNavigate();
     const handleLogout = async ()=>{
         const success = await logout();
@@ -26,6 +26,7 @@ const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
         }
 
     }
+
     return (
         <div
             className={`absolute ${isMobile ? "left-0" : "right-0"} top-14 w-[352px] bg-white shadow-lg rounded-[16px] z-50 font-lato p-6`}

@@ -1,6 +1,6 @@
 import { FC, useState, useRef, useEffect } from "react";
 import { FaAngleLeft, FaChevronRight } from "react-icons/fa";
-import ApplicantNavBar from "../../components/layouts/ApplicantNavBar.tsx";
+import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import SearchIcon from "../../components/common/SearchIcon.tsx";
 import Chat from "../../assets/icons/bubble-chat.svg";
 import {applicantNavBarItemMap, applicantNavItems, applicantNavItemsMobile} from "../../utils/constants.ts";
@@ -44,7 +44,7 @@ export const ApplicantNetwork: FC = () => {
 
   return (
     <div className="bg-[#F7F8FA] min-h-screen">
-      <ApplicantNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile} navbarItemsMap={applicantNavBarItemMap}/>
+      <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile} navbarItemsMap={applicantNavBarItemMap}/>
       <div className="w-full flex flex-col items-center py-6">
         <div className="w-[94%] flex flex-col items-center justify-center py-6">
           <div className="w-full py-[10px] pl-[30px] pr-[12px] bg-[#FFFFFF] rounded-2xl flex flex-col sm:flex-row items-center gap-2">

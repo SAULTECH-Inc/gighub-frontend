@@ -1,4 +1,4 @@
-import {BrowserRouter, Routes, Route} from "react-router-dom";
+import {Routes, Route, useLocation} from "react-router-dom";
 import {NotFound} from "../pages/NotFound.tsx";
 import {Home} from "../pages/Home.tsx";
 import {ApplicantDashboard} from "../pages/applicant/ApplicantDashboard.tsx";
@@ -20,8 +20,7 @@ import JobDetails from "../pages/JobDetails.tsx";
 import JobList from "../pages/JobList.tsx";
 import FilterJob from "../pages/FilterJob.tsx";
 import {Login} from "../pages/auth/Login.tsx";
-import PrivateRoute from "../pages/auth/PrivateRoute.tsx";
-import {UserType} from "../utils/types/enums.ts";
+import PrivateRoute from "../middleware/PrivateRoute.tsx";
 import NotAuthorized from "../pages/auth/NotAuthorized.tsx";
 import ForgotPassword from "../pages/auth/ForgotPassword.tsx";
 import VerifyOtpToResetPassword from "../pages/auth/VerifyOtpToResetPassword.tsx";
@@ -29,11 +28,21 @@ import ResetPassword from "../pages/auth/ResetPassword.tsx";
 import PasswordResetSuccess from "../pages/auth/PasswordResetSuccess.tsx";
 import EmployerDashboard from "../pages/employer/EmployerDashboard.tsx";
 import JobSearch from "../pages/JobSearch.tsx";
+import {useAuth} from "../store/useAuth.ts";
+import {useEffect} from "react";
 
+import EmployerJobMultistepForm from "../pages/employer/EmployerJobMultistepForm.tsx";
+import {UserType} from "../utils/enums.ts";
 
 const AppRoutes = () => {
+    const {setRedirectPath} = useAuth();
+    const location = useLocation();
+    useEffect(() => {
+        if (location.pathname){
+            setRedirectPath(location.pathname);
+        }
+    }, [location.pathname]);
     return (
-        <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Home/>}/>
                 <Route path="/not-authorized" element={<NotAuthorized/>}/>
@@ -63,8 +72,12 @@ const AppRoutes = () => {
                 <Route path="/reset-password" element={<ResetPassword/>}/>
                 <Route path="/password-reset-success" element={<PasswordResetSuccess/>}/>
                 <Route path="/applicant/find-jobs" element={<JobSearch/>}/>
+      <Route path="/applicant/dashboard/network" element={<ApplicantNetwork/>}/>
+      <Route path="/applicant/dashboard/jobselection" element={<JobSelection/>}/>
+      <Route path="/notification" element={<Notification/>}/>
+      <Route path="/employerJobMultistepForm" element={<EmployerJobMultistepForm />}/>
+
             </Routes>
-        </BrowserRouter>
     );
 };
 

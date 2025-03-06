@@ -1,9 +1,9 @@
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion"; // Import Framer Motion
-import {useFormStore} from "../../../../store/useFormStore.ts";
 import documentAttachment from "../../../../assets/icons/documentAttachment.svg";
 import videoAttachment from "../../../../assets/icons/videoAttachment.svg";
-import {useOtp} from "../../../../hooks/useOtpVerify.ts";
+import {useAuth} from "../../../../store/useAuth.ts";
+import {ApplicantSignupRequest} from "../../../../utils/types";
 
 interface StepTwoProp {
     handleNext: () => void;
@@ -14,10 +14,9 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
                                                            handleNext,
                                                            handlePrev,
                                                        }) => {
-    const { applicant, setApplicantData } = useFormStore();
-    const {sendOtp} = useOtp();
+    const { applicantSignupRequest, setApplicantSignupRequest, sendVerificationOtp } = useAuth();
     const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
-    const [documentType, setDocumentType] = useState<string | undefined>(applicant.documentType);
+    const [documentType, setDocumentType] = useState<string | undefined>(applicantSignupRequest?.documentType);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleBrowseClick = () => {
@@ -39,25 +38,25 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
 
             // Update formData based on documentType
             if (documentType === "resume") {
-                setApplicantData({
-                    ...applicant,
+                setApplicantSignupRequest({
+                    ...applicantSignupRequest,
                     [documentType]: newFiles[0].file,
-                });
+                } as ApplicantSignupRequest);
             } else if (documentType === "coverLetter") {
-                setApplicantData({
-                    ...applicant,
+                setApplicantSignupRequest({
+                    ...applicantSignupRequest,
                     [documentType]: newFiles[0].file,
-                });
+                } as ApplicantSignupRequest);
             }else if (documentType === "portfolio") {
-                setApplicantData({
-                    ...applicant,
+                setApplicantSignupRequest({
+                    ...applicantSignupRequest,
                     [documentType]: newFiles[0].file,
-                });
+                } as ApplicantSignupRequest);
             }else if (documentType === "videoCv") {
-                setApplicantData({
-                    ...applicant,
+                setApplicantSignupRequest({
+                    ...applicantSignupRequest,
                     [documentType]: newFiles[0].file,
-                });
+                } as ApplicantSignupRequest);
             }
 
             // Simulate file upload progress (replace with actual upload logic)
@@ -106,24 +105,20 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
         if (name === "documentType") {
             setDocumentType(value);
         } else {
-            setApplicantData({
-                ...applicant,
+            setApplicantSignupRequest({
+                ...applicantSignupRequest,
                 [name]: value,
-            });
+            } as ApplicantSignupRequest);
         }
     }
 
-    const handleProceed =  ()=>{
-        sendOtp({
-            email: applicant.email,
-            name: applicant.firstName + " " + applicant.middleName + " ",
-        });
-        setTimeout(
-            () => {
-                handleNext();
-            },
-            1000
-        )
+    const handleProceed = async ()=>{
+        const success = await sendVerificationOtp(applicantSignupRequest?.email as string,"SIGNUP");
+        if(success) {
+            handleNext();
+        }else{
+            return false;
+        }
     }
 
     return (

@@ -1,17 +1,20 @@
 import {create} from "zustand";
-import {persist} from "zustand/middleware";
+import {createJSONStorage, persist} from "zustand/middleware";
 import {toast} from "react-toastify";
-import {useFormStore} from "./useFormStore";
-import {ApplicantData, EmployerData, PasswordResetRequest, Role} from "../utils/types";
+import {
+    APIResponse,
+    ApplicantData, ApplicantPersonalInfo,
+    ApplicantSignupRequest, EducationResponseDto,
+    EmployerData, EmployerSignupRequest,
+    PasswordResetRequest, ProfessionalSummaryData,
+    Role
+} from "../utils/types";
 import {UserType} from "../utils/types/enums.ts";
 import {privateApiClient, publicApiClient} from "../api/axios.ts";
 import {immer} from "zustand/middleware/immer";
 import secureLocalStorage from "react-secure-storage";
+import {API_BASE_URL, secureStorageWrapper} from "../utils/constants.ts";
 
-
-// ✅ Import the form store
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5173";
 
 export interface LoginRequest {
     email: string;
@@ -20,48 +23,68 @@ export interface LoginRequest {
 
 export interface AuthData {
     isAuthenticated: boolean;
-    redirectPath: string | null;
-    employer: EmployerData | null;
-    email: string | null;
-    otp: string | null;
-    applicant: ApplicantData | null;
+    redirectPath: string | "";
+    employer: EmployerData | "";
+    email: string | "";
+    otp: string | "";
+    applicant: ApplicantData;
     loginRequest: LoginRequest | null;
-    passwordResetRequest: PasswordResetRequest | null;
+    applicantSignupRequest: ApplicantSignupRequest;
+    applicantPersonalInfo: ApplicantPersonalInfo;
+    employerSignupRequest: EmployerSignupRequest;
+    professionalSummaryData: ProfessionalSummaryData;
+    resetApplicantPersonalInfo: () => void;
+    resetProfessionalSummaryData: ()=>void;
+    passwordResetRequest: PasswordResetRequest;
     role: Role | null;
     userType: UserType | null ;
     loading: boolean;
     error: string | null;
     signupSuccess: boolean;
     login: (data: LoginRequest) => Promise<boolean>;
-    signup: (userType: UserType) => Promise<boolean>;
+    signup: (userType: UserType, request: EmployerSignupRequest | ApplicantSignupRequest) => Promise<boolean>;
     updateProfile: (data: Partial<EmployerData> | Partial<ApplicantData>)=> void;
     setProfileData: (data: Partial<EmployerData> | Partial<ApplicantData>)=>void;
+    setApplicantPersonalInfo: (data: ApplicantPersonalInfo)=>void;
+    updateApplicantPersonalInfo: (data: ApplicantPersonalInfo)=>Promise<ApplicantPersonalInfo | null>;
+    setProfessionalSummaryData: (data:ProfessionalSummaryData)=>void;
+    updateProfessionalSummaryData: (data: ProfessionalSummaryData)=>Promise<ProfessionalSummaryData | null>;
     setUserType: (userType: UserType)=>void;
     setEmail: (email: string)=>void;
     setOtp: (otp: string)=>void;
-    verifyAccount: (email: string, action: string) => Promise<boolean>;
+    sendVerificationOtp: (email: string, action: string) => Promise<boolean>;
+    verifyAccount: (email: string) => Promise<boolean>;
     verifyOtp: (email: string, otp: string) => Promise<boolean>;
     sendOtp: (email: string) => Promise<boolean>;
     setPasswordResetRequest: (data: PasswordResetRequest)=>void;
+    setApplicantSignupRequest: (data: ApplicantSignupRequest)=>void;
+    setEmployerSignupRequest: (data: EmployerSignupRequest)=>void;
     resetPassword: (data: PasswordResetRequest) => Promise<boolean>;
+    resetSignupRequest: ()=>void;
     logout: () => Promise<boolean>;
     setRedirectPath: (path: string)=>void;
+    resetApplicantSignupRequest: ()=>void;
 }
 
 export const useAuth = create<AuthData>()(
     persist(
         immer<AuthData>((set, ) => ({
             isAuthenticated: !!secureLocalStorage.getItem("auth-token"),
-            redirectPath: null,
+            redirectPath: "",
             signupSuccess: false,
-            employer: null,
-            applicant: null,
+            employer: {} as EmployerData,
+            applicant: {} as ApplicantData,
             role: secureLocalStorage.getItem("auth-role") as Role | null,
             userType: secureLocalStorage.getItem("userType") as UserType | null,
-            email: null,
-            otp: null,
-            loginRequest: null,
-            passwordResetRequest: null,
+            email: "",
+            otp: "",
+            loginRequest: {} as LoginRequest,
+            passwordResetRequest: {} as PasswordResetRequest,
+            applicantSignupRequest: {} as ApplicantSignupRequest,
+            employerSignupRequest: {} as EmployerSignupRequest,
+            applicantPersonalInfo: {} as ApplicantPersonalInfo,
+            professionalSummaryData: {} as ProfessionalSummaryData,
+            applicantEducation: {} as EducationResponseDto,
             loading: false,
             error: null,
 
@@ -74,6 +97,7 @@ export const useAuth = create<AuthData>()(
                 try {
                     const response = await privateApiClient.post(`${API_BASE_URL}/auth/login`, data);
                     const userData: ApplicantData | EmployerData = response.data.data;
+                    console.log("LOGGED IN USER ::: ", userData);
                     set((state) => {
                         state.isAuthenticated = true;
                         state.role = userData.role as Role;
@@ -81,10 +105,26 @@ export const useAuth = create<AuthData>()(
 
                         if (userData.userType === UserType.EMPLOYER) {
                             state.employer = userData as EmployerData;
-                            state.applicant = null;
+                            state.applicant = {} as ApplicantData;
                         } else {
-                            state.applicant = userData as ApplicantData;
-                            state.employer = null;
+                            const appData = userData as ApplicantData;
+                            state.applicant = appData;
+                            state.applicantPersonalInfo = {
+                                firstName: appData?.firstName,
+                                lastName: appData?.lastName,
+                                middleName: appData?.middleName,
+                                email: appData?.email,
+                                phoneNumber: appData?.phoneNumber,
+                                country: appData?.country,
+                                city: appData?.city,
+                                dateOfBirth: appData?.dateOfBirth,
+                                address: appData?.address,
+                            } as ApplicantPersonalInfo;
+                            state.professionalSummaryData = {
+                                professionalTitle: appData?.cv?.professionalTitle as string,
+                                professionalSummary: appData?.cv?.professionalSummary as string
+                            }
+                            state.employer = {} as EmployerData;
                         }
 
                         state.loading = false;
@@ -105,8 +145,7 @@ export const useAuth = create<AuthData>()(
                 return false;
             },
 
-            signup: async (userType) => {
-                const { applicant, employer } = useFormStore.getState();
+            signup: async (userType, request: EmployerSignupRequest | ApplicantSignupRequest) => {
                 set((state) => {
                     state.loading = true;
                     state.error = null;
@@ -115,7 +154,7 @@ export const useAuth = create<AuthData>()(
 
                 try {
                     const form = new FormData();
-                    const formData = userType === UserType.EMPLOYER ? employer : applicant;
+                    const formData = userType === UserType.EMPLOYER ? request as EmployerSignupRequest : request;
 
                     Object.entries(formData).forEach(([key, value]) => {
                         if(key !== "otp" && key!== "confirmPassword"){
@@ -137,10 +176,10 @@ export const useAuth = create<AuthData>()(
 
                         if (userData.userType === UserType.EMPLOYER) {
                             state.employer = userData as EmployerData;
-                            state.applicant = null;
+                            state.applicant = {} as ApplicantData;
                         } else {
                             state.applicant = userData as ApplicantData;
-                            state.employer = null;
+                            state.employer = {} as EmployerData;
                         }
 
                         state.loading = false;
@@ -265,7 +304,7 @@ export const useAuth = create<AuthData>()(
                     secureLocalStorage.setItem("otp", otp);
                 });
             },
-            verifyAccount: async (email: string, action: string) => {
+            sendVerificationOtp: async (email: string, action: string) => {
                 set((state) => {
                     state.loading = true;
                     state.error = null;
@@ -273,8 +312,32 @@ export const useAuth = create<AuthData>()(
 
                 try {
                     await publicApiClient.get(`${API_BASE_URL}/auth/send-verification-otp?email=${email}&action=${action}`);
-                    toast.success("Account verification link sent successfully.");
                     return true;
+                } catch (err: any) {
+                    toast.error(err.response?.data?.message || "Verification failed");
+                    set((state) => {
+                        state.error = err.response?.data?.message || "Verification failed";
+                        state.loading = false;
+                    });
+                }
+                return false;
+            },
+            verifyAccount: async (email: string)=>{
+                set((state) => {
+                    state.loading = true;
+                    state.error = null;
+                });
+
+                try {
+                    const response = await publicApiClient.get<APIResponse<boolean>>(`${API_BASE_URL}/auth/verify-account`, {
+                        params: { email: email },
+                    })
+                        .then(res=>res.data);
+                    set((state) => {
+                        state.email = email;
+                        state.loading = false;
+                    });
+                    return response.data;
                 } catch (err: any) {
                     toast.error(err.response?.data?.message || "Verification failed");
                     set((state) => {
@@ -292,7 +355,7 @@ export const useAuth = create<AuthData>()(
 
                 try {
                     await publicApiClient.get(`${API_BASE_URL}/auth/otp/verify`, {
-                        params: { email: email, otp: otp },
+                        params: { otp: otp },
                     });
                     secureLocalStorage.setItem("email", email);
                     set((state) => {
@@ -356,6 +419,9 @@ export const useAuth = create<AuthData>()(
 
             logout: async () => {
                 try {
+                    set((state)=> {
+                        state.loading = true;
+                    });
                     await privateApiClient.post(`${API_BASE_URL}/auth/logout`);
                     secureLocalStorage.removeItem("auth-token");
                     secureLocalStorage.removeItem("auth-role");
@@ -363,13 +429,20 @@ export const useAuth = create<AuthData>()(
                     secureLocalStorage.removeItem("auth-storage");
                     secureLocalStorage.removeItem("job-preference-store");
                     secureLocalStorage.removeItem("redirectPath");
+                    secureLocalStorage.removeItem("applicantJobProfile");
+                    secureLocalStorage.removeItem("auth-storage");
 
 
                     set((state) => {
                         state.isAuthenticated = false;
-                        state.employer = null;
-                        state.applicant = null;
-                        state.role = null;
+                        state.employer = {} as EmployerData;
+                        state.applicant = {} as ApplicantData;
+                        state.role = {} as Role;
+                        state.email = "";
+                        state.otp = "";
+                        state.passwordResetRequest = {} as PasswordResetRequest;
+                        state.applicantSignupRequest = {} as ApplicantSignupRequest;
+                        state.employerSignupRequest = {} as EmployerSignupRequest;
                         state.userType = null;
                         state.loading = false;
                         state.error = null;
@@ -390,6 +463,124 @@ export const useAuth = create<AuthData>()(
                     state.redirectPath = path;
                 });
             },
+            setApplicantSignupRequest: async (request: ApplicantSignupRequest)=>{
+                set((state) => {
+                    state.applicantSignupRequest = {
+                       ...state.applicantSignupRequest,
+                       ...request,
+                    };
+                });
+            },
+            setEmployerSignupRequest: async (request: EmployerSignupRequest) => {
+                set((state) => {
+                    state.employerSignupRequest = {
+                       ...state.employerSignupRequest,
+                       ...request,
+                    };
+                });
+            },
+            resetSignupRequest: async ()=>{
+                set((state) => {
+                    state.employerSignupRequest = {
+                        companyName: "",
+                        companyDescription: "",
+                        companyWebsite: "",
+                        email: "",
+                        password: "",
+                        confirmPassword: "",
+                        companyPhone: "",
+                        coverPage: null,
+                        companyLogo: null,
+                    };
+                    state.applicantSignupRequest = {
+                        firstName: "",
+                        lastName: "",
+                        middleName: "",
+                        email: "",
+                        password: "",
+                        confirmPassword: "",
+                        phoneNumber: "",
+                        resume: null,
+                        address: "",
+                        coverLetter: null,
+                        portfolio: null,
+                        videoCv: null,
+                        documentType: "",
+                    };
+                });
+            },
+            setApplicantPersonalInfo: data => {
+                set((state) => {
+                    state.applicantPersonalInfo = {
+                       ...state.applicantPersonalInfo,
+                       ...data,
+                    } as ApplicantPersonalInfo;
+                });
+            },
+            updateApplicantPersonalInfo: async (data: ApplicantPersonalInfo) => {
+                //call backend
+                try {
+                    set((state) => {
+                        state.loading = true;
+                    });
+                    const response = await privateApiClient.put<APIResponse<ApplicantPersonalInfo>>(`${API_BASE_URL}/users/applicants/update/personal-info`, data);
+                    set((state)=>{
+                        state.loading = false;
+                        state.error = null;
+                    });
+                    return response?.data?.data;
+                }catch (err: any) {
+                    toast.error(err.response?.data?.message || "Error updating personal information");
+                    set((state) => {
+                        state.error = err.response?.data?.message || "Error updating personal information";
+                        state.loading = false;
+                    });
+                    return null;
+                }
+            },
+            setProfessionalSummaryData: (data: ProfessionalSummaryData) => {
+                set((state) => {
+                    state.professionalSummaryData = {
+                        ...state.professionalSummaryData,
+                        ...data,
+                    };
+                });
+            },
+            updateProfessionalSummaryData: async (data) => {
+                try {
+                    set((state) => {
+                        state.loading = true;
+                    });
+                    const response = await privateApiClient.put<APIResponse<ProfessionalSummaryData>>(`${API_BASE_URL}/users/applicants/update/professional-summary`, data);
+                    set((state)=>{
+                        state.loading = false;
+                        state.error = null;
+                    });
+                    return response?.data?.data;
+                }catch (err: any) {
+                    toast.error(err.response?.data?.message || "Error updating professional summary");
+                    set((state) => {
+                        state.error = err.response?.data?.message || "Error updating professional summary";
+                        state.loading = false;
+                    });
+                    return null;
+                }
+            },
+            resetApplicantPersonalInfo: async () => {
+                set((state) => {
+                    state.applicantPersonalInfo = {} as ApplicantPersonalInfo;
+                });
+            },
+            resetProfessionalSummaryData: async () =>{
+                set((state) => {
+                    state.professionalSummaryData = {} as ProfessionalSummaryData;
+                });
+            },
+            resetApplicantSignupRequest: async () =>{
+                set((state) => {
+                    state.applicantSignupRequest = {} as ApplicantSignupRequest;
+                });
+            }
         })),
         {
             name: "auth-storage",
@@ -397,6 +588,10 @@ export const useAuth = create<AuthData>()(
                 isAuthenticated: state.isAuthenticated,
                 employer: state.employer,
                 applicant: state.applicant,
+                employerSignupRequest: state.employerSignupRequest,
+                applicantSignupRequest: state.applicantSignupRequest,
+                applicantPersonalInfo: state.applicantPersonalInfo,
+                professionalSummaryData: state.professionalSummaryData,
                 signupSuccess: state.signupSuccess,
                 email: state.email,
                 otp: state.otp,
@@ -405,6 +600,7 @@ export const useAuth = create<AuthData>()(
                 userType: state.userType,
                 role: state.role,
             }),
+            storage: createJSONStorage(()=>secureStorageWrapper)
         }
     )
 );
