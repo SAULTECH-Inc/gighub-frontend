@@ -1,4 +1,4 @@
-import { EmploymentType } from "./emplymentTypes";
+import { EmploymentType } from "./employmentTypes";
 
 interface JobListing {
     id: string;

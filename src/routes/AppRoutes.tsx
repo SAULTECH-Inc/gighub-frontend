@@ -21,7 +21,7 @@ import JobList from "../pages/JobList.tsx";
 import FilterJob from "../pages/FilterJob.tsx";
 import {Login} from "../pages/auth/Login.tsx";
 import PrivateRoute from "../pages/auth/PrivateRoute.tsx";
-import {UserType} from "../utils/types/enums.ts";
+import { UserType } from "../utils/enums.ts";
 import NotAuthorized from "../pages/auth/NotAuthorized.tsx";
 import ForgotPassword from "../pages/auth/ForgotPassword.tsx";
 import VerifyOtpToResetPassword from "../pages/auth/VerifyOtpToResetPassword.tsx";
@@ -47,7 +47,7 @@ const AppRoutes = () => {
                 <Route path="/applicant/signup" element={<ApplicantMultistepForm/>}/>
                 <Route path="/employer/signup" element={<EmployerMultistepForm/>}/>
                 <Route path="/employer/profile" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><EmployerProfile/></PrivateRoute>}/>
-                <Route path="/applicant/profile" element={<PrivateRoute allowedTypes={[UserType.APPLICANT]}><ApplicantProfile/></PrivateRoute>}/>
+                <Route path="/applicant/profile" element={<ApplicantProfile/>}/>
                 <Route path="/employer/public-profile" element={<EmployerPublicProfile/>}/>
                 <Route path="/employer/manage-applicants" element={<ManageApplicant/>}/>
                 <Route path="/settings/account-settings" element={<AccountSettings/>}/>
@@ -64,31 +64,13 @@ const AppRoutes = () => {
                 <Route path="/reset-password" element={<ResetPassword/>}/>
                 <Route path="/password-reset-success" element={<PasswordResetSuccess/>}/>
                 <Route path="/applicant/find-jobs" element={<JobSearch/>}/>
-            </Routes>
-        </BrowserRouter>
-    );
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="*" element={<NotFound />} />
       <Route path="/applicant/dashboard/network" element={<ApplicantNetwork/>}/>
-      <Route path="/applicant/dashboard/manageapplicant" element={<ManageApplicant/>}/>
       <Route path="/applicant/dashboard/jobselection" element={<JobSelection/>}/>
       <Route path="/notification" element={<Notification/>}/>
       <Route path="/employerJobMultistepForm" element={<EmployerJobMultistepForm />}/>
-      <Route path="/applicant/dashboard" element={<ApplicantDashboard/>}/>
-          <Route path="/user-type-selection" element={<UserTypeSelection/>} />
-          <Route path="/applicant/signup" element={<ApplicantMultistepForm/>}/>
-          <Route path="/employer/signup" element={<EmployerMultistepForm/>}/>
-      <Route path="/employer/profile" element={<EmployerProfile/>}/>
-          <Route path="/applicant/profile" element={<ApplicantProfile/>}/>
-          <Route path="/navbar/demo" element={<ApplicantNavBar/>}/>
-          <Route path="/dashboard/dashboard" element={<EmployerPublicProfile/>}/>
-          <Route path="/employer/public-profile" element={<EmployerPublicProfile/>}/>
-      </Routes>
-    </BrowserRouter>
-  );
-};
 
+            </Routes>
+        </BrowserRouter>
+    );
+  }
 export default AppRoutes;
