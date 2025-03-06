@@ -1,6 +1,6 @@
 import React from "react";
 import { Delete } from "../assets/icons";
-import { EmploymentType } from "../utils/emplymentTypes";
+import { EmploymentType } from "../utils/employmentTypes";
 
 interface JobListing {
     id: string;

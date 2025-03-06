@@ -2,19 +2,18 @@ import CustomDropdown from "../../../common/CustomDropdown.tsx";
 import RichTextEditor from "../../../common/RichTextEditor.tsx";
 import React, {useEffect, useState} from "react";
 import useModalStore from "../../../../store/modalStateStores.ts";
-import {useAuth} from "../../../../store/useAuth.ts";
 import {
-    ApplicantData,
     cities,
     classOfDegrees,
-    countries,
+    countries, CvResponseDto,
     EducationResponseDto,
     fieldsOfStudies,
     institutions,
     Option
 } from "../../../../utils/types";
-import useEducationFormStore from "../../../../store/useEducationFormStore.tsx";
 import {toast} from "react-toastify";
+import {useApplicantJobProfile} from "../../../../store/useApplicantJobProfile.ts";
+import CustomCheckbox from "../../../common/CustomCheckbox.tsx";
 
 interface AddEducationModalProp {
     modalId: string;
@@ -23,23 +22,21 @@ interface AddEducationModalProp {
 const AddEducationModal: React.FC<AddEducationModalProp> = ({modalId}) => {
     const {modals, closeModal} = useModalStore();
     const isOpen = modals[modalId];
-    const {applicant, setProfileData} = useAuth();
-    const {education, setEducation, submitEducation, resetEducation} = useEducationFormStore();
+    const {cvDetails, educations, setEducations, setCvDetails, applicantEducation, setApplicantEducation, resetApplicantEducation, addApplicantEducation} = useApplicantJobProfile();
     const [description, setDescription] = useState<string>(
-        education?.description || ""
+        ""
     );
     const [currentlyEnrolled, setCurrentEnrolled] = useState<boolean>(false);
 
 
     useEffect(() => {
         // Avoid unnecessary updates by comparing values before setting state
-        setEducation({
-            ...education,
+        setApplicantEducation({
+            ...applicantEducation,
             description: description,
-
-        })
+        });
         if (currentlyEnrolled) {
-            setEducation({...education, endDate: new Date() });
+            setApplicantEducation({...applicantEducation, endDate: new Date() });
         }
     }, [description, currentlyEnrolled]);
 
@@ -51,19 +48,17 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({modalId}) => {
         e.preventDefault();
 
         try {
-            const success = await submitEducation(education, applicant?.id || 0, applicant?.cv?.id || 0);
-            if (success) {
+            const newEducation = await addApplicantEducation(applicantEducation);
+            if (newEducation) {
                 toast.success("Education updated successfully!");
-                resetEducation();
-                const educations: EducationResponseDto[] = [...applicant?.cv?.educations || []];
-                educations.push(education);
-                setProfileData({
-                    ...applicant,
-                    cv: {
-                        ...applicant?.cv,
-                        educations: educations
-                    }
-                } as ApplicantData);
+                resetApplicantEducation();
+                const edus: EducationResponseDto[] = [...educations || []];
+                edus.push(newEducation);
+                setEducations(edus);
+                setCvDetails({
+                    ...cvDetails,
+                    educations: edus,
+                } as CvResponseDto);
             }
         } catch (error) {
             toast.error("Failed to update education.");
@@ -74,8 +69,8 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({modalId}) => {
 
     const handleChangeDate = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target;
-        setEducation({
-            ...education,
+        setApplicantEducation({
+            ...applicantEducation,
             [name]: new Date(value),
         })
     }
@@ -83,7 +78,7 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({modalId}) => {
 
     if (!isOpen) return null;
     //   flex flex-col justify-evenly py-[5px]
-    return (<div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+    return (<div className="w-screen h-screen fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 -top-3">
 
         <form className="m-2 w-[360px] h-[680px] md:w-[690px] md:h-[850px] lg:w-[820px] lg:h-[830px] p-5 md:p-8 lg:p-10 shadow-lg bg-white rounded-[16px] flex flex-col gap-y-5 overflow-y-scroll md:overflow-y-hidden">
             <h3>Not Specified</h3>
@@ -94,8 +89,8 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({modalId}) => {
                         placeholder="Enter class of degree"
                         options={classOfDegrees}
                         handleSelect={(selected: Option) => {
-                            setEducation({
-                                ...education,
+                            setApplicantEducation({
+                                ...applicantEducation,
                                 degree: selected.value,
                             })
                         }}
@@ -108,8 +103,8 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({modalId}) => {
                         placeholder="Enter field of study"
                         options={fieldsOfStudies}
                         handleSelect={(selected: Option) => {
-                            setEducation({
-                                ...education,
+                            setApplicantEducation({
+                                ...applicantEducation,
                                 fieldOfStudy: selected.value,
                             })
                         }}
@@ -124,8 +119,8 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({modalId}) => {
                         placeholder="Enter institution"
                         options={institutions}
                         handleSelect={(selected: Option) => {
-                            setEducation({
-                                ...education,
+                            setApplicantEducation({
+                                ...applicantEducation,
                                 institution: selected.value,
                             })
                         }}
@@ -138,8 +133,8 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({modalId}) => {
                         placeholder="Enter country"
                         options={countries}
                         handleSelect={(selected: Option) => {
-                            setEducation({
-                                ...education,
+                            setApplicantEducation({
+                                ...applicantEducation,
                                 country: selected.value,
                             })
                         }}
@@ -154,8 +149,8 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({modalId}) => {
                         placeholder="Enter city"
                         options={cities}
                         handleSelect={(selected: Option) => {
-                            setEducation({
-                                ...education,
+                            setApplicantEducation({
+                                ...applicantEducation,
                                 city: selected.value,
                             })
                         }}
@@ -168,7 +163,7 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({modalId}) => {
                         <input type="date"
                                name="startDate"
                                onChange={handleChangeDate}
-                               value={education?.startDate ? new Date(education.startDate).toISOString().split('T')[0] : ""}
+                               value={applicantEducation?.startDate ? new Date(applicantEducation.startDate).toISOString().split('T')[0] : ""}
                                className="rounded-[10px]  bg-[#F7F8FA] w-full p-2 lg:p-3 border-[1px] border-[#E3E6F3] focus:ring-0 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none"/>
                     </div>
                     {!currentlyEnrolled && (<div className="w-full md:w-1/2 flex flex-col gap-y-2">
@@ -177,7 +172,7 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({modalId}) => {
                                name="endDate"
                                disabled={currentlyEnrolled}
                                onChange={handleChangeDate}
-                               value={education?.endDate ? new Date(education.endDate).toISOString().split('T')[0] : ""}
+                               value={applicantEducation?.endDate ? new Date(applicantEducation.endDate).toISOString().split('T')[0] : ""}
                                className="rounded-[10px]  bg-[#F7F8FA] w-full p-2 lg:p-3 border-[1px] border-[#E3E6F3] focus:ring-0 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none"/>
                     </div>)}
 
@@ -185,12 +180,15 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({modalId}) => {
             </div>
             <div className="flex lg:justify-end justify-start">
                 <span>
-                <input type="checkbox" onChange={
-                    e => {
-                        setCurrentEnrolled(e.target.checked);
-                    }
-                }/>
-                <label className="ml-2">Currently there</label>
+             <CustomCheckbox
+                 label="Currently there"
+                 checked={currentlyEnrolled}
+                 onChange={
+                     e => {
+                         setCurrentEnrolled(e.target.checked);
+                     }
+                 }
+             />
             </span>
             </div>
 
@@ -203,7 +201,7 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({modalId}) => {
                     onClick={handleAddEducation}
                     type="button"
                     className="px-4 py-2 border-[#E6E6E6] border-[1px] w-[197px] rounded-[10px] bg-[#FFFFFF] text-purple-600 font-medium">
-                    Update
+                    Add
                 </button>
                 <button
                     onClick={() => closeModal(modalId)}

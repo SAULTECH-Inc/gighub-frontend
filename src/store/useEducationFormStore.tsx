@@ -29,7 +29,6 @@ const useEducationFormStore = create<EducationData>((set) => ({
     submitSuccess: false,
     error: null,
     setEducation: (education) => set({ education }),
-
     submitEducation: async (data: EducationResponseDto, applicantId: number, cvId:  number) => {
         try {
             const request: AddEducationRequestDto = {

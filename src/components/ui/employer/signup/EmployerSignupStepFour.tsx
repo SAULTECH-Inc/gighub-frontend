@@ -3,51 +3,45 @@ import { motion } from "framer-motion";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import ApplicantSignupSuccessModal from "../../../ui/ApplicantSignupSuccessModal.tsx";
 import useModalStore from "../../../../store/modalStateStores.ts";
-import { useFormStore } from "../../../../store/useFormStore.ts"; // ✅ Updated import
 import { useAuth } from "../../../../store/useAuth.ts";
 import { toast } from "react-toastify";
 import {UserType} from "../../../../utils/types/enums.ts";
+import {EmployerSignupRequest} from "../../../../utils/types";
 
 interface StepTwoProp {
     handlePrev: () => void;
 }
 
 const EmployerSignupStepFour: React.FC<StepTwoProp> = ({ handlePrev }) => {
-    const { signup } = useAuth();
+    const { employerSignupRequest, setEmployerSignupRequest, resetSignupRequest, signup} = useAuth();
     const { openModal, isModalOpen } = useModalStore();
-    const { employer, setEmployerData, resetFormData } = useFormStore(); // ✅ Updated store usage
 
     // Handle input changes
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setEmployerData({ [name]: value }); // ✅ More precise update
+        setEmployerSignupRequest({...employerSignupRequest, [name]: value } as EmployerSignupRequest);
     };
 
     // Handle form submission
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-
-        // Ensure required fields are filled
         const requiredFieldsCompleted =
-            employer.companyName &&
-            employer.email &&
-            employer.companyPhone &&
-            employer.password &&
-            employer.confirmPassword;
+            employerSignupRequest?.companyName &&
+            employerSignupRequest?.email &&
+            employerSignupRequest?.companyPhone &&
+            employerSignupRequest?.password &&
+            employerSignupRequest?.confirmPassword;
 
         if (!requiredFieldsCompleted) {
             toast.error("All required fields must be filled out.");
             return;
         }
 
-        console.log("DATA TO BE SUBMITTED ::: ", employer);
-
-        // Call signup function (no need to pass employer data, Zustand store handles it)
-        const success = await signup(UserType.EMPLOYER);
+        const success = await signup(UserType.EMPLOYER, employerSignupRequest);
 
         if(success){
             openModal("employer-signup-success-modal");
-            resetFormData();
+            resetSignupRequest();
         }
     };
 
@@ -87,7 +81,7 @@ const EmployerSignupStepFour: React.FC<StepTwoProp> = ({ handlePrev }) => {
                     className="resize-none border-[1px] p-5 border-[#ccc] rounded-[16px] focus:outline-none focus:ring-0 focus:border-[1px] focus:border-[#ccc] w-full h-[182px] text-[16px] placeholder-gray-500"
                     placeholder="Write here..."
                     id="company-description"
-                    value={employer.companyDescription} // ✅ Updated to `employer`
+                    value={employerSignupRequest?.companyDescription} // ✅ Updated to `employer`
                     name="companyDescription"
                     onChange={handleChange}
                 />

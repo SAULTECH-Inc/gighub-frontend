@@ -1,12 +1,12 @@
 import {FC} from "react";
-import ApplicantNavBar from "../components/layouts/ApplicantNavBar.tsx";
+import TopNavBar from "../components/layouts/TopNavBar.tsx";
 import Account from "./settings/account/Account.tsx";
 import AccountSidebar from "./settings/account/AccountSidebar.tsx";
 import {employerNavBarItemMap, employerNavItems, employerNavItemsMobile} from "../utils/constants.ts";
 const EmployerProfile: FC = () => {
     return (
         <div className="bg-[#F7F8FA] mx-auto">
-            <ApplicantNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
+            <TopNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
             <div className="flex justify-center bg-gray-100 min-h-screen pt-6 mx-auto gap-x-10 px-2 lg:px-5">
                 {/* Sidebar */}
                 <AccountSidebar/>

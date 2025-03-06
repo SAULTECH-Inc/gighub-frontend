@@ -1,5 +1,5 @@
 import { FC } from "react";
-import ApplicantNavBar from "../../components/layouts/ApplicantNavBar.tsx";
+import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import AboutUs from "../../components/ui/employer/public-profile/AboutUs.tsx";
 import MediaAndGallery from "../../components/ui/employer/public-profile/MediaAndGallery.tsx";
 import CurrentJobOpening from "../../components/ui/employer/public-profile/CurrentJobOpening.tsx";
@@ -13,7 +13,7 @@ import {employerNavBarItemMap, employerNavItems, employerNavItemsMobile} from ".
 const EmployerPublicProfile: FC = () => {
     return (
         <div className="bg-[#F7F8FA] min-h-screen">
-            <ApplicantNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
+            <TopNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
             <div className="flex justify-center bg-gray-100 pt-6 gap-x-2 mx-auto">
 
                 {/* Main Content */}

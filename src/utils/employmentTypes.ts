@@ -5,5 +5,11 @@ export enum EmploymentType {
     FREELANCE = "Freelance",
     REMOTE = "Remote",
     INTERNSHIP = "Internship",
-    TEMPORARY = "Temporary"
+    TEMPORARY = "Temporary",
+    VOLUNTEER = 'Volunteer',
+    SEASONAL = 'Seasonal',
+    PER_DIEM = 'Per Diem', 
+    CONSULTANT = 'Consultant',
+    APPRENTICESHIP = 'Apprenticeship'
+
   }

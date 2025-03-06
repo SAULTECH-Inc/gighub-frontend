@@ -1,7 +1,6 @@
 import { FC } from "react";
-import CompanyOverview from "../../components/ui/employer/profile/CompanyOverview.tsx";
 import CompanySocials from "../../components/ui/employer/profile/CompanySocials.tsx";
-import ApplicantNavBar from "../../components/layouts/ApplicantNavBar.tsx";
+import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import PersonalInfo from "../../components/ui/applicant/profile/PersonalInfo.tsx";
 import ProfessionalSummary from "../../components/ui/applicant/profile/ProfessionalSummary.tsx";
 import Education from "../../components/ui/applicant/profile/Education.tsx";
@@ -14,16 +13,25 @@ import Verification from "../../components/ui/applicant/profile/Verification.tsx
 import ApplicantProfileCard from "../../components/ui/applicant/profile/ApplicantProfileCard.tsx";
 import ApplicantProfileSidebar from "../../components/ui/applicant/profile/ApplicantProfileSidebar.tsx";
 import {useAuth} from "../../store/useAuth.ts";
-import {useJobPreferenceStore} from "../../store/useJobPreferenceStore.ts";
 import {applicantNavBarItemMap, applicantNavItems, applicantNavItemsMobile} from "../../utils/constants.ts";
+import {useApplicantJobProfile} from "../../store/useApplicantJobProfile.ts";
+import {CvResponseDto} from "../../utils/types";
 
 const ApplicantProfile: FC = () => {
     const {applicant,updateProfile} = useAuth();
-    const {preferences, addPreference} = useJobPreferenceStore();
+    const {preferences, cvDetails, updatedCvDetails,setCvDetails} = useApplicantJobProfile();
     const handleSaveChanges = async () => {
         if(preferences){
             console.log("Adding job preferences: ", preferences);
-            await addPreference(preferences);
+            // const updatedPreference = await updatePreference(preferences);
+            // if(updatedPreference){
+            //     setPreference(updatedPreference);
+            // }
+            const updated = await updatedCvDetails(cvDetails?.id || 0, applicant?.id,cvDetails as Partial<CvResponseDto>);
+            if(updated){
+                console.log("Updated CV details: ", updatedCvDetails);
+                setCvDetails(cvDetails as CvResponseDto);
+            }
         }
         if(applicant){
             updateProfile(applicant);
@@ -31,7 +39,7 @@ const ApplicantProfile: FC = () => {
     }
     return (
         <div className="bg-[#F7F8FA] min-h-screen">
-            <ApplicantNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile} navbarItemsMap={applicantNavBarItemMap}/>
+            <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile} navbarItemsMap={applicantNavBarItemMap}/>
             <div className="flex justify-center bg-gray-100 min-h-screen pt-6 mx-auto gap-x-10 px-2 lg:px-5">
                 {/* Sidebar */}
                 <ApplicantProfileSidebar/>
@@ -47,7 +55,6 @@ const ApplicantProfile: FC = () => {
                     <form className="w-full space-y-9">
                         <PersonalInfo />
                         <ProfessionalSummary />
-                        <CompanyOverview />
                         <Education />
                         <WorkExperience />
                         <JobPreferences />

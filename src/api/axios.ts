@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import secureLocalStorage from "react-secure-storage";
 
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5173';
 
@@ -19,7 +20,7 @@ export const privateApiClient: AxiosInstance = axios.create({
 
 privateApiClient.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        const token = localStorage.getItem('auth-token');
+        const token = secureLocalStorage.getItem('auth-token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -35,12 +36,12 @@ privateApiClient.interceptors.response.use(
             try {
                 const refreshResponse = await publicApiClient.post('/auth/refresh-token', {}, { withCredentials: true });
                 const newAccessToken = refreshResponse.data.data.token;
-                localStorage.setItem('auth-token', newAccessToken);
+                secureLocalStorage.setItem('auth-token', newAccessToken);
                 error.config.headers.Authorization = `Bearer ${newAccessToken}`;
                 return privateApiClient.request(error.config);
             } catch (error: any) {
-                localStorage.removeItem('auth-token');
-                window.location.href = 'login';
+                secureLocalStorage.removeItem('auth-token');
+                window.location.href = '/login';
                 throw error;
             }
         }

@@ -25,7 +25,7 @@ const CustomRadioButton: React.FC<CustomRadioButtonProps> = ({
                                                              }) => {
     return (
         <label
-            className={`flex items-center cursor-pointer space-x-2 ${
+            className={`flex items-center cursor-pointer gap-x-2 ${
                 disabled ? "opacity-50 cursor-not-allowed" : ""
             } ${className}`}
         >

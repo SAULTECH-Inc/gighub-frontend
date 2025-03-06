@@ -11,9 +11,10 @@ interface SkillsProps {
     skills: string[];
     addSkill: (skill: string) => void;
     removeSkill: (skill: string) => void;
+    isEditable?: boolean;
 }
 
-const Skills: React.FC<SkillsProps> = ({ options, skills, addSkill, removeSkill }) => {
+const Skills: React.FC<SkillsProps> = ({ options, skills, addSkill, removeSkill, isEditable }) => {
 
     // Handle dropdown change
     const handleDropdownChange = (option: Option) => {
@@ -33,6 +34,7 @@ const Skills: React.FC<SkillsProps> = ({ options, skills, addSkill, removeSkill 
                             options={options}
                             onChange={handleDropdownChange}
                             placeholder="+ Add Skill"
+                            disabled={isEditable}
                             className="text-left w-full p-2 border border-[#E6E6E6] rounded-[10px] bg-[#F7F8FA]"
                         />
                     </div>
@@ -44,6 +46,7 @@ const Skills: React.FC<SkillsProps> = ({ options, skills, addSkill, removeSkill 
                             <span>{skill}</span>
                             <button
                                 type="button"
+                                disabled={!isEditable}
                                 onClick={() => removeSkill(skill)}
                                 className="text-white font-semibold hover:bg-red-600 rounded-full"
                             >

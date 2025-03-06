@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from "react";
 
-type FrequencyType = 'hour' | 'week' | 'month' | 'year';
+type FrequencyType = "hour" | "week" | "month" | "year";
 type CurrencyType = keyof typeof exchangeRates;
 
 interface SalaryRangeProps {
@@ -27,37 +27,40 @@ const frequencyMultipliers = {
 const exchangeRates = {
     USD: 1,
     EUR: 0.93,
-    GBP: 0.80,
-    JPY: 148.50,
+    GBP: 0.8,
+    JPY: 148.5,
     CAD: 1.36,
     AUD: 1.52,
 };
 
 const frequencyLabels = {
-    hour: 'per hour',
-    week: 'per week',
-    month: 'per month',
-    year: 'per year',
+    hour: "per hour",
+    week: "per week",
+    month: "per month",
+    year: "per year",
 } as const;
 
-const currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD'] as const;
+const currencies = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD"] as const;
 
 export default function SalaryRangeSelector({
-                                                label = 'Salary Range',
+                                                label = "Salary Range",
                                                 baseMin = 0,
                                                 baseMax = 100000,
-                                                currency = 'USD',
-                                                frequency = 'year',
+                                                currency = "USD",
+                                                frequency = "year",
                                                 onChange,
                                             }: SalaryRangeProps) {
-    const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>(currency);
-    const [selectedFrequency, setSelectedFrequency] = useState<FrequencyType>(frequency);
+    const [selectedCurrency, setSelectedCurrency] =
+        useState<CurrencyType>(currency);
+    const [selectedFrequency, setSelectedFrequency] =
+        useState<FrequencyType>(frequency);
     const [prevCurrency, setPrevCurrency] = useState(currency);
     const [prevFrequency, setPrevFrequency] = useState(frequency);
     const [minValue, setMinValue] = useState(baseMin);
     const [maxValue, setMaxValue] = useState(baseMax);
 
-    const convertValue = useMemo(() =>
+    const convertValue = useMemo(
+        () =>
             (value: number, newCurrency: CurrencyType, newFrequency: FrequencyType) => {
                 const rate = exchangeRates[newCurrency] / exchangeRates.USD;
                 const freq = frequencyMultipliers[newFrequency];
@@ -66,60 +69,23 @@ export default function SalaryRangeSelector({
         []
     );
 
-    // Initialize converted values
     useEffect(() => {
-        const convertedMin = convertValue(baseMin, selectedCurrency, selectedFrequency);
-        const convertedMax = convertValue(baseMax, selectedCurrency, selectedFrequency);
-        setMinValue(convertedMin);
-        setMaxValue(convertedMax);
+        setMinValue(convertValue(baseMin, selectedCurrency, selectedFrequency));
+        setMaxValue(convertValue(baseMax, selectedCurrency, selectedFrequency));
     }, [baseMin, baseMax, convertValue, selectedCurrency, selectedFrequency]);
 
-    // Handle currency/frequency changes
     useEffect(() => {
         const convert = (value: number) =>
             value *
             (exchangeRates[selectedCurrency] / exchangeRates[prevCurrency]) *
-            (frequencyMultipliers[selectedFrequency] / frequencyMultipliers[prevFrequency]);
+            (frequencyMultipliers[selectedFrequency] /
+                frequencyMultipliers[prevFrequency]);
 
-        const newMin = convert(minValue);
-        const newMax = convert(maxValue);
-
-        setMinValue(newMin);
-        setMaxValue(newMax);
+        setMinValue(convert(minValue));
+        setMaxValue(convert(maxValue));
         setPrevCurrency(selectedCurrency);
         setPrevFrequency(selectedFrequency);
-    }, [selectedCurrency, selectedFrequency, minValue, maxValue, prevCurrency, prevFrequency]);
-
-    // Current boundaries in selected currency/frequency
-    const currentMinBoundary = useMemo(
-        () => convertValue(baseMin, selectedCurrency, selectedFrequency),
-        [baseMin, convertValue, selectedCurrency, selectedFrequency]
-    );
-
-    const currentMaxBoundary = useMemo(
-        () => convertValue(baseMax, selectedCurrency, selectedFrequency),
-        [baseMax, convertValue, selectedCurrency, selectedFrequency]
-    );
-
-    const formattedMin = useMemo(
-        () => `${selectedCurrency} ${Math.round(minValue).toLocaleString()}`,
-        [minValue, selectedCurrency]
-    );
-
-    const formattedMax = useMemo(
-        () => `${selectedCurrency} ${Math.round(maxValue).toLocaleString()}`,
-        [maxValue, selectedCurrency]
-    );
-
-    const handleMinChange = (value: number) => {
-        const newValue = Math.min(value, maxValue);
-        setMinValue(Math.max(newValue, currentMinBoundary));
-    };
-
-    const handleMaxChange = (value: number) => {
-        const newValue = Math.max(value, minValue);
-        setMaxValue(Math.min(newValue, currentMaxBoundary));
-    };
+    }, [selectedCurrency, selectedFrequency]);
 
     useEffect(() => {
         onChange({
@@ -131,57 +97,65 @@ export default function SalaryRangeSelector({
     }, [minValue, maxValue, selectedCurrency, selectedFrequency, onChange]);
 
     return (
-        <div className="p-5 border border-gray-300 rounded-lg max-w-md m-2.5">
-            {label && <label className="block font-medium mb-2">{label}</label>}
+        <div className="rounded-xl bg-white max-w-md my-4">
+            {label && (
+                <h3 className="mb-4">{label}</h3>
+            )}
+            <div className="flex gap-3 mb-4">
 
-            <div className="flex gap-2 mb-4">
                 <select
                     value={selectedCurrency}
                     onChange={(e) => setSelectedCurrency(e.target.value as CurrencyType)}
-                    className="flex-1 p-2 border border-gray-300 rounded-md"
+                    className="w-1/2 p-2 border border-[#E6E6E6] focus:right-0 focus:border-[1px] focus:border-[#E6E6E6] rounded-lg text-sm bg-white focus:outline-none"
                 >
                     {currencies.map((curr) => (
-                        <option key={curr} value={curr}>{curr}</option>
+                        <option key={curr} value={curr}>
+                            {curr}
+                        </option>
                     ))}
                 </select>
 
                 <select
                     value={selectedFrequency}
                     onChange={(e) => setSelectedFrequency(e.target.value as FrequencyType)}
-                    className="flex-1 p-2 border border-gray-300 rounded-md"
+                    className="w-1/2 p-2 border border-[#E6E6E6] focus:right-0 focus:border-[1px] focus:border-[#E6E6E6] rounded-lg text-sm bg-white focus:outline-none"
                 >
                     {Object.entries(frequencyLabels).map(([value, text]) => (
-                        <option key={value} value={value}>{text}</option>
+                        <option key={value} value={value}>
+                            {text}
+                        </option>
                     ))}
                 </select>
             </div>
 
-            <div className="space-y-4">
-                <div className="space-y-2">
-                    <label className="block text-sm">
-                        Min: {formattedMin}
-                    </label>
+            {/* Salary Range */}
+            <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-600">
+                    <span className="mr-2">Range:</span>
+                    <span className="font-bold text-gray-800">
+                        {selectedCurrency} {Math.round(minValue).toLocaleString()} -{" "}
+                        {Math.round(maxValue).toLocaleString()} {frequencyLabels[selectedFrequency]}
+                    </span>
+                </label>
+                <div className="relative mt-2">
+                    {/* Min Salary Slider */}
                     <input
                         type="range"
-                        min={currentMinBoundary}
-                        max={currentMaxBoundary}
+                        min={convertValue(baseMin, selectedCurrency, selectedFrequency)}
+                        max={convertValue(baseMax, selectedCurrency, selectedFrequency)}
                         value={minValue}
-                        onChange={(e) => handleMinChange(Number(e.target.value))}
-                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                        onChange={(e) => setMinValue(Number(e.target.value))}
+                        className="w-full h-2 bg-purple-300 rounded-lg appearance-none cursor-pointer transition-all duration-300 accent-purple-500"
                     />
-                </div>
 
-                <div className="space-y-2">
-                    <label className="block text-sm">
-                        Max: {formattedMax}
-                    </label>
+                    {/* Max Salary Slider */}
                     <input
                         type="range"
                         min={minValue}
-                        max={currentMaxBoundary}
+                        max={convertValue(baseMax, selectedCurrency, selectedFrequency)}
                         value={maxValue}
-                        onChange={(e) => handleMaxChange(Number(e.target.value))}
-                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                        onChange={(e) => setMaxValue(Number(e.target.value))}
+                        className="w-full h-2 bg-purple-300 rounded-lg appearance-none cursor-pointer transition-all duration-300 accent-purple-500"
                     />
                 </div>
             </div>

@@ -2,7 +2,7 @@
 import forms from "@tailwindcss/forms";
 import typography from "@tailwindcss/typography";
 import aspectRatio from "@tailwindcss/aspect-ratio";
-
+import tailwindScrollbarHide from "tailwind-scrollbar-hide";
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
@@ -18,7 +18,7 @@ export default {
         "light-yellow": "#FFA203",
         "light-orange": "#FF8A05",
         white: "#FFFFFF",
-        green: "#90EE90", // Light green (you can replace with specific shade if needed)
+        green: "#90EE90",
         gray: "#9E9E9E",
         charcoal: "rgba(34, 34, 34, 1)",
       },
@@ -35,9 +35,9 @@ export default {
         xs: "480px",
         sm: "640px",
         md: "768px",
-        lg: "960px",
-        xl: "1200px",
-        "2xl": "1440px",
+        lg: "1024px",
+        xl: "1280px",
+        "2xl": "1536px",
         "3xl": "1920px",
       },
       animation: {
@@ -61,6 +61,5 @@ export default {
       },
     },
   },
-  plugins: [forms, typography, aspectRatio],
-    plugins: [require("tailwind-scrollbar-hide")],
+  plugins: [forms, typography, aspectRatio, tailwindScrollbarHide],
 };

@@ -1,10 +1,9 @@
 import React, {useRef, useState} from "react";
 import { motion } from "framer-motion";
-import { useFormStore } from "../../../../store/useFormStore.ts";
 import code from "../../../../assets/icons/code.svg";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import {useOtp} from "../../../../hooks/useOtpVerify.ts";
 import {toast} from "react-toastify";
+import {useAuth} from "../../../../store/useAuth.ts";
 
 interface StepTwoProp {
     handleNext: () => void;
@@ -15,20 +14,16 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
                                                             handleNext,
                                                             handlePrev
                                                         }) => {
-    const { employer, setEmployerData } = useFormStore();
+    const {otp,loading, setOtp,verifyOtp, employerSignupRequest, sendVerificationOtp} = useAuth();
     const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
-    const { verifyOtp,sendOtp, isVerifyingOtp } = useOtp();
     const [isInvalid, setIsInvalid] = useState(false);
     const shakeAnimation = isInvalid
         ? { x: [-5, 5, -5, 5, 0] }  // Shake effect, ends smoothly at 0
         : { x: 0 }; // Normal state
     const handleOTPChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-        const updatedOTP = [...employer.otp];
+        const updatedOTP = [...otp as string];
         updatedOTP[index] = e.target.value;
-        setEmployerData({
-            ...employer,
-            ['otp']: updatedOTP.join(''),
-        });
+        setOtp(updatedOTP.join(''))
 
         if (e.target.value && index < otpRefs.current.length - 1) {
             otpRefs.current[index + 1]?.focus();
@@ -36,68 +31,42 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
     };
 
     const handleBackspace = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-        if (e.key === "Backspace" && !employer.otp[index] && index > 0) {
+        if (e.key === "Backspace" && !otp?.at(index) && index > 0) {
             otpRefs.current[index - 1]?.focus();
         }
+
     };
 
     const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>, index: number) => {
         console.log(index)
         const pastedText = e.clipboardData.getData("Text");
         if (pastedText.length === 6) {
-            const updatedOTP = [...employer.otp];
+            setOtp("");
+            const updatedOTP = [];
             for (let i = 0; i < 6; i++) {
                 updatedOTP[i] = pastedText[i];
             }
-            setEmployerData({
-                ...employer,
-                ['otp']: updatedOTP.join(''),
-            });
+            setOtp(updatedOTP.join(''))
         }
     };
 
-    const handleContinue = () => {
-        const otp = employer.otp;
+    const handleContinue = async() => {
         if (otp === "") {
             toast.error("All OTP fields are required.");
             return;
         }
-
-        verifyOtp({ otp }, {
-            onSuccess: (data) => {
-                if (data.statusCode === 200) {
-                    setIsInvalid(false);
-                    toast.success(data.message);
-                    handleNext();
-                }
-            },
-            onError: (error) => {
-                console.error("OTP Verification Failed:", JSON.stringify(error));
-                setIsInvalid(true);
-                toast.error(error.message);
-                setTimeout(() => {
-                    setIsInvalid(false);
-                    setEmployerData({
-                        ...employer,
-                        otp: "", // Reset OTP field to an empty string
-                    });
-                }, 500);
-            }
-        });
+        const success = await verifyOtp(employerSignupRequest?.email as string, otp as string);
+        if(success) {
+            setIsInvalid(false);
+            handleNext();
+        }else{
+            setIsInvalid(true);
+        }
     };
 
-    const handleOtpResend = ()=>{
-        sendOtp({ email: employer.email, name: employer.companyName }, {
-            onSuccess: (data) => {
-                if (data.statusCode === 200) {
-                    toast.success(data.message);
-                }
-            },
-            onError: (error) => {
-                console.error("OTP Resend Failed:", JSON.stringify(error));
-                toast.error(error.message);
-            }
-        });
+    const handleOtpResend = async ()=>{
+        await sendVerificationOtp(employerSignupRequest?.email as string, "SIGNUP");
+        setOtp("");
     }
 
     return (
@@ -124,7 +93,7 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
             >
                 We’ve sent a verification code to your email. Please enter the code to confirm
                 your account and start exploring GigHub.{" "}
-                <span className="text-purple-700">{employer.email}</span>
+                <span className="text-purple-700">{employerSignupRequest?.email}</span>
             </motion.p>
 
             <motion.div
@@ -140,7 +109,7 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
                             key={index}
                             maxLength={1}
                             name={`otp[${index}]`}
-                            value={employer.otp[index] || ''}
+                            value={otp[index] || ''}
                             className="w-[40px] h-[40px] lg:w-[47px] lg:h-[42px] text-center rounded-[10px] border-[1px] border-[#5E5E5E] focus:outline-none focus:ring-0 focus:border-[1px] focus:border-[#5E5E5E]"
                             onChange={(e) => handleOTPChange(e, index)}
                             onKeyDown={(e) => handleBackspace(e, index)}
@@ -177,9 +146,8 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
                 <button
                     className="mx-auto block w-full h-[50px] text-[16px] font-semibold text-[#FFFFFF] bg-[#6438C2] rounded-[10px] hover:bg-[#5931A9] transition"
                     onClick={handleContinue}
-                    disabled={isVerifyingOtp}
                 >
-                    {isVerifyingOtp ? "Verifying..." : "Continue"}
+                    {loading ? "Verifying..." : "Continue"}
                 </button>
                 <button
                     className="flex justify-center items-center gap-x-2 mx-auto w-full h-[50px] text-[16px] font-semibold text-[#000000] border-[1px] border-[#CCC] bg-white rounded-[10px] hover:bg-[#ccc] transition"
