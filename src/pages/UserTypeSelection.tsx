@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import userSelection from '../assets/icons/userSelectionLeftSide.svg';
 import gighubLogo from '../assets/icons/gighubLogoSmall.svg'
 import jobSeekerUser from '../assets/icons/jobSeekerUser.svg'
@@ -10,7 +10,6 @@ import {UserType} from "../utils/types/enums.ts";
 
 const UserTypeSelection: React.FC = () => {
     const {isAuthenticated, userType, setUserType} = useAuth();
-    const [selectedUserType, setSelectedUserType] = useState<string | null>(null);
     const navigator = useNavigate();
 
     React.useEffect(() => {
@@ -22,19 +21,15 @@ const UserTypeSelection: React.FC = () => {
     }, [isAuthenticated, userType]);
 
     const handleAsJobSeeker = () => {
-        setSelectedUserType(UserType.APPLICANT);
         setUserType(UserType.APPLICANT);
     };
 
     const handleAsEmployer = () => {
-        setSelectedUserType(UserType.EMPLOYER);
         setUserType(UserType.EMPLOYER);
     };
 
     const handleProceed = () => {
-        // Navigate to the next step of the application process
-        const route = userType === UserType.APPLICANT ? "/applicant/signup" : "/employer/signup";
-        navigator(route);
+        navigator(`/${userType}/signup`);
     };
 
     const handleBack = () => {
@@ -68,7 +63,7 @@ const UserTypeSelection: React.FC = () => {
                     >
                         <motion.div
                             onClick={handleAsJobSeeker}
-                            className={`cursor-pointer w-[calc(130px+5px)] lg:w-[137px] h-[145px] flex flex-col items-center justify-evenly border-[1px] rounded-[16px] ${selectedUserType === "applicant" ? "border-purple-600" : "border-[#E6E6E6]"}`}
+                            className={`cursor-pointer w-[calc(130px+5px)] lg:w-[137px] h-[145px] flex flex-col items-center justify-evenly border-[1px] rounded-[16px] ${userType === UserType.APPLICANT ? "border-purple-600" : "border-[#E6E6E6]"}`}
                             whileHover={{ scale: 1.05 }}
                         >
                             <img className="mx-auto" src={jobSeekerUser} alt="job seeker" />
@@ -76,7 +71,7 @@ const UserTypeSelection: React.FC = () => {
                         </motion.div>
                         <motion.div
                             onClick={handleAsEmployer}
-                            className={`cursor-pointer w-[calc(130px+5px)] lg:w-[137px] lg:h-[145px] flex flex-col items-center justify-evenly border-[1px] rounded-[16px] ${selectedUserType === "employer" ? "border-purple-600" : "border-[#E6E6E6]"}`}
+                            className={`cursor-pointer w-[calc(130px+5px)] lg:w-[137px] lg:h-[145px] flex flex-col items-center justify-evenly border-[1px] rounded-[16px] ${userType === UserType.EMPLOYER ? "border-purple-600" : "border-[#E6E6E6]"}`}
                             whileHover={{ scale: 1.05 }}
                         >
                             <img className="mx-auto" src={employerUser} alt="employer" />
@@ -100,7 +95,7 @@ const UserTypeSelection: React.FC = () => {
                             onClick={handleProceed}
                             className="w-[131px] h-[43px] bg-[#6438C2] text-white font-semibold text-[16px] rounded-[10px]"
                             whileHover={{ scale: 1.05 }}
-                            disabled={!selectedUserType} // Disable button if no selection is made
+                            disabled={!userType} // Disable button if no selection is made
                         >
                             Proceed
                         </motion.button>

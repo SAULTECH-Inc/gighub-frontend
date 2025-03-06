@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import gighubLogo from "../../assets/icons/gighubLogoSmall.svg";
 import {motion} from "framer-motion";
-import applicantSignupStep1 from "../../assets/icons/applicantSignupStep1.svg";
+import applicantSignupStep1 from "../../assets/icons/applicantSignupStep1.png";
 import applicantSignupStep2 from "../../assets/icons/applicantSignupStep2.svg";
 import applicantSignupStep4 from "../../assets/icons/applicantSignupStepFour.svg";
 import EmployerSignupStepOne from "../../components/ui/employer/signup/EmployerSignupStepOne.tsx";
@@ -31,7 +31,7 @@ const EmployerMultistepForm: React.FC = ()=>{
     const handlePrev = () => setStep(step - 1);
     return (
         <motion.div
-            className="relative flex flex-col md:flex-row justify-center items-center min-h-screen py-2"
+            className="w-full h-screen relative flex flex-col md:flex-row justify-center lg:gap-x-[10%] xl:gap-x-[1%] items-center py-2 border-2 mx-auto my-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -106,12 +106,12 @@ const EmployerMultistepForm: React.FC = ()=>{
             </div>
 
             {/* Right Section - Image */}
-            <div className="hidden lg:block w-1/2 pl-40">
-                {step === 1 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep1} alt="Step 1" />}
-                {step === 2 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep2} alt="Step 2" />}
-                {step === 3 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep2} alt="Step 3" />}
-                {step === 4 && <motion.img className="h-auto max-h-screen" src={applicantSignupStep4} alt="Step 4" />}
-            </div>
+            {/*<div className="hidden lg:block w-1/2 pl-40">*/}
+                {step === 1 && <motion.img className="hidden lg:flex h-[890px]" src={applicantSignupStep1} alt="Step 1"/>}
+                {step === 2 && <motion.img className="hidden lg:flex h-[890px]" src={applicantSignupStep2} alt="Step 2"/>}
+                {step === 3 && <motion.img className="hidden lg:flex h-[890px]" src={applicantSignupStep2} alt="Step 3"/>}
+                {step === 4 && <motion.img className="hidden lg:flex h-[890px]" src={applicantSignupStep4} alt="Step 4"/>}
+            {/*</div>*/}
         </motion.div>
     );
 }

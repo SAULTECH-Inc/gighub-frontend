@@ -1,4 +1,4 @@
-import ApplicantNavBar from "../../components/layouts/ApplicantNavBar.tsx";
+import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import SearchIcon from "../../components/common/SearchIcon.tsx";
 import {
   FilterIcon,
@@ -31,7 +31,7 @@ const ManageApplicant: FC = () => {
 
   return (
     <div className="w-full bg-[#F7F8FA] min-h-screen">
-      <ApplicantNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
+      <TopNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
 
       <div className="w-full flex flex-col items-center">
         <div className="flex  flex-col md:flex-row md:justify-between w-[95%] bg-white rounded-[16px] mt-5">

@@ -5,7 +5,7 @@ import React from "react";
 import {useAuth} from "../../store/useAuth.ts";
 
 const ForgotPassword: React.FC = ()=>{
-    const {setEmail,email, verifyAccount} = useAuth();
+    const {setEmail,email, sendVerificationOtp} = useAuth();
     const navigate = useNavigate();
     let inputComplete = true
     const handleValidateEmail = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -14,7 +14,7 @@ const ForgotPassword: React.FC = ()=>{
         if(!inputComplete) {
             return
         }
-        const success = await verifyAccount(email as string, "RESET_PASSWORD");
+        const success = await sendVerificationOtp(email as string, "RESET_PASSWORD");
         if(success) {
             navigate('/verify-otp-to-reset-password');
         }

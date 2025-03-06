@@ -90,35 +90,6 @@ export interface ProgressBarProps {
     color?: string; // e.g. "bg-blue-600" or "bg-green-500"
 }
 
-
-export interface EmployerSignupRequest{
-    companyName: string;
-    companyDescription: string;
-    companyWebsite: string;
-    email: string;
-    password: string;
-    otp: string;
-    companyPhone: string;
-    coverPage: File | null;
-    companyLogo: File | null;
-}
-
-export interface ApplicantSignupRequest{
-    firstName: string;
-    surname: string;
-    middleName: string;
-    email: string;
-    password: string;
-    otp: string;
-    phone: string;
-    address: string;
-    resume: File | null;
-    coverLetter: File | null;
-    portfolio: File | null;
-    videoCv: File | null;
-    documentType: string;
-}
-
 export interface LoginRequest{
     email: string;
     password: string;
@@ -137,6 +108,7 @@ export interface Role {
     description: string;
     permissions: Permission[];
 }
+
 
 export interface EmployerData {
     companyName: string;
@@ -179,6 +151,17 @@ export interface EmployerData {
     updatedAt: string;
 }
 
+export interface ApplicantPersonalInfo{
+    firstName?: string;
+    lastName?: string;
+    middleName?: string;
+    email?: string ;
+    phoneNumber?: string;
+    country?: string;
+    city?: string;
+    dateOfBirth?: string;
+    address?: string;
+}
 export interface ApplicantData {
     firstName: string | null;
     lastName: string  | null;
@@ -252,18 +235,31 @@ export interface AddEducationRequestDto {
 }
 
 
-export interface ExperienceResponseDto {
+export interface ExperienceRequestDto {
     company: string;
     position: string;
     startDate: Date;
-    endDate: Date;
-    description: string;
+    endDate?: Date;
+    description?: string;
 }
+export interface ExperienceResponseDto {
+    id?: number;
+    company: string;
+    position: string;
+    startDate: Date;
+    endDate?: Date;
+    description?: string;
+    location?: string;
+    city?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
+
 
 
 export interface SkillsResponseDto {
     id?: number;
-    skill?: string;
+    skill: string;
     level?: string;
     description?: string;
     yearsOfExperience?: string;
@@ -284,7 +280,7 @@ export interface CertificationResponseDto {
     institution?: string;
     dateObtained?: string;
     description?: string;
-    yearsOfExperience?: string;
+    yearObtained?: string;
     proficiency?: string;
 }
 
@@ -349,17 +345,17 @@ export interface CvResponseDto {
     coverLetter: string | null;
     applicantNotes: string | null;
     applicationMode: CVType | null;
-    contact: ContactResponseDto | null;
-    addresses: AddressResponseDto[] | null;
-    socials: SocialsResponseDto[] | null;
-    educations: EducationResponseDto[] | null;
-    experiences: ExperienceResponseDto[] | null;
-    skills: SkillsResponseDto[] | null;
-    languages: LanguageResponseDto[] | null;
+    contact: Partial<ContactResponseDto> | null;
+    addresses: Partial<AddressResponseDto>[] | null;
+    socials: Partial<SocialsResponseDto>[] | null;
+    educations: Partial<EducationResponseDto>[] | null;
+    experiences: Partial<ExperienceResponseDto>[] | null;
+    skills: Partial<SkillsResponseDto>[];
+    languages: Partial<LanguageResponseDto>[] | null;
     certifications: CertificationResponseDto[] | null;
-    awards: AwardResponseDto[] | null;
-    references: ReferenceResponseDto[] | null;
-    testimonials: TestimonialResponseDto[] | null;
+    awards: Partial<AwardResponseDto>[] | null;
+    references: Partial<ReferenceResponseDto>[] | null;
+    testimonials: Partial<TestimonialResponseDto>[] | null;
 }
 
 export enum CVType {
@@ -491,4 +487,57 @@ export interface PasswordResetRequest{
     email?: string;
     password?: string;
     confirmPassword?: string;
+}
+
+
+export interface ApplicantSignupRequest {
+    firstName: string;
+    lastName: string;
+    middleName: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    phoneNumber: string;
+    address: string;
+    resume: File | null;
+    coverLetter: File | null;
+    portfolio: File | null;
+    videoCv: File | null;
+    documentType: string;
+}
+
+export interface EmployerSignupRequest {
+    companyName: string;
+    companyDescription: string;
+    companyWebsite: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    companyPhone: string;
+    coverPage: File | null;
+    companyLogo: File | null;
+}
+
+export interface JobApplicationDetails{
+    id: number;
+    jobTitle: string;
+    companyName: string;
+    jobDescription: string;
+    jobLocation: string;
+    jobType: string;
+    jobSalary: SalaryRange;
+    jobRoles: string[];
+    jobSkills: string[];
+    jobReferences: string[];
+    jobCompanyDescription: string;
+    jobCompanySize: string;
+    jobCompanyType: string;
+    jobCompanyFounded: string;
+    jobCompanyIndustry: string;
+    jobCompanyWebsite: string;
+}
+
+export interface ProfessionalSummaryData{
+    professionalTitle?: string;
+    professionalSummary?: string;
 }

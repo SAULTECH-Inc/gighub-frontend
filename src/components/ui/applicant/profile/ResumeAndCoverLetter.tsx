@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import videoIcon from '../../../../assets/icons/video.svg';
 import fileIcon from '../../../../assets/icons/fileUploaded.svg';
+import {useApplicantJobProfile} from "../../../../store/useApplicantJobProfile.ts";
 
 const ResumeAndCoverLetter: React.FC = () => {
+    const {cvDetails, setCvDetails} = useApplicantJobProfile();
     const [documentName, setDocumentName] = useState<string>("");
     const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
 
@@ -51,7 +53,7 @@ const ResumeAndCoverLetter: React.FC = () => {
                         onChange={handleChangeDropdown}
                         value={documentName}
                     >
-                        <option value="" disabled></option>
+                        <option value="Document" disabled selected={true}></option>
                         {documentOptions.map((option) => (
                             <option key={option} value={option}>
                                 {option}

@@ -1,5 +1,5 @@
 import React from "react";
-import ApplicantNavBar from "../../components/layouts/ApplicantNavBar.tsx";
+import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import ApplicationStats from "../../components/ui/ApplicationStats.tsx";
 import ApplicantRecentApplications from "../../components/ui/ApplicantRecentApplications.tsx";
 import ApplicantSchedules from "../../components/ui/ApplicantSchedules.tsx";
@@ -11,7 +11,7 @@ const EmployerDashboard: React.FC = () => {
     return (
         <>
             <div className="bg-[#F7F7F7]">
-                <ApplicantNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
+                <TopNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
                 <div
                     className="py-6 bg-gray-100 px-3 lg:grid lg:grid-cols-[1024px_396px] gap-6 min-h-screen items-start justify-center overscroll-auto">
                     {/* First Column */}
