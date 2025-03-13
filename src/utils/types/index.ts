@@ -1,5 +1,5 @@
 import React, {ButtonHTMLAttributes, ChangeEvent} from "react";
-import {UserType} from "./enums.ts";
+import {UserType} from "../enums";
 
 export type User = {
     id: string;
@@ -77,6 +77,8 @@ export interface DatePickerProps {
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     disabled?: boolean;
     className?: string;
+    min?: string;
+    requiredAsterisk?: boolean;
 }
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

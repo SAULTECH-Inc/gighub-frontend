@@ -10,3 +10,4 @@ export { default as Human1 } from "./images/human1.png";
 export { default as Referrer1 } from "./images/referrer1.svg";
 export { default as Referrer2 } from "./images/referrer2.svg";
 export { default as Referrer3 } from "./images/referrer3.svg";
+export { default as Crown } from "./images/crown.svg";

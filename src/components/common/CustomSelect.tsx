@@ -94,7 +94,7 @@ const CustomSelect: React.FC<DropdownProps> = ({
                             filteredOptions.map((option) => (
                                 <li
                                     key={option.value}
-                                    className="px-4 py-2 cursor-pointer hover:bg-blue-100"
+                                    className="px-4 py-2 text-sm cursor-pointer hover:bg-blue-100"
                                     onClick={() => handleSelect(option)}
                                 >
                                     {option.label}
