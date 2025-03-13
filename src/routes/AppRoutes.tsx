@@ -33,6 +33,7 @@ import {useEffect} from "react";
 
 import EmployerJobMultistepForm from "../pages/employer/EmployerJobMultistepForm.tsx";
 import {UserType} from "../utils/enums.ts";
+import JobEmployerDashboard from "../components/ui/employer/JobEmployerDashboard.tsx";
 
 const AppRoutes = () => {
     const {setRedirectPath} = useAuth();
@@ -53,6 +54,7 @@ const AppRoutes = () => {
                 <Route path="/employer/dashboard" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><EmployerDashboard/></PrivateRoute>}/>
                 <Route path="/user-type-selection" element={<UserTypeSelection/>}/>
                 <Route path="/applicant/signup" element={<ApplicantMultistepForm/>}/>
+                <Route path="/employer/jobcreation" element={<JobEmployerDashboard/>}/>
                 <Route path="/employer/signup" element={<EmployerMultistepForm/>}/>
                 <Route path="/employer/profile" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><EmployerProfile/></PrivateRoute>}/>
                 <Route path="/applicant/profile" element={<PrivateRoute allowedTypes={[UserType.APPLICANT]}><ApplicantProfile/></PrivateRoute>}/>

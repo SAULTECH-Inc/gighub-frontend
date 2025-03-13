@@ -1,23 +1,22 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from "zustand/middleware";
 import { immer } from 'zustand/middleware/immer';
+import { SkillsResponseDto } from '../utils/types';
 import {NODE_ENV, secureStorageWrapper} from "../utils/constants.ts";
 
 export interface JobFormData {
   title: string;
-  company: string;
   endDate: string;
   description: string;
   responsibility: string;
   experienceYears: number;
   department: string;
   jobType: string;
-  employmentType: string;
-  jobStatus: string;
-  currency: string;
+  level: string;
   frequency: string;
-  skillSet: string[];
-  exactAmount: number;
+  employmentType: string;
+  currency: string;
+  skillSet: SkillsResponseDto[];
   maximumAmount: number;
   minimumAmount: number;
   location: string;
@@ -37,95 +36,21 @@ interface JobFormStore {
   resetFormData: () => void;
 }
 
-// export const useJobFormStore = create<JobFormStore>()(
-//   persist(
-//     {
-//       step: 1,
-//       setStep: (step) => {
-//         set({ step });
-//       },
-//       nextStep: () => {
-//         const newStep = get().step + 1;
-//         set({ step: newStep });
-//       },
-//       prevStep: () => {
-//         const newStep = Math.max(1, get().step - 1);
-//         set({ step: newStep });
-//       },
-//       reset: () => set({ step: 1 }),
-//       job: {
-//         title: "",
-//         company: "",
-//         endDate: "",
-//         description: "",
-//         responsibility: "",
-//         department: "",
-//         experienceYears: 0,
-//         jobType: "",
-//         employmentType: "",
-//         jobStatus: "",
-//         currency: "USD",
-//         frequency: "per hour",
-//         skillSet: [],
-//         exactAmount: 0,
-//         maximumAmount: 0,
-//         minimumAmount: 0,
-//         location: "",
-//         preferredCandidateCountry: [],
-//         preferredCandidatePreviousCompany: [],
-//         preferredCandidateUniversity: [],
-//       },
-//       setJobData: (data) => set((state) => ({ job: { ...state.job, ...data } })),
-//       resetFormData: () => set(() => ({
-//         job: {
-//           title: "",
-//           company: "",
-//           endDate: "",
-//           description: "",
-//           responsibility: "",
-//           department: "",
-//           jobType: "",
-//           experienceYears: 0,
-//           employmentType: "",
-//           jobStatus: "",
-//           currency: "USD",
-//           frequency: "per month",
-//           skillSet: [],
-//           exactAmount: 0,
-//           maximumAmount: 0,
-//           minimumAmount: 0,
-//           location: "",
-//           preferredCandidateCountry: [],
-//           preferredCandidatePreviousCompany: [],
-//           preferredCandidateUniversity: [],
-//         }
-//       })),
-//     },
-//     {
-//       name: "employer-job-form",
-//       storage: createJSONStorage(() => localStorage),
-//     }
-
-//   )
-// )
-
 export const useJobFormStore = create<JobFormStore>()(persist(immer<JobFormStore>((set,)=>({
   step: 1,
   job: {
     title: "",
-    company: "",
     endDate: "",
     description: "",
     responsibility: "",
     department: "",
     experienceYears: 0,
     jobType: "",
+    level: "",
+    frequency: "",
     employmentType: "",
-    jobStatus: "",
     currency: "USD",
-    frequency: "per hour",
-    skillSet: [],
-    exactAmount: 0,
+    skillSet: [] as SkillsResponseDto[],
     maximumAmount: 0,
     minimumAmount: 0,
     location: "",
@@ -162,19 +87,17 @@ export const useJobFormStore = create<JobFormStore>()(persist(immer<JobFormStore
     set((state) => {
       state.job = {
         title: "",
-        company: "",
         endDate: "",
         description: "",
         responsibility: "",
         department: "",
         jobType: "",
+        level: "",
+        frequency: "",
         experienceYears: 0,
         employmentType: "",
-        jobStatus: "",
         currency: "USD",
-        frequency: "per month",
-        skillSet: [],
-        exactAmount: 0,
+        skillSet: [] as SkillsResponseDto[],
         maximumAmount: 0,
         minimumAmount: 0,
         location: "",
@@ -186,5 +109,9 @@ export const useJobFormStore = create<JobFormStore>()(persist(immer<JobFormStore
   },
 })),{
   name: "employer-job-form",
-  storage: createJSONStorage(()=>NODE_ENV === 'development' ? localStorage: secureStorageWrapper)
+  partialize: (state)=>({
+    job: state.job,
+    step: state.step
+  }),
+  storage: createJSONStorage(() => localStorage),
 }));

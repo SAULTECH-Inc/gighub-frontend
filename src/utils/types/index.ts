@@ -77,6 +77,8 @@ export interface DatePickerProps {
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     disabled?: boolean;
     className?: string;
+    min?: string;
+    requiredAsterisk?: boolean;
 }
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -545,6 +547,7 @@ export interface ProfessionalSummaryData{
     professionalTitle?: string;
     professionalSummary?: string;
 }
+
 
 export interface CompanyInfos {
     companyName: string;

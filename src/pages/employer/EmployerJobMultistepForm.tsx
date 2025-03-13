@@ -6,18 +6,23 @@ import CreateJobStepFour from "../../components/ui/employer/createjob/CreateJobS
 import { useJobFormStore } from "../../store/useJobFormStore";
 import { Gighub } from "../../assets/icons";
 import cancel from "../../assets/icons/cancelMedium.svg";
-
+import useModalStore from "../../store/modalStateStores";
 
 const EmployerJobMultistepForm: React.FC = () => {
-    const { step } = useJobFormStore();
+  const { step } = useJobFormStore();
+  const { closeModal } = useModalStore();
 
-  
-    return (
-      <div className="w-full flex flex-col bg-[#F7F7F7] items-center mt-40 gap-10">
-        <div className="w-[96%] max-w-[900px] py-2 flex flex-col gap-4">
+  const handleClose = () => {
+    closeModal("addJobModal");
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-2 overflow-y-auto z-50">
+      <div className="w-full max-w-[900px] bg-[#F7F7F7] rounded-lg shadow-xl flex flex-col items-center">
+        <div className="w-[92%] max-w-[900px] py-2 flex flex-col gap-4">
           <div className="flex justify-between">
-            <h1 className="text-[#000000] font-bold text-2xl">Add new job</h1>
-            <img src={cancel} alt="cancel" />
+            <h1 className="text-[#000000] font-bold sm:text-2xl">Add new job</h1>
+            <img src={cancel} alt="cancel" onClick={handleClose} className="w-3 sm:w-4"/>
           </div>
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center">
@@ -42,21 +47,15 @@ const EmployerJobMultistepForm: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="w-full rounded-[10px] flex flex-col items-center justify-center">
-          {step === 1 && (
-            <CreateJobStepOne />
-          )}
-          {step === 2 && (
-            <CreateJobStepTwo />
-          )}
-          {step === 3 && (
-            <CreateJobStepThree />
-          )}
-          {step === 4 && (
-            <CreateJobStepFour />
-          )}
+        <div className="w-full px-4 rounded-[10px] flex flex-col items-center justify-center">
+          {step === 1 && <CreateJobStepOne />}
+          {step === 2 && <CreateJobStepTwo />}
+          {step === 3 && <CreateJobStepThree />}
+          {step === 4 && <CreateJobStepFour />}
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 export default EmployerJobMultistepForm;
+
