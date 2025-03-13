@@ -21,6 +21,8 @@ import {useAuth} from "../../store/useAuth.ts";
 import {applicantNavBarItemMap} from "../../utils/constants.ts";
 import {toast} from "react-toastify";
 import ChatWindow from "../ui/ChatWindow.tsx";
+import {useEmployerProfile} from "../../store/useEmployerProfile.ts";
+import {useNavBarActiveItem} from "../../store/useNavBarActiveItem.ts";
 
 interface ApplicantNavBarProps {
     navbarItemsMap: typeof applicantNavBarItemMap;
@@ -35,6 +37,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
     navItemsMobile,
                                                    }) => {
     const {logout} = useAuth();
+    const {resetAboutCompany, resetCompanyInfo, resetBrandAndVisuals, resetComplianceAndVerification, resetContactInfo, resetEmployerProfile, resetSocials}= useEmployerProfile();
     const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
     const [isNotificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
     const [isMessageDropdownOpen, setMessageDropdownOpen] = useState(false); // State for MessageDropdown
@@ -45,7 +48,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
     const notificationDropdownRef = useRef<HTMLDivElement>(null);
     const messageDropdownRef = useRef<HTMLDivElement>(null); // Ref for MessageDropdown
     const searchInputRef = useRef<HTMLInputElement>(null); // Ref for Search Input
-    const [activeItem, setActiveItem] = useState<string>();
+    const {activeItem, setActiveItem} = useNavBarActiveItem();
     const [isChatWindowOpened, setChatWindowOpened] = useState(false);
 
 
@@ -117,9 +120,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
 
     const handleSetItems = (item: string) => {
         console.log(JSON.stringify(item));
-        setActiveItem(() => {
-            return item;
-        });
+        setActiveItem(item);
     };
     const handleNavigateHome = () => {
         navigate("/");
@@ -128,6 +129,13 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
     const handleLogout = async ()=>{
         const success = await logout();
         if(success){
+            resetAboutCompany();
+            resetCompanyInfo();
+            resetBrandAndVisuals();
+            resetComplianceAndVerification();
+            resetContactInfo();
+            resetEmployerProfile();
+            resetSocials();
             navigate("/login");
         } else{
             toast.error("Failed to logout. Please try again.");
@@ -136,16 +144,17 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
 
 
     return (
-        <>
+        <div>
             <nav
-                className="relative flex justify-between items-center px-6 py-4 bg-white border-b-[1px] border-b-[#E6E6E6] h-[calc(70px-5px)]">
+                className="relative flex justify-between items-center px-10 py-4 bg-white border-b-[1px] border-b-[#E6E6E6] h-[calc(70px-5px)]">
                 {/* Left: Logo */}
-                <div className="hidden lg:flex items-center gap-2">
-                    <img src={GighubLogo} alt="Gighub Logo" className="h-10 w-auto cursor-pointer" onClick={handleNavigateHome}/>
+                <div className="hidden lg:flex items-center gap-2 ">
+                    <img src={GighubLogo} alt="Gighub Logo" className="h-10 w-auto cursor-pointer"
+                         onClick={handleNavigateHome}/>
                 </div>
 
                 {/* Center: Navigation Links (Desktop) */}
-                <ul className="hidden lg:flex gap-8 text-gray-600 font-lato text-[16px] absolute left-1/2 transform -translate-x-1/2">
+                <ul className="hidden lg:flex flex-wrap gap-6 text-gray-700 font-lato text-[16px] justify-center ">
                     {navItems.map((item) => (
                         <li
                             key={item}
@@ -162,7 +171,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                 </ul>
 
                 {/* Right: Notifications, Messages, and Profile (Desktop Only) */}
-                <div className="flex items-center gap-4 lg:gap-8 ml-auto lg:ml-0"> {/* ml-auto only on mobile */}
+                <div className="flex items-center gap-4 lg:gap-8 ml-auto lg:ml-0 "> {/* ml-auto only on mobile */}
                     {/* Search Icon and Input */}
                     <div className="relative">
                         <div
@@ -200,7 +209,8 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                         <div className="cursor-pointer" onClick={toggleMessageDropdown}>
                             <MessageNotificationIcon count={8}/>
                         </div>
-                        {isMessageDropdownOpen && <MessageDropdown setChatWindowOpened={setChatWindowOpened} onClose={closeDropdowns}/>}
+                        {isMessageDropdownOpen &&
+                            <MessageDropdown setChatWindowOpened={setChatWindowOpened} onClose={closeDropdowns}/>}
                     </div>
 
                     {/* Profile Dropdown (Hidden on Mobile) */}
@@ -213,7 +223,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                 </div>
                 {
                     isChatWindowOpened && (
-                        <ChatWindow />
+                        <ChatWindow/>
                     )
                 }
             </nav>
@@ -321,7 +331,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

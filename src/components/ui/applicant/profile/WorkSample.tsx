@@ -1,125 +1,109 @@
-import React, { useState } from 'react';
-import FileIcon from '../../../../assets/icons/fileUploaded.svg';
-import LinkIcon from '../../../../assets/icons/linkedin.svg';
+import React from 'react';
+import {FaLinkSlash} from "react-icons/fa6";
+import {IoMdClose} from "react-icons/io";
+import {useApplicantJobProfile} from "../../../../store/useApplicantJobProfile.ts";
+import {CvResponseDto} from "../../../../utils/types";
+import {useSectionEditable} from "../../../../store/useEditable.ts";
+import {toast} from "react-toastify";
 
 const FileUploadForm: React.FC = () => {
-    const [files, setFiles] = useState<File[]>([]);
-    const [links, setLinks] = useState<string[]>(['']);
-
-    // Handle multiple file uploads (up to 3)
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            const selectedFiles = Array.from(e.target.files);
-            if (files.length + selectedFiles.length <= 3) {
-                setFiles([...files, ...selectedFiles]);
-            } else {
-                alert('You can upload up to 3 files only.');
-            }
-        }
-    };
-
-    // Remove individual file
-    const removeFile = (index: number) => {
-        setFiles(files.filter((_, i) => i !== index));
-    };
-
+    const {cvDetails, setCvDetails, updatePortfolioLinks} = useApplicantJobProfile();
+    const {isEditable, toggleEdit} = useSectionEditable("work-sample");
     // Handle link input changes
     const handleLinkChange = (index: number, value: string) => {
-        const updatedLinks = [...links];
+        const updatedLinks = [...cvDetails?.portfolioLink as string[]];
         updatedLinks[index] = value;
-        setLinks(updatedLinks);
+        setCvDetails({
+            ...cvDetails,
+            portfolioLink: updatedLinks
+        } as  CvResponseDto);
     };
 
     // Remove individual link
-    const removeLink = (index: number) => {
-        setLinks(links.filter((_, i) => i !== index));
+    const removeLink = async(index: number) => {
+        const updatedLinks = [...cvDetails?.portfolioLink as string[]];
+        updatedLinks.splice(index, 1);
+        const response = await updatePortfolioLinks(updatedLinks);
+        if(response){
+            setCvDetails({
+                ...cvDetails,
+                portfolioLink: updatedLinks
+            } as CvResponseDto);
+        }
     };
 
     // Add new link (max 3)
     const addLink = () => {
-        if (links.length < 3) {
-            setLinks([...links, '']);
-        } else {
-            alert('You can add up to 3 links only.');
+        const arr= cvDetails?.portfolioLink as string[] || [] as string[];
+        if (arr.length < 3) {
+            setCvDetails({
+               ...cvDetails,
+                portfolioLink: [...cvDetails?.portfolioLink || [], ''],
+            } as CvResponseDto);
         }
     };
 
-    const handleBrowseClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        document.getElementById("file-upload")?.click();
+    const handleToggleEdit = () => {
+        toggleEdit();
+    };
+
+    const handleSavePortfolioLinks = async() => {
+        const response = await updatePortfolioLinks(cvDetails?.portfolioLink as string[]);
+        if (response) {
+            toast.success("Portfolio links updated successfully");
+        } else {
+            toast.error("Failed to update portfolio links. Please try again later.");
+        }
     };
 
     return (
-        <section className="mt-4 pt-5 border-t-[2px] border-t-[#E6E6E6] space-y-8">
+        <section className="relative mt-4 pt-5 border-t-[2px] border-t-[#E6E6E6] space-y-8">
+            <div
+                className="absolute top-2 right-1 flex justify-evenly items-center text-xs gap-x-2 z-10">
+                <button type="button" onClick={handleToggleEdit}
+                        className="bg-[#F6F6F7] w-12 rounded-[5px] border-[#ccc] border-[1px] p-1">Edit
+                </button>
+                <button type="button"
+                        onClick={handleSavePortfolioLinks}
+                        className={`${!isEditable ? "cursor-not-allowed" : "cursor-pointer"} bg-[#F6F6F7] w-12 rounded-[5px] border-[#ccc] border-[1px] p-1`}>Save
+                </button>
+            </div>
             <h3 className="text-xl mb-4">Work sample</h3>
 
             {/* Upload method selector */}
 
             {/* File & Link Upload Sections Side by Side */}
             <div className="flex flex-col md:items-start md:flex-row space-x-0 md:space-x-6 space-y-6 md:space-y-0">
-                {/* FILE UPLOAD BOX */}
-                <div className="w-full md:w-1/2 h-[250px] p-6 bg-white border border-[#E6E6E6] rounded-[16px]">
-                    <span className="text-sm text-gray-700 font-lato">Upload Files</span>
-                    <div className="flex items-center justify-between bg-gray-50 p-4 border border-[#E6E6E6] w-full h-[52px] rounded-[16px]">
-                        <input
-                            type="file"
-                            id="file-upload"
-                            multiple
-                            onChange={handleFileChange}
-                            className="hidden"
-                        />
-                        <button
-                            onClick={handleBrowseClick}
-                            className="ml-4 py-1 px-4 text-white text-sm bg-[#6438C2] rounded-[10px]"
-                        >
-                            Browse files
-                        </button>
-                    </div>
-
-                    {/* Display Uploaded Files */}
-                    <div className="mt-4">
-                        {files.map((file, index) => (
-                            <div key={index} className="flex justify-between items-center bg-[#F7F8FA] p-3 rounded-[10px] mt-2">
-                                <div className="flex items-center">
-                                    <img src={FileIcon} alt="File Icon" className="w-4 h-4 mr-2"/>
-                                    <span>{file.name}</span>
-                                </div>
-                                <button
-                                    onClick={() => removeFile(index)}
-                                    className="ml-2 text-sm text-black hover:text-gray-700"
-                                >
-                                    X
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                </div>
 
                 {/* LINKS INPUT BOX */}
-                <div className="w-full md:w-1/2 min-h-[250px] md:h-[250px] p-6 bg-white border border-[#E6E6E6] rounded-[16px]">
+                <div className="w-full min-h-[250px] md:h-[250px] p-6 bg-white border border-[#E6E6E6] rounded-[16px]">
                     <span className="text-sm text-gray-700 font-lato">Provide Links</span>
 
-                    {links.map((link, index) => (
+                    {cvDetails?.portfolioLink?.map((link, index) => (
                         <div key={index} className="flex items-center bg-[#F7F8FA] p-2 rounded-[10px] mt-2">
-                            <img src={LinkIcon} alt="Link Icon" className="w-4 h-4"/>
+                            <FaLinkSlash/>
                             <input
                                 type="url"
                                 value={link}
+                                disabled={!isEditable}
                                 onChange={(e) => handleLinkChange(index, e.target.value)}
                                 placeholder="Enter a link"
                                 className="flex-1 ml-2 p-2 bg-[#F9FAFB] text-sm border border-[#E6E6E6] focus:outline-none focus:ring-0 focus:border-[1px] focus:border-gray"
                             />
                             <button
+                                type="button"
+                                disabled={!isEditable}
                                 onClick={() => removeLink(index)}
                                 className="ml-2 text-sm text-gray-600 hover:text-gray-800"
                             >
-                                X
+                                <IoMdClose/>
                             </button>
                         </div>
                     ))}
 
-                    {links.length < 3 && (
-                        <button onClick={addLink} className="mt-4 text-sm text-purple-600 hover:underline">
+                    {(cvDetails?.portfolioLink || []).length < 3 && (
+                        <button type="button" onClick={addLink}
+                                className="mt-4 text-sm text-purple-600 hover:underline">
                             Add Another Link
                         </button>
                     )}

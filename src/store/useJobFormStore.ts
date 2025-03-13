@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from "zustand/middleware";
 import { immer } from 'zustand/middleware/immer';
+import {NODE_ENV, secureStorageWrapper} from "../utils/constants.ts";
 
 export interface JobFormData {
   title: string;
@@ -104,7 +105,7 @@ interface JobFormStore {
 //       name: "employer-job-form",
 //       storage: createJSONStorage(() => localStorage),
 //     }
-  
+
 //   )
 // )
 
@@ -185,5 +186,5 @@ export const useJobFormStore = create<JobFormStore>()(persist(immer<JobFormStore
   },
 })),{
   name: "employer-job-form",
-  storage: createJSONStorage(() => localStorage),
+  storage: createJSONStorage(()=>NODE_ENV === 'development' ? localStorage: secureStorageWrapper)
 }));

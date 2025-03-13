@@ -6,24 +6,21 @@ import microsoftLogo from '../../assets/icons/mLogo.svg';
 import gighubLogo from '../../assets/icons/gighubLogoSmall.svg';
 import {useAuth} from "../../store/useAuth.ts";
 import {Link, useNavigate} from "react-router-dom";
-
 import CustomCheckbox from "../../components/common/CustomCheckbox.tsx";
-import {UserType} from "../../utils/types/enums.ts";
-import secureLocalStorage from "react-secure-storage";
+
 export const Login = () => {
     const [credentials, setCredentials] = useState({
         email: '',
         password: '',
         rememberMe: false,
     });
-    const {login} = useAuth();
+    const {login, userType} = useAuth();
     const navigate = useNavigate();
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         const success = await login(credentials);
         if(success) {
-            const storedUserType = secureLocalStorage.getItem("userType") as UserType;
-            const path = `/${storedUserType}/profile`;
+            const path = `/${userType}/profile`;
             navigate(path);
         }
     };
@@ -38,16 +35,16 @@ export const Login = () => {
             <form
                   className="h-screen flex flex-row justify-evenly space-x-0 items-center mx-auto my-auto">
                 <div className="flex flex-col gap-y-6 justify-center items-center w-full px-5 md:px-10 lg:w-1/2  xl:w-1/3 h-[890px]">
-                    <div className="flex flex-col w-full gap-y-2">
+                    <div className="flex flex-col w-full gap-y-1">
                         <img className="h-40 w-40 mx-auto" src={gighubLogo} alt="right"/>
                         <div className="mx-auto mb-5">
-                            <h1 className="text-[20px] sm:text-[25px] md:text-[32px]">Login Into Your Account</h1>
-                            <p className="text-[12px] sm:text-[13px] md:text-[16px] text-[#AFAFAF]">Welcome Back! Select method to login:</p>
+                            <h1 className="text-[22px] sm:text-[25px] md:text-[32px]">Login Into Your Account</h1>
+                            <p className="text-[13px] sm:text-[14px] md:text-[16px] text-[#AFAFAF]">Welcome Back! Select method to login:</p>
                         </div>
                         <div className="flex flex-row justify-center gap-x-4 lg:gap-x-10 px-4">
-                            <img className="cursor-pointer lg:w-4/12 w-3/12" src={googleLogo} alt="right"/>
-                            <img className="cursor-pointer lg:w-4/12 w-3/12" src={linkedInLogo} alt="right"/>
-                            <img className="cursor-pointer lg:w-4/12 w-3/12" src={microsoftLogo} alt="right"/>
+                            <img className="cursor-pointer lg:w-4/12 w-4/12" src={googleLogo} alt="right"/>
+                            <img className="cursor-pointer lg:w-4/12 w-4/12" src={linkedInLogo} alt="right"/>
+                            <img className="cursor-pointer lg:w-4/12 w-4/12" src={microsoftLogo} alt="right"/>
                         </div>
                         <div className="w-full flex flex-col gap-y-4 mt-12">
                             <p className="text-center text-[#AFAFAF]">Or continue with email</p>

@@ -2,13 +2,12 @@ import React, {useEffect} from "react";
 import Image7 from "../../../../assets/images/image7.png";
 import Camera from "../../../../assets/icons/Camera.svg";
 import { useAuth } from "../../../../store/useAuth.ts";
-import { useJobPreferenceStore } from "../../../../store/useJobPreferenceStore.ts";
 import {useFileUploadStore} from "../../../../store/useFileUploadStore.ts";
 import {FileUploadRequest} from "../../../../utils/types";
+import {Action} from "../../../../utils/enums.ts";
 
 const ApplicantProfileCard: React.FC = () => {
-    const { applicant, updateProfile } = useAuth();
-    const { preferences, addPreference } = useJobPreferenceStore();
+    const { applicant,  } = useAuth();
     const {profilePictureUploadRequest,
         profilePictureUploadResponse,
         setProfilePictureUploadRequest,
@@ -39,19 +38,11 @@ const ApplicantProfileCard: React.FC = () => {
                 userId: applicant?.id as number,
                 whatIsTheItem: "profilePicture",
                 userType: "applicant",
-                action: "PROFILE_PICTURE_UPDATE",
+                action: Action.PROFILE_PICTURE_UPDATE,
             });
         }
     };
 
-    const handleSaveChanges = async () => {
-        if (applicant) {
-            if (preferences) {
-                await addPreference(preferences);
-            }
-            updateProfile(applicant);
-        }
-    };
 
     const handleFileUpload = () => {
         const fileInput = document.getElementById("file-dialog-opener") as HTMLInputElement;
@@ -93,14 +84,6 @@ const ApplicantProfileCard: React.FC = () => {
                     <p className="text-[10px] md:text-[15px] lg:text-sm text-gray-200">Lagos Nigeria</p>
                 </div>
             </div>
-
-            {/* Save Changes Button */}
-            <button
-                onClick={handleSaveChanges}
-                className="bg-white font-lato p-2 md:py-3 md:px-5 rounded-[16px] lg:py-2 shadow lg:px-6 hover:bg-gray-200 text-[11px] md:text-lg lg:text-[20px] text-[#000000] transition"
-            >
-                Update Profile
-            </button>
         </div>
     );
 };
