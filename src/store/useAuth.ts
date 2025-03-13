@@ -9,12 +9,50 @@ import {
     PasswordResetRequest, ProfessionalSummaryData,
     Role
 } from "../utils/types";
-import {UserType} from "../utils/types/enums.ts";
+import {UserType} from "../utils/enums.ts";
 import {privateApiClient, publicApiClient} from "../api/axios.ts";
 import {immer} from "zustand/middleware/immer";
 import secureLocalStorage from "react-secure-storage";
-import {API_BASE_URL, secureStorageWrapper} from "../utils/constants.ts";
+import {API_BASE_URL, NODE_ENV, secureStorageWrapper} from "../utils/constants.ts";
 
+
+const removeFromLocalStorage = async (nodeEnv: string)=>{
+    if(nodeEnv === 'development'){
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('redirectPath');
+        localStorage.removeItem('employer');
+        localStorage.removeItem('authRole');
+        localStorage.removeItem('email');
+        localStorage.removeItem('otp');
+        localStorage.removeItem('applicant');
+        localStorage.removeItem('loginRequest');
+        localStorage.removeItem('applicantSignupRequest');
+        localStorage.removeItem('professionalSummaryData');
+        localStorage.removeItem('passwordResetRequest');
+        localStorage.removeItem('role');
+        localStorage.removeItem('userType');
+        localStorage.removeItem('loading');
+        localStorage.removeItem('error');
+        localStorage.removeItem('signupSuccess');
+    }else{
+        secureLocalStorage.removeItem('authToken');
+        secureLocalStorage.removeItem('redirectPath');
+        secureLocalStorage.removeItem('employer');
+        secureLocalStorage.removeItem('authRole');
+        secureLocalStorage.removeItem('email');
+        secureLocalStorage.removeItem('otp');
+        secureLocalStorage.removeItem('applicant');
+        secureLocalStorage.removeItem('loginRequest');
+        secureLocalStorage.removeItem('applicantSignupRequest');
+        secureLocalStorage.removeItem('professionalSummaryData');
+        secureLocalStorage.removeItem('passwordResetRequest');
+        secureLocalStorage.removeItem('role');
+        secureLocalStorage.removeItem('userType');
+        secureLocalStorage.removeItem('loading');
+        secureLocalStorage.removeItem('error');
+        secureLocalStorage.removeItem('signupSuccess');
+    }
+}
 
 export interface LoginRequest {
     email: string;
@@ -24,7 +62,9 @@ export interface LoginRequest {
 export interface AuthData {
     isAuthenticated: boolean;
     redirectPath: string | "";
-    employer: EmployerData | "";
+    employer: EmployerData | null;
+    authToken: string | null;
+    authRole: Role | null;
     email: string | "";
     otp: string | "";
     applicant: ApplicantData;
@@ -69,12 +109,14 @@ export interface AuthData {
 export const useAuth = create<AuthData>()(
     persist(
         immer<AuthData>((set, ) => ({
-            isAuthenticated: !!secureLocalStorage.getItem("auth-token"),
+            authToken: null,
+            authRole: null,
+            isAuthenticated: false,
             redirectPath: "",
             signupSuccess: false,
             employer: {} as EmployerData,
             applicant: {} as ApplicantData,
-            role: secureLocalStorage.getItem("auth-role") as Role | null,
+            role: null,
             userType: secureLocalStorage.getItem("userType") as UserType | null,
             email: "",
             otp: "",
@@ -97,18 +139,24 @@ export const useAuth = create<AuthData>()(
                 try {
                     const response = await privateApiClient.post(`${API_BASE_URL}/auth/login`, data);
                     const userData: ApplicantData | EmployerData = response.data.data;
-                    console.log("LOGGED IN USER ::: ", userData);
                     set((state) => {
                         state.isAuthenticated = true;
                         state.role = userData.role as Role;
                         state.userType = userData.userType;
 
                         if (userData.userType === UserType.EMPLOYER) {
-                            state.employer = userData as EmployerData;
+                            const employer = userData as EmployerData;
+                            state.employer = employer;
                             state.applicant = {} as ApplicantData;
+                            state.authRole=employer.role as Role;
+                            state.authToken = employer?.token;
+                            state.userType=employer.userType;
                         } else {
                             const appData = userData as ApplicantData;
                             state.applicant = appData;
+                            state.authRole=appData.role as Role;
+                            state.authToken = response.data.token;
+                            state.userType=appData.userType;
                             state.applicantPersonalInfo = {
                                 firstName: appData?.firstName,
                                 lastName: appData?.lastName,
@@ -129,10 +177,6 @@ export const useAuth = create<AuthData>()(
 
                         state.loading = false;
                     });
-
-                    secureLocalStorage.setItem("auth-token", userData.token as string);
-                    secureLocalStorage.setItem("auth-role", JSON.stringify(userData.role));
-                    secureLocalStorage.setItem("userType", userData.userType as  string);
                     return true;
                 } catch (err: any) {
                     set((state) => {
@@ -173,6 +217,8 @@ export const useAuth = create<AuthData>()(
                         state.isAuthenticated = true;
                         state.role = userData.role as Role;
                         state.userType = userData.userType as UserType;
+                        state.authToken = userData.token;
+                        state.authRole = userData.role as Role;
 
                         if (userData.userType === UserType.EMPLOYER) {
                             state.employer = userData as EmployerData;
@@ -185,9 +231,6 @@ export const useAuth = create<AuthData>()(
                         state.loading = false;
                     });
 
-                    secureLocalStorage.setItem("auth-token", userData.token as string);
-                    secureLocalStorage.setItem("auth-role", JSON.stringify(userData.role));
-                    secureLocalStorage.setItem("userType", JSON.stringify(userData.userType));
                     return true;
                 } catch (err: any) {
                     toast.error(err.response?.data?.message || "Signup failed");
@@ -423,16 +466,7 @@ export const useAuth = create<AuthData>()(
                         state.loading = true;
                     });
                     await privateApiClient.post(`${API_BASE_URL}/auth/logout`);
-                    secureLocalStorage.removeItem("auth-token");
-                    secureLocalStorage.removeItem("auth-role");
-                    secureLocalStorage.removeItem("userType");
-                    secureLocalStorage.removeItem("auth-storage");
-                    secureLocalStorage.removeItem("job-preference-store");
-                    secureLocalStorage.removeItem("redirectPath");
-                    secureLocalStorage.removeItem("applicantJobProfile");
-                    secureLocalStorage.removeItem("auth-storage");
-
-
+                    await removeFromLocalStorage(NODE_ENV);
                     set((state) => {
                         state.isAuthenticated = false;
                         state.employer = {} as EmployerData;
@@ -502,7 +536,7 @@ export const useAuth = create<AuthData>()(
                         phoneNumber: "",
                         resume: null,
                         address: "",
-                        coverLetter: null,
+                        coverLetterLink: null,
                         portfolio: null,
                         videoCv: null,
                         documentType: "",
@@ -585,6 +619,8 @@ export const useAuth = create<AuthData>()(
         {
             name: "auth-storage",
             partialize: (state) => ({
+                authToken: state.authToken,
+                authRole: state.authRole,
                 isAuthenticated: state.isAuthenticated,
                 employer: state.employer,
                 applicant: state.applicant,
@@ -600,7 +636,7 @@ export const useAuth = create<AuthData>()(
                 userType: state.userType,
                 role: state.role,
             }),
-            storage: createJSONStorage(()=>secureStorageWrapper)
+            storage: createJSONStorage(()=>NODE_ENV === 'development' ? localStorage: secureStorageWrapper)
         }
     )
 );

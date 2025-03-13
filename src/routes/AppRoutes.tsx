@@ -48,16 +48,16 @@ const AppRoutes = () => {
                 <Route path="/not-authorized" element={<NotAuthorized/>}/>
                 <Route path="*" element={<NotFound/>}/>
                 <Route path="/login" element={<Login/>}/>
-                <Route path="/applicant/dashboard/network" element={<ApplicantNetwork/>}/>
-                <Route path="/applicant/dashboard" element={<ApplicantDashboard/>}/>
-                <Route path="/employer/dashboard" element={<EmployerDashboard/>}/>
+                <Route path="/applicant/network" element={<PrivateRoute allowedTypes={[UserType.APPLICANT]}><ApplicantNetwork/></PrivateRoute>}/>
+                <Route path="/applicant/dashboard" element={<PrivateRoute allowedTypes={[UserType.APPLICANT]}><ApplicantDashboard/></PrivateRoute>}/>
+                <Route path="/employer/dashboard" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><EmployerDashboard/></PrivateRoute>}/>
                 <Route path="/user-type-selection" element={<UserTypeSelection/>}/>
                 <Route path="/applicant/signup" element={<ApplicantMultistepForm/>}/>
                 <Route path="/employer/signup" element={<EmployerMultistepForm/>}/>
                 <Route path="/employer/profile" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><EmployerProfile/></PrivateRoute>}/>
                 <Route path="/applicant/profile" element={<PrivateRoute allowedTypes={[UserType.APPLICANT]}><ApplicantProfile/></PrivateRoute>}/>
                 <Route path="/employer/public-profile" element={<EmployerPublicProfile/>}/>
-                <Route path="/employer/manage-applicants" element={<ManageApplicant/>}/>
+                <Route path="/employer/manage-applicants" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><ManageApplicant/></PrivateRoute>}/>
                 <Route path="/settings/account-settings" element={<AccountSettings/>}/>
                 <Route path="/settings/privacy-settings" element={<PrivacySettings/>}/>
                 <Route path="/settings/notification-settings" element={<NotificationSettings/>}/>
@@ -66,17 +66,14 @@ const AppRoutes = () => {
                 <Route path="/job-list" element={<JobList/>}/>
                 <Route path="/job-filter" element={<FilterJob/>}/>
                 <Route path="/notification" element={<Notification/>}/>
-                <Route path="/applicant/dashboard/jobselection" element={<JobSelection/>}/>
+                <Route path="/applicant/dashboard/jobselection" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><JobSelection/></PrivateRoute>}/>
                 <Route path="/forgot-password" element={<ForgotPassword/>}/>
                 <Route path="/verify-otp-to-reset-password" element={<VerifyOtpToResetPassword/>}/>
                 <Route path="/reset-password" element={<ResetPassword/>}/>
                 <Route path="/password-reset-success" element={<PasswordResetSuccess/>}/>
                 <Route path="/applicant/find-jobs" element={<JobSearch/>}/>
-      <Route path="/applicant/dashboard/network" element={<ApplicantNetwork/>}/>
-      <Route path="/applicant/dashboard/jobselection" element={<JobSelection/>}/>
-      <Route path="/notification" element={<Notification/>}/>
-      <Route path="/employerJobMultistepForm" element={<EmployerJobMultistepForm />}/>
-
+                <Route path="/notification" element={<Notification/>}/>
+                <Route path="/employerJobMultistepForm" element={<EmployerJobMultistepForm />}/>
             </Routes>
     );
 };

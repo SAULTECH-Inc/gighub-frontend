@@ -5,8 +5,8 @@ import ApplicantSignupSuccessModal from "../../../ui/ApplicantSignupSuccessModal
 import useModalStore from "../../../../store/modalStateStores.ts";
 import { useAuth } from "../../../../store/useAuth.ts";
 import { toast } from "react-toastify";
-import {UserType} from "../../../../utils/types/enums.ts";
 import {EmployerSignupRequest} from "../../../../utils/types";
+import {UserType} from "../../../../utils/enums.ts";
 
 interface StepTwoProp {
     handlePrev: () => void;

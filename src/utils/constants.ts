@@ -15,6 +15,7 @@ export const DEFAULT_PAGE = 0;
 export const PER_PAGE = 20;
 
 export const VITE_API_FILE_SERVICE = import.meta.env.VITE_API_FILE_SERVICE || 'http://localhost:5173';
+export const NODE_ENV = import.meta.env.NODE_ENV || 'development';
 export const applicantNavBarItemMap = new Map<string, string>([]);
 applicantNavBarItemMap.set("Dashboard", "/applicant/dashboard");
 applicantNavBarItemMap.set("Find Jobs", "/applicant/find-jobs");
