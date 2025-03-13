@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { FaAsterisk } from "react-icons/fa";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 interface Option {
@@ -6,28 +7,28 @@ interface Option {
     value: string;
 }
 
-interface SearchableSelectWithAddProps {
+interface MultiSelectProps {
+    label: string;
     placeholder?: string;
-    className?: string;
-    options: Option[];
-    onChange?: (option: Option) => void;
-    onAddOption?: (option: Option) => void;
+    options: Option[]; 
+    selectedItems: Option[]; 
+    setSelectedItems: (items: Option[]) => void; 
+    requiredAsterisk?: boolean;
 }
 
-const SearchableSelectWithAdd: React.FC<SearchableSelectWithAddProps> = ({
-    placeholder = "Select an option...",
-    className,
+const MultiSelect: React.FC<MultiSelectProps> = ({
+    label,
+    placeholder,
     options,
-    onChange,
-    onAddOption,
+    selectedItems,
+    setSelectedItems,
+    requiredAsterisk = false,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState("");
     const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
-    const [selectedOption, setSelectedOption] = useState<Option | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    // Filter options based on search input
     useEffect(() => {
         setFilteredOptions(
             options.filter((option) =>
@@ -36,7 +37,6 @@ const SearchableSelectWithAdd: React.FC<SearchableSelectWithAddProps> = ({
         );
     }, [search, options]);
 
-    // Handle clicking outside the dropdown
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -50,53 +50,57 @@ const SearchableSelectWithAdd: React.FC<SearchableSelectWithAddProps> = ({
     }, []);
 
     const handleSelect = (option: Option) => {
-        setSelectedOption(option);
-        if (onChange) {
-            onChange(option);
+        if (!selectedItems.some((item) => item.value === option.value)) {
+            setSelectedItems([...selectedItems, option]);
         }
         setIsOpen(false);
     };
 
     const handleAddOption = () => {
         if (search.trim() === "") return;
-    
+
         const newOption: Option = {
             label: search,
-            value: search.replace(/\s+/g, '-'), // Removed toLowerCase() to preserve case
+            value: search.replace(/\s+/g, "-"),
         };
-    
-        if (onAddOption) {
-            onAddOption(newOption); // Call the onAddOption callback
+
+        if (!selectedItems.some((item) => item.value === newOption.value)) {
+            setSelectedItems([...selectedItems, newOption]);
         }
-    
-        setSelectedOption(newOption);
-        if (onChange) {
-            onChange(newOption);
-        }
+
         setIsOpen(false);
         setSearch("");
     };
+    const handleRemove = (value: string) => {
+        const updatedItems = selectedItems.filter((item) => item.value !== value);
+        setSelectedItems(updatedItems);
+    };
+
 
     return (
-        <div className="relative" ref={dropdownRef}>
-            {/* Dropdown button */}
-            <button
+        <div className="relative w-full" ref={dropdownRef}>
+        <div className="w-full flex flex-wrap bg-[#F7F8FA] md:p-4 border border-[#E6E6E6] p-2 rounded-[16px]">
+       <div className="flex gap-1 items-center text-[12px] sm:text-base">
+       {label}{requiredAsterisk && <FaAsterisk className="w-2 fill-[#FA4E09]"/>}
+       </div>
+        <button
                 type="button"
-                className={`${className}`}
+                className={` text-[#8E8E8E]  w-full text-[12px] sm:text-base p-2 rounded-lg bg-white mt-2 flex justify-between items-center border border-[#E6E6E6]`}
                 onClick={() => setIsOpen(!isOpen)}
             >
-                {selectedOption ? selectedOption.label : placeholder}
+                {placeholder}
                 {isOpen ? (
-                    <MdKeyboardArrowUp className="absolute right-3 top-3 cursor-pointer text-[30px]" />
+                    <MdKeyboardArrowUp className="cursor-pointer text-[24px]" />
                 ) : (
-                    <MdKeyboardArrowDown className="absolute right-3 top-2 cursor-pointer text-[30px]" />
+                    <MdKeyboardArrowDown className="cursor-pointer text-[24px]" />
                 )}
             </button>
+            
 
-            {/* Dropdown menu */}
+
+
             {isOpen && (
-                <div className="absolute mt-2 w-full bg-white shadow-lg z-10 rounded-[10px] p-3 border border-gray-300">
-                    {/* Search input */}
+                <div className="absolute mt-2 w-full bg-white shadow-lg z-10 rounded-lg p-3 border border-gray-300">
                     <input
                         type="text"
                         className="w-full px-3 py-2 text-sm border-b border-gray-300 focus:outline-none"
@@ -105,13 +109,12 @@ const SearchableSelectWithAdd: React.FC<SearchableSelectWithAddProps> = ({
                         onChange={(e) => setSearch(e.target.value)}
                     />
 
-                    {/* Options List */}
-                    <ul className="max-h-48 overflow-y-auto">
+                    <ul className="max-h-48 overflow-y-auto mt-2">
                         {filteredOptions.length > 0 ? (
                             filteredOptions.map((option) => (
                                 <li
                                     key={option.value}
-                                    className="px-4 py-2 text-sm cursor-pointer hover:bg-blue-100"
+                                    className="px-4 py-2 text-sm cursor-pointer hover:bg-[#6438C2]"
                                     onClick={() => handleSelect(option)}
                                 >
                                     {option.label}
@@ -122,19 +125,40 @@ const SearchableSelectWithAdd: React.FC<SearchableSelectWithAddProps> = ({
                         )}
                     </ul>
 
-                    {/* Add new option button */}
                     {search.trim() !== "" && !options.some(option => option.label.toLowerCase() === search.toLowerCase()) && (
                         <button
-                            className="w-full mt-2 px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                            className="w-full mt-2 px-4 py-2 text-sm bg-[#6438C2] text-white rounded hover:bg-[#6438C2]"
                             onClick={handleAddOption}
                         >
                             Add "{search}"
                         </button>
                     )}
+
+
                 </div>
+                
             )}
+            <div className="flex flex-wrap gap-2 mt-2 max-h-[100px] overflow-y-auto">
+                {selectedItems.map((item) => (
+                    <div
+                        key={item.value}
+                        className="px-4 py-2 bg-[#FA4E09] text-white text-[12px] rounded-lg flex items-center space-x-2"
+                    >
+                        <span>{item.label}</span>
+                        <button
+                            type="button"
+                            onClick={() => handleRemove(item.value)}
+                            className="text-white font-semibold cursor-pointer"
+                        >
+                            &times;
+                        </button>
+                    </div>
+                ))}
+            </div>
+            </div>
         </div>
+        
     );
 };
 
-export default SearchableSelectWithAdd;
+export default MultiSelect;
