@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from "zustand/middleware";
 import { immer } from 'zustand/middleware/immer';
 import { SkillsResponseDto } from '../utils/types';
-import {NODE_ENV, secureStorageWrapper} from "../utils/constants.ts";
 
 export interface JobFormData {
   title: string;
