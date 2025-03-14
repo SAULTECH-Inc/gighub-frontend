@@ -32,7 +32,7 @@ employerNavBarItemMap.set("Manage Applicants", "/employer/manage-applicants");
 employerNavBarItemMap.set("My Networks", "/my-networks");
 employerNavBarItemMap.set("Profile", "/employer/dashboard/profile");
 employerNavBarItemMap.set("Settings", "/employer/dashboard/settings");
-employerNavBarItemMap.set("Job List", "/employer/job-list");
+employerNavBarItemMap.set("Job List", "/employer/manage-jobs");
 employerNavBarItemMap.set("My Schedules", "/employer/my-schedules");
 employerNavBarItemMap.set("Help & Support", "/help-support");
 employerNavBarItemMap.set("Logout", "/logout");

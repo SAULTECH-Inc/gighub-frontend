@@ -31,7 +31,6 @@ import JobSearch from "../pages/JobSearch.tsx";
 import {useAuth} from "../store/useAuth.ts";
 import {useEffect} from "react";
 
-import EmployerJobMultistepForm from "../pages/employer/EmployerJobMultistepForm.tsx";
 import {UserType} from "../utils/enums.ts";
 import JobEmployerDashboard from "../components/ui/employer/JobEmployerDashboard.tsx";
 
@@ -68,14 +67,13 @@ const AppRoutes = () => {
                 <Route path="/job-list" element={<JobList/>}/>
                 <Route path="/job-filter" element={<FilterJob/>}/>
                 <Route path="/notification" element={<Notification/>}/>
-                <Route path="/applicant/dashboard/jobselection" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><JobSelection/></PrivateRoute>}/>
+                <Route path="/employer/manage-jobs" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><JobSelection/></PrivateRoute>}/>
                 <Route path="/forgot-password" element={<ForgotPassword/>}/>
                 <Route path="/verify-otp-to-reset-password" element={<VerifyOtpToResetPassword/>}/>
                 <Route path="/reset-password" element={<ResetPassword/>}/>
                 <Route path="/password-reset-success" element={<PasswordResetSuccess/>}/>
                 <Route path="/applicant/find-jobs" element={<JobSearch/>}/>
                 <Route path="/notification" element={<Notification/>}/>
-                <Route path="/employerJobMultistepForm" element={<EmployerJobMultistepForm />}/>
             </Routes>
     );
 };
