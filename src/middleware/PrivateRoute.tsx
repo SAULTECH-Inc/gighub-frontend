@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../store/useAuth";
-import { UserType } from "../utils/types/enums";
+import { UserType } from "../utils/enums";
 
 interface PrivateRouteProps {
     children: JSX.Element;
