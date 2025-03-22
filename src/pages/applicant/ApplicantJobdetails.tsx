@@ -5,8 +5,9 @@ import {
     applicantNavItemsMobile,
 } from "../../utils/constants";
 import JobSearchTopBar from "../../components/ui/JobSearchTopBar";
-import  JobDetails  from "../../components/ui/applicant/JobDetails";
+import  JobDetailsSidebar  from "../../components/ui/applicant/JobDetailsSidebar";
 import JobDescription from "../../components/ui/applicant/JobDescription";
+import CompanyInfo from "../../components/ui/applicant/CompanyInfo";
 
 const ApplicantJobdetails = () => {
   return (
@@ -17,7 +18,7 @@ const ApplicantJobdetails = () => {
         <div className="grid grid-cols-12 gap-x-14 bg-[#F7F8FA] p-6">
             <div className="col-span-4 flex flex-col rounded-[16px] gap-y-4 p-4">
                 {Array(3).fill("").map((_, index)=>(
-                    <JobDetails 
+                    <JobDetailsSidebar 
                     key={index}
                     title='Quality Assurance Tester Manual Intern'
                     location='Lagos, Nigeria'
@@ -34,7 +35,9 @@ const ApplicantJobdetails = () => {
                     <div>
                         <JobDescription />
                     </div>
-                    <div></div>
+                    <div>
+                        <CompanyInfo />
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-import { Jumia } from "../../../assets/icons"
+import  Jumia  from "../../../assets/images/JumiaProfile.png"
 import locationIcon from "../../../assets/icons/locationIcon.svg";
 import peopleApplied from "../../../assets/icons/peopleApplied.svg";
 import numberOfDaysRemaining from "../../../assets/icons/numberOfDaysRemaining.svg";
@@ -15,7 +15,7 @@ export interface JobMatchCardProps {
     daysLeft: number;
 }
 
-const JobDetails: React.FC<JobMatchCardProps> = ({
+const JobDetailsSidebar: React.FC<JobMatchCardProps> = ({
     title,
     location,
     tags,
@@ -28,7 +28,7 @@ const JobDetails: React.FC<JobMatchCardProps> = ({
     <div className="relative w-full h-[280px] rounded-[16px] cursor-pointer bg-white p-4 flex flex-col mx-auto">
         <div className="flex items-center gap-2">
             <div className="bg-[#F7F8FA] rounded-md">
-                <img src={Jumia} alt="jumia" className="w-[100px]" />
+                <img src={Jumia} alt="jumia" />
             </div>
             <div className="flex flex-col">
                 <h2 className="text-black text-[20px] font-medium">{title}</h2>
@@ -64,4 +64,4 @@ const JobDetails: React.FC<JobMatchCardProps> = ({
   )
 }
 
-export default JobDetails
+export default JobDetailsSidebar
