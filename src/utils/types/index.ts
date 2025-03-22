@@ -1,5 +1,6 @@
 import React, {ButtonHTMLAttributes, ChangeEvent} from "react";
-import {UserType} from "./enums.ts";
+import { UserType } from "../enums";
+// import {UserType} from "../enums"; // Adjusted the path to match the correct location
 
 export type User = {
     id: string;

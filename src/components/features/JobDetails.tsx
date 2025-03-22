@@ -13,6 +13,7 @@ import ApplicationModal from "../ui/ApplicationModal.tsx";
 import useModalStore from "../../store/modalStateStores.ts";
 import ApplicationSuccessModal from "../ui/ApplicationSuccessModal.tsx";
 import PaymentSuccessModal from "../ui/PaymentSuccessModal.tsx";
+import { Link } from "react-router-dom";
 
 export const JobDetails: React.FC<JobMatchCardProps> = ({
                                                             title,
@@ -63,9 +64,11 @@ export const JobDetails: React.FC<JobMatchCardProps> = ({
             </div>
 
             {/* Description */}
+            <Link to={`/applicant/job-details/${title}`}>
             <p className="text-[12px] md:text-[13px] text-gray-700 leading-5 font-lato">
                 {description}
             </p>
+            </Link>
 
             {/* Job Info */}
             <div className="w-full flex flex-wrap md:justify-between items-center md:gap-2 gap-x-4 gap-y-3 justify-start">
