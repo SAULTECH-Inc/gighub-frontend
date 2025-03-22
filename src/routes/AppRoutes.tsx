@@ -16,7 +16,7 @@ import AccountSettings from "../pages/AccountSettings.tsx";
 import PrivacySettings from "../pages/PrivacySettings.tsx";
 import NotificationSettings from "../pages/NotificationSettings.tsx";
 import SubscriptionSettings from "../pages/SubscriptionSettings.tsx";
-import JobDetails from "../pages/JobDetails.tsx";
+// import JobDetails from "../pages/JobDetails.tsx";
 import JobList from "../pages/JobList.tsx";
 import FilterJob from "../pages/FilterJob.tsx";
 import {Login} from "../pages/auth/Login.tsx";
@@ -33,6 +33,7 @@ import {useEffect} from "react";
 
 import EmployerJobMultistepForm from "../pages/employer/EmployerJobMultistepForm.tsx";
 import {UserType} from "../utils/enums.ts";
+import ApplicantJobdetails from "../pages/applicant/ApplicantJobdetails.tsx";
 
 const AppRoutes = () => {
     const {setRedirectPath} = useAuth();
@@ -62,7 +63,7 @@ const AppRoutes = () => {
                 <Route path="/settings/privacy-settings" element={<PrivacySettings/>}/>
                 <Route path="/settings/notification-settings" element={<NotificationSettings/>}/>
                 <Route path="/settings/subscription-settings" element={<SubscriptionSettings/>}/>
-                <Route path="/job-details" element={<JobDetails/>}/>
+                {/* <Route path="/job-details" element={<JobDetails/>}/> */}
                 <Route path="/job-list" element={<JobList/>}/>
                 <Route path="/job-filter" element={<FilterJob/>}/>
                 <Route path="/notification" element={<Notification/>}/>
@@ -72,6 +73,7 @@ const AppRoutes = () => {
                 <Route path="/reset-password" element={<ResetPassword/>}/>
                 <Route path="/password-reset-success" element={<PasswordResetSuccess/>}/>
                 <Route path="/applicant/find-jobs" element={<JobSearch/>}/>
+                <Route path="/applicant/job-details/:title" element={<ApplicantJobdetails/>}/>job details
       <Route path="/applicant/dashboard/network" element={<ApplicantNetwork/>}/>
       <Route path="/applicant/dashboard/jobselection" element={<JobSelection/>}/>
       <Route path="/notification" element={<Notification/>}/>
