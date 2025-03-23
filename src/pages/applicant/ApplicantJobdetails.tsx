@@ -14,9 +14,11 @@ const ApplicantJobdetails = () => {
     <div>
         <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile}
         navbarItemsMap={applicantNavBarItemMap} />
+        <div className="hidden sm:block">
         <JobSearchTopBar/>
-        <div className="grid grid-cols-12 gap-x-14 bg-[#F7F8FA] p-6">
-            <div className="col-span-4 flex flex-col rounded-[16px] gap-y-4 p-4">
+        </div>
+        <div className="flex items-start max-lg:flex-col-reverse justify-between bg-[#F7F8FA] sm:p-6 p-3">
+            <div className="flex flex-col max-lg:grid max-lg:grid-cols-2 max-lg:gap-x-2 max-sm:grid-cols-1 rounded-[16px] gap-y-4 p-4">
                 {Array(3).fill("").map((_, index)=>(
                     <JobDetailsSidebar 
                     key={index}
@@ -30,8 +32,8 @@ const ApplicantJobdetails = () => {
                     />
                 ))}
             </div>
-            <div className="col-span-8 bg-white p-4 shadowm-lg">
-                <div className="flex items-center gap-2">
+            <div className=" bg-white shadow-lg rounded-[16px]">
+                <div className="sm:flex flex-row sm:items-start items-center justify-center ">
                     <div>
                         <JobDescription />
                     </div>

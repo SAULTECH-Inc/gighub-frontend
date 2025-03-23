@@ -4,7 +4,7 @@ import { FaUser } from "react-icons/fa";
 import { IoBagSharp } from "react-icons/io5";
 const CompanyInfo = () => {
   return (
-    <div className="relative w-full h-screen rounded-[16px] cursor-pointer bg-white p-4 flex flex-col mx-auto border-l-[1px] border-[#E6E6E6]">
+    <div className="relative sm:w-[350px] w-full rounded-[16px] cursor-pointer bg-white p-4 flex flex-col mx-auto border-l-[1px] border-[#E6E6E6]">
         <div className="flex items-center gap-2">
             <div className="bg-[#F7F8FA] rounded-md h-[80px] w-[80px]">
                 <img src={Paystack} alt="paystack" className="w-[500px]" />
@@ -26,7 +26,7 @@ const CompanyInfo = () => {
             <div className="flex items-center gap-x-2">
                 <IoBagSharp className="text-gray text-[20px]" />
                 <span className="text-gray font-normal text-sm">15 connection work here</span>
-                <a href="" className="ml-20 text-[#6438C2]">See All</a>
+                <a href="" className="ml-16 text-[#6438C2]">See All</a>
             </div>
         </div>
         <div className="mt-6">
