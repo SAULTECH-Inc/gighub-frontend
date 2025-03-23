@@ -25,24 +25,24 @@ const JobDetailsSidebar: React.FC<JobMatchCardProps> = ({
     daysLeft
 }) => {
   return (
-    <div className="relative w-full h-[280px] rounded-[16px] cursor-pointer bg-white p-4 flex flex-col mx-auto">
+    <div className="relative w-full rounded-[16px] cursor-pointer bg-white p-4 flex flex-col mx-auto">
         <div className="flex items-center gap-2">
             <div className="bg-[#F7F8FA] rounded-md">
                 <img src={Jumia} alt="jumia" />
             </div>
             <div className="flex flex-col">
-                <h2 className="text-black text-[20px] font-medium">{title}</h2>
+                <h2 className="text-black sm:text-[20px] text-sm font-medium">{title}</h2>
                 <span className="text-gray text-sm">{location}</span>
             </div>
             <button className="border-[1px] border-[#E6E6E6] px-4 py-1 rounded-[10px] text-[#6438C2]">Apply</button>
         </div>
-        <div className="flex items-center justify-center space-x-10 mt-4">
+        <div className="flex items-center sm:justify-between mt-5 space-x-4">
         {tags.map((tag, index)=>(
-            <span key={index} className="bg-[#F7F8FA] px-4 py-2 rounded-full text-black">{tag}</span>
+            <span key={index} className="bg-[#F7F8FA] h-10 w-24 flex items-center justify-center rounded-[20px] text-black">{tag}</span>
         ))}
         </div>
         <p className="text-black text-sm mt-4">{description}</p>
-        <div className="flex items-center justify-between gap-x-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-5">
             <div className="flex items-center space-x-2 mt-5">
                 <img src={jobTypeIcon} alt={type} />
                 <span className="text-gray text-sm">{type}</span>
