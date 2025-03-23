@@ -32,6 +32,8 @@ import {useAuth} from "../store/useAuth.ts";
 import {useEffect} from "react";
 
 import {UserType} from "../utils/enums.ts";
+import ApplicantJobdetails from "../pages/applicant/ApplicantJobdetails.tsx";
+import CompanyList from "../pages/company list/CompanyList.tsx";
 import JobEmployerDashboard from "../components/ui/employer/JobEmployerDashboard.tsx";
 
 const AppRoutes = () => {
@@ -74,6 +76,13 @@ const AppRoutes = () => {
                 <Route path="/password-reset-success" element={<PasswordResetSuccess/>}/>
                 <Route path="/applicant/find-jobs" element={<JobSearch/>}/>
                 <Route path="/notification" element={<Notification/>}/>
+                <Route path="/applicant/job-details/:title" element={<ApplicantJobdetails/>}/>job details
+                <Route path="/applicant/dashboard/network" element={<ApplicantNetwork/>}/>
+                <Route path="/applicant/dashboard/jobselection" element={<JobSelection/>}/>
+                <Route path="/notification" element={<Notification/>}/>
+                <Route path="/employerJobMultistepForm" element={<EmployerJobMultistepForm />}/>
+                <Route path="/companylist" element={<CompanyList />} />
+
             </Routes>
     );
 };
