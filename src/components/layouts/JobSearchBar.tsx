@@ -11,7 +11,7 @@ const JobSearchBar = () => {
                 <input ref={jobInputRef} 
                 type="text" 
                 placeholder="Job title"
-                className=" border-none sm:w-[300px] w-full  outline-none focus:outline-none focus:border-[#ccc] active:border-[#ccc] placeholder:text-sm placeholder:text-black px-2 text-sm placeholder:font-bold focus:ring-0" />
+                className=" border-none w-full  outline-none focus:outline-none focus:border-[#ccc] active:border-[#ccc] placeholder:text-sm placeholder:text-black px-2 text-sm placeholder:font-bold focus:ring-0" />
                 <div className="h-7 w-7 bg-[#F7F7F7] flex items-center justify-center rounded-full">
                     <IoClose className="text-2xl font-normal" />
                 </div>
@@ -23,7 +23,7 @@ const JobSearchBar = () => {
                 <input ref={companyInputRef} 
                 type="text" 
                 placeholder="Company Name"
-                className=" border-none sm:w-[300px] w-full  outline-none focus:outline-none focus:border-[#ccc] active:border-[#ccc] placeholder:text-sm placeholder:text-black px-2 text-sm placeholder:font-bold focus:ring-0" />
+                className=" border-none w-full  outline-none focus:outline-none focus:border-[#ccc] active:border-[#ccc] placeholder:text-sm placeholder:text-black px-2 text-sm placeholder:font-bold focus:ring-0" />
                 <div className="h-7 w-7 bg-[#F7F7F7] flex items-center justify-center rounded-full">
                     <IoClose className="text-2xl font-normal" />
                 </div>
