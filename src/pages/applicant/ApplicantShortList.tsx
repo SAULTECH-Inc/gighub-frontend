@@ -13,13 +13,13 @@ const ApplicantShortList = () => {
     <div>
         <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile}
         navbarItemsMap={applicantNavBarItemMap} />
-        <div className="py-6 bg-[#F7F8FA] px-3 md:grid md:grid-cols-[1024px_396px] gap-6 min-h-screen items-start justify-center">
+        <div className="bg-[#F7F8FA] px-6 grid grid-cols-[1024px_396px] gap-6 min-h-screen max-lg:grid-cols-1">
             {/* first column */}
             <div className="flex flex-col w-full">
                 <JobSearchBar />
-                <div className="bg-white mt-10 rounded-[16px] p-6">
+                <div className="bg-white mt-10 rounded-[16px] p-4">
                     <h3 className="text-[30px] font-bold">You are shortlisted in the following jobs</h3>
-                    <div className="flex flex-col items-center space-y-6">
+                    <div className="flex flex-col items-center">
                         {Array(2).fill("").map((index)=>(
                             <JobShortlisted
                             key={index} 
