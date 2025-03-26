@@ -35,6 +35,7 @@ import EmployerJobMultistepForm from "../pages/employer/EmployerJobMultistepForm
 import {UserType} from "../utils/enums.ts";
 import ApplicantJobdetails from "../pages/applicant/ApplicantJobdetails.tsx";
 import CompanyList from "../pages/company list/CompanyList.tsx";
+import ApplicantShortList from "../pages/applicant/ApplicantShortList.tsx";
 
 const AppRoutes = () => {
     const {setRedirectPath} = useAuth();
@@ -80,6 +81,7 @@ const AppRoutes = () => {
                 <Route path="/notification" element={<Notification/>}/>
                 <Route path="/employerJobMultistepForm" element={<EmployerJobMultistepForm />}/>
                 <Route path="/companylist" element={<CompanyList />} />
+                <Route path="/applicant/applicant-shortlist" element={<ApplicantShortList />} />
 
             </Routes>
     );

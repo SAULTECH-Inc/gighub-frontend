@@ -9,7 +9,6 @@ import {
     PasswordResetRequest, ProfessionalSummaryData,
     Role
 } from "../utils/types";
-// import {UserType} from "../utils/types/enums.ts";
 import {privateApiClient, publicApiClient} from "../api/axios.ts";
 import {immer} from "zustand/middleware/immer";
 import secureLocalStorage from "react-secure-storage";
