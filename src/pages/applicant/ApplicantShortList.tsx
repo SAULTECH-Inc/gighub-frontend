@@ -11,8 +11,7 @@ import {
 const ApplicantShortList = () => {
   return (
     <div>
-        {/*<TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile}*/}
-        {/*navbarItemsMap={applicantNavBarItemMap} />*/}
+s
         <div className="bg-[#F7F8FA] px-6 grid grid-cols-[1024px_396px] gap-6 min-h-screen max-lg:grid-cols-1">
             {/* first column */}
             <div className="flex flex-col w-full">
