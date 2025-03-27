@@ -2,6 +2,7 @@ import axios, {AxiosInstance, InternalAxiosRequestConfig} from 'axios';
 import secureLocalStorage from "react-secure-storage";
 import {API_BASE_URL, NODE_ENV} from "../utils/constants.ts";
 import {TOKEN} from "../utils/helpers.ts";
+import {useAuth} from "../store/useAuth.ts";
 
 const baseURL = API_BASE_URL || 'http://localhost:5173';
 
@@ -37,11 +38,7 @@ privateApiClient.interceptors.response.use(
             try {
                 const refreshResponse = await publicApiClient.post('/auth/refresh-token', {}, { withCredentials: true });
                 const newAccessToken = refreshResponse.data.data.token;
-                if (NODE_ENV === 'production') {
-                    secureLocalStorage.setItem('authToken', newAccessToken);
-                } else {
-                    localStorage.setItem('authToken', newAccessToken);
-                }
+                useAuth().setAuthToken(newAccessToken);
                 error.config.headers.Authorization = `Bearer ${newAccessToken}`;
                 return privateApiClient.request(error.config);
             } catch (error: any) {

@@ -2,7 +2,6 @@ import {create} from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
 import {APIResponse, JobPreference, JobPreferenceResponse} from "../utils/types";
 import {privateApiClient} from "../api/axios.ts";
-import {toast} from "react-toastify";
 
 
 interface JobPreferenceState {
@@ -43,7 +42,6 @@ export const useJobPreferenceStore = create<JobPreferenceState>()(
                         set(() => ({
                             error: error.response?.data?.message || "Unknown error occurred",
                         }));
-                        toast.error(error.response?.data?.message || "Failed to fetch job preferences");
                     }
                     return false; // Returning false to indicate that the effect is async
                 },

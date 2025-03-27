@@ -1,8 +1,8 @@
 import {FC} from "react";
-import TopNavBar from "../components/layouts/TopNavBar.tsx";
-import FilterBar from "./jobList2/FilterBar.tsx";
-import Table from "./jobList2/Table.tsx";
-import {employerNavBarItemMap, employerNavItems, employerNavItemsMobile} from "../utils/constants.ts";
+import TopNavBar from "../../components/layouts/TopNavBar.tsx";
+import FilterBar from "../jobList2/FilterBar.tsx";
+import Table from "../jobList2/Table.tsx";
+import {employerNavBarItemMap, employerNavItems, employerNavItemsMobile} from "../../utils/constants.ts";
 const FilterJob: FC = () => {
     return (
         <div className="mx-auto">

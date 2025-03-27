@@ -1,15 +1,15 @@
 import React, {useState} from "react";
-import TopNavBar from "../components/layouts/TopNavBar.tsx";
+import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import {
     applicantNavBarItemMap,
     applicantNavItems,
     applicantNavItemsMobile,
-} from "../utils/constants.ts";
-import JobSearchTopBar from "../components/ui/JobSearchTopBar.tsx";
-import {JobDetails} from "../components/features/JobDetails.tsx";
-import JobSearchSidebar from "../components/ui/JobSearchSidebar.tsx";
-import ApplicantSchedules from "../components/ui/ApplicantSchedules.tsx";
-import ApplicantMessages from "../components/ui/ApplicantMessages.tsx";
+} from "../../utils/constants.ts";
+import JobSearchTopBar from "../../components/ui/JobSearchTopBar.tsx";
+import {JobDetails} from "../../components/features/JobDetails.tsx";
+import JobSearchSidebar from "../../components/ui/JobSearchSidebar.tsx";
+import ApplicantSchedules from "../../components/ui/ApplicantSchedules.tsx";
+import ApplicantMessages from "../../components/ui/ApplicantMessages.tsx";
 
 const JobSearch: React.FC = () => {
     // States for different filter sections
