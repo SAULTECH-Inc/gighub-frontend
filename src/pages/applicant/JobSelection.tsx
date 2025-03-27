@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { FilterIcon} from "../../assets/icons";
 import { dummyListings } from "../../utils/dummyListings";
 import { dummyPostListings } from "../../utils/dummyPostListing";
-import JobListing from "../JobListing";
-import JobPosting from "../JobPosting";
+import JobListing from "../job/JobListing.tsx";
+import JobPosting from "../job/JobPosting.tsx";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import {employerNavBarItemMap, employerNavItems, employerNavItemsMobile} from "../../utils/constants.ts";
+import CustomDatePicker from "../../components/common/CustomDatePicker.tsx";
 
 type Section = "open" | "draft";
 const JobSelection: React.FC = () => {
@@ -15,6 +16,11 @@ const JobSelection: React.FC = () => {
       <div className="flex flex-col gap-y-12">
         <TopNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile}
                    navbarItemsMap={employerNavBarItemMap}/>
+          <CustomDatePicker
+              initialDate="2024-03-14"
+              onChange={(date) => console.log(date)}
+              className="border-[1px] border-[#CCC] text-center focus:ring-0 focus:outline-none focus:border-[#ccc] focus:border-[1px] text-gray-500 px-4 rounded-lg"
+          />
 
         <div className="w-full flex justify-center min-h-screen bg-[#F7F7F7]">
 
@@ -106,6 +112,7 @@ const JobSelection: React.FC = () => {
             </div>
           </div>
         </div>
+
       </div>
 
   );

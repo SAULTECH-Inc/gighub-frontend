@@ -9,48 +9,36 @@ import {
     PasswordResetRequest, ProfessionalSummaryData,
     Role
 } from "../utils/types";
-import {UserType} from "../utils/enums.ts";
 import {privateApiClient, publicApiClient} from "../api/axios.ts";
 import {immer} from "zustand/middleware/immer";
 import secureLocalStorage from "react-secure-storage";
 import {API_BASE_URL, NODE_ENV, secureStorageWrapper} from "../utils/constants.ts";
+import {UserType} from "../utils/enums.ts";
 
 
-const removeFromLocalStorage = async (nodeEnv: string)=>{
+export const removeFromLocalStorage = async (nodeEnv: string)=>{
     if(nodeEnv === 'development'){
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('redirectPath');
-        localStorage.removeItem('employer');
-        localStorage.removeItem('authRole');
+        localStorage.removeItem('auth-storage');
+        localStorage.removeItem('chat-store');
+        localStorage.removeItem('applicantJobProfile');
+        localStorage.removeItem('employer-profile');
+        localStorage.removeItem('nav-bar-active-item');
         localStorage.removeItem('email');
-        localStorage.removeItem('otp');
-        localStorage.removeItem('applicant');
-        localStorage.removeItem('loginRequest');
-        localStorage.removeItem('applicantSignupRequest');
-        localStorage.removeItem('professionalSummaryData');
-        localStorage.removeItem('passwordResetRequest');
-        localStorage.removeItem('role');
         localStorage.removeItem('userType');
-        localStorage.removeItem('loading');
-        localStorage.removeItem('error');
-        localStorage.removeItem('signupSuccess');
+        localStorage.removeItem("nav-menu-store");
+        localStorage.removeItem("settings");
+        localStorage.removeItem("fileUploadStore");
     }else{
-        secureLocalStorage.removeItem('authToken');
-        secureLocalStorage.removeItem('redirectPath');
-        secureLocalStorage.removeItem('employer');
-        secureLocalStorage.removeItem('authRole');
+        secureLocalStorage.removeItem('auth-storage');
+        secureLocalStorage.removeItem('chat-store');
+        secureLocalStorage.removeItem('applicantJobProfile');
+        secureLocalStorage.removeItem('employer-profile');
+        secureLocalStorage.removeItem('nav-bar-active-item');
         secureLocalStorage.removeItem('email');
-        secureLocalStorage.removeItem('otp');
-        secureLocalStorage.removeItem('applicant');
-        secureLocalStorage.removeItem('loginRequest');
-        secureLocalStorage.removeItem('applicantSignupRequest');
-        secureLocalStorage.removeItem('professionalSummaryData');
-        secureLocalStorage.removeItem('passwordResetRequest');
-        secureLocalStorage.removeItem('role');
         secureLocalStorage.removeItem('userType');
-        secureLocalStorage.removeItem('loading');
-        secureLocalStorage.removeItem('error');
-        secureLocalStorage.removeItem('signupSuccess');
+        secureLocalStorage.removeItem("nav-menu-store");
+        secureLocalStorage.removeItem("settings");
+        secureLocalStorage.removeItem("fileUploadStore");
     }
 }
 
@@ -63,11 +51,15 @@ export interface AuthData {
     isAuthenticated: boolean;
     redirectPath: string | "";
     employer: EmployerData | null;
+    setEmployerData: (employer: EmployerData)=>void;
     authToken: string | null;
+    setAuthToken: (authToken: string)=>void;
     authRole: Role | null;
+    setAuthRole: (authRole: Role)=>void;
     email: string | "";
     otp: string | "";
     applicant: ApplicantData;
+    setApplicantData: (applicant: ApplicantData)=>void;
     loginRequest: LoginRequest | null;
     applicantSignupRequest: ApplicantSignupRequest;
     applicantPersonalInfo: ApplicantPersonalInfo;
@@ -81,7 +73,7 @@ export interface AuthData {
     loading: boolean;
     error: string | null;
     signupSuccess: boolean;
-    login: (data: LoginRequest) => Promise<boolean>;
+    login: (data: LoginRequest) => Promise<ApplicantData | EmployerData | null>;
     signup: (userType: UserType, request: EmployerSignupRequest | ApplicantSignupRequest) => Promise<boolean>;
     updateProfile: (data: Partial<EmployerData> | Partial<ApplicantData>)=> void;
     setProfileData: (data: Partial<EmployerData> | Partial<ApplicantData>)=>void;
@@ -104,6 +96,8 @@ export interface AuthData {
     logout: () => Promise<boolean>;
     setRedirectPath: (path: string)=>void;
     resetApplicantSignupRequest: ()=>void;
+    changePassword: (newPassword: string, currentPassword: string, confirmPassword: string) => Promise<boolean>;
+    verifyPassword: (password: string)=> Promise<boolean>;
 }
 
 export const useAuth = create<AuthData>()(
@@ -117,7 +111,7 @@ export const useAuth = create<AuthData>()(
             employer: {} as EmployerData,
             applicant: {} as ApplicantData,
             role: null,
-            userType: secureLocalStorage.getItem("userType") as UserType | null,
+            userType: null,
             email: "",
             otp: "",
             loginRequest: {} as LoginRequest,
@@ -129,6 +123,16 @@ export const useAuth = create<AuthData>()(
             applicantEducation: {} as EducationResponseDto,
             loading: false,
             error: null,
+            setAuthToken: (authToken: string)=>{
+                set((state)=>{
+                    state.authToken = authToken;
+                });
+            },
+            setAuthRole: (authRole: Role) => {
+                set((state) => {
+                    state.authRole = authRole;
+                });
+            },
 
             login: async (data) => {
                 set((state) => {
@@ -137,7 +141,7 @@ export const useAuth = create<AuthData>()(
                 });
 
                 try {
-                    const response = await privateApiClient.post(`${API_BASE_URL}/auth/login`, data);
+                    const response = await privateApiClient.post<APIResponse<ApplicantData | EmployerData>>(`${API_BASE_URL}/auth/login`, data);
                     const userData: ApplicantData | EmployerData = response.data.data;
                     set((state) => {
                         state.isAuthenticated = true;
@@ -155,7 +159,7 @@ export const useAuth = create<AuthData>()(
                             const appData = userData as ApplicantData;
                             state.applicant = appData;
                             state.authRole=appData.role as Role;
-                            state.authToken = response.data.token;
+                            state.authToken = response?.data?.data?.token;
                             state.userType=appData.userType;
                             state.applicantPersonalInfo = {
                                 firstName: appData?.firstName,
@@ -177,7 +181,7 @@ export const useAuth = create<AuthData>()(
 
                         state.loading = false;
                     });
-                    return true;
+                    return response?.data?.data;
                 } catch (err: any) {
                     set((state) => {
                         state.error = err.response?.data?.message || "Login failed";
@@ -186,7 +190,7 @@ export const useAuth = create<AuthData>()(
 
                     toast.error(err.response?.data?.message || "Login failed");
                 }
-                return false;
+                return null;
             },
 
             signup: async (userType, request: EmployerSignupRequest | ApplicantSignupRequest) => {
@@ -330,7 +334,6 @@ export const useAuth = create<AuthData>()(
                 });
             },
             setUserType: (userType) => {
-                secureLocalStorage.setItem("userType", JSON.stringify(userType));
                 set((state) => {
                     state.userType = userType;
                 });
@@ -338,13 +341,11 @@ export const useAuth = create<AuthData>()(
             setEmail: (email) => {
                 set((state) => {
                     state.email = email;
-                    secureLocalStorage.setItem("email", email);
                 });
             },
             setOtp: (otp) => {
                 set((state) => {
                     state.otp = otp;
-                    secureLocalStorage.setItem("otp", otp);
                 });
             },
             sendVerificationOtp: async (email: string, action: string) => {
@@ -400,7 +401,6 @@ export const useAuth = create<AuthData>()(
                     await publicApiClient.get(`${API_BASE_URL}/auth/otp/verify`, {
                         params: { otp: otp },
                     });
-                    secureLocalStorage.setItem("email", email);
                     set((state) => {
                         state.email = email;
                         state.loading = false;
@@ -466,7 +466,6 @@ export const useAuth = create<AuthData>()(
                         state.loading = true;
                     });
                     await privateApiClient.post(`${API_BASE_URL}/auth/logout`);
-                    await removeFromLocalStorage(NODE_ENV);
                     set((state) => {
                         state.isAuthenticated = false;
                         state.employer = {} as EmployerData;
@@ -614,6 +613,46 @@ export const useAuth = create<AuthData>()(
                 set((state) => {
                     state.applicantSignupRequest = {} as ApplicantSignupRequest;
                 });
+            },
+            setApplicantData: applicant => {
+                set((state) => {
+                    state.applicant = {
+                       ...state.applicant,
+                       ...applicant,
+                    };
+                });
+            },
+            setEmployerData: employer => {
+                set((state) => {
+                    state.employer = {
+                       ...state.employer,
+                       ...employer,
+                    };
+                });
+            },
+            changePassword: async (newPassword:string, currentPassword: string, confirmPassword) => {
+                // call backend
+                try {
+                    const response = await privateApiClient.put<APIResponse<boolean>>(`${API_BASE_URL}/auth/change-password`, {
+                        newPassword: newPassword,
+                        currentPassword: currentPassword,
+                        confirmNewPassword: confirmPassword
+                    });
+                    return response?.data?.data;
+                } catch (err: any) {
+                    toast.error(err.response?.data?.message || "Error changing password");
+                    return false;
+                }
+            },
+            verifyPassword: async (password) => {
+                // call backend
+                try {
+                    const response = await privateApiClient.get<APIResponse<boolean>>(`${API_BASE_URL}/auth/verify-password?password=${password}`);
+                    return response?.data?.data;
+                } catch (err: any) {
+                    toast.error(err.response?.data?.message || "Error verifying password");
+                    return false;
+                }
             }
         })),
         {

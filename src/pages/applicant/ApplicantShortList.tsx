@@ -11,8 +11,8 @@ import {
 const ApplicantShortList = () => {
   return (
     <div>
-        <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile}
-        navbarItemsMap={applicantNavBarItemMap} />
+        {/*<TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile}*/}
+        {/*navbarItemsMap={applicantNavBarItemMap} />*/}
         <div className="bg-[#F7F8FA] px-6 grid grid-cols-[1024px_396px] gap-6 min-h-screen max-lg:grid-cols-1">
             {/* first column */}
             <div className="flex flex-col w-full">
@@ -22,7 +22,7 @@ const ApplicantShortList = () => {
                     <div className="flex flex-col items-center">
                         {Array(2).fill("").map((index)=>(
                             <JobShortlisted
-                            key={index} 
+                            key={index}
                             companyName="Fundy Inc"
                             jobTitle="Product Design"
                             jobType="Full Time, Remote"
