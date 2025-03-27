@@ -26,10 +26,35 @@ import {
     employerNavItems,
     employerNavItemsMobile
 } from "../utils/constants.ts";
+import {useUserSubscription} from "../store/useUserSubscription.ts";
 const UserSettings: FC = () => {
     const {settings} = useNavMenuStore();
-    const {userType} = useAuth();
+    const {applicant, employer, userType} = useAuth();
     const {setApplicantSettings, setEmployerSettings, fetchSettings} = useSettingsStore();
+    const {fetchSubscription, setSubscription,  fetchSubscriptionHistory, setSubscriptionHistory} = useUserSubscription();
+    useEffect(() => {
+        if(userType === UserType.APPLICANT){
+            const doFetchSubscription = async ()=>{
+                const responseOne = await fetchSubscription(applicant?.id);
+                const responseTwo = await fetchSubscriptionHistory(applicant?.id);
+                if(responseOne && responseTwo){
+                    setSubscription(responseOne);
+                    setSubscriptionHistory(responseTwo);
+                }
+            };
+            doFetchSubscription();
+        }else{
+            const doFetchSubscription = async ()=>{
+                const responseOne = await fetchSubscription(employer?.id as number);
+                const responseTwo = await fetchSubscriptionHistory(employer?.id as number);
+                if(responseOne && responseTwo){
+                    setSubscription(responseOne);
+                    setSubscriptionHistory(responseTwo);
+                }
+            };
+            doFetchSubscription();
+        }
+    }, [applicant, employer, userType]);
     useEffect(() => {
         const fetchUserSettings = async()=> {
             const response = await fetchSettings(userType as UserType);

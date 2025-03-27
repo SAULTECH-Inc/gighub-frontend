@@ -1,7 +1,9 @@
 import ArrowIcon from "../../../assets/icons/circle-arrow.png";
+import {useUserSubscription} from "../../../store/useUserSubscription.ts";
 
 
 const MonthlyPlan = () => {
+    const {currentSubscription, invoices, subscriptionHistory} = useUserSubscription();
     return (<div className="w-full flex gap-6 px-10 py-10 font-lato">
             {/* Left Box - Monthly Plan */}
             <div

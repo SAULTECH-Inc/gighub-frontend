@@ -146,7 +146,7 @@ export interface EmployerData {
     managerRole: string | null;
     managerEmail: string | null;
     managerPhoneNumber: string | null;
-    id: string;
+    id: number | null;
     createdBy: string;
     updatedBy: string;
     createdAt?: Date | string;
