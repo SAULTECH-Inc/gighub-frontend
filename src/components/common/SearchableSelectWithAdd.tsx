@@ -99,7 +99,7 @@ const SearchableSelectWithAdd: React.FC<SearchableSelectWithAddProps> = ({
                     {/* Search input */}
                     <input
                         type="text"
-                        className="w-full px-3 py-2 border-b border-gray-300 focus:outline-none"
+                        className="w-full px-3 py-2 text-sm border-b border-gray-300 focus:outline-none"
                         placeholder="Search..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
@@ -111,21 +111,21 @@ const SearchableSelectWithAdd: React.FC<SearchableSelectWithAddProps> = ({
                             filteredOptions.map((option) => (
                                 <li
                                     key={option.value}
-                                    className="px-4 py-2 cursor-pointer hover:bg-blue-100"
+                                    className="px-4 py-2 text-sm cursor-pointer hover:bg-blue-100"
                                     onClick={() => handleSelect(option)}
                                 >
                                     {option.label}
                                 </li>
                             ))
                         ) : (
-                            <li className="px-4 py-2 text-gray-500">No results found</li>
+                            <li className="px-4 py-2 text-sm text-gray-500">No results found</li>
                         )}
                     </ul>
 
                     {/* Add new option button */}
                     {search.trim() !== "" && !options.some(option => option.label.toLowerCase() === search.toLowerCase()) && (
                         <button
-                            className="w-full mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            className="w-full mt-2 px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
                             onClick={handleAddOption}
                         >
                             Add "{search}"

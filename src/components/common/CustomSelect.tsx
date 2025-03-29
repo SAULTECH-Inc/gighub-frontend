@@ -67,7 +67,7 @@ const CustomSelect: React.FC<DropdownProps> = ({
                 className={`${className}`}
                 onClick={() => setIsOpen(!isOpen)}
             >
-                {selectedOption ? selectedOption.label : placeholder}
+                {selectedOption ? selectedOption.label : placeholder || '\u00A0'}
                 {isOpen ? (
                     <MdKeyboardArrowUp className="absolute right-3 top-3 cursor-pointer text-[30px]" />
                 ) : (
@@ -94,7 +94,7 @@ const CustomSelect: React.FC<DropdownProps> = ({
                             filteredOptions.map((option) => (
                                 <li
                                     key={option.value}
-                                    className="px-4 py-2 cursor-pointer hover:bg-blue-100"
+                                    className="px-4 py-2 text-sm cursor-pointer hover:bg-blue-100"
                                     onClick={() => handleSelect(option)}
                                 >
                                     {option.label}

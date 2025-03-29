@@ -17,7 +17,9 @@ const NotAuthorized: React.FC = () => {
                 </p>
 
                 <button
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate("/",{
+                        replace: true,
+                    })}
                     className="mt-6 px-6 py-2 text-lg font-semibold text-white bg-primary rounded-md hover:bg-purple-700 transition duration-300"
                 >
                     Go to Home

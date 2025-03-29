@@ -1,69 +1,89 @@
-import PowerIcon from "../../../assets/images/power.png"; // Imported image
+import ToggleSwitch from "../../../components/common/ToggleSwitch.tsx";
+import {useCallback, useEffect} from "react";
+import {PrivacyOptions, useSettingsStore} from "../../../store/useSettingsStore.ts";
+import {debounce} from "lodash";
+import {toast} from "react-toastify"; // Imported image
 
 const Privacy = () => {
-    return (
-        <div className="flex flex-col items-center py-10 font-lato">
-            {/* Top Purple Header (Separate) */}
-            <div className="w-[1072px] h-[101px] bg-[#6438C2] rounded-t-[16px] flex items-center px-6 ml-10 mt-[-70px]">
-                <h1 className="text-white text-[32px] font-bold leading-[38.4px]">
-                    Privacy Settings
-                </h1>
-            </div>
+    const viewers = ["publicProfile", "onlyEmployers", "onlyMe", "onlyMyNetwork"];
+    const {applicantSettings, privacy, setPrivacy, updatePrivacy} = useSettingsStore();
 
-            {/* Privacy Settings Title (Without Background) */}
-            <h2 className="text-black font-lato font-bold text-[24px] leading-[28.8px] tracking-[0%] text-xl  mt-6 self-start pl-4">
+
+    useEffect(() => {
+        if (applicantSettings) {
+            setPrivacy(applicantSettings.privacy);
+        }
+    }, [applicantSettings]);
+
+
+    const debouncedUpdate = useCallback(debounce(async (settings: PrivacyOptions) => {
+        const response = await updatePrivacy(settings);
+        if (response) {
+            setPrivacy(response);
+        } else {
+            toast.error("Failed to update application status notification settings");
+        }
+    }, 500), [privacy]);
+
+    useEffect(() => {
+        return () => {
+            debouncedUpdate.cancel(); // prevent memory leak
+        };
+    }, [debouncedUpdate]);
+    const getPrivacySettingStateFields = (item: string) => {
+        switch (item) {
+            case "publicProfile":
+                return "Public (anyone can see)";
+            case "onlyEmployers":
+                return "Employers Only";
+            case "onlyMe":
+                return "Private (Only Visible to me)";
+            default:
+                return "Ony My Network";
+        }
+    }
+
+
+    const handlePrivacySettingsToggle = (item: string) => {
+        const updatedSettings = {
+            ...privacy, [item]: !privacy[item as keyof PrivacyOptions]
+        };
+        setPrivacy(updatedSettings);
+        debouncedUpdate(updatedSettings);
+    }
+    return (<div className="w-[90%] flex flex-col self-center py-10 font-lato">
+            {/* Title */}
+            <h2 className="text-black font-bold text-[24px] text-left text-xl">
                 Privacy Settings
             </h2>
 
-            {/* Privacy Box (White Background) */}
+            {/* Privacy Box */}
             <div
-                className="absolute bg-white border border-[#E6E6E6] rounded-[16px] w-[920px] h-[480px] flex flex-col items-start py-6 px-8 font-lato"
-                style={{top: "259px", left: "406px"}}
-            >
-                {/* Privacy Settings Section */}
-                <div className="w-full">
-                    {/* Privacy Box */}
-                    <div className="border-none">
-                        {/* Title */}
-                        <h3 className="text-black text-md font-bold mt-0">Who can view my profile</h3>
+                className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[265px] flex flex-col items-start py-6 px-8 mt-4">
+                {/* Two Column Headings */}
+                <div className="grid grid-cols-2 w-full">
+                    <h3 className="text-black text-md font-bold">Who can view my profile</h3>
+                </div>
 
-                        {/* Horizontal Rule */}
-                        <hr className="w-full border-t border-[#E6E6E6] my-3"/>
+                {/* Horizontal Rule */}
+                <hr className="w-full border-t border-[#E6E6E6] my-3"/>
 
-                        {/* Privacy Options */}
-                        <div className="space-y-4 w-full">
-                            {/* Public Option */}
-                            <label className="flex items-center gap-[200px]">
-                    <span className="font-lato font-bold text-[16px] leading-[19.2px] text-[#8E8E8E] text-md">
-                        Public (anyone can see)
-                    </span>
-                                <img src={PowerIcon} alt="Toggle"
-                                     className="w-[35px] h-[19px]  cursor-pointer -ml-[2px]"/>
-                            </label>
-
-                            {/* Employers Only Option */}
-                            <label className="flex items-center gap-[255px]">
-                    <span className="font-lato font-bold text-[16px] leading-[19.2px] text-[#8E8E8E] text-md">
-                        Employers Only
-                    </span>
-                                <img src={PowerIcon} alt="Toggle"
-                                     className="w-[35px] h-[19px] cursor-pointer -ml-[5px]"/>
-                            </label>
-
-                            {/* Private Option */}
-                            <label className="flex items-center gap-[173px]">
-                    <span className="font-lato font-bold text-[16px] leading-[19.2px] text-[#8E8E8E] text-md">
-                        Private (Only Visible to me)
-                    </span>
-                                <img src={PowerIcon} alt="Toggle"
-                                     className="w-[35px] h-[19px] cursor-pointer ml-[-4px]"/>
-                            </label>
-                        </div>
+                {/* Two-Column Layout */}
+                <div className="grid grid-cols-2 w-full gap-x-8 p-8">
+                    {/* Left Column - Application Status */}
+                    <div className="w-full space-y-4">
+                        {viewers.map((item, index) => (<label key={index} className="flex items-center justify-between">
+                                <span
+                                    className="font-bold text-[16px] text-[#8E8E8E]">{getPrivacySettingStateFields(item)}</span>
+                                <ToggleSwitch
+                                    isOn={privacy[item as keyof PrivacyOptions]}
+                                    onToggle={() => handlePrivacySettingsToggle(item)}
+                                />
+                            </label>))}
                     </div>
                 </div>
             </div>
-        </div>
-    );
+        </div>);
 };
 
 export default Privacy;
