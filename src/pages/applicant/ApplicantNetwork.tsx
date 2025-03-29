@@ -4,12 +4,14 @@ import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import SearchIcon from "../../components/common/SearchIcon.tsx";
 import Chat from "../../assets/icons/bubble-chat.svg";
 import {applicantNavBarItemMap, applicantNavItems, applicantNavItemsMobile} from "../../utils/constants.ts";
+import { useNavigate } from "react-router-dom";
 
 export const ApplicantNetwork: FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [displayScrollIcons, setDisplayScrollIcons] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const navigate = useNavigate();
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -110,8 +112,8 @@ export const ApplicantNetwork: FC = () => {
                 <p className="w-[50%] font-medium text-[#8E8E8E]">
                   500 mutual friends
                 </p>
-                <div className="border border-[#E6E6E6] rounded-[10px] py-[6px] px-[16px]">
-                  <button className="font-medium text-[#000000]">
+                  {/* <button className="font-medium text-[#000000]" onClick={() => navigate("/user/publicprofileview/[id]")}> */}
+                  <button className="font-medium text-[#000000]" onClick={() => navigate("/user/publicprofileview/21")}>
                     View Profile
                   </button>
                 </div>
@@ -596,7 +598,6 @@ export const ApplicantNetwork: FC = () => {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 };

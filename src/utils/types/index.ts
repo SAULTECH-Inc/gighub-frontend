@@ -1,5 +1,5 @@
 import React, {ButtonHTMLAttributes, ChangeEvent} from "react";
-import {UserType} from "../enums";
+import { UserType } from "../enums";
 
 export type User = {
     id: string;
