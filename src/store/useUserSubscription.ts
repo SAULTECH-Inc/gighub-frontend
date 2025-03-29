@@ -3,27 +3,33 @@ import {createJSONStorage, persist} from "zustand/middleware";
 import {immer} from "zustand/middleware/immer";
 import {privateApiClient} from "../api/axios.ts";
 import {APIResponse} from "../utils/types";
-import {NODE_ENV, secureStorageWrapper} from "../utils/constants.ts";
+import {NODE_ENV, secureStorageWrapper, SUBSCRIPTION_SERVICE_HOST} from "../utils/constants.ts";
+import {BillingCycle, SubscriptionType} from "../utils/enums.ts";
 
-interface ISubscription {
+
+export interface ISubscription {
     id: string;
-    subscriptionType: string;
-    billingCycle: string;
+    billingCycle: BillingCycle;
     status: string;
-    subscriptionDate: Date | string;
-    subscriptionEndDate: Date | string;
     nextSubscriptionDate: Date | string;
     price: number;
     currency: string;
+    type: SubscriptionType;
+    name: string;
+    duration: number;
+    description?: string;
+    isActive: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
-interface ISubscriptionInvoices {
+export interface ISubscriptionInvoices {
     id: string;
     createdAt: Date | string;
     url: string;
 }
 
-interface ISubscriptionHistory {
+export interface ISubscriptionHistory {
     history: ISubscription,
     invoices: ISubscriptionInvoices
 }
@@ -72,10 +78,11 @@ export const useUserSubscription = create<ISubscriptionState>()(persist(immer<IS
     },
     fetchSubscription: async (userId) => {
         try {
-            const response = await privateApiClient.get<APIResponse<ISubscription>>(`/api/user/${userId}/subscription`);
+            const response = await privateApiClient.get<APIResponse<ISubscription>>(`${SUBSCRIPTION_SERVICE_HOST}/subscriptions/users/${userId}/subscriptions`);
             set((state) => {
                 state.currentSubscription = response?.data?.data;
             });
+            console.log("SUBSCRIPTION ::: "+JSON.stringify(response?.data?.data));
             return response?.data?.data;
         } catch (error) {
             console.error("Error fetching subscription:", error);
@@ -85,7 +92,7 @@ export const useUserSubscription = create<ISubscriptionState>()(persist(immer<IS
     },
     fetchSubscriptionHistory: async (userId) => {
         try {
-            const response = await privateApiClient.get<APIResponse<ISubscriptionHistory>>(`/api/user/${userId}/subscription-history`);
+            const response = await privateApiClient.get<APIResponse<ISubscriptionHistory>>(`${SUBSCRIPTION_SERVICE_HOST}/subscriptions/users/${userId}/subscription-history`);
             set((state) => {
                 state.subscriptionHistory = response?.data?.data;
             });

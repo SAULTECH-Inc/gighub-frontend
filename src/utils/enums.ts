@@ -24,3 +24,30 @@ export enum Action{
     UPLOAD_COVER_PAGE = 'upload_cover_page',
     UPLOAD_COMPANY_LOGO = 'upload_company_logo',
 }
+
+export enum SubscriptionType {
+    PROFESSIONAL = "Professional",
+    ENTERPRISE = "Enterprise",
+}
+
+export enum BillingCycle {
+    FREE = "Free",
+    MONTHLY = "Monthly",
+    QUARTERLY = "Quarterly",
+    ANNUALLY = "Annually",
+}
+
+export const SubscriptionPlans: Record<SubscriptionType, Record<BillingCycle, string>> = {
+    [SubscriptionType.PROFESSIONAL]: {
+        [BillingCycle.FREE]: "Lite",
+        [BillingCycle.MONTHLY]: "Plus",
+        [BillingCycle.QUARTERLY]: "Premium",
+        [BillingCycle.ANNUALLY]: "Ultimate",
+    },
+    [SubscriptionType.ENTERPRISE]: {
+        [BillingCycle.FREE]: "Basic",
+        [BillingCycle.MONTHLY]: "Advanced",
+        [BillingCycle.QUARTERLY]: "Pro",
+        [BillingCycle.ANNUALLY]: "Elite",
+    },
+};

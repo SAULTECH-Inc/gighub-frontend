@@ -4,6 +4,7 @@ import { MdOutlinePrivacyTip } from "react-icons/md";
 import { RiNotification2Line } from "react-icons/ri";
 import { TbUserEdit } from "react-icons/tb";
 import { MdOutlineUnsubscribe } from "react-icons/md";
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -12,10 +13,13 @@ import { MdOutlineUnsubscribe } from "react-icons/md";
 
 const NotificationSidebar = () => {
     const {settings, toggleSetting} = useNavMenuStore();
+    const navigate = useNavigate();
     return (
         <div className="w-full hidden lg:flex flex-col h-[737px] bg-white rounded-[16px] p-6 shadow font-lato">
             {/* Back Button */}
-            <div className="flex items-center text-purple-700 font-bold cursor-pointer mb-6">
+            <div onClick={()=>{
+                navigate("/applicant/dashboard");
+            }} className="flex items-center text-purple-700 font-bold cursor-pointer mb-6">
                 <img src={BackIcon} alt="Back" className="font-bold w-4 h-4 mr-2" />
                 <span>Back</span>
             </div>
