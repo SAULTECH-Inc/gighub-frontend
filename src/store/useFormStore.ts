@@ -11,7 +11,7 @@ export interface ApplicantFormData {
     phoneNumber: string;
     address: string;
     resume: File | null;
-    coverLetter: File | null;
+    coverLetterLink: File | null;
     portfolio: File | null;
     videoCv: File | null;
     documentType: string;
@@ -50,7 +50,7 @@ export const useFormStore = create<FormStore>((set) => ({
         phoneNumber: "",
         address: "",
         resume: null,
-        coverLetter: null,
+        coverLetterLink: null,
         portfolio: null,
         videoCv: null,
         documentType: "",
@@ -88,7 +88,7 @@ export const useFormStore = create<FormStore>((set) => ({
                 phoneNumber: "",
                 address: "",
                 resume: null,
-                coverLetter: null,
+                coverLetterLink: null,
                 portfolio: null,
                 videoCv: null,
                 documentType: "",

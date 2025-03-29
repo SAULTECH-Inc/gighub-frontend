@@ -1,4 +1,4 @@
-import {FileUploadRequest, FileUploadResponse} from "../utils/types";
+import {APIResponse, FileUploadRequest, FileUploadResponse} from "../utils/types";
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import {immer} from "zustand/middleware/immer";
@@ -9,7 +9,7 @@ import {toast} from "react-toastify";
 interface InitialState {
     profilePictureUploadRequest: FileUploadRequest | null;
     profilePictureUploadResponse: FileUploadResponse | null;
-    uploadProfilePicture: (request: FileUploadRequest, path: string) => Promise<boolean>;
+    uploadProfilePicture: (request: FileUploadRequest, path: string) => Promise<FileUploadResponse>;
     resetProfilePictureUploadRequest: () => void;
     resetProfilePictureUploadResponse: () => void;
     resetFileUploadStore: () => void;
@@ -22,14 +22,14 @@ export const useFileUploadStore = create<InitialState>()(persist(immer<InitialSt
     uploadProfilePicture: async (request, path) => {
         const formData = new FormData();
 
-            formData.append("file", request.file);
+            formData.append("file", request?.file as File);
             formData.append("userId", request.userId.toString());
             formData.append("userType", request.userType);
             formData.append("whatIsTheItem", request.whatIsTheItem);
             formData.append("action", request.action);
 
         try {
-            const response = await axios.post(`${VITE_API_FILE_SERVICE}/${path}`, formData, {
+            const response = await axios.post<APIResponse<FileUploadResponse>>(`${VITE_API_FILE_SERVICE}/${path}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -38,7 +38,7 @@ export const useFileUploadStore = create<InitialState>()(persist(immer<InitialSt
             set((state) => {
                 state.profilePictureUploadResponse = response.data.data;
             });
-            return true;
+            return response?.data?.data;
         } catch (error) {
             console.error("File upload failed:", error);
             toast.error("Failed to upload file ::: "+JSON.stringify(error));

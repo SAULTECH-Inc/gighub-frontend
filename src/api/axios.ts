@@ -1,7 +1,10 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import axios, {AxiosInstance, InternalAxiosRequestConfig} from 'axios';
 import secureLocalStorage from "react-secure-storage";
+import {API_BASE_URL, NODE_ENV} from "../utils/constants.ts";
+import {TOKEN} from "../utils/helpers.ts";
+import {useAuth} from "../store/useAuth.ts";
 
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5173';
+const baseURL = API_BASE_URL || 'http://localhost:5173';
 
 export const publicApiClient: AxiosInstance = axios.create({
     baseURL,
@@ -20,9 +23,8 @@ export const privateApiClient: AxiosInstance = axios.create({
 
 privateApiClient.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        const token = secureLocalStorage.getItem('auth-token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        if (TOKEN) {
+            config.headers.Authorization = `Bearer ${TOKEN}`;
         }
         return config;
     },
@@ -36,11 +38,15 @@ privateApiClient.interceptors.response.use(
             try {
                 const refreshResponse = await publicApiClient.post('/auth/refresh-token', {}, { withCredentials: true });
                 const newAccessToken = refreshResponse.data.data.token;
-                secureLocalStorage.setItem('auth-token', newAccessToken);
+                useAuth().setAuthToken(newAccessToken);
                 error.config.headers.Authorization = `Bearer ${newAccessToken}`;
                 return privateApiClient.request(error.config);
             } catch (error: any) {
-                secureLocalStorage.removeItem('auth-token');
+                if (NODE_ENV === 'production') {
+                    secureLocalStorage.removeItem('authToken');
+                } else {
+                    localStorage.removeItem('authToken');
+                }
                 window.location.href = '/login';
                 throw error;
             }

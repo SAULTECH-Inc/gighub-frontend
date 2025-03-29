@@ -1,9 +1,9 @@
 import {FC} from "react";
-import TopNavBar from "../components/layouts/TopNavBar.tsx";
-import JobDetailsSidebar from "./jobDetails/JobDetailsSidebar.tsx";
-import JobDetailsTop from "./jobDetails/JobDetailsTop.tsx";
-import JobDetailsBody from "./jobDetails/JobDetailsBody.tsx";
-import {employerNavBarItemMap, employerNavItems, employerNavItemsMobile} from "../utils/constants.ts";
+import TopNavBar from "../../components/layouts/TopNavBar.tsx";
+import JobDetailsSidebar from "../jobDetails/JobDetailsSidebar.tsx";
+import JobDetailsTop from "../jobDetails/JobDetailsTop.tsx";
+import JobDetailsBody from "../jobDetails/JobDetailsBody.tsx";
+import {employerNavBarItemMap, employerNavItems, employerNavItemsMobile} from "../../utils/constants.ts";
 const JobDetails: FC = () => {
     return (
         <div className="mx-auto">

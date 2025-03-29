@@ -1,15 +1,26 @@
-import BackIcon from "../../../assets/images/arrow-left-02.png"; // Replace with your actual path
-import AccountIcon from "../../../assets/images/edit-user-01.png";
-import NotificationIcon from "../../../assets/images/notification-01.png";
-import PrivacyIcon from "../../../assets/images/user-account.png";
-import SubscriptionIcon from "../../../assets/images/money-01.png";
+import BackIcon from "../../../assets/images/arrow-left-02.png";
+import {useNavMenuStore} from "../../../store/useNavMenuStore.ts";
+import { MdOutlinePrivacyTip } from "react-icons/md";
+import { RiNotification2Line } from "react-icons/ri";
+import { TbUserEdit } from "react-icons/tb";
+import { MdOutlineUnsubscribe } from "react-icons/md";
+import {useNavigate} from "react-router-dom";
 
-const Sidebar = () => {
+
+
+
+
+
+const NotificationSidebar = () => {
+    const {settings, toggleSetting} = useNavMenuStore();
+    const navigate = useNavigate();
     return (
-        <div className="w-[278px] h-[837px] -ml-14 bg-white rounded-[16px] p-6 shadow-md font-lato">
+        <div className="w-full hidden lg:flex flex-col h-[737px] bg-white rounded-[16px] p-6 shadow font-lato">
             {/* Back Button */}
-            <div className="flex items-center text-purple-700 font-medium cursor-pointer mb-6">
-                <img src={BackIcon} alt="Back" className="w-4 h-4 mr-2" />
+            <div onClick={()=>{
+                navigate("/applicant/dashboard");
+            }} className="flex items-center text-purple-700 font-bold cursor-pointer mb-6">
+                <img src={BackIcon} alt="Back" className="font-bold w-4 h-4 mr-2" />
                 <span>Back</span>
             </div>
 
@@ -17,31 +28,40 @@ const Sidebar = () => {
             <h2 className="text-xl font-bold mb-6">Settings</h2>
 
             {/* Menu Items */}
-            <div className="space-y-4">
+            <ul className="flex flex-col gap-y-5">
                 {/* Active Item */}
-                <div className="flex items-center text-gray-700 font-medium">
-                    <img src={AccountIcon} alt="Account" className="w-5 h-5 mr-3" />
+                <li onClick={()=>toggleSetting(
+                    "account"
+                )} className={`flex items-center ${settings.account ? "text-[#6438C2]" : "text-gray-700"} cursor-pointer hover:text-[#6438C2]`}>
+                    <TbUserEdit className={`${settings.account ? "text-[#6438C2]" : "text-gray-700"} w-5 h-5 mr-3`} />
                     <span>Account</span>
-                </div>
+                </li>
 
                 {/* Inactive Items */}
-                <div className="flex items-center text-[#6438C2] cursor-pointer">
-                    <img src={NotificationIcon} alt="Notification" className="w-5 h-5 mr-3" />
+                <li onClick={()=>toggleSetting(
+                    "notification"
+                )} className={`flex items-center ${settings.notification ? "text-[#6438C2]" : "text-gray-700"} cursor-pointer hover:text-[#6438C2]`}>
+                    <RiNotification2Line className={`${settings.notification ? "text-[#6438C2]" : "text-gray-700"} w-5 h-5 mr-3`} />
                     <span>Notification</span>
-                </div>
+                </li>
 
-                <div className="flex items-center text-gray-400 cursor-pointer">
-                    <img src={PrivacyIcon} alt="Privacy" className="w-5 h-5 mr-3" />
+                <li onClick={()=>toggleSetting(
+                    "privacy"
+                )} className={`flex items-center ${settings.privacy ? "text-[#6438C2]" : "text-gray-700"} cursor-pointer hover:text-[#6438C2]`}>
+                    <MdOutlinePrivacyTip className={`${settings.privacy ? "text-[#6438C2]" : "text-gray-700"} w-5 h-5 mr-3`} />
+                    {/*<img src={PrivacyIcon} alt="Privacy" className="w-5 h-5 mr-3" />*/}
                     <span>Privacy</span>
-                </div>
+                </li>
 
-                <div className="flex items-center text-gray-400 cursor-pointer">
-                    <img src={SubscriptionIcon} alt="Subscription" className="w-5 h-5 mr-3" />
+                <li onClick={()=>toggleSetting(
+                    "subscription"
+                )} className={`flex items-center ${settings.subscription ? "text-[#6438C2]" : "text-gray-700"} cursor-pointer hover:text-[#6438C2]`}>
+                    <MdOutlineUnsubscribe className={`${settings.subscription ? "text-[#6438C2]" : "text-gray-700"} w-5 h-5 mr-3`} />
                     <span>Subscription</span>
-                </div>
-            </div>
+                </li>
+            </ul>
         </div>
     );
 };
 
-export default Sidebar;
+export default NotificationSidebar;

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import {FC, useEffect} from "react";
 import CompanySocials from "../../components/ui/employer/profile/CompanySocials.tsx";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import PersonalInfo from "../../components/ui/applicant/profile/PersonalInfo.tsx";
@@ -7,7 +7,6 @@ import Education from "../../components/ui/applicant/profile/Education.tsx";
 import WorkExperience from "../../components/ui/applicant/profile/WorkExperience.tsx";
 import JobPreferences from "../../components/ui/applicant/profile/JobPreferences.tsx";
 import SkillsAndCompetences from "../../components/ui/applicant/profile/SkillAndCompetences.tsx";
-import ResumeAndCoverLetter from "../../components/ui/applicant/profile/ResumeAndCoverLetter.tsx";
 import WorkSample from "../../components/ui/applicant/profile/WorkSample.tsx";
 import Verification from "../../components/ui/applicant/profile/Verification.tsx";
 import ApplicantProfileCard from "../../components/ui/applicant/profile/ApplicantProfileCard.tsx";
@@ -15,28 +14,17 @@ import ApplicantProfileSidebar from "../../components/ui/applicant/profile/Appli
 import {useAuth} from "../../store/useAuth.ts";
 import {applicantNavBarItemMap, applicantNavItems, applicantNavItemsMobile} from "../../utils/constants.ts";
 import {useApplicantJobProfile} from "../../store/useApplicantJobProfile.ts";
-import {CvResponseDto} from "../../utils/types";
+import ResumeAndCoverLetter from "../../components/ui/applicant/profile/ResumeAndCoverLetter.tsx";
 
 const ApplicantProfile: FC = () => {
-    const {applicant,updateProfile} = useAuth();
-    const {preferences, cvDetails, updatedCvDetails,setCvDetails} = useApplicantJobProfile();
-    const handleSaveChanges = async () => {
-        if(preferences){
-            console.log("Adding job preferences: ", preferences);
-            // const updatedPreference = await updatePreference(preferences);
-            // if(updatedPreference){
-            //     setPreference(updatedPreference);
-            // }
-            const updated = await updatedCvDetails(cvDetails?.id || 0, applicant?.id,cvDetails as Partial<CvResponseDto>);
-            if(updated){
-                console.log("Updated CV details: ", updatedCvDetails);
-                setCvDetails(cvDetails as CvResponseDto);
-            }
+    const {applicant} = useAuth();
+    const {setCvDetails} = useApplicantJobProfile();
+    useEffect(() => {
+        if(applicant.cv){
+            console.log("Applicant: ", applicant);
+            setCvDetails(applicant.cv);
         }
-        if(applicant){
-            updateProfile(applicant);
-        }
-    }
+    }, [applicant]);
     return (
         <div className="bg-[#F7F8FA] min-h-screen">
             <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile} navbarItemsMap={applicantNavBarItemMap}/>
@@ -66,13 +54,6 @@ const ApplicantProfile: FC = () => {
 
                         <div className="flex justify-between items-center space-x-4 mt-4 pt-5 border-t-[2px] border-t-[#E6E6E6]">
                             <p className="text-[#6438C2] text-xl font-lato font-semibold">Your profile is 80% Done</p>
-                            <button
-                                type="button"
-                                onClick={handleSaveChanges}
-                                className="bg-[#6438C2] block text-white px-6 py-3 rounded-[10px] font-lato text-[20px] text-xl hover:bg-purple-700"
-                            >
-                                Update Profile
-                            </button>
                         </div>
                     </form>
                 </div>
