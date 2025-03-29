@@ -30,6 +30,8 @@ import ApplicantJobdetails from "../pages/applicant/ApplicantJobdetails.tsx";
 import CompanyList from "../pages/company list/CompanyList.tsx";
 import JobEmployerDashboard from "../components/ui/employer/JobEmployerDashboard.tsx";
 import ApplicantShortList from "../pages/applicant/ApplicantShortList.tsx";
+import PublicProfileView from "../components/ui/view profile/PublicProfileView.tsx";
+import ViewProfile from "../components/ui/view profile/ViewProfile.tsx";
 
 const AppRoutes = () => {
     return (
@@ -68,6 +70,8 @@ const AppRoutes = () => {
                 <Route path="/applicant/dashboard/jobselection" element={<JobSelection/>}/>
                 <Route path="/companylist" element={<CompanyList />} />
                 <Route path="/applicant/applicant-shortlist" element={<ApplicantShortList />} />
+                <Route path="/user/viewprofile" element={<ViewProfile/>}/>
+                <Route path="/user/publicprofileview/[id]" element={<PublicProfileView/>}/>
 
             </Routes>
     );
