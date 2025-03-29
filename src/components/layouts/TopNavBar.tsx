@@ -124,8 +124,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
 
     useEffect(() => {
         if(activeItem){
-            console.log("CURRENT ROUTE ::: "+activeItem);
-            navigate(navbarItemsMap.get(activeItem));
+            navigate(navbarItemsMap.get(activeItem) || "/settings");
         }
     },[activeItem]);
 

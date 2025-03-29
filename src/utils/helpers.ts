@@ -1,5 +1,7 @@
 import {NODE_ENV} from "./constants.ts";
 import secureLocalStorage from "react-secure-storage";
+import {ISubscription} from "../store/useUserSubscription.ts";
+import moment from "moment";
 
 export const calculatePasswordStrength = (password: string): number => {
     let strength = 0;
@@ -80,4 +82,32 @@ export const checkPasswordStrength = (password: string): number => {
     return -1; // Too weak (default fallback)
 };
 
+/**
+ * Calculates and formats the next subscription date
+ * @param subscription - Subscription object
+ * @returns string | null - Formatted next subscription date or null if data is missing
+ */
+export function calculateNextSubscriptionDate(subscription: ISubscription): string | null {
+    if (!subscription.createdAt || !subscription.duration) {
+        return null;
+    }
+
+    const baseDate = moment(subscription.createdAt);
+    const nextDate = baseDate.add(subscription.duration, 'months');
+
+    return nextDate.format('MMMM Do, YYYY'); // Example: "November 30th, 2025"
+}
+
+export const subCycle = (subscription: ISubscription)=>{
+    switch(subscription?.duration){
+        case 1:
+            return "Month";
+        case 3:
+            return "Quarter";
+        case 6:
+            return "Half-Year";
+        default:
+            return "Year";
+    }
+}
 

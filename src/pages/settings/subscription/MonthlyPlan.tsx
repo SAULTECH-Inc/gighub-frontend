@@ -1,9 +1,14 @@
 import ArrowIcon from "../../../assets/icons/circle-arrow.png";
-import {useUserSubscription} from "../../../store/useUserSubscription.ts";
+import {ISubscription, useUserSubscription} from "../../../store/useUserSubscription.ts";
+import {currencyAbbreviationToSymbol} from "../../../utils/constants.ts";
+import {calculateNextSubscriptionDate, subCycle} from "../../../utils/helpers.ts";
 
 
 const MonthlyPlan = () => {
-    const {currentSubscription, invoices, subscriptionHistory} = useUserSubscription();
+    const {currentSubscription} = useUserSubscription();
+
+    //calculate next subscription
+
     return (<div className="w-full flex gap-6 px-10 py-10 font-lato">
             {/* Left Box - Monthly Plan */}
             <div
@@ -14,15 +19,15 @@ const MonthlyPlan = () => {
                     {/* Monthly Plan Tag */}
                     <div
                         className="bg-[#6438C2] text-white text-xs font-bold px-3 py-1  w-[116px] h-[30px] flex items-center justify-center">
-                        Monthly Plan
+                        {currentSubscription?.billingCycle} Plan
                     </div>
 
                     {/* Pricing */}
                     <div className="flex items-start">
-                        <p className="text-[28px] font-bold text-black leading-none">$20</p>
+                        <p className="text-[28px] font-bold text-black leading-none">{currencyAbbreviationToSymbol[currentSubscription?.currency || "$"]}{currentSubscription?.price}</p>
                         <span
                             className="text-[#8E8E8E] text-[16px] leading-[19.2px] tracking-[0%] ml-1 relative top-[-1px]">
-        /Month
+        /{subCycle(currentSubscription as ISubscription)}
     </span>
                     </div>
                 </div>
@@ -57,7 +62,7 @@ const MonthlyPlan = () => {
 
                 {/* Payment Date */}
                 <p className="text-[20px] font-bold leading-[24px] tracking-[0%] font-lato">
-                    On November 30, 2025
+                    {calculateNextSubscriptionDate(currentSubscription as ISubscription)}
                 </p>
 
                 {/* Manage Payment Button */}
