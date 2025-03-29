@@ -10,8 +10,7 @@ import EmployerSignupStepThree from "../../components/ui/employer/signup/Employe
 import EmployerSignupStepFour from "../../components/ui/employer/signup/EmployerSignupStepFour.tsx";
 import {useAuth} from "../../store/useAuth.ts";
 import {useNavigate} from "react-router-dom";
-import { UserType } from "../../utils/enums.ts";
-
+import {UserType} from "../../utils/enums.ts";
 
 const EmployerMultistepForm: React.FC = ()=>{
     const [step, setStep] = useState(1);

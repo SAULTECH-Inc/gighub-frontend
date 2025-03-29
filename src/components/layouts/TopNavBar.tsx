@@ -9,18 +9,22 @@ import NotificationDropdown from "../ui/NotificationDropdown.tsx";
 import MessageDropdown from "../ui/MessageDropdown.tsx";
 import {useLocation, useNavigate} from "react-router-dom";
 import {AiOutlineDashboard, AiOutlineUser} from "react-icons/ai";
-import {FaPeopleGroup} from "react-icons/fa6";
-import {BsGear, BsPersonWorkspace} from "react-icons/bs";
-import {MdOutlineContentPasteSearch} from "react-icons/md";
+import {BsGear} from "react-icons/bs";
+import {MdOutlineContentPasteSearch, MdOutlineManageAccounts} from "react-icons/md";
 import {FaPowerOff} from "react-icons/fa";
-import {GrCircleQuestion} from "react-icons/gr";
+import {GrCircleQuestion, GrGroup, GrWorkshop} from "react-icons/gr";
 import hamburger from '../../assets/icons/hamburger.svg';
 import avatarIcon from "../../assets/icons/avatar.svg";
 import {RiCloseLargeFill} from "react-icons/ri";
-import {useAuth} from "../../store/useAuth.ts";
-import {applicantNavBarItemMap} from "../../utils/constants.ts";
+import {removeFromLocalStorage, useAuth} from "../../store/useAuth.ts";
+import {applicantNavBarItemMap, NODE_ENV} from "../../utils/constants.ts";
 import {toast} from "react-toastify";
-import ChatWindow from "../ui/ChatWindow.tsx";
+import ChatWindow from "../features/ChatWindow.tsx";
+import {useEmployerProfile} from "../../store/useEmployerProfile.ts";
+import {useNavBarActiveItem} from "../../store/useNavBarActiveItem.ts";
+import {USER_TYPE} from "../../utils/helpers.ts";
+import {UserType} from "../../utils/enums.ts";
+import {useChatStore} from "../../store/useChatStore.ts";
 
 interface ApplicantNavBarProps {
     navbarItemsMap: typeof applicantNavBarItemMap;
@@ -34,7 +38,17 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
     navItems,
     navItemsMobile,
                                                    }) => {
-    const {logout} = useAuth();
+    const {messages, sender} = useChatStore();
+    const [messageCount, setMessageCount] = useState<number>(0);
+    useEffect(() => {
+        console.log("Messages updated:", messages);  // Debugging
+        const myMessages = messages.filter(message =>
+            message.sender !== sender && !message.read && !message.viewed
+        );
+        setMessageCount(myMessages.length);
+    }, []);
+
+    const {applicant, employer,logout} = useAuth();
     const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
     const [isNotificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
     const [isMessageDropdownOpen, setMessageDropdownOpen] = useState(false); // State for MessageDropdown
@@ -45,13 +59,12 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
     const notificationDropdownRef = useRef<HTMLDivElement>(null);
     const messageDropdownRef = useRef<HTMLDivElement>(null); // Ref for MessageDropdown
     const searchInputRef = useRef<HTMLInputElement>(null); // Ref for Search Input
-    const [activeItem, setActiveItem] = useState<string>();
+    const {activeItem, setActiveItem} = useNavBarActiveItem();
     const [isChatWindowOpened, setChatWindowOpened] = useState(false);
 
 
 
     const navigate = useNavigate();
-    const location = useLocation();
 
     const toggleProfileDropdown = () => {
         setProfileDropdownOpen((prev) => !prev);
@@ -111,15 +124,13 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
 
     useEffect(() => {
         if(activeItem){
-            navigate(navbarItemsMap.get(activeItem) || location.pathname);
+            navigate(navbarItemsMap.get(activeItem) || "/settings");
         }
     },[activeItem]);
 
     const handleSetItems = (item: string) => {
         console.log(JSON.stringify(item));
-        setActiveItem(() => {
-            return item;
-        });
+        setActiveItem(item);
     };
     const handleNavigateHome = () => {
         navigate("/");
@@ -128,6 +139,8 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
     const handleLogout = async ()=>{
         const success = await logout();
         if(success){
+            console.log("logged out");
+            await removeFromLocalStorage(NODE_ENV);
             navigate("/login");
         } else{
             toast.error("Failed to logout. Please try again.");
@@ -136,16 +149,17 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
 
 
     return (
-        <>
+        <div>
             <nav
-                className="relative flex justify-between items-center px-6 py-4 bg-white border-b-[1px] border-b-[#E6E6E6] h-[calc(70px-5px)]">
+                className="relative flex justify-between items-center px-10 py-4 bg-white border-b-[1px] border-b-[#E6E6E6] h-[calc(70px-5px)]">
                 {/* Left: Logo */}
-                <div className="hidden lg:flex items-center gap-2">
-                    <img src={GighubLogo} alt="Gighub Logo" className="h-10 w-auto cursor-pointer" onClick={handleNavigateHome}/>
+                <div className="hidden lg:flex items-center gap-2 ">
+                    <img src={GighubLogo} alt="Gighub Logo" className="h-10 w-auto cursor-pointer"
+                         onClick={handleNavigateHome}/>
                 </div>
 
                 {/* Center: Navigation Links (Desktop) */}
-                <ul className="hidden lg:flex gap-8 text-gray-600 font-lato text-[16px] absolute left-1/2 transform -translate-x-1/2">
+                <ul className="hidden lg:flex flex-wrap gap-6 text-gray-700 font-lato text-[16px] justify-center ">
                     {navItems.map((item) => (
                         <li
                             key={item}
@@ -162,7 +176,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                 </ul>
 
                 {/* Right: Notifications, Messages, and Profile (Desktop Only) */}
-                <div className="flex items-center gap-4 lg:gap-8 ml-auto lg:ml-0"> {/* ml-auto only on mobile */}
+                <div className="flex items-center gap-4 lg:gap-8 ml-auto lg:ml-0 "> {/* ml-auto only on mobile */}
                     {/* Search Icon and Input */}
                     <div className="relative">
                         <div
@@ -198,9 +212,10 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                     {/* Message Notification Icon */}
                     <div className="relative" ref={messageDropdownRef}>
                         <div className="cursor-pointer" onClick={toggleMessageDropdown}>
-                            <MessageNotificationIcon count={8}/>
+                            <MessageNotificationIcon count={messageCount}/>
                         </div>
-                        {isMessageDropdownOpen && <MessageDropdown setChatWindowOpened={setChatWindowOpened} onClose={closeDropdowns}/>}
+                        {isMessageDropdownOpen &&
+                            <MessageDropdown setChatWindowOpened={setChatWindowOpened} onClose={closeDropdowns}/>}
                     </div>
 
                     {/* Profile Dropdown (Hidden on Mobile) */}
@@ -213,7 +228,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                 </div>
                 {
                     isChatWindowOpened && (
-                        <ChatWindow />
+                        <ChatWindow/>
                     )
                 }
             </nav>
@@ -252,8 +267,14 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                             className="h-[50px] w-[50px] bg-gray rounded-full flex items-center justify-center"
                         />
                         <div>
-                            <h3 className="text-lg font-bold text-gray-800">Shadrach Adamu</h3>
-                            <p className="text-sm text-gray-500">Software engineer</p>
+                            <h3 className="text-lg font-bold text-gray-800">{
+                                USER_TYPE === UserType.APPLICANT  ? applicant.firstName + " "+applicant.lastName : employer?.companyName
+                            }</h3>
+                            <p className="text-sm text-gray-500">
+                                {
+                                    USER_TYPE === UserType.APPLICANT  ? applicant?.cv?.professionalTitle : "Company"
+                                }
+                            </p>
                         </div>
                     </div>
 
@@ -290,10 +311,10 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                                     <MdOutlineContentPasteSearch className="text-lg"/>
                                 )}
                                 {item === "Applications" && (
-                                    <BsPersonWorkspace className="text-lg"/>
+                                    <GrWorkshop className="text-lg"/>
                                 )}
                                 {item === "My Networks" && (
-                                    <FaPeopleGroup className="text-lg"/>
+                                    <GrGroup className="text-lg"/>
                                 )}
                                 {item === "Profile" && (
                                     <AiOutlineUser className="text-lg"/>
@@ -303,6 +324,10 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                                 )}
                                 {item === "Help & Support" && (
                                     <GrCircleQuestion className="text-lg"/>
+                                )}
+
+                                {item === "Manage Applicants" && (
+                                    <MdOutlineManageAccounts className="text-lg"/>
                                 )}
 
                                 <span>{item}</span>
@@ -321,7 +346,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

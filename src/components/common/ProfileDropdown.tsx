@@ -4,9 +4,13 @@ import { PiGearSixLight } from "react-icons/pi";
 import { GrCircleQuestion } from "react-icons/gr";
 import { CiUser } from "react-icons/ci";
 import avatarIcon from "../../assets/icons/avatar.svg";
-import {useAuth} from "../../store/useAuth.ts";
+import {removeFromLocalStorage, useAuth} from "../../store/useAuth.ts";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
+import {USER_TYPE} from "../../utils/helpers.ts";
+import {UserType} from "../../utils/enums.ts";
+import {NODE_ENV} from "../../utils/constants.ts";
+import {useNavBarActiveItem} from "../../store/useNavBarActiveItem.ts";
 
 interface ProfileDropdownProps {
     onClose: () => void;
@@ -14,17 +18,19 @@ interface ProfileDropdownProps {
 }
 
 const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
-    const {logout, error } = useAuth();
+    const {logout, applicant, employer, userType } = useAuth();
+    const {setActiveItem} = useNavBarActiveItem();
     const navigate = useNavigate();
     const handleLogout = async ()=>{
         const success = await logout();
         if(success){
-            onClose();
+            console.log("logged out");
+            await removeFromLocalStorage(NODE_ENV);
             navigate("/login");
-        }else{
-            toast.error(error);
+            onClose();
+        } else{
+            toast.error("Failed to logout. Please try again.");
         }
-
     }
 
     return (
@@ -39,13 +45,20 @@ const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
                     className="h-[50px] w-[50px] bg-gray rounded-full flex items-center justify-center"
                 />
                 <div>
-                    <h3 className="text-lg font-bold text-gray-800">Shadrach Adamu</h3>
-                    <p className="text-sm text-gray-500">Software engineer</p>
+                    <h3 className="text-lg font-bold text-gray-800">{
+                        USER_TYPE === UserType.APPLICANT ? applicant.firstName + " " + applicant.lastName : employer?.companyName
+                    }</h3>
+                    <p className="text-sm text-gray-500">
+                        {
+                            USER_TYPE === UserType.APPLICANT ? applicant?.cv?.professionalTitle : "Company"
+                        }
+                    </p>
                 </div>
             </div>
 
             {/* Auto Apply Section */}
-            <div className="bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white rounded-[16px] p-4 flex items-center gap-3 mb-6 cursor-pointer">
+            <div
+                className="bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white rounded-[16px] p-4 flex items-center gap-3 mb-6 cursor-pointer">
                 <span className="text-xl">👑</span>
                 <div>
                     <p className="font-bold text-sm">Auto Apply</p>
@@ -57,19 +70,25 @@ const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
             <ul className="space-y-4 text-sm font-medium">
                 <li
                     className="flex items-center gap-3 cursor-pointer text-gray-500 hover:text-gray-800"
-                    onClick={onClose}
+                    onClick={()=>{
+                        setActiveItem("Profile");
+                    }}
                 >
                     <CiUser className="text-lg" /> Profile
                 </li>
                 <li
                     className="flex items-center gap-3 cursor-pointer text-gray-500 hover:text-gray-800"
-                    onClick={onClose}
+                    onClick={()=>{
+                        setActiveItem("Settings");
+                    }}
                 >
                     <PiGearSixLight className="text-lg" /> Settings
                 </li>
                 <li
                     className="flex items-center gap-3 cursor-pointer text-gray-500 hover:text-gray-800"
-                    onClick={onClose}
+                    onClick={()=>{
+                        navigate(`/${userType}/help`);
+                    }}
                 >
                     <GrCircleQuestion className="text-lg" /> Help and support
                 </li>

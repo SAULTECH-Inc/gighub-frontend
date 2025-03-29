@@ -1,5 +1,5 @@
 import React, {ButtonHTMLAttributes, ChangeEvent} from "react";
-import { UserType } from "../enums";
+import {Action, UserType} from "../enums.ts";
 
 export type User = {
     id: string;
@@ -117,7 +117,7 @@ export interface EmployerData {
     companyDescription: string;
     email: string;
     companyWebsite: string;
-    companySize: number;
+    companySize: string;
     country: string;
     city: string;
     isVerified: boolean;
@@ -136,7 +136,7 @@ export interface EmployerData {
     companyRegistrationNumber: string | null;
     governmentIdentificationNumber: string | null;
     taxIdentificationNumber: string | null;
-    brandAndVisuals: string | null;
+    brandAndVisuals?: string[] | null;
     facebookProfile: string | null;
     linkedInProfile: string | null;
     twitterProfile: string | null;
@@ -146,11 +146,12 @@ export interface EmployerData {
     managerRole: string | null;
     managerEmail: string | null;
     managerPhoneNumber: string | null;
-    id: string;
+    id: number | null;
     createdBy: string;
     updatedBy: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    registrationNumber?: string;
 }
 
 export interface ApplicantPersonalInfo{
@@ -183,7 +184,7 @@ export interface ApplicantData {
     cv: CvResponseDto;
     token: string | null;
     profilePicture: string | null;
-    coverLetter: string | null;
+    coverLetterLink: string | null;
     governmentIdentificationNumber: string | null;
     facebookProfile: string | null;
     linkedInProfile: string | null;
@@ -344,7 +345,9 @@ export interface CvResponseDto {
     professionalSummary: string | null;
     headline: string | null;
     cvLink: string | null;
-    coverLetter: string | null;
+    coverLetterLink: string | null;
+    videoCv: string | null;
+    portfolioLink: string[] | null;
     applicantNotes: string | null;
     applicationMode: CVType | null;
     contact: Partial<ContactResponseDto> | null;
@@ -478,10 +481,11 @@ export interface FileUploadResponse{
 
 
 export interface FileUploadRequest {
-    file: File | string;
+    file?: File | string;
+    fileUrl?: string;
     userId: number;
     userType: string;
-    action: string;
+    action: Action;
     whatIsTheItem: string;
 }
 
@@ -502,7 +506,7 @@ export interface ApplicantSignupRequest {
     phoneNumber: string;
     address: string;
     resume: File | null;
-    coverLetter: File | null;
+    coverLetterLink: File | null;
     portfolio: File | null;
     videoCv: File | null;
     documentType: string;
@@ -542,4 +546,41 @@ export interface JobApplicationDetails{
 export interface ProfessionalSummaryData{
     professionalTitle?: string;
     professionalSummary?: string;
+}
+
+
+export interface CompanyInfos {
+    companyName: string;
+    country: string;
+    companySize: string;
+    industry: string;
+    city: string;
+    companyAddress: string;
+}
+
+export interface ContactInfo {
+    managerEmail: string;
+    managerPhoneNumber: string;
+    companyPhone: string;
+    email: string;
+}
+
+export interface BrandAndVisuals {
+    files: string[];
+}
+
+export interface AboutCompany {
+    companyDescription: string;
+}
+
+export interface Socials {
+    facebookProfile: string;
+    twitterProfile: string;
+    linkedInProfile: string;
+    instagramProfile: string;
+}
+
+export interface ComplianceAndVerifications {
+    taxIdentificationNumber: string;
+    registrationNumber: string;
 }

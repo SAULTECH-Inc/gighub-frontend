@@ -42,7 +42,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
                     ...applicantSignupRequest,
                     [documentType]: newFiles[0].file,
                 } as ApplicantSignupRequest);
-            } else if (documentType === "coverLetter") {
+            } else if (documentType === "coverLetterLink") {
                 setApplicantSignupRequest({
                     ...applicantSignupRequest,
                     [documentType]: newFiles[0].file,
@@ -81,7 +81,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
     const getFileIcon = (fileName: string) => {
         if (fileName.toLowerCase().includes("resume")) {
             return documentAttachment;
-        } else if (fileName.toLowerCase().includes("coverLetter")) {
+        } else if (fileName.toLowerCase().includes("coverLetterLink")) {
             return documentAttachment;
         } else if (fileName.toLowerCase().includes("videoCv")) {
             return videoAttachment;
@@ -156,7 +156,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
                             Document name
                         </option>
                         <option value="resume">Resume</option>
-                        <option value="coverLetter">Cover Letter</option>
+                        <option value="coverLetterLink">Cover Letter</option>
                         <option value="portfolio">Work Samples</option>
                         <option value="videoCv">Video CV</option>
                     </select>

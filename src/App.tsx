@@ -1,4 +1,3 @@
-import './App.css'
 import AppRoutes from "./routes/AppRoutes.tsx";
 import { ToastContainer } from 'react-toastify';
 import {BrowserRouter} from "react-router-dom";

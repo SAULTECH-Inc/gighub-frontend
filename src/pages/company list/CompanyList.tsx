@@ -12,14 +12,14 @@ import {
 const CompanyList = () => {
   return (
     <div className="relative overflow-hidden">
-        <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile}
-        navbarItemsMap={applicantNavBarItemMap} />
+        {/*<TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile}*/}
+        {/*navbarItemsMap={applicantNavBarItemMap} />*/}
         <div className="p-4 bg-[#F7F8FA]">
             <CompanyNavbar />
             <div className="flex max-lg:flex-col-reverse items-start gap-x-6 mt-5">
                 <div className="grid grid-cols-1 max-lg:grid-cols-2 max-sm:grid-cols-1 gap-4 max-lg:mt-10 max-w-[500px] max-lg:max-w-full">
                 {Array(3).fill("").map((_, index)=>(
-                    <JobDetailsSidebar 
+                    <JobDetailsSidebar
                     key={index}
                     title='Quality Assurance Tester Manual Intern'
                     location='Lagos, Nigeria'
@@ -43,7 +43,7 @@ const CompanyList = () => {
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
   )
