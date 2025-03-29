@@ -1,5 +1,4 @@
 import { FC } from "react";
-import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import AboutUs from "../../components/ui/employer/public-profile/AboutUs.tsx";
 import MediaAndGallery from "../../components/ui/employer/public-profile/MediaAndGallery.tsx";
 import CurrentJobOpening from "../../components/ui/employer/public-profile/CurrentJobOpening.tsx";
@@ -7,13 +6,12 @@ import EmployeesTestimonials from "../../components/ui/employer/public-profile/E
 import ReviewsAndRatings from "../../components/ui/employer/public-profile/ReviewsAndRatings.tsx";
 import ContactInfo from "../../components/ui/employer/public-profile/ContactInfo.tsx";
 import PublicProfileCard from "../../components/ui/employer/public-profile/PublicProfileCard.tsx";
-import {employerNavBarItemMap, employerNavItems, employerNavItemsMobile} from "../../utils/constants.ts";
 
 
 const EmployerPublicProfile: FC = () => {
     return (
         <div className="bg-[#F7F8FA] min-h-screen">
-            <TopNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
+            {/*<TopNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>*/}
             <div className="flex justify-center bg-gray-100 pt-6 gap-x-2 mx-auto">
 
                 {/* Main Content */}

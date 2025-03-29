@@ -1,7 +1,7 @@
 import {FC} from "react";
-import TopNavBar from "../components/layouts/TopNavBar.tsx";
-import JobFilterBar from "./jobList/JobFilterBar.tsx";
-import JobTable from "./jobList/JobTable.tsx";
+import TopNavBar from "../../components/layouts/TopNavBar.tsx";
+import JobFilterBar from "../jobList/JobFilterBar.tsx";
+import JobTable from "../jobList/JobTable.tsx";
 const EmployerProfile: FC = () => {
     return (
         <div className="mx-auto">

@@ -63,7 +63,7 @@ const CustomRadioButton: React.FC<CustomRadioButtonProps> = ({
             </div>
 
             {/* Optional Label */}
-            {label && <span className="text-gray-800">{label}</span>}
+            {label && <span className="text-gray-800  text-sm sm:text-base">{label}</span>}
         </label>
     );
 };
