@@ -72,6 +72,7 @@ const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
                     className="flex items-center gap-3 cursor-pointer text-gray-500 hover:text-gray-800"
                     onClick={()=>{
                         setActiveItem("Profile");
+                        navigate(`/${userType}/profile`);
                     }}
                 >
                     <CiUser className="text-lg" /> Profile
@@ -80,6 +81,7 @@ const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
                     className="flex items-center gap-3 cursor-pointer text-gray-500 hover:text-gray-800"
                     onClick={()=>{
                         setActiveItem("Settings");
+                        navigate(`/settings`);
                     }}
                 >
                     <PiGearSixLight className="text-lg" /> Settings
@@ -87,7 +89,7 @@ const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
                 <li
                     className="flex items-center gap-3 cursor-pointer text-gray-500 hover:text-gray-800"
                     onClick={()=>{
-                        navigate(`/${userType}/help`);
+                        navigate(`/help-and-support`);
                     }}
                 >
                     <GrCircleQuestion className="text-lg" /> Help and support
