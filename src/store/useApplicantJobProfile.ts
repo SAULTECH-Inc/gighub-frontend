@@ -14,7 +14,10 @@ import {
 import {privateApiClient} from '../api/axios';
 import {toast} from 'react-toastify';
 import {API_BASE_URL, NODE_ENV, secureStorageWrapper, VITE_API_FILE_SERVICE} from "../utils/constants.ts";
-export interface SkillsAndCompetency{
+import logger from "../log-config";
+import {handleError} from "../utils/helpers.ts";
+
+export interface SkillsAndCompetency {
     skills: SkillsResponseDto[];
     certifications: CertificationResponseDto[];
 }
@@ -22,28 +25,28 @@ export interface SkillsAndCompetency{
 interface ApplicantJobProfile {
     preferences: JobPreference | null;
     cvDetails: Partial<CvResponseDto> | null;
-    updatedCvDetails: (data: Partial<CvResponseDto>)=>Promise<CvResponseDto | null>;
+    updatedCvDetails: (data: Partial<CvResponseDto>) => Promise<CvResponseDto | null>;
     jobApplicationDetails: JobApplicationDetails[];
     skillsAndCompetency: SkillsAndCompetency;
     application: JobApplicationDetails | null;
     applicantEducation: EducationResponseDto;
-    uploadProfileFile: (data: FileUploadRequest)=>Promise<FileUploadResponse | null>;
-    deleteProfileFile: (data: FileUploadRequest)=>Promise<boolean>;
+    uploadProfileFile: (data: FileUploadRequest) => Promise<FileUploadResponse | null>;
+    deleteProfileFile: (data: FileUploadRequest) => Promise<boolean>;
     experience: ExperienceResponseDto;
     experiences: ExperienceResponseDto[]
-    setExperiences: (data: ExperienceResponseDto[])=>void;
+    setExperiences: (data: ExperienceResponseDto[]) => void;
     setExperience: (experience: ExperienceResponseDto) => void;
-    updateSocials: (socials: SocialsResponseDto[])=>Promise<SocialsResponseDto[]>;
+    updateSocials: (socials: SocialsResponseDto[]) => Promise<SocialsResponseDto[]>;
     addExperience: (experience: ExperienceRequestDto) => Promise<ExperienceResponseDto | null>;
     updateExperience: (experience: ExperienceResponseDto) => Promise<ExperienceResponseDto | null>;
-    updateSkillsAndCompetencies: (skillsAndCompetency: SkillsAndCompetency)=>Promise<SkillsAndCompetency>;
-    updatePortfolioLinks: (links: string[])=>Promise<string[]>;
+    updateSkillsAndCompetencies: (skillsAndCompetency: SkillsAndCompetency) => Promise<SkillsAndCompetency>;
+    updatePortfolioLinks: (links: string[]) => Promise<string[]>;
     deleteExperience: (experienceId: number) => Promise<boolean>;
-    fetchExperiences: ()=>Promise<ExperienceResponseDto[]>;
+    fetchExperiences: () => Promise<ExperienceResponseDto[]>;
     resetExperiences: () => void;
-    resetExperience: ()=>void;
+    resetExperience: () => void;
     educations: EducationResponseDto[] | [];
-    setEducations: (data: EducationResponseDto[])=>void;
+    setEducations: (data: EducationResponseDto[]) => void;
     setApplicantEducation: (education: EducationResponseDto) => void;
     updatedApplicantEducation: (data: EducationResponseDto) => Promise<EducationResponseDto | null>;
     addApplicantEducation: (data: EducationResponseDto) => Promise<EducationResponseDto | null>;
@@ -118,11 +121,10 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                         });
                         return response.data.data;
                     } catch (error: any) {
-                        console.error('Failed to fetch job preferences:', error);
                         set((state) => {
                             state.error = error.response?.data?.message || 'Unknown error occurred';
                         });
-                        toast.error(error.response?.data?.message || 'Failed to fetch job preferences');
+                        handleError(error);
                         return null;
                     } finally {
                         set((state) => {
@@ -140,17 +142,16 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                             preference
                         );
                         set((state) => {
-                            state.preferences = { ...preference, ...response.data?.data };
+                            state.preferences = {...preference, ...response.data?.data};
                             state.success = true;
                             state.error = null;
                         });
                         return response.data.data;
                     } catch (error: any) {
-                        console.error('Failed to add job preference:', error);
                         set((state) => {
                             state.error = error.response?.data?.message || 'Unknown error occurred';
                         });
-                        toast.error(error.response?.data?.message || 'Failed to add job preference');
+                        handleError(error);
                         return null;
                     } finally {
                         set((state) => {
@@ -175,17 +176,16 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                     try {
                         const response = await privateApiClient.put<APIResponse<CvResponseDto>>(`/cv/update`, data);
                         set((state) => {
-                            state.cvDetails = {...state.cvDetails, ...response.data?.data };
+                            state.cvDetails = {...state.cvDetails, ...response.data?.data};
                             state.success = true;
                             state.error = null;
                         });
                         return response.data?.data;
                     } catch (error: any) {
-                        console.error('Failed to update CV details:', error);
                         set((state) => {
                             state.error = error.response?.data?.message || 'Unknown error occurred';
                         });
-                        toast.error(error.response?.data?.message || 'Failed to update CV details');
+                        handleError(error);
                         return null;
                     } finally {
                         set((state) => {
@@ -206,11 +206,10 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                         });
                         return response.data.data;
                     } catch (error: any) {
-                        console.error('Failed to fetch CV details:', error);
                         set((state) => {
                             state.error = error.response?.data?.message || 'Unknown error occurred';
                         });
-                        toast.error(error.response?.data?.message || 'Failed to fetch CV details');
+                        handleError(error);
                         return null;
                     } finally {
                         set((state) => {
@@ -232,17 +231,17 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                             state.loading = true;
                         });
                         const response = await privateApiClient.put<APIResponse<EducationResponseDto>>(`${API_BASE_URL}/cv/update-education`, data);
-                        set((state)=>{
+                        set((state) => {
                             state.loading = false;
                             state.error = null;
                         });
                         return response?.data?.data;
-                    } catch (err: any) {
-                        toast.error(err.response?.data?.message || "Error updating education information");
+                    } catch (error: any) {
                         set((state) => {
-                            state.error = err.response?.data?.message || "Error updating education information";
+                            state.error = error.response?.data?.message || "Error updating education information";
                             state.loading = false;
                         });
+                        handleError(error);
                         return null;
                     }
                 },
@@ -252,12 +251,16 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                         console.log("Education deleted successfully");
                         return response?.data?.statusCode === 200;
                     } catch (error: any) {
-                        console.error("Error deleting education:", error);
-                        set({ error: error.response?.data?.message || "Unknown error occurred" });
+                        set({error: error.response?.data?.message || "Unknown error occurred"});
+                        if (NODE_ENV === 'production') {
+                            logger.error(error.response?.data?.message || 'Unknown error occurred');
+                        } else {
+                            toast.error(error.response?.data?.message || 'Failed to fetch job preferences');
+                        }
                     }
                     return false;
                 },
-                fetchApplicantEducation: async ()=>{
+                fetchApplicantEducation: async () => {
                     try {
                         set((state) => {
                             state.loading = true;
@@ -270,12 +273,11 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                         });
                         return response.data?.data;
                     } catch (error: any) {
-                        console.error('Failed to fetch applicant education:', error);
                         set((state) => {
                             state.error = error.response?.data?.message || 'Unknown error occurred';
                             state.loading = false;
                         });
-                        toast.error(error.response?.data?.message || 'Failed to fetch applicant education');
+                        handleError(error);
                         return [];
                     }
                 },
@@ -290,31 +292,31 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                             state.loading = true;
                         });
                         const response = await privateApiClient.post<APIResponse<EducationResponseDto>>(`${API_BASE_URL}/cv/add-education`, data);
-                        set((state)=>{
+                        set((state) => {
                             state.loading = false;
                             state.error = null;
                         });
                         return response?.data?.data;
                     } catch (err: any) {
-                        toast.error(err.response?.data?.message || "Error updating education information");
                         set((state) => {
                             state.error = err.response?.data?.message || "Error updating education information";
                             state.loading = false;
                         });
+                        handleError(err);
                         return null;
                     }
                 },
-                resetApplicantEducation: async ()=>{
+                resetApplicantEducation: async () => {
                     set((state) => {
-                        state.applicantEducation = {} as  EducationResponseDto;
+                        state.applicantEducation = {} as EducationResponseDto;
                     });
                 },
-                resetEducations: async ()=>{
+                resetEducations: async () => {
                     set((state) => {
                         state.educations = [];
                     });
                 },
-                fetchExperiences: async ()=>{
+                fetchExperiences: async () => {
                     try {
                         set((state) => {
                             state.loading = true;
@@ -327,12 +329,11 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                         });
                         return response.data?.data;
                     } catch (error: any) {
-                        console.error('Failed to fetch experiences:', error);
                         set((state) => {
                             state.error = error.response?.data?.message || 'Unknown error occurred';
                             state.loading = false;
                         });
-                        toast.error(error.response?.data?.message || 'Failed to fetch experiences');
+                        handleError(error);
                         return [];
                     }
                 },
@@ -347,17 +348,17 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                             state.loading = true;
                         });
                         const response = await privateApiClient.post<APIResponse<ExperienceResponseDto>>(`${API_BASE_URL}/cv/add-experience`, data);
-                        set((state)=>{
+                        set((state) => {
                             state.loading = false;
                             state.error = null;
                         });
                         return response?.data?.data;
                     } catch (err: any) {
-                        toast.error(err.response?.data?.message || "Error updating experience information");
                         set((state) => {
                             state.error = err.response?.data?.message || "Error updating experience information";
                             state.loading = false;
                         });
+                        handleError(err);
                         return null;
                     }
                 },
@@ -367,17 +368,17 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                             state.loading = true;
                         });
                         const response = await privateApiClient.put<APIResponse<ExperienceResponseDto>>(`${API_BASE_URL}/cv/experiences/${data.id}/update`, data);
-                        set((state)=>{
+                        set((state) => {
                             state.loading = false;
                             state.error = null;
                         });
                         return response?.data?.data;
                     } catch (err: any) {
-                        toast.error(err.response?.data?.message || "Error updating experience information");
                         set((state) => {
                             state.error = err.response?.data?.message || "Error updating experience information";
                             state.loading = false;
                         });
+                        handleError(err);
                         return null;
                     }
                 },
@@ -387,46 +388,46 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                         console.log("Experience deleted successfully");
                         return response?.data?.statusCode === 200;
                     } catch (error: any) {
-                        console.error("Error deleting experience:", error);
-                        set({ error: error.response?.data?.message || "Unknown error occurred" });
+                        set({error: error.response?.data?.message || "Unknown error occurred"});
+                        handleError(error)
                     }
                     return false;
                 },
                 setExperience: data => {
-                            set((state) => {
-                                state.experience = {
-                                    ...state.experience,
-                                    ...data
-                                };
-                            });
-                        },
-                        resetExperience: async ()=>{
-                            set((state) => {
-                                state.experience = {} as ExperienceResponseDto;
-                            });
-                        },
-                            resetExperiences: async ()=>{
-                            set((state) => {
-                                state.experiences = [];
+                    set((state) => {
+                        state.experience = {
+                            ...state.experience,
+                            ...data
+                        };
                     });
                 },
-                updateSkillsAndCompetencies: async (skillAndCompetences: SkillsAndCompetency)=>{
+                resetExperience: async () => {
+                    set((state) => {
+                        state.experience = {} as ExperienceResponseDto;
+                    });
+                },
+                resetExperiences: async () => {
+                    set((state) => {
+                        state.experiences = [];
+                    });
+                },
+                updateSkillsAndCompetencies: async (skillAndCompetences: SkillsAndCompetency) => {
                     try {
                         set((state) => {
                             state.loading = true;
                         });
                         const response = await privateApiClient.put<APIResponse<SkillsAndCompetency>>(`${API_BASE_URL}/cv/skills-and-competencies`, skillAndCompetences);
-                        set((state)=>{
+                        set((state) => {
                             state.loading = false;
                             state.error = null;
                         });
                         return response?.data?.data;
                     } catch (err: any) {
-                        toast.error(err.response?.data?.message || "Error updating skills and competencies");
                         set((state) => {
                             state.error = err.response?.data?.message || "Error updating skills and competencies";
                             state.loading = false;
                         });
+                        handleError(err);
                         return {} as SkillsAndCompetency;
                     }
                 },
@@ -473,15 +474,15 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
 
                         return response?.data?.data;
                     } catch (err: any) {
-                        toast.error(err.response?.data?.message || "Error uploading profile file");
                         set((state) => {
                             state.error = err.response?.data?.message || "Error uploading profile file";
                             state.loading = false;
                         });
+                        handleError(err);
                         return {} as FileUploadResponse;
                     }
                 },
-                deleteProfileFile: async (data: FileUploadRequest)=>{
+                deleteProfileFile: async (data: FileUploadRequest) => {
                     try {
                         set((state) => {
                             state.loading = true;
@@ -494,15 +495,15 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                         });
                         return response?.data?.data;
                     } catch (err: any) {
-                        toast.error(err.response?.data?.message || "Error deleting profile file");
                         set((state) => {
                             state.error = err.response?.data?.message || "Error deleting profile file";
                             state.loading = false;
                         });
+                        handleError(err);
                         return false;
                     }
                 },
-                updatePortfolioLinks: async(links: string[])=>{
+                updatePortfolioLinks: async (links: string[]) => {
                     try {
                         set((state) => {
                             state.loading = true;
@@ -515,15 +516,15 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                         });
                         return response?.data?.data;
                     } catch (err: any) {
-                        toast.error(err.response?.data?.message || "Error updating portfolio links");
                         set((state) => {
                             state.error = err.response?.data?.message || "Error updating portfolio links";
                             state.loading = false;
                         });
+                        handleError(err);
                         return [];
                     }
                 },
-                updateSocials: async(socials: SocialsResponseDto[])=>{
+                updateSocials: async (socials: SocialsResponseDto[]) => {
                     try {
                         set((state) => {
                             state.loading = true;
@@ -536,11 +537,11 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                         });
                         return response?.data?.data;
                     } catch (err: any) {
-                        toast.error(err.response?.data?.message || "Error updating socials");
                         set((state) => {
                             state.error = err.response?.data?.message || "Error updating socials";
                             state.loading = false;
                         });
+                        handleError(err);
                         return [];
                     }
                 }
@@ -560,7 +561,7 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                     error: state.error,
                     loading: state.loading,
                 }),
-                storage: createJSONStorage(()=>NODE_ENV === 'development' ? localStorage: secureStorageWrapper)
+                storage: createJSONStorage(() => NODE_ENV === 'development' ? localStorage : secureStorageWrapper)
             }
         )
     )

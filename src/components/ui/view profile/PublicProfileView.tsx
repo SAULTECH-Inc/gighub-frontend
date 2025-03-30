@@ -11,8 +11,10 @@ import {
 import PublicProfile from "./PublicProfile";
 import { useParams } from "react-router-dom";
 import { privateApiClient } from "../../../api/axios";
-import { APIResponse, ApplicantData } from "../../../utils/types";
-import { API_BASE_URL } from "../../../utils/constants";
+import { APIResponse, ApplicantData, SkillsResponseDto } from "../../../utils/types";
+import { API_BASE_URL, applicantNavBarItemMap, applicantNavItems, applicantNavItemsMobile } from "../../../utils/constants";
+import TopNavBar from "../../layouts/TopNavBar";
+import { FaFacebook, FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 
 
 const PublicProfileView:React.FC = () => {
@@ -21,7 +23,7 @@ const PublicProfileView:React.FC = () => {
     const [applicant, setApplicant] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [isWorksampleAvailable] = useState(true);
+    const [isWorksampleAvailable] = useState(false);
 
     useEffect(() => {
         const fetchApplicant = async () => {
@@ -46,14 +48,13 @@ const PublicProfileView:React.FC = () => {
 
   return (
         <div className="bg-[#F7F8FA]">
-      {/* <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile} navbarItemsMap={applicantNavBarItemMap}/> */}
-    <div className="bg-[#D9D9D9] flex flex-col w-full items-center gap-5">
+      <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile} navbarItemsMap={applicantNavBarItemMap}/>
+    <div className="bg-[#F7F8FA] flex flex-col w-full items-center gap-5">
       {isWorksampleAvailable && (
         <div className="w-full flex flex-col items-center">
             <div className="flex w-[94%] max-w-[675px] lg:max-w-[1360px] justify-end sm:justify-between gap-2 my-5">
             <div className="hidden sm:flex gap-2 items-center">
               <p className="text-[13px] sm:text-2xl">
-                {/* {applicant.lastname[0]} . {applicant.middlename[0]} {applicant.firstname}{" "} */}
                 {applicant.lastName ? applicant.lastName[0]: ""}.{applicant.middleName ? applicant.middleName[0] : ""} {applicant.firstName} Profile
               </p>
             </div>
@@ -111,7 +112,7 @@ const PublicProfileView:React.FC = () => {
                         </div>
                         <div className="w-[90%] flex flex-col gap-2 my-2">
                           <p className="text-[#8E8E8E]">
-                            {applicant.state}, {applicant.country} . {applicant.numberOfConnections}k Connections
+                            {applicant.state}, {applicant.country} . {400}k Connections
                           </p>
                         </div>
                         <hr className="w-[90%] border-[#E6E6E6]" />
@@ -131,17 +132,45 @@ const PublicProfileView:React.FC = () => {
                         </div>
                         <hr className="w-[90%] border-[#E6E6E6]" />
                         <div className="w-[90%] flex flex-col gap-2 my-4">
-                          <p>Portfolio website</p>
-                          <p className="text-[#6438C2] text-[13px]">{applicant.portfolio}</p>
+           <p className="text-[13px] sm:text-[16px] font-semibold">Social media  handles</p>
+  <div className="flex text-[13px] text-[#6438C2] gap-5">
+                      {!applicant.facebookProfile && (
+                        <a href={applicant?.facebookProfile ?? undefined} target="_blank" rel="noopener noreferrer">
+                          <FaFacebook className="mr-2 h-5 w-5 cursor-pointer fill-[#1877F2] text-[#8E8E8E]" />
+                        </a>
+                      )}
+                      {!applicant.twitterProfile && (
+                        <a href={applicant?.twitterProfile ?? undefined}  target="_blank" rel="noopener noreferrer">
+                          {" "}
+                          <FaTwitter className="mr-2 h-5 w-5 cursor-pointer fill-[#1DA1F2] text-[#8E8E8E]" />
+                        </a>
+                      )}
+                      {!applicant.linkedInProfile && (
+                        <a href={applicant?.linkedInProfile ?? undefined}  target="_blank" rel="noopener noreferrer">
+                          {" "}
+                          <FaLinkedin className="mr-2 h-5 w-5 cursor-pointer fill-[#0077B5] text-[#8E8E8E]" />
+                        </a>
+                      )}
+                      {!applicant.githubProfile && (
+                        <a href={applicant?.githubProfile ?? undefined}  target="_blank" rel="noopener noreferrer">
+                          {" "}
+                          <FaGithub className="mr-2 h-5 w-5 cursor-pointer fill-[#181717] text-[#8E8E8E]" />
+                        </a>
+                      )}
+                    </div>
                         </div>
                         <hr className="w-[90%] border-[#E6E6E6]" />
                 <div className="w-[90%] flex flex-col gap-2">
                   <p className="mt-2 font-medium">About me</p>
-                  <p className="text-[#8E8E8E] text-[13px]">{applicant.bio}</p>
-                  <div className="flex flex-col gap-2">
+                  <div
+              className="text-[13px] text-[#8E8E8E]"
+              dangerouslySetInnerHTML={{
+                __html: applicant.cv?.professionalSummary || "",
+              }}
+            ></div>{" "}                  <div className="flex flex-col gap-2">
                     <p className="font-medium">Software Skills</p>
                     <div className="text-[#8E8E8E] text-[13px] flex flex-wrap">
-                      {applicant.cv.skills.join(", ")}
+                      {applicant?.cv?.skills?.map((skill: SkillsResponseDto) => skill.skill).join(", ")}
                     </div>
                   </div>
                 </div>

@@ -78,14 +78,14 @@ export const useUserSubscription = create<ISubscriptionState>()(persist(immer<IS
     },
     fetchSubscription: async (userId) => {
         try {
-            const response = await privateApiClient.get<APIResponse<ISubscription>>(`${SUBSCRIPTION_SERVICE_HOST}/subscriptions/users/${userId}/subscriptions`);
+            const response = await privateApiClient.get<APIResponse<ISubscription>>(`${SUBSCRIPTION_SERVICE_HOST}/subscriptions/users/${userId}`);
             set((state) => {
                 state.currentSubscription = response?.data?.data;
             });
             console.log("SUBSCRIPTION ::: "+JSON.stringify(response?.data?.data));
             return response?.data?.data;
-        } catch (error) {
-            console.error("Error fetching subscription:", error);
+        } catch (error: any) {
+            console.error("Error fetching subscription:", error?.response?.data);
             return null;
         }
 
@@ -97,8 +97,8 @@ export const useUserSubscription = create<ISubscriptionState>()(persist(immer<IS
                 state.subscriptionHistory = response?.data?.data;
             });
             return response?.data?.data;
-        } catch (error) {
-            console.error("Error fetching subscription history:", error);
+        } catch (error: any) {
+            console.error("Error fetching subscription:", error?.response?.data);
             return null;
         }
     },

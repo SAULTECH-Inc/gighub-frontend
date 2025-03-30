@@ -1,74 +1,109 @@
 import React, { useState } from "react";
-import { Ellipse115, Ellipse116, Ellipse117 } from "../../../assets/images";
+import {
+  Bagged,
+  Ellipse115,
+  Ellipse116,
+  Ellipse117,
+} from "../../../assets/images";
 import { ApplicantData } from "../../../utils/types";
 
-const ProfileDetailsExtension: React.FC<{ person: ApplicantData }> = ({person}) => {
+const ProfileDetailsExtension: React.FC<{ person: ApplicantData }> = ({
+  person,
+}) => {
+  const [showAllExperiences, setShowAllExperiences] = useState(false);
 
+  const formatExperienceDates = (
+    startDate: Date | string | undefined,
+    endDate: Date | string | undefined,
+  ) => {
+    const startYear =
+      startDate instanceof Date ? startDate.getFullYear() : startDate;
+    const endYear = endDate instanceof Date ? endDate.getFullYear() : endDate;
 
-  const [showAll, setShowAll] = useState(false);
-
-  const toggleShowMore = () => {
-    setShowAll(!showAll);
+    if (startYear && endYear && startYear !== endYear) {
+      return `${startYear} - ${endYear}`;
+    } else if (startYear && endYear && startYear === endYear) {
+      return `${startYear}`;
+    } else if (startYear) {
+      return `${startYear}`;
+    } else if (endYear) {
+      return `${endYear}`;
+    } else {
+      return "";
+    }
   };
 
+  const displayExperiences = showAllExperiences
+    ? person.cv?.experiences || []
+    : person.cv?.experiences?.slice(0, 2) || [];
+
+  const hasMoreExperiences = (person.cv?.experiences?.length || 0) > 2;
+
   return (
-    <div className="w-full flex flex-col items-center text-[#000000]">
-      <div className="bg-white w-[100%] rounded-[16px] max-w-[328px] flex flex-col items-center py-4">
-      <div className="flex flex-col gap-4 my-4"></div>
-      <p className="font-medium text-lg">Work Experience</p>
-
-      {(person.cv?.experiences ?? []).slice(0, 3).map((exp) => (
-        <div key={exp.id} className="border border-gray-300 p-4 rounded-lg shadow-md">
-          <p className="font-bold text-lg">{exp.position}</p>
-          <p className="text-gray-600">{exp.company} - {exp.city || exp.location}</p>
-          <p className="text-gray-500 text-sm">
-            {new Date(exp.startDate || "").toLocaleDateString()} - {exp.endDate ? new Date(exp.endDate || "").toLocaleDateString() : "Present"}
-          </p>
-          {exp.description && <p className="text-gray-700 mt-2">{exp.description}</p>}
-        </div>
-      ))}
-
-      {(person.cv?.experiences ?? []).length > 3 && (
-        <div>
-          {showAll ? (
-            <div className="border border-gray-300 p-4 rounded-lg shadow-md h-[200px] overflow-y-auto">
-              {(person.cv?.experiences?.slice(3) || []).map((exp) => (
-                <div key={exp.id} className="border-b border-gray-300 pb-4 mb-4 last:border-none">
-                  <p className="font-bold text-lg">{exp.position}</p>
-                  <p className="text-gray-600">{exp.company} - {exp.city || exp.location}</p>
-                  <p className="text-gray-500 text-sm">
-                    {new Date(exp.startDate || "").toLocaleDateString()} - {exp.endDate ? new Date(exp.endDate).toLocaleDateString() : "Present"}
-                  </p>
-                  {exp.description && <p className="text-gray-700 mt-2">{exp.description}</p>}
-                </div>
-              ))}
-            </div>
-          ) : null}
-
-          <button
-            className="bg-[#6438C2] text-white font-medium py-2 px-4 rounded-md mt-4 self-start"
-            onClick={toggleShowMore}
+    <div className="flex w-full flex-col items-center text-[#000000]">
+      <div className="flex w-[100%] max-w-[328px] flex-col items-center rounded-[16px] bg-white py-4">
+        <div className="flex w-[90%] flex-col items-center">
+          <p className="w-full pt-2 font-bold">Job experience</p>
+          <div
+            className={`w-full ${showAllExperiences ? "max-h-[300px] overflow-y-auto pr-2" : ""}`}
           >
-            {showAll ? "Show Less" : "Show More"}
-          </button>
+            {displayExperiences.map((experience, index) => (
+              <div key={experience.id || index}>
+                <div className="mt-2 flex w-full items-center gap-3">
+                  <div className="flex h-[50px] w-[50px] items-center justify-center rounded-full bg-[#F7F8FA]">
+                    <img src={Bagged} alt="Bagged" />
+                  </div>
+                  <div>
+                    <p className="text-[13px] font-bold">
+                      {experience.position ?? ""}
+                    </p>
+                    <p className="text-[13px] font-bold text-[#8E8E8E]">
+                      {experience?.company ?? ""} .{" "}
+                      {formatExperienceDates(
+                        experience.startDate,
+                        experience.endDate,
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className="my-4 w-full text-[13px] font-bold leading-[100%] text-[#8E8E8E]"
+                  dangerouslySetInnerHTML={{
+                    __html: experience?.description || "",
+                  }}
+                ></div>
+                {index < displayExperiences.length - 1 && (
+                  <div className="flex w-full justify-center">
+                    <hr className="w-[40%] border-[#E6E6E6]" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          {hasMoreExperiences && (
+            <button
+              className="mt-3 w-[40%] rounded-[10px] bg-[#6438C2] py-2 text-[13px] text-white"
+              onClick={() => setShowAllExperiences(!showAllExperiences)}
+            >
+              {showAllExperiences ? "See less" : "See more"}
+            </button>
+          )}
         </div>
-      )}
-          
-          <div className="w-[90%] flex flex-col">
+        <div className="flex w-[90%] flex-col">
           <hr className="my-5 w-full border-[#E6E6E6]" />
           <p className="w-full font-bold">Testimonies</p>
           <div className="flex flex-col">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="flex justify-center items-center">
+                <div className="flex items-center justify-center">
                   <img src={Ellipse115} alt="Person1" />
                 </div>
                 <p className="text-[13px] font-bold">Bashir Umar</p>
               </div>
-              <p className="text-[#8E8E8E] text-[13px]">2:20 Am</p>
+              <p className="text-[13px] text-[#8E8E8E]">2:20 Am</p>
             </div>
-            <div className="border-l border-dashed border-[#8E8E8E] ml-[20px] flex justify-center py-3">
-              <p className="text-[13px] font-bold w-[90%] text-[#8E8E8E]">
+            <div className="ml-[20px] flex justify-center border-l border-dashed border-[#8E8E8E] py-3">
+              <p className="w-[90%] text-[13px] font-bold text-[#8E8E8E]">
                 I really love his job, his that smart guy you may be searching
                 for
               </p>
@@ -77,15 +112,15 @@ const ProfileDetailsExtension: React.FC<{ person: ApplicantData }> = ({person}) 
           <div className="flex flex-col">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="flex justify-center items-center">
+                <div className="flex items-center justify-center">
                   <img src={Ellipse116} alt="Person1" />
                 </div>
                 <p className="text-[13px] font-bold">Bashir Umar</p>
               </div>
-              <p className="text-[#8E8E8E] text-[13px]">2:20 Am</p>
+              <p className="text-[13px] text-[#8E8E8E]">2:20 Am</p>
             </div>
-            <div className="border-l border-dashed border-[#8E8E8E] ml-[20px] flex justify-center py-3">
-              <p className="text-[13px] font-bold w-[90%] text-[#8E8E8E]">
+            <div className="ml-[20px] flex justify-center border-l border-dashed border-[#8E8E8E] py-3">
+              <p className="w-[90%] text-[13px] font-bold text-[#8E8E8E]">
                 I really love his job, his that smart guy you may be searching
                 for
               </p>
@@ -94,21 +129,21 @@ const ProfileDetailsExtension: React.FC<{ person: ApplicantData }> = ({person}) 
           <div className="flex flex-col">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="flex justify-center items-center">
+                <div className="flex items-center justify-center">
                   <img src={Ellipse117} alt="Person1" />
                 </div>
                 <p className="text-[13px] font-bold">Bashir Umar</p>
               </div>
-              <p className="text-[#8E8E8E] text-[13px]">2:20 Am</p>
+              <p className="text-[13px] text-[#8E8E8E]">2:20 Am</p>
             </div>
-            <div className="border-l border-dashed border-[#8E8E8E] ml-[20px] flex justify-center py-3">
-              <p className="text-[13px] font-bold w-[90%] text-[#8E8E8E]">
+            <div className="ml-[20px] flex justify-center border-l border-dashed border-[#8E8E8E] py-3">
+              <p className="w-[90%] text-[13px] font-bold text-[#8E8E8E]">
                 I really love his job, his that smart guy you may be searching
                 for
               </p>
             </div>
           </div>
-          </div>
+        </div>
       </div>
     </div>
   );
