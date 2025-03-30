@@ -2,83 +2,73 @@ import React from "react";
 import { ASAbubakar } from "../../../assets/images";
 import { ApplicantData } from "../../../utils/types";
 
-
-const ProfileDetails: React.FC<{ person: ApplicantData }> = ({
-  person
-}) => {
-  
-  const {
-    firstName,
-    lastName,
-    middleName,
-    email,
-    phoneNumber,
-    professionalTitle,
-    city,
-    country,
-    profilePicture,
-    address,
-    cv: { skills = [], headline = "" },
-  } = person;
-
+const ProfileDetails: React.FC<{ person: ApplicantData }> = ({ person }) => {
   return (
-    <div className="flex flex-col items-center text-[#000000]">
-      <div className="flex flex-col items-center py-[22px] w-[100%] max-w-[328px] bg-white rounded-[16px]">
+    <div className="flex w-full flex-col items-center text-[#000000]">
+      <div className="flex w-[100%] max-w-[328px] flex-col items-center rounded-[16px] bg-white py-[22px]">
         <div className="w-[90%]">
-          <div className="relative flex flex-col h-[94px]">
-            <div className="w-full h-[64px] bg-gradient-to-r from-[#6438C2] via-[#6438C2] to-white via-50% rounded-tr-[16px] rounded-tl-[16px]"></div>
+          <div className="relative flex h-[94px] flex-col">
+            <div className="h-[64px] w-full rounded-tl-[16px] rounded-tr-[16px] bg-gradient-to-r from-[#6438C2] via-[#6438C2] via-50% to-white"></div>
             <img
-              src={profilePicture || ASAbubakar}
+              src={person.profilePicture || ASAbubakar}
               alt="ASAbubakar"
-              className="absolute w-[60px] h-[60px] bottom-0 left-5"
+              className="absolute bottom-0 left-5 h-[60px] w-[60px]"
             />
           </div>
           <div>
-            <p className="font-bold text-20px]">
-              {lastName ? lastName[0]: ""}.{middleName ? middleName[0] : ""} {firstName}
+            <p className="text-20px] font-bold">
+              {person.lastName ? person.lastName[0] : ""}.
+              {person.middleName ? person.middleName[0] : ""} {person.firstName}
             </p>
           </div>
-          <div className="flex flex-col gap-2 my-4">
-            <p className="font-bold">{professionalTitle}</p>
-            <p className="text-[#8E8E8E]">
-              {city}, {country} . {300}k Connections
+          <div className="my-4 flex flex-col gap-2">
+            <p className="font-bold">{person?.professionalTitle}</p>
+            <p className="text-[13px] text-[#8E8E8E]">
+              {person.city && person.city}
+              {person.city && person.country && ", "}
+              {person.country && person.country}
+              {(person.city || person.country) && " . "}
+              {400}k Connections
             </p>
           </div>
           <hr className="border-[#E6E6E6]" />
-          <div className="flex flex-col gap-2 my-4">
+          <div className="my-4 flex flex-col gap-2">
             <p className="font-medium">Email Address</p>
-            <p className="text-[#8E8E8E] text-[13px]">{email}</p>
+            <p className="text-[13px] text-[#8E8E8E]">{person.email}</p>
           </div>
           <hr className="border-[#E6E6E6]" />
-          <div className="flex flex-col gap-2 my-4">
+          <div className="my-4 flex flex-col gap-2">
             <p className="font-medium">Home Address</p>
-            <p className="text-[#8E8E8E] text-[13px]">{address}</p>
+            <p className="text-[13px] text-[#8E8E8E]">{person.address}</p>
           </div>
           <hr className="border-[#E6E6E6]" />
-          <div className="flex flex-col gap-2 my-4">
+          <div className="my-4 flex flex-col gap-2">
             <p className="font-bold">Phone number</p>
-            <p className="text-[#8E8E8E] text-[13px]">{phoneNumber}</p>
+            <p className="text-[13px] text-[#8E8E8E]">{person.phoneNumber}</p>
           </div>
           <hr className="border-[#E6E6E6]" />
-          <div className="flex flex-col gap-2 my-4">
+          <div className="my-4 flex flex-col gap-2">
             <p>Portfolio website</p>
-            <p className="text-[#6438C2] text-[13px]">{"provide portfolio"}</p>
+            <p className="text-[13px] text-[#6438C2]">{"provide portfolio"}</p>
           </div>
           <hr className="border-[#E6E6E6]" />
-          <div className="flex flex-col gap-2 my-4">
+          <div className="my-4 flex flex-col gap-2">
             <p className="font-medium">About me</p>
-            <p className="text-[#8E8E8E] text-[13px]">{headline}</p>
+            <p className="text-[13px] text-[#8E8E8E]">{person.cv?.headline}</p>
           </div>
           <hr className="border-[#E6E6E6]" />
-          <div className="flex flex-col gap-2 my-4">
+          <div className="my-4 flex flex-col gap-2">
             <p className="font-medium">Software Skills</p>
-            <div className="text-[#8E8E8E] flex flex-wrap">
-              {skills.length > 0
-                ? skills
-                    .map((skil) => `${skil.skill} (${skil.yearsOfExperience} yrs)`)
+            {/* <div className="flex flex-wrap text-[#8E8E8E]">
+              {person.cv?.skills.length > 0
+                ? person.cv?.skills
+                    .map(
+                      (skil) =>
+                        `${skil?.skill} (${skil.yearsOfExperience} yrs)`,
+                    )
                     .join(", ")
                 : "No skills available"}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

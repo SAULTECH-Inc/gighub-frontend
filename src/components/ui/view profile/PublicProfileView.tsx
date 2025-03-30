@@ -10,35 +10,14 @@ import {
 } from "../../../assets/images";
 import PublicProfile from "./PublicProfile";
 import { useParams } from "react-router-dom";
+import { privateApiClient } from "../../../api/axios";
+import { APIResponse, ApplicantData } from "../../../utils/types";
+import { API_BASE_URL } from "../../../utils/constants";
 
-
-const person = {
-  firstname: "Abubakar",
-  lastname: "Aasas",
-  middlename: "Sasas",
-  professionalTitle: "UI/UX Designer",
-  email: "Asabubakar@gmail.com",
-  address: "Street Road, street road",
-  phone: "07011079676",
-  portfolio: "inspire.com",
-  bio: "I am a UI/UX designer skilled in creating user-friendly, visually appealing digital experiences. My expertise includes wireframing, prototyping, and conducting user research to ensure intuitive and responsive designs. Proficient in tools like Figma, Adobe XD, and Sketch, I focus on delivering accessible and seamless interfaces for both web and mobile. I strive to align design solutions with business goals while solving complex user challenges.",
-  numberOfConnections: 500,
-  state: "Lagos",
-  country: "Nigeria",
-  skills: [
-    "UI/UX Design",
-    "Wireframing",
-    "Prototyping",
-    "User Research",
-    "Figma",
-    "Adobe XD",
-    "Sketch",
-  ],
-  // image: "ASAbubakar",
-};
 
 const PublicProfileView:React.FC = () => {
-    const { id } = useParams<{ id: string }>(); // Get the applicant ID from the URL
+    const { id } = useParams<{ id: string }>(); 
+    const numericId = id ? parseInt(id, 10) : null;
     const [applicant, setApplicant] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -47,10 +26,10 @@ const PublicProfileView:React.FC = () => {
     useEffect(() => {
         const fetchApplicant = async () => {
           try {
-            const response = await fetch(`http://your-api.com/api/applicants/${id}`);
-            if (!response.ok) throw new Error("Failed to fetch applicant details");
-            const data = await response.json();
-            setApplicant(data);
+            const response = await privateApiClient.get<APIResponse<ApplicantData>>(`${API_BASE_URL}/users/${numericId}`);
+            const userData: ApplicantData = response?.data?.data;
+            console.log("Fetched User Data:", JSON.stringify(userData));
+            setApplicant(userData);
           } catch (err) {
             setError((err as Error).message);
           } finally {
@@ -66,14 +45,16 @@ const PublicProfileView:React.FC = () => {
       if (!applicant) return <p>No applicant found.</p>;
 
   return (
+        <div className="bg-[#F7F8FA]">
+      {/* <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile} navbarItemsMap={applicantNavBarItemMap}/> */}
     <div className="bg-[#D9D9D9] flex flex-col w-full items-center gap-5">
       {isWorksampleAvailable && (
         <div className="w-full flex flex-col items-center">
             <div className="flex w-[94%] max-w-[675px] lg:max-w-[1360px] justify-end sm:justify-between gap-2 my-5">
             <div className="hidden sm:flex gap-2 items-center">
               <p className="text-[13px] sm:text-2xl">
-                {person.lastname[0]} . {person.middlename[0]} {person.firstname}{" "}
-                Profile
+                {/* {applicant.lastname[0]} . {applicant.middlename[0]} {applicant.firstname}{" "} */}
+                {applicant.lastName ? applicant.lastName[0]: ""}.{applicant.middleName ? applicant.middleName[0] : ""} {applicant.firstName} Profile
               </p>
             </div>
             <div className="flex gap-2 items-center">
@@ -90,7 +71,7 @@ const PublicProfileView:React.FC = () => {
               <ProfileDetails person={applicant} />
             </div>
             <div className="w-full lg:w-[50%]">
-              <PublicProfile />
+              <PublicProfile person={applicant} />
             </div>
             <div className="hidden lg:flex lg:w-[25%]">
               <ProfileDetailsExtension person={applicant}/>
@@ -124,43 +105,43 @@ const PublicProfileView:React.FC = () => {
                         </div>
                         <div className="w-[90%] mt-4 flex justify-between gap-2">
                           <p className="font-bold text-20px]">
-                            {person.lastname[0]}.{person.middlename[0]} {person.firstname}
+                            {applicant.lastname[0]}.{applicant.middlename[0]} {applicant.firstname}
                           </p>
-                          <p className="font-bold text-[#6438C2]">{person.professionalTitle}</p>
+                          <p className="font-bold text-[#6438C2]">{applicant.professionalTitle}</p>
                         </div>
                         <div className="w-[90%] flex flex-col gap-2 my-2">
                           <p className="text-[#8E8E8E]">
-                            {person.state}, {person.country} . {person.numberOfConnections}k Connections
+                            {applicant.state}, {applicant.country} . {applicant.numberOfConnections}k Connections
                           </p>
                         </div>
                         <hr className="w-[90%] border-[#E6E6E6]" />
                         <div className="w-[90%] flex flex-col gap-2 my-4">
                           <p className="font-medium">Email Address</p>
-                          <p className="text-[#8E8E8E] text-[13px]">{person.email}</p>
+                          <p className="text-[#8E8E8E] text-[13px]">{applicant.email}</p>
                         </div>
                         <hr className="w-[90%] border-[#E6E6E6]" />
                         <div className="w-[90%] flex flex-col gap-2 my-4">
                           <p className="font-medium">Home Address</p>
-                          <p className="text-[#8E8E8E] text-[13px]">{person.address}</p>
+                          <p className="text-[#8E8E8E] text-[13px]">{applicant.address}</p>
                         </div>
                         <hr className="w-[90%] border-[#E6E6E6]" />
                         <div className="w-[90%] flex flex-col gap-2 my-4">
                           <p className="font-bold">Phone number</p>
-                          <p className="text-[#8E8E8E] text-[13px]">{person.phone}</p>
+                          <p className="text-[#8E8E8E] text-[13px]">{applicant.phone}</p>
                         </div>
                         <hr className="w-[90%] border-[#E6E6E6]" />
                         <div className="w-[90%] flex flex-col gap-2 my-4">
                           <p>Portfolio website</p>
-                          <p className="text-[#6438C2] text-[13px]">{person.portfolio}</p>
+                          <p className="text-[#6438C2] text-[13px]">{applicant.portfolio}</p>
                         </div>
                         <hr className="w-[90%] border-[#E6E6E6]" />
                 <div className="w-[90%] flex flex-col gap-2">
                   <p className="mt-2 font-medium">About me</p>
-                  <p className="text-[#8E8E8E] text-[13px]">{person.bio}</p>
+                  <p className="text-[#8E8E8E] text-[13px]">{applicant.bio}</p>
                   <div className="flex flex-col gap-2">
                     <p className="font-medium">Software Skills</p>
                     <div className="text-[#8E8E8E] text-[13px] flex flex-wrap">
-                      {person.skills.join(", ")}
+                      {applicant.cv.skills.join(", ")}
                     </div>
                   </div>
                 </div>
@@ -266,7 +247,7 @@ const PublicProfileView:React.FC = () => {
         </div>
       )}
     </div>
-
+    </div>
 )
 }
 

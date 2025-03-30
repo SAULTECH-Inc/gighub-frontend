@@ -4,11 +4,6 @@ import { ApplicantData } from "../../../utils/types";
 
 const ProfileDetailsExtension: React.FC<{ person: ApplicantData }> = ({person}) => {
 
-  const {
-    cv:{
-      experiences = [],
-    } = {},
-  } = person;
 
   const [showAll, setShowAll] = useState(false);
 
@@ -22,7 +17,7 @@ const ProfileDetailsExtension: React.FC<{ person: ApplicantData }> = ({person}) 
       <div className="flex flex-col gap-4 my-4"></div>
       <p className="font-medium text-lg">Work Experience</p>
 
-      {(experiences ?? []).slice(0, 3).map((exp) => (
+      {(person.cv?.experiences ?? []).slice(0, 3).map((exp) => (
         <div key={exp.id} className="border border-gray-300 p-4 rounded-lg shadow-md">
           <p className="font-bold text-lg">{exp.position}</p>
           <p className="text-gray-600">{exp.company} - {exp.city || exp.location}</p>
@@ -33,11 +28,11 @@ const ProfileDetailsExtension: React.FC<{ person: ApplicantData }> = ({person}) 
         </div>
       ))}
 
-      {(experiences ?? []).length > 3 && (
-        <>
+      {(person.cv?.experiences ?? []).length > 3 && (
+        <div>
           {showAll ? (
             <div className="border border-gray-300 p-4 rounded-lg shadow-md h-[200px] overflow-y-auto">
-              {(experiences?.slice(3) || []).map((exp) => (
+              {(person.cv?.experiences?.slice(3) || []).map((exp) => (
                 <div key={exp.id} className="border-b border-gray-300 pb-4 mb-4 last:border-none">
                   <p className="font-bold text-lg">{exp.position}</p>
                   <p className="text-gray-600">{exp.company} - {exp.city || exp.location}</p>
@@ -56,6 +51,10 @@ const ProfileDetailsExtension: React.FC<{ person: ApplicantData }> = ({person}) 
           >
             {showAll ? "Show Less" : "Show More"}
           </button>
+        </div>
+      )}
+          
+          <div className="w-[90%] flex flex-col">
           <hr className="my-5 w-full border-[#E6E6E6]" />
           <p className="w-full font-bold">Testimonies</p>
           <div className="flex flex-col">
@@ -109,9 +108,8 @@ const ProfileDetailsExtension: React.FC<{ person: ApplicantData }> = ({person}) 
               </p>
             </div>
           </div>
-      </>
-      )}
-    </div>
+          </div>
+      </div>
     </div>
   );
 };

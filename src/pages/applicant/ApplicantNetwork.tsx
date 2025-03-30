@@ -113,7 +113,7 @@ export const ApplicantNetwork: FC = () => {
                   500 mutual friends
                 </p>
                   {/* <button className="font-medium text-[#000000]" onClick={() => navigate("/user/publicprofileview/[id]")}> */}
-                  <button className="font-medium text-[#000000]" onClick={() => navigate("/user/publicprofileview/21")}>
+                  <button className="font-medium bg-red-600 px-5 text-[#000000]" onClick={() => navigate(`/applicant/dashboard/network/publicprofileview/${1}`)}>
                     View Profile
                   </button>
                 </div>

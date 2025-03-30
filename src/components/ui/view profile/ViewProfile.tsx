@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ProfileDetails from "./ProfileDetails";
 import ProfileDetailsExtension from "./ProfileDetailsExtension";
 import {
@@ -12,47 +13,29 @@ import {
 import PublicProfile from "./PublicProfile";
 import { Arrowleft } from "../../../assets/icons";
 import { useAuth } from "../../../store/useAuth";
-
-// const person = {
-//   firstname: "Abubakar",
-//   lastname: "Aasas",
-//   middlename: "Sasas",
-//   professionalTitle: "UI/UX Designer",
-//   email: "Asabubakar@gmail.com",
-//   address: "Street Road, street road",
-//   phone: "07011079676",
-//   portfolio: "inspire.com",
-//   bio: "I am a UI/UX designer skilled in creating user-friendly, visually appealing digital experiences. My expertise includes wireframing, prototyping, and conducting user research to ensure intuitive and responsive designs. Proficient in tools like Figma, Adobe XD, and Sketch, I focus on delivering accessible and seamless interfaces for both web and mobile. I strive to align design solutions with business goals while solving complex user challenges.",
-//   numberOfConnections: 500,
-//   state: "Lagos",
-//   country: "Nigeria",
-//   skills: [
-//     "UI/UX Design",
-//     "Wireframing",
-//     "Prototyping",
-//     "User Research",
-//     "Figma",
-//     "Adobe XD",
-//     "Sketch",
-//   ],
-//   // image: "ASAbubakar",
-// };
-
-const ViewProfile: React.FC = () => {
-  const [isWorksampleAvailable] = useState(true);
-  const { applicant } = useAuth();
+import TopNavBar from "../../layouts/TopNavBar";
+import { applicantNavBarItemMap, applicantNavItems, applicantNavItemsMobile } from "../../../utils/constants";
 
 
-  return (
+  const ViewProfile: React.FC = () => {
+    const [isWorksampleAvailable] = useState(true);
+    const navigate = useNavigate();
+    const { applicant } = useAuth();
+  
+    console.log("Private User Data:", JSON.stringify(applicant));
+  
+    return (
     <div className="bg-[#D9D9D9] flex flex-col w-full items-center gap-5">
+        <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile} navbarItemsMap={applicantNavBarItemMap}/>
+
       {isWorksampleAvailable && (
         <div className="w-full flex flex-col items-center">
            <div className="flex w-[94%] max-w-[675px] lg:max-w-[1360px] justify-between gap-2 my-5">
-           <div className="flex gap-2 items-center">
+           <div className="flex gap-2 items-center" onClick={() => window.history.back()}>
              <img src={ArrowLeft2} alt="arrow left" />
              <p className="text-[13px] sm:text-2xl">Your Public Profile</p>
            </div>
-           <button className="text-white bg-[#6438C2] py-2 px-3 sm:px-[56px] rounded-[10px] text-[13px]">
+           <button className="text-white bg-[#6438C2] py-2 px-3 sm:px-[56px] rounded-[10px] text-[13px]" onClick={() => navigate("/settings")}>
              Go to settings
            </button>
          </div>
@@ -61,7 +44,7 @@ const ViewProfile: React.FC = () => {
               <ProfileDetails person={applicant} />
             </div>
             <div className="w-full lg:w-[50%]">
-              <PublicProfile />
+              <PublicProfile person={applicant} />
             </div>
             <div className="hidden lg:flex lg:w-[25%]">
               <ProfileDetailsExtension person={applicant}/>
@@ -127,13 +110,13 @@ const ViewProfile: React.FC = () => {
                         <hr className="w-[90%] border-[#E6E6E6]" />
                 <div className="w-[90%] flex flex-col gap-2">
                   <p className="mt-2 font-medium">About me</p>
-                  <p className="text-[#8E8E8E] text-[13px]">{applicant.cv.headline}</p>
-                  <div className="flex flex-col gap-2">
+                  <p className="text-[#8E8E8E] text-[13px]">{applicant.cv?.headline}</p>
+                  {/* <div className="flex flex-col gap-2">
                     <p className="font-medium">Software Skills</p>
                     <div className="text-[#8E8E8E] text-[13px] flex flex-wrap">
-                      {applicant.cv.skills.join(", ")}
+                      {applicant.cv?.skills.join(", ")}
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               <div className="w-[90%] flex flex-col items-center  ">
                 <p className="w-full font-bold pt-2">Job experience</p>
