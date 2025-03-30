@@ -12,8 +12,8 @@ import CompanyInfo from "../../components/ui/applicant/CompanyInfo";
 const ApplicantJobdetails = () => {
   return (
     <div>
-        {/*<TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile}*/}
-        {/*navbarItemsMap={applicantNavBarItemMap} />*/}
+        <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile}
+        navbarItemsMap={applicantNavBarItemMap} />
         <div className="hidden sm:block">
         <JobSearchTopBar/>
         </div>

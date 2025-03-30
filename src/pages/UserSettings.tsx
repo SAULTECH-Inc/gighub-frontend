@@ -44,6 +44,7 @@ const UserSettings: FC = () => {
             };
             doFetchSubscription();
         }else{
+
             const doFetchSubscription = async ()=>{
                 const responseOne = await fetchSubscription(employer?.id as number);
                 const responseTwo = await fetchSubscriptionHistory(employer?.id as number);
@@ -59,6 +60,7 @@ const UserSettings: FC = () => {
         const fetchUserSettings = async()=> {
             const response = await fetchSettings(userType as UserType);
             if(userType === UserType.EMPLOYER){
+
                 setEmployerSettings(response as EmployerSettings);
             } else {
                 const appSettings = response as ApplicantSettings;
@@ -88,7 +90,7 @@ const UserSettings: FC = () => {
                     <NotificationSettingsHeader/>
 
                     {/*Notification */}
-                    {settings.notification && (
+                    {settings.notification && userType === UserType.APPLICANT && (
                         <div className="w-full flex flex-col items-center overflow-y-auto max-h-screen">
                             <JobApplicationUpdate/>
                             <JobRecommendation/>

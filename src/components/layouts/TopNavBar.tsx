@@ -7,7 +7,7 @@ import MessageNotificationIcon from "../common/MessageNotificationIcon.tsx";
 import ProfileDropdown from "../common/ProfileDropdown.tsx";
 import NotificationDropdown from "../ui/NotificationDropdown.tsx";
 import MessageDropdown from "../ui/MessageDropdown.tsx";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {AiOutlineDashboard, AiOutlineUser} from "react-icons/ai";
 import {BsGear} from "react-icons/bs";
 import {MdOutlineContentPasteSearch, MdOutlineManageAccounts} from "react-icons/md";
@@ -20,7 +20,6 @@ import {removeFromLocalStorage, useAuth} from "../../store/useAuth.ts";
 import {applicantNavBarItemMap, NODE_ENV} from "../../utils/constants.ts";
 import {toast} from "react-toastify";
 import ChatWindow from "../features/ChatWindow.tsx";
-import {useEmployerProfile} from "../../store/useEmployerProfile.ts";
 import {useNavBarActiveItem} from "../../store/useNavBarActiveItem.ts";
 import {USER_TYPE} from "../../utils/helpers.ts";
 import {UserType} from "../../utils/enums.ts";
@@ -122,15 +121,18 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
         };
     }, []);
 
-    useEffect(() => {
-        if(activeItem){
-            navigate(navbarItemsMap.get(activeItem) || "/settings");
-        }
-    },[activeItem]);
+    // useEffect(() => {
+    //     if(activeItem && activeItem !== ""){
+    //         navigate(navbarItemsMap.get(activeItem) || "/settings");
+    //     }else{
+    //         navigate("/");
+    //     }
+    // },[activeItem]);
 
     const handleSetItems = (item: string) => {
         console.log(JSON.stringify(item));
         setActiveItem(item);
+        navigate(navbarItemsMap.get(item) || "/settings");
     };
     const handleNavigateHome = () => {
         navigate("/");

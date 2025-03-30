@@ -28,8 +28,8 @@ import JobSearch from "../pages/job/JobSearch.tsx";
 import {UserType} from "../utils/enums.ts";
 import ApplicantJobdetails from "../pages/applicant/ApplicantJobdetails.tsx";
 import CompanyList from "../pages/company list/CompanyList.tsx";
-import JobEmployerDashboard from "../components/ui/employer/JobEmployerDashboard.tsx";
 import ApplicantShortList from "../pages/applicant/ApplicantShortList.tsx";
+import MyApplications from "../pages/applicant/MyApplications.tsx";
 
 const AppRoutes = () => {
     return (
@@ -43,7 +43,6 @@ const AppRoutes = () => {
                 <Route path="/employer/dashboard" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><EmployerDashboard/></PrivateRoute>}/>
                 <Route path="/user-type-selection" element={<UserTypeSelection/>}/>
                 <Route path="/applicant/signup" element={<ApplicantMultistepForm/>}/>
-                <Route path="/employer/jobcreation" element={<JobEmployerDashboard/>}/>
                 <Route path="/employer/signup" element={<EmployerMultistepForm/>}/>
                 <Route path="/employer/profile" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><EmployerProfile/></PrivateRoute>}/>
                 <Route path="/applicant/profile" element={<PrivateRoute allowedTypes={[UserType.APPLICANT]}><ApplicantProfile/></PrivateRoute>}/>
@@ -62,10 +61,11 @@ const AppRoutes = () => {
                 <Route path="/applicant/find-jobs" element={<JobSearch/>}/>
                 <Route path="/notification" element={<Notification/>}/>
                 <Route path="/applicant/job-details/:title" element={<ApplicantJobdetails/>}/>
-                <Route path="/applicant/dashboard/network" element={<ApplicantNetwork/>}/>
+                <Route path="/employer/network" element={<ApplicantNetwork/>}/>
                 <Route path="/applicant/dashboard/jobselection" element={<JobSelection/>}/>
                 <Route path="/companylist" element={<CompanyList />} />
                 <Route path="/applicant/applicant-shortlist" element={<ApplicantShortList />} />
+                <Route path="/applicant/my-applications" element={<MyApplications />} />
 
             </Routes>
     );
