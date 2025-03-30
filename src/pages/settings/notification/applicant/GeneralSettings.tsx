@@ -1,39 +1,41 @@
 import {useCallback, useEffect} from "react";
-import ToggleSwitch from "../../../components/common/ToggleSwitch.tsx";
+import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
-    CommunicationNotification, CommunicationNotificationOption,
+    GeneralSettingsNotification, GeneralSettingsNotificationOptions,
     NotificationType,
     useSettingsStore
-} from "../../../store/useSettingsStore.ts";
+} from "../../../../store/useSettingsStore.ts";
 import {debounce} from "lodash";
 import {toast} from "react-toastify";
 
-const CommunicationPreferences = () => {
-    const {applicantSettings, communication, setCommunication, updateCommunication} = useSettingsStore();
+const GeneralSettings = () => {
+    const {applicantSettings, generalSettings, setGeneralSettings, updateGeneralSettings} = useSettingsStore();
     const notificationTypes = ["all", "emailNotification", "pushNotification"];
-    const communicationNotificationState = [
-        "promotionalOffers",
-    "fromPlatform"
+    const generalSettingsState = [
+        "enableTwoFactorAuth",
+        "passwordChange",
+        "passwordReset",
+        "loginFromNewDevice",
+        "login",
     ];
-
 
     useEffect(() => {
         if (applicantSettings) {
-            setCommunication(applicantSettings.notifications.options.communication);
+            setGeneralSettings(applicantSettings.notifications.options.generalSettings);
         }
     }, [applicantSettings]);
 
 
     const debouncedUpdate = useCallback(
-        debounce(async (settings: CommunicationNotification) => {
-            const response = await updateCommunication(settings);
+        debounce(async (settings: GeneralSettingsNotification) => {
+            const response = await updateGeneralSettings(settings);
             if (response) {
-                setCommunication(response);
+                setGeneralSettings(response);
             } else {
                 toast.error("Failed to update application status notification settings");
             }
         }, 500),
-        [communication]
+        [generalSettings]
     );
 
     useEffect(() => {
@@ -42,12 +44,18 @@ const CommunicationPreferences = () => {
         };
     }, [debouncedUpdate]);
 
-    const getCommunicationStateField = (item: string) => {
+    const getGeneralSettingsStateField = (item: string) => {
         switch (item) {
-            case "promotionalOffers":
-                return "From employers";
+            case "enableTwoFactorAuth":
+                return "Two factor authentication is enabled";
+            case "passwordChange":
+                return "Password is changed";
+            case "passwordReset":
+                return "Password is reset";
+            case "loginFromNewDevice":
+                return "Login from new device";
             default:
-                return "From platform";
+                return "Login";
         }
     }
 
@@ -65,59 +73,61 @@ const CommunicationPreferences = () => {
 
     const handleNotificationTypeToggle = (item: string) => {
         const updatedSettings = {
-            ...communication,
+            ...generalSettings,
             notificationType: {
-                ...communication.notificationType,
-                [item]: !communication.notificationType[item as keyof NotificationType]
+                ...generalSettings.notificationType,
+                [item]: !generalSettings.notificationType[item as keyof NotificationType]
             }
         };
-        setCommunication(updatedSettings);
+        setGeneralSettings(updatedSettings);
         debouncedUpdate(updatedSettings);
     };
 
-    const handleCommunicationSettingsToggle = (item: string) => {
+    const handleGeneralSettingsToggle = (item: string) => {
         const updatedSettings = {
-            ...communication,
+            ...generalSettings,
             option: {
-                ...communication.option,
-                [item]: !communication.option[item as keyof CommunicationNotificationOption]
+                ...generalSettings.option,
+                [item]: !generalSettings.option[item as keyof GeneralSettingsNotificationOptions]
             }
         };
-        setCommunication(updatedSettings);
+        setGeneralSettings(updatedSettings);
         debouncedUpdate(updatedSettings);
     }
 
     return (
-        <div className="w-[90%] flex flex-col self-center py-10 font-lato">
-            <hr className="w-full border-t border-[#E6E6E6] mb-4" />
+        <div className="w-[90%] flex flex-col self-center font-lato">
+            <hr className="w-full border-t border-[#E6E6E6] mb-4"/>
 
             {/* Page Title */}
             <h2 className="text-black font-bold text-[24px] text-left text-xl">
-                Communication Preferences
+                General Settings
             </h2>
 
             {/* White Box Container */}
-            <div className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-8 mt-4">
+            <div
+                className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-8 mt-4">
                 {/* Header Titles */}
                 <div className="grid grid-cols-2 w-full font-bold text-md text-black">
-                    <h3>Receive Promotional Offers</h3>
+                    <h3>Notify me when:</h3>
                     <h3>Notification Type</h3>
                 </div>
 
                 {/* Horizontal Rule */}
-                <hr className="w-full border-t border-[#E6E6E6] my-3" />
+                <hr className="w-full border-t border-[#E6E6E6] my-3"/>
 
                 {/* Two-Column Layout */}
                 <div className="grid grid-cols-2 w-full gap-x-8 p-8">
-                    {/* Left Column - Promotional Offers */}
+                    {/* Left Column - General Settings Notifications */}
                     <div className="w-full">
                         <div className="space-y-4 mt-2">
-                            {communicationNotificationState.map((item, index) => (
+                            {generalSettingsState.map((item, index) => (
                                 <label key={index} className="flex items-center justify-between">
-                                    <span className="text-[16px] text-[#8E8E8E]">{getCommunicationStateField(item)}</span>
+                                    <span
+                                        className="text-[16px] text-[#8E8E8E]">{getGeneralSettingsStateField(item)}</span>
                                     <ToggleSwitch
-                                        isOn={communication.option[item as keyof CommunicationNotificationOption]}
-                                        onToggle={() => handleCommunicationSettingsToggle(item)}
+                                        isOn={generalSettings.option[item as keyof GeneralSettingsNotificationOptions]}
+                                        onToggle={() => handleGeneralSettingsToggle(item)}
                                     />
                                 </label>
                             ))}
@@ -129,9 +139,10 @@ const CommunicationPreferences = () => {
                         <div className="space-y-4 mt-2">
                             {notificationTypes.map((item, index) => (
                                 <label key={index} className="flex items-center justify-between">
-                                    <span className="text-[16px] text-[#8E8E8E]">{getNotificationTypeStateField(item)}</span>
+                                    <span
+                                        className="text-[16px] text-[#8E8E8E]">{getNotificationTypeStateField(item)}</span>
                                     <ToggleSwitch
-                                        isOn={communication.notificationType[item as keyof NotificationType]}
+                                        isOn={generalSettings.notificationType[item as keyof NotificationType]}
                                         onToggle={() => handleNotificationTypeToggle(item)}
                                     />
                                 </label>
@@ -144,4 +155,4 @@ const CommunicationPreferences = () => {
     );
 };
 
-export default CommunicationPreferences;
+export default GeneralSettings;

@@ -1,5 +1,5 @@
-import BackIcon from "../../../assets/images/arrow-left-02.png";
-import {useNavMenuStore} from "../../../store/useNavMenuStore.ts";
+import BackIcon from "../../../../assets/images/arrow-left-02.png";
+import {useNavMenuStore} from "../../../../store/useNavMenuStore.ts";
 import { MdOutlinePrivacyTip } from "react-icons/md";
 import { RiNotification2Line } from "react-icons/ri";
 import { TbUserEdit } from "react-icons/tb";

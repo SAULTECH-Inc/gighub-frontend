@@ -1,4 +1,4 @@
-import {useNavMenuStore} from "../../../store/useNavMenuStore.ts";
+import {useNavMenuStore} from "../../../../store/useNavMenuStore.ts";
 
 const NotificationSettingsHeader = () => {
     const {settings} = useNavMenuStore();

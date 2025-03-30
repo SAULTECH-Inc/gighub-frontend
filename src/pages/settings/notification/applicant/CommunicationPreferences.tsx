@@ -1,37 +1,39 @@
 import {useCallback, useEffect} from "react";
-import ToggleSwitch from "../../../components/common/ToggleSwitch.tsx";
+import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
-    NotificationType, PlatformNotificationOption, PlatformNotifications,
+    CommunicationNotification, CommunicationNotificationOption,
+    NotificationType,
     useSettingsStore
-} from "../../../store/useSettingsStore.ts";
+} from "../../../../store/useSettingsStore.ts";
 import {debounce} from "lodash";
 import {toast} from "react-toastify";
 
-const PlatformNotification = () => {
-    const {applicantSettings, platform, setPlatform, updatePlatform} = useSettingsStore();
+const CommunicationPreferences = () => {
+    const {applicantSettings, communication, setCommunication, updateCommunication} = useSettingsStore();
     const notificationTypes = ["all", "emailNotification", "pushNotification"];
-    const platformState = [
-        "newProductOrUpdate",
-    "maintenanceDowntime"
+    const communicationNotificationState = [
+        "promotionalOffers",
+    "fromPlatform"
     ];
 
+
     useEffect(() => {
-        if(applicantSettings){
-            setPlatform(applicantSettings.notifications.options.platform);
+        if (applicantSettings) {
+            setCommunication(applicantSettings.notifications.options.communication);
         }
     }, [applicantSettings]);
 
 
     const debouncedUpdate = useCallback(
-        debounce(async (settings: PlatformNotifications) => {
-            const response = await updatePlatform(settings);
+        debounce(async (settings: CommunicationNotification) => {
+            const response = await updateCommunication(settings);
             if (response) {
-                setPlatform(response);
+                setCommunication(response);
             } else {
                 toast.error("Failed to update application status notification settings");
             }
         }, 500),
-        [platform]
+        [communication]
     );
 
     useEffect(() => {
@@ -39,12 +41,13 @@ const PlatformNotification = () => {
             debouncedUpdate.cancel(); // prevent memory leak
         };
     }, [debouncedUpdate]);
-    const getPlatformStateField = (item: string) => {
+
+    const getCommunicationStateField = (item: string) => {
         switch (item) {
-            case "newProductOrUpdate":
-                return "New features or update";
+            case "promotionalOffers":
+                return "From employers";
             default:
-                return "Maintenance or downtime";
+                return "From platform";
         }
     }
 
@@ -62,41 +65,42 @@ const PlatformNotification = () => {
 
     const handleNotificationTypeToggle = (item: string) => {
         const updatedSettings = {
-            ...platform,
+            ...communication,
             notificationType: {
-                ...platform.notificationType,
-                [item]:!platform.notificationType[item as keyof NotificationType]
+                ...communication.notificationType,
+                [item]: !communication.notificationType[item as keyof NotificationType]
             }
         };
-        setPlatform(updatedSettings);
+        setCommunication(updatedSettings);
         debouncedUpdate(updatedSettings);
     };
 
-    const handlePlatformToggle = (item: string) => {
+    const handleCommunicationSettingsToggle = (item: string) => {
         const updatedSettings = {
-            ...platform,
+            ...communication,
             option: {
-                ...platform.option,
-                [item]:!platform.option[item as keyof PlatformNotificationOption]
+                ...communication.option,
+                [item]: !communication.option[item as keyof CommunicationNotificationOption]
             }
         };
-        setPlatform(updatedSettings);
+        setCommunication(updatedSettings);
         debouncedUpdate(updatedSettings);
     }
+
     return (
         <div className="w-[90%] flex flex-col self-center py-10 font-lato">
             <hr className="w-full border-t border-[#E6E6E6] mb-4" />
 
             {/* Page Title */}
             <h2 className="text-black font-bold text-[24px] text-left text-xl">
-                Platform Notification
+                Communication Preferences
             </h2>
 
             {/* White Box Container */}
             <div className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-8 mt-4">
                 {/* Header Titles */}
                 <div className="grid grid-cols-2 w-full font-bold text-md text-black">
-                    <h3>Notify me about:</h3>
+                    <h3>Receive Promotional Offers</h3>
                     <h3>Notification Type</h3>
                 </div>
 
@@ -105,15 +109,15 @@ const PlatformNotification = () => {
 
                 {/* Two-Column Layout */}
                 <div className="grid grid-cols-2 w-full gap-x-8 p-8">
-                    {/* Left Column - Platform Notifications */}
+                    {/* Left Column - Promotional Offers */}
                     <div className="w-full">
                         <div className="space-y-4 mt-2">
-                            {platformState.map((item, index) => (
+                            {communicationNotificationState.map((item, index) => (
                                 <label key={index} className="flex items-center justify-between">
-                                    <span className="text-[16px] text-[#8E8E8E]">{getPlatformStateField(item)}</span>
+                                    <span className="text-[16px] text-[#8E8E8E]">{getCommunicationStateField(item)}</span>
                                     <ToggleSwitch
-                                        isOn={platform.option[item as keyof PlatformNotificationOption]}
-                                        onToggle={() => handlePlatformToggle(item)}
+                                        isOn={communication.option[item as keyof CommunicationNotificationOption]}
+                                        onToggle={() => handleCommunicationSettingsToggle(item)}
                                     />
                                 </label>
                             ))}
@@ -127,7 +131,7 @@ const PlatformNotification = () => {
                                 <label key={index} className="flex items-center justify-between">
                                     <span className="text-[16px] text-[#8E8E8E]">{getNotificationTypeStateField(item)}</span>
                                     <ToggleSwitch
-                                        isOn={platform.notificationType[item as keyof NotificationType]}
+                                        isOn={communication.notificationType[item as keyof NotificationType]}
                                         onToggle={() => handleNotificationTypeToggle(item)}
                                     />
                                 </label>
@@ -140,4 +144,4 @@ const PlatformNotification = () => {
     );
 };
 
-export default PlatformNotification;
+export default CommunicationPreferences;

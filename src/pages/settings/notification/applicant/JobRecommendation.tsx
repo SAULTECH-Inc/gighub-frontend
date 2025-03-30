@@ -1,11 +1,11 @@
-import ToggleSwitch from "../../../components/common/ToggleSwitch.tsx";
+import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {useCallback, useEffect} from "react";
 import {
     JobRecommendations,
     JobRecommendationsNotification,
     NotificationFrequency, NotificationType,
     useSettingsStore
-} from "../../../store/useSettingsStore.ts";
+} from "../../../../store/useSettingsStore.ts";
 import {debounce} from "lodash";
 import {toast} from "react-toastify";
 
