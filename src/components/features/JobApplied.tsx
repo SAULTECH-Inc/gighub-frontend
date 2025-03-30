@@ -19,12 +19,12 @@ const JobApplied:React.FC<JobDescription> = ({companyName, jobTitle, jobType, lo
                 <span className='text-sm text-[#7F7F7F]'>{location}</span>
             </div>
         </div>
-        <span className='text-black font-medium text-sm'>{date}</span>
-        <p className='font-normal text-black'>{jobTitle}</p>
-        <p className='font-normal text-black'>{jobType}</p>
+        <span className='text-black font-medium text-sm sm:flex hidden'>{date}</span>
+        <p className='font-normal text-black sm:flex hidden'>{jobTitle}</p>
+        <p className='font-normal text-black sm:flex hidden'>{jobType}</p>
         <div className='flex items-center gap-x-3'>
-            <div className='h-3 w-3 bg-orange rounded-full'></div>
-            <span className='text-orange'>Summitted</span>
+            <div className='h-3 w-3 bg-orange rounded-full mr-5'></div>
+            <span className='text-orange sm:flex hidden'>Summitted</span>
         </div>
        </div>
        <button className="bg-[#6438C2] h-[3rem] w-[8rem] text-white font-bold rounded-[10px]">View destails</button>
