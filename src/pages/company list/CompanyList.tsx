@@ -12,8 +12,8 @@ import {
 const CompanyList = () => {
   return (
     <div className="relative overflow-hidden">
-        {/*<TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile}*/}
-        {/*navbarItemsMap={applicantNavBarItemMap} />*/}
+        <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile}
+        navbarItemsMap={applicantNavBarItemMap} />
         <div className="p-4 bg-[#F7F8FA]">
             <CompanyNavbar />
             <div className="flex max-lg:flex-col-reverse items-start gap-x-6 mt-5">
