@@ -37,6 +37,7 @@ import ApplicantJobdetails from "../pages/applicant/ApplicantJobdetails.tsx";
 import CompanyList from "../pages/company list/CompanyList.tsx";
 import ApplicantShortList from "../pages/applicant/ApplicantShortList.tsx";
 import Auto_Apply from "../pages/applicant/Auto_Apply.tsx";
+import AutoApply from "../pages/settings/notification/AutoApply.tsx";
 
 const AppRoutes = () => {
     const {setRedirectPath} = useAuth();
@@ -84,6 +85,7 @@ const AppRoutes = () => {
                 <Route path="/companylist" element={<CompanyList />} />
                 <Route path="/applicant/applicant-shortlist" element={<ApplicantShortList />} />
                 <Route path="/applicant/auto_apply" element={<Auto_Apply />} />
+                <Route path="/autoapply" element={<AutoApply />} />
 
             </Routes>
     );
