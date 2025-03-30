@@ -11,26 +11,10 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { Chatbob, Retweet } from "../../../assets/icons";
 import PublicProfileModal from "../../common/PublicProfileModal";
 import { useState } from "react";
+import { ApplicantData } from "../../../utils/types";
 
 
-const person = {
-  firstname: "Abubakar",
-  lastname: "Aasas",
-  middlename: "Sasas",
-  professionalTitle: "UI/UX Designer",
-  email: 'Asabubakar@gmail.com',
-  address: "Street Road, street road",
-  phone: '07011079676',
-  portfolio: "inspire.com",
-  bio: "I am a UI/UX designer skilled in creating user-friendly, visually appealing digital experiences. My expertise includes wireframing, prototyping, and conducting user research to ensure intuitive and responsive designs. Proficient in tools like Figma, Adobe XD, and Sketch, I focus on delivering accessible and seamless interfaces for both web and mobile. I strive to align design solutions with business goals while solving complex user challenges.",
-  numberOfConnections: 500,
-  state: "Lagos",
-  country: "Nigeria",
-  skills: ["UI/UX Design", "Wireframing", "Prototyping", "User Research", "Figma", "Adobe XD", "Sketch"],
-  // image: "ASAbubakar",
-}
-
-const PublicProfile: React.FC = () => {
+const PublicProfile: React.FC<{ person: ApplicantData }> = ({person}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onClose = () => {

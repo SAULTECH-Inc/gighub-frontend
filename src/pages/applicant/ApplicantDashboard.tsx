@@ -10,7 +10,10 @@ import {
     applicantNavItems, applicantNavItemsMobile,
 } from "../../utils/constants.ts";
 
+import { useNavigate } from "react-router-dom";
+
 export const ApplicantDashboard = () => {
+    const navigate = useNavigate();
     return (
         <>
             <div className="bg-[#F7F7F7]">
@@ -33,6 +36,10 @@ export const ApplicantDashboard = () => {
                             <ApplicantMessages/>
                         </div>
                     </div>
+                                      {/* <button className="font-medium text-[#000000]" onClick={() => navigate("/user/publicprofileview/[id]")}> */}
+                  <button className="font-medium bg-red-600 px-5 text-[#000000]" onClick={() => navigate("/user/viewprofile")}>
+                    View Profile
+                  </button>
                 </div>
 
             </div>
