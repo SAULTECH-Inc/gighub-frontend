@@ -1,26 +1,36 @@
 import {useCallback, useEffect} from "react";
-import ToggleSwitch from "../../../components/common/ToggleSwitch.tsx";
+import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
     InterviewInvitationState, InterviewInvitationNotification, NotificationType,
     useSettingsStore
-} from "../../../store/useSettingsStore.ts";
+} from "../../../../store/useSettingsStore.ts";
 import {debounce} from "lodash";
 import {toast} from "react-toastify";
+import {USER_TYPE} from "../../../../utils/helpers.ts";
+import {UserType} from "../../../../utils/enums.ts";
 
 const InterviewInvitation = () => {
     // State to track toggle status for each item
-    const {applicantSettings, interviewInvitation, setInterviewInvitation, updateInterviewInvitation} = useSettingsStore();
+    const {
+        applicantSettings,
+        employerSettings,
+        interviewInvitation,
+        setInterviewInvitation,
+        updateInterviewInvitation
+    } = useSettingsStore();
     const notificationTypes = ["all", "emailNotification", "pushNotification"];
     const interviewUpdates = [
         "scheduleCancelled",
-    "scheduleRescheduled",
-    "notifyForUpcomingInterviews",
-    "notifyForInterviewConfirmation"
+        "scheduleRescheduled",
+        "notifyForUpcomingInterviews",
+        "notifyForInterviewConfirmation"
     ];
 
     useEffect(() => {
-        if(applicantSettings){
+        if (applicantSettings && USER_TYPE === UserType.APPLICANT) {
             setInterviewInvitation(applicantSettings.notifications.options.interviewInvitation);
+        } else {
+            setInterviewInvitation(employerSettings.notifications.options.interviewInvitation);
         }
     }, [applicantSettings]);
 
@@ -46,13 +56,13 @@ const InterviewInvitation = () => {
     const getInterviewInvitationStateField = (item: string) => {
         switch (item) {
             case "scheduleRescheduled":
-                return "An employer schedules an interview";
+                return "When An employer schedules an interview";
             case "scheduleCancelled":
-                return "An interview is canceled";
+                return "When An interview is cancelled";
             case "notifyForUpcomingInterviews":
-                return "Notify for upcoming interviews";
+                return "For upcoming interviews";
             default:
-                return "Notify for interview confirmation";
+                return "For interview confirmation";
         }
     }
 
@@ -71,7 +81,7 @@ const InterviewInvitation = () => {
             ...interviewInvitation,
             notificationType: {
                 ...interviewInvitation.notificationType,
-                [item]:!interviewInvitation.notificationType[item as keyof NotificationType]
+                [item]: !interviewInvitation.notificationType[item as keyof NotificationType]
             }
         };
         setInterviewInvitation(updatedSettings);
@@ -83,7 +93,7 @@ const InterviewInvitation = () => {
             ...interviewInvitation,
             option: {
                 ...interviewInvitation.option,
-                [item]:!interviewInvitation.option[item as keyof InterviewInvitationState]
+                [item]: !interviewInvitation.option[item as keyof InterviewInvitationState]
             }
         };
         setInterviewInvitation(updatedSettings);
@@ -92,7 +102,7 @@ const InterviewInvitation = () => {
 
     return (
         <div className="w-[90%] flex flex-col self-center py-10 font-lato">
-            <hr className="w-full border-t border-[#E6E6E6] mb-4" />
+            <hr className="w-full border-t border-[#E6E6E6] mb-4"/>
 
             {/* Page Title */}
             <h2 className="text-black font-bold text-[24px] text-left text-xl">
@@ -100,15 +110,16 @@ const InterviewInvitation = () => {
             </h2>
 
             {/* White Box Container */}
-            <div className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-8 mt-4">
+            <div
+                className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-8 mt-4">
                 {/* Header Titles */}
                 <div className="grid grid-cols-2 w-full font-bold text-md text-black">
-                    <h3>Notify me when:</h3>
+                    <h3>Notify me:</h3>
                     <h3>Notification Type</h3>
                 </div>
 
                 {/* Horizontal Rule */}
-                <hr className="w-full border-t border-[#E6E6E6] my-3" />
+                <hr className="w-full border-t border-[#E6E6E6] my-3"/>
 
                 {/* Two-Column Layout */}
                 <div className="grid grid-cols-2 w-full gap-x-8 p-8">
@@ -117,7 +128,8 @@ const InterviewInvitation = () => {
                         <div className="space-y-4 mt-2">
                             {interviewUpdates.map((item, index) => (
                                 <label key={index} className="flex items-center justify-between">
-                                    <span className="text-[16px] text-[#8E8E8E]">{getInterviewInvitationStateField(item)}</span>
+                                    <span
+                                        className="text-[16px] text-[#8E8E8E]">{getInterviewInvitationStateField(item)}</span>
                                     <ToggleSwitch
                                         isOn={interviewInvitation.option[item as keyof InterviewInvitationState]}
                                         onToggle={() => handleInterviewInvitationToggle(item)}
@@ -132,7 +144,8 @@ const InterviewInvitation = () => {
                         <div className="space-y-4 mt-2">
                             {notificationTypes.map((item, index) => (
                                 <label key={index} className="flex items-center justify-between">
-                                    <span className="text-[16px] text-[#8E8E8E]">{getNotificationTypeStateField(item)}</span>
+                                    <span
+                                        className="text-[16px] text-[#8E8E8E]">{getNotificationTypeStateField(item)}</span>
                                     <ToggleSwitch
                                         isOn={interviewInvitation.notificationType[item as keyof NotificationType]}
                                         onToggle={() => handleNotificationTypeToggle(item)}

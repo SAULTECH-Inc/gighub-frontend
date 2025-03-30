@@ -1,40 +1,39 @@
 import {useCallback, useEffect} from "react";
-import ToggleSwitch from "../../../components/common/ToggleSwitch.tsx";
+import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
-    AutoApplyState,
-    AutoApplyNotification,NotificationType,
+    EmployerActionNotification, EmployerActionOption,
+    NotificationType,
     useSettingsStore
-} from "../../../store/useSettingsStore.ts";
+} from "../../../../store/useSettingsStore.ts";
 import {debounce} from "lodash";
 import {toast} from "react-toastify";
 
-const AutoApply = () => {
-    // State to track toggle status for each item
-    const {applicantSettings, autoApply, setAutoApply, updateAutoApply} = useSettingsStore();
+const EmployerAction = () => {
+    const {applicantSettings, employerAction, setEmployerAction, updateEmployerAction} = useSettingsStore();
     const notificationTypes = ["all", "emailNotification", "pushNotification"];
-    const autoApplyOptions = [
-        "jobAutoApplied",
-    "jobMatchFound",
-    "jobMatchedButFailedToApply"
+    const employerActions = [
+        "viewedMyProfile",
+    "downloadedMyResume",
+    "sentDirectMessage",
     ];
 
     useEffect(() => {
         if(applicantSettings){
-            setAutoApply(applicantSettings.notifications.options.autoApply);
+            setEmployerAction(applicantSettings.notifications.options.employerAction);
         }
     }, [applicantSettings]);
 
 
     const debouncedUpdate = useCallback(
-        debounce(async (settings: AutoApplyNotification) => {
-            const response = await updateAutoApply(settings);
+        debounce(async (settings: EmployerActionNotification) => {
+            const response = await updateEmployerAction(settings);
             if (response) {
-                setAutoApply(response);
+                setEmployerAction(response);
             } else {
                 toast.error("Failed to update application status notification settings");
             }
         }, 500),
-        [autoApply]
+        [employerAction]
     );
 
     useEffect(() => {
@@ -43,14 +42,14 @@ const AutoApply = () => {
         };
     }, [debouncedUpdate]);
 
-    const getAutoApplyStateField = (item: string) => {
+    const getEmployerActionStateField = (item: string) => {
         switch (item) {
-            case "jobAutoApplied":
-                return "A job is auto-applied successfully";
-            case "jobMatchFound":
-                return "Job Match Found";
+            case "viewedMyProfile":
+                return "Views my profile";
+            case "downloadedMyResume":
+                return "Downloads my Resume";
             default:
-                return "Job matches my profile but fails to apply";
+                return "Sends a direct message";
         }
     }
 
@@ -68,41 +67,42 @@ const AutoApply = () => {
 
     const handleNotificationTypeToggle = (item: string) => {
         const updatedSettings = {
-            ...autoApply,
+            ...employerAction,
             notificationType: {
-                ...autoApply.notificationType,
-                [item]:!autoApply.notificationType[item as keyof NotificationType]
+                ...employerAction.notificationType,
+                [item]:!employerAction.notificationType[item as keyof NotificationType]
             }
         };
-        setAutoApply(updatedSettings);
+        setEmployerAction(updatedSettings);
         debouncedUpdate(updatedSettings);
     };
 
-    const handleAutoApplyToggle = (item: string) => {
+    const handleEmployerActionsToggle = (item: string) => {
         const updatedSettings = {
-            ...autoApply,
+            ...employerAction,
             option: {
-                ...autoApply.option,
-                [item]:!autoApply.option[item as keyof AutoApplyState]
+                ...employerAction.option,
+                [item]:!employerAction.option[item as keyof EmployerActionOption]
             }
         };
-        setAutoApply(updatedSettings);
+        setEmployerAction(updatedSettings);
         debouncedUpdate(updatedSettings);
     }
+
     return (
         <div className="w-[90%] flex flex-col self-center font-lato">
             <hr className="w-full border-t border-[#E6E6E6] mb-4" />
 
             {/* Page Title */}
             <h2 className="text-black font-bold text-[24px] text-left text-xl">
-                Auto Apply Notification
+                Employer Action
             </h2>
 
             {/* White Box Container */}
             <div className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-8 mt-4">
                 {/* Header Titles */}
                 <div className="grid grid-cols-2 w-full font-bold text-md text-black">
-                    <h3>Notify me when:</h3>
+                    <h3>Notify me when an employer:</h3>
                     <h3>Notification Type</h3>
                 </div>
 
@@ -111,15 +111,15 @@ const AutoApply = () => {
 
                 {/* Two-Column Layout */}
                 <div className="grid grid-cols-2 w-full gap-x-8 p-8">
-                    {/* Left Column - Auto Apply Updates */}
+                    {/* Left Column - Employer Actions */}
                     <div className="w-full">
                         <div className="space-y-4 mt-2">
-                            {autoApplyOptions.map((item, index) => (
+                            {employerActions.map((item, index) => (
                                 <label key={index} className="flex items-center justify-between">
-                                    <span className="text-[16px] text-[#8E8E8E]">{getAutoApplyStateField(item)}</span>
+                                    <span className="text-[16px] text-[#8E8E8E]">{getEmployerActionStateField(item)}</span>
                                     <ToggleSwitch
-                                        isOn={autoApply.option[item as keyof AutoApplyState]}
-                                        onToggle={() => handleAutoApplyToggle(item)}
+                                        isOn={employerAction.option[item as keyof EmployerActionOption]}
+                                        onToggle={() => handleEmployerActionsToggle(item)}
                                     />
                                 </label>
                             ))}
@@ -133,7 +133,7 @@ const AutoApply = () => {
                                 <label key={index} className="flex items-center justify-between">
                                     <span className="text-[16px] text-[#8E8E8E]">{getNotificationTypeStateField(item)}</span>
                                     <ToggleSwitch
-                                        isOn={autoApply.notificationType[item as keyof NotificationType]}
+                                        isOn={employerAction.notificationType[item as keyof NotificationType]}
                                         onToggle={() => handleNotificationTypeToggle(item)}
                                     />
                                 </label>
@@ -146,4 +146,4 @@ const AutoApply = () => {
     );
 };
 
-export default AutoApply;
+export default EmployerAction;

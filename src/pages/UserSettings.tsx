@@ -1,15 +1,15 @@
 import {FC, useEffect} from "react";
-import NotificationSettingsHeader from "./settings/notification/NotificationSettingsHeader.tsx";
-import JobRecommendation from "./settings/notification/JobRecommendation.tsx";
-import InterviewInvitation from "./settings/notification/InterviewInvitation.tsx";
-import AutoApply from "./settings/notification/AutoApply.tsx";
-import SavedJob from "./settings/notification/SavedJob.tsx";
-import EmployerAction from "./settings/notification/EmployerAction.tsx";
-import PlatformNotification from "./settings/notification/PlatformNotification.tsx";
-import GeneralSettings from "./settings/notification/GeneralSettings.tsx";
-import CommunicationPreferences from "./settings/notification/CommunicationPreferences.tsx";
-import JobApplicationUpdate from "./settings/notification/JobApplicationUpdate.tsx";
-import NotificationSidebar from "./settings/notification/NotificationSidebar.tsx";
+import NotificationSettingsHeader from "./settings/notification/applicant/NotificationSettingsHeader.tsx";
+import JobRecommendation from "./settings/notification/applicant/JobRecommendation.tsx";
+import InterviewInvitation from "./settings/notification/applicant/InterviewInvitation.tsx";
+import AutoApply from "./settings/notification/applicant/AutoApply.tsx";
+import SavedJob from "./settings/notification/applicant/SavedJob.tsx";
+import EmployerAction from "./settings/notification/applicant/EmployerAction.tsx";
+import PlatformNotification from "./settings/notification/applicant/PlatformNotification.tsx";
+import GeneralSettings from "./settings/notification/applicant/GeneralSettings.tsx";
+import CommunicationPreferences from "./settings/notification/applicant/CommunicationPreferences.tsx";
+import JobApplicationUpdate from "./settings/notification/applicant/JobApplicationUpdate.tsx";
+import NotificationSidebar from "./settings/notification/applicant/NotificationSidebar.tsx";
 import {useNavMenuStore} from "../store/useNavMenuStore.ts";
 import MonthlyPlan from "./settings/subscription/MonthlyPlan.tsx";
 import InvoiceList from "./settings/subscription/InvoiceList.tsx";
@@ -27,6 +27,8 @@ import {
     employerNavItemsMobile
 } from "../utils/constants.ts";
 import {useUserSubscription} from "../store/useUserSubscription.ts";
+import ManageJobNotification from "./settings/notification/employer/ManageJobNotification.tsx";
+import JobPostingStatus from "./settings/notification/employer/JobPostingStatus.tsx";
 const UserSettings: FC = () => {
     const {settings} = useNavMenuStore();
     const {applicant, employer, userType} = useAuth();
@@ -101,6 +103,13 @@ const UserSettings: FC = () => {
                             <PlatformNotification/>
                             <GeneralSettings/>
                             <CommunicationPreferences/>
+                        </div>)}
+
+                    {settings.notification && userType === UserType.EMPLOYER && (
+                        <div className="w-full flex flex-col items-center overflow-y-auto max-h-screen">
+                            <ManageJobNotification/>
+                            <JobPostingStatus/>
+                            <InterviewInvitation/>
                         </div>)}
                     {/*Subscription */}
                     {settings.subscription && (

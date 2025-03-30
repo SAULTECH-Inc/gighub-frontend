@@ -5,6 +5,7 @@ import {API_BASE_URL, NODE_ENV, secureStorageWrapper} from "../utils/constants.t
 import {UserType} from "../utils/enums.ts";
 import {privateApiClient} from "../api/axios.ts";
 import {APIResponse} from "../utils/types";
+import {handleError, USER_TYPE} from "../utils/helpers.ts";
 
 // Notification Types
 export interface NotificationType {
@@ -163,8 +164,7 @@ interface PaymentAndBillingNotification {
 }
 
 // Job Posting Notifications
-interface JobPostingStatusNotificationOptions {
-    newJobPosting: boolean;
+export interface JobPostingStatusNotificationOptions {
     draftSaved: boolean;
     jobUpdated: boolean;
     jobPublished: boolean;
@@ -173,7 +173,7 @@ interface JobPostingStatusNotificationOptions {
     jobDeleted: boolean;
 }
 
-interface JobPostingStatusNotification {
+export interface JobPostingStatusNotification {
     notificationType: NotificationType;
     option: JobPostingStatusNotificationOptions;
 }
@@ -237,8 +237,22 @@ export interface ApplicantSettings {
     subscription: SubscriptionDetails;
 }
 
+// Manage Job Notifications Options
+export interface ManageJobNotificationState {
+    applicantApplies: boolean;
+    applicationStatusUpdated: boolean;
+    interviewScheduled: boolean;
+}
+
+// Manage Job Applications Notifications
+export interface ManageJobApplicationsNotifications {
+    notificationType: NotificationType;
+    option: ManageJobNotificationState;
+}
+
 // Employer Notifications Options
 interface EmployerNotificationsOptions {
+    manageJobApplications: ManageJobApplicationsNotifications;
     jobPostingStatus: JobPostingStatusNotification;
     interviewInvitation: InterviewInvitationNotification;
     paymentAndBilling: PaymentAndBillingNotification;
@@ -274,6 +288,12 @@ export interface SettingsStore {
     setEmployerSettings: (settings: EmployerSettings) => void;
     applicantSettings: ApplicantSettings;
     employerSettings: EmployerSettings;
+    manageJobApplications: ManageJobApplicationsNotifications;
+    setManageJobApplications: (manageJobApplications: ManageJobApplicationsNotifications) =>void;
+    jobPostingStatus: JobPostingStatusNotification;
+    setJobPostingStatus: (status: JobPostingStatusNotification) => void;
+    updateJobPostingStatus: (status: JobPostingStatusNotification)=>Promise<JobPostingStatusNotification>;
+    updateManageJobApplications: (manageJobNotification: ManageJobApplicationsNotifications) => Promise<ManageJobApplicationsNotifications>;
     applicationStatusNotification: ApplicationStatusNotification;
     jobRecommendations: JobRecommendationsNotification;
     setJobRecommendationsNotification: (jobRecommendations: JobRecommendationsNotification) => void;
@@ -446,7 +466,11 @@ export const useSettingsStore = create<SettingsStore>()(
                     }
                 },
                 setInterviewInvitation: (invitation: InterviewInvitationNotification) => set((state) => {
-                    state.applicantSettings.notifications.options.interviewInvitation = invitation;
+                    if(USER_TYPE === UserType.APPLICANT){
+                        state.applicantSettings.notifications.options.interviewInvitation = invitation;
+                    }else{
+                        state.employerSettings.notifications.options.interviewInvitation = invitation;
+                    }
                 }),
                 updateInterviewInvitation: async (invitation: InterviewInvitationNotification) => {
                     const SETTINGS_URL = `${API_BASE_URL}/settings/interview-invitation/update`;
@@ -679,6 +703,70 @@ export const useSettingsStore = create<SettingsStore>()(
                         console.error(`Error updating privacy settings:`, err);
                         throw new Error(`Failed to update privacy settings: ${err.message}`);
                     }
+                },
+                manageJobApplications: {
+                    notificationType: {
+                        all: false,
+                        emailNotification: false,
+                        pushNotification: false,
+                        smsNotification: false
+                    },
+                    option: {
+                        applicantApplies: false,
+                        applicationStatusUpdated: false,
+                        interviewScheduled: false,
+                    }
+                },
+                setManageJobApplications: (manageJobApplications: ManageJobApplicationsNotifications) => set((state) => {
+                    state.employerSettings.notifications.options.manageJobApplications = manageJobApplications
+                }),
+                updateManageJobApplications: async (manageJobApplications: ManageJobApplicationsNotifications) => {
+                    const SETTINGS_URL = `${API_BASE_URL}/settings/manage-job-applications/update`;
+
+                    try {
+                        const response = await privateApiClient.put<APIResponse<ManageJobApplicationsNotifications>>(SETTINGS_URL, manageJobApplications);
+                        set((state) => {
+                            state.manageJobApplications = manageJobApplications;
+                        });
+                        return response?.data?.data;
+                    } catch (err: any) {
+                        handleError(err);
+                        return {} as ManageJobApplicationsNotifications;
+                    }
+                },
+                jobPostingStatus: {
+                    notificationType: {
+                        all: false,
+                        emailNotification: false,
+                        pushNotification: false,
+                        smsNotification: false
+                    },
+                    option: {
+                        newJobPosting: false,
+                        draftSaved: false,
+                        jobUpdated: false,
+                        jobPublished: false,
+                        jobFailed: false,
+                        jobExpired: false,
+                        jobDeleted: false
+                    }
+                },
+                setJobPostingStatus: (jobPostingStatus: JobPostingStatusNotification) => set((state) => {
+                    state.employerSettings.notifications.options.jobPostingStatus = jobPostingStatus
+                }),
+                updateJobPostingStatus: async (jobPostingStatus: JobPostingStatusNotification) => {
+                    const SETTINGS_URL = `${API_BASE_URL}/settings/job-posting-status/update`;
+
+                    try {
+                        const response = await privateApiClient.put<APIResponse<JobPostingStatusNotification>>(SETTINGS_URL, jobPostingStatus);
+                        set((state) => {
+                            state.jobPostingStatus = jobPostingStatus;
+                        });
+                        return response?.data?.data;
+                    } catch (err: any) {
+                        handleError(err);
+                        return {} as JobPostingStatusNotification;
+                    }
                 }
             })),
             {
@@ -698,6 +786,8 @@ export const useSettingsStore = create<SettingsStore>()(
                     privacy: state.privacy,
                     applicationStatusNotification: state.applicationStatusNotification,
                     employerSettings: state.employerSettings,
+                    manageJobApplications: state.manageJobApplications,
+                    jobPostingStatus: state.jobPostingStatus
                 })
             }
         )

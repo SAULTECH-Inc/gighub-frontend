@@ -46,12 +46,12 @@ const MonthlyPlan = () => {
                 {/* Middle Row: Application Count & Upgrade Button */}
                 <div className="flex justify-between items-center mt-3">
                     {/* Application Usage */}
-                    <div>
-                        <p className="text-black text-[14px]">12 of 3000 Applications</p>
-                        <div className="w-[215px] h-[9px] bg-[#F7F8FA] rounded-[16px] mt-1 relative">
-                            <div className="bg-[#6438C2] h-[9px] rounded-[16px]" style={{width: "60px"}}></div>
-                        </div>
-                    </div>
+                    {
+                        currentSubscription?.isActive && (<div
+                            className="rounded-[10px] shadow-sm flex justify-center items-center bg-[#F7F6F7] text-orange w-[137px] h-[42px]">
+                            <p className="text-center">Active</p>
+                        </div>)
+                    }
 
                     {/* Upgrade Button */}
                     <button
