@@ -2,6 +2,7 @@ import {NODE_ENV} from "./constants.ts";
 import secureLocalStorage from "react-secure-storage";
 import {ISubscription} from "../store/useUserSubscription.ts";
 import moment from "moment";
+import logger from "../log-config";
 
 export const calculatePasswordStrength = (password: string): number => {
     let strength = 0;
@@ -108,6 +109,14 @@ export const subCycle = (subscription: ISubscription)=>{
             return "Half-Year";
         default:
             return "Year";
+    }
+}
+
+export const handleError = (error: any)=>{
+    if (NODE_ENV === 'production') {
+        logger.error(error.response?.data?.message || 'Unknown error occurred');
+    } else {
+        // toast.error(error.response?.data?.message || 'Failed to fetch job preferences');
     }
 }
 

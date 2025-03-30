@@ -2,10 +2,14 @@ import ArrowIcon from "../../../assets/icons/circle-arrow.png";
 import {ISubscription, useUserSubscription} from "../../../store/useUserSubscription.ts";
 import {currencyAbbreviationToSymbol} from "../../../utils/constants.ts";
 import {calculateNextSubscriptionDate, subCycle} from "../../../utils/helpers.ts";
+import {useAuth} from "../../../store/useAuth.ts";
+import {UserType} from "../../../utils/enums.ts";
 
 
 const MonthlyPlan = () => {
+    const {userType} = useAuth();
     const {currentSubscription} = useUserSubscription();
+    console.log("Sub ::: "+JSON.stringify(currentSubscription));
 
     //calculate next subscription
 
@@ -21,6 +25,13 @@ const MonthlyPlan = () => {
                         className="bg-[#6438C2] text-white text-xs font-bold px-3 py-1  w-[116px] h-[30px] flex items-center justify-center">
                         {currentSubscription?.billingCycle} Plan
                     </div>
+                    {
+                        userType === UserType.APPLICANT && (
+                            <div>
+                                Auto Apply
+                            </div>
+                        )
+                    }
 
                     {/* Pricing */}
                     <div className="flex items-start">
