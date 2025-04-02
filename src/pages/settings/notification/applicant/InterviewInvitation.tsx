@@ -1,41 +1,50 @@
 import {useCallback, useEffect} from "react";
-import ToggleSwitch from "../../../components/common/ToggleSwitch.tsx";
+import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
-    GeneralSettingsNotification, GeneralSettingsNotificationOptions,
-    NotificationType,
+    InterviewInvitationState, InterviewInvitationNotification, NotificationType,
     useSettingsStore
-} from "../../../store/useSettingsStore.ts";
+} from "../../../../store/useSettingsStore.ts";
 import {debounce} from "lodash";
 import {toast} from "react-toastify";
+import {USER_TYPE} from "../../../../utils/helpers.ts";
+import {UserType} from "../../../../utils/enums.ts";
 
-const GeneralSettings = () => {
-    const {applicantSettings, generalSettings, setGeneralSettings, updateGeneralSettings} = useSettingsStore();
+const InterviewInvitation = () => {
+    // State to track toggle status for each item
+    const {
+        applicantSettings,
+        employerSettings,
+        interviewInvitation,
+        setInterviewInvitation,
+        updateInterviewInvitation
+    } = useSettingsStore();
     const notificationTypes = ["all", "emailNotification", "pushNotification"];
-    const generalSettingsState = [
-        "enableTwoFactorAuth",
-        "passwordChange",
-        "passwordReset",
-        "loginFromNewDevice",
-        "login",
+    const interviewUpdates = [
+        "scheduleCancelled",
+        "scheduleRescheduled",
+        "notifyForUpcomingInterviews",
+        "notifyForInterviewConfirmation"
     ];
 
     useEffect(() => {
-        if (applicantSettings) {
-            setGeneralSettings(applicantSettings.notifications.options.generalSettings);
+        if (applicantSettings && USER_TYPE === UserType.APPLICANT) {
+            setInterviewInvitation(applicantSettings.notifications.options.interviewInvitation);
+        } else {
+            setInterviewInvitation(employerSettings.notifications.options.interviewInvitation);
         }
     }, [applicantSettings]);
 
 
     const debouncedUpdate = useCallback(
-        debounce(async (settings: GeneralSettingsNotification) => {
-            const response = await updateGeneralSettings(settings);
+        debounce(async (settings: InterviewInvitationNotification) => {
+            const response = await updateInterviewInvitation(settings);
             if (response) {
-                setGeneralSettings(response);
+                setInterviewInvitation(response);
             } else {
                 toast.error("Failed to update application status notification settings");
             }
         }, 500),
-        [generalSettings]
+        [interviewInvitation]
     );
 
     useEffect(() => {
@@ -44,18 +53,16 @@ const GeneralSettings = () => {
         };
     }, [debouncedUpdate]);
 
-    const getGeneralSettingsStateField = (item: string) => {
+    const getInterviewInvitationStateField = (item: string) => {
         switch (item) {
-            case "enableTwoFactorAuth":
-                return "Two factor authentication is enabled";
-            case "passwordChange":
-                return "Password is changed";
-            case "passwordReset":
-                return "Password is reset";
-            case "loginFromNewDevice":
-                return "Login from new device";
+            case "scheduleRescheduled":
+                return "When An employer schedules an interview";
+            case "scheduleCancelled":
+                return "When An interview is cancelled";
+            case "notifyForUpcomingInterviews":
+                return "For upcoming interviews";
             default:
-                return "Login";
+                return "For interview confirmation";
         }
     }
 
@@ -69,47 +76,45 @@ const GeneralSettings = () => {
                 return "All";
         }
     }
-
-
     const handleNotificationTypeToggle = (item: string) => {
         const updatedSettings = {
-            ...generalSettings,
+            ...interviewInvitation,
             notificationType: {
-                ...generalSettings.notificationType,
-                [item]: !generalSettings.notificationType[item as keyof NotificationType]
+                ...interviewInvitation.notificationType,
+                [item]: !interviewInvitation.notificationType[item as keyof NotificationType]
             }
         };
-        setGeneralSettings(updatedSettings);
+        setInterviewInvitation(updatedSettings);
         debouncedUpdate(updatedSettings);
     };
 
-    const handleGeneralSettingsToggle = (item: string) => {
+    const handleInterviewInvitationToggle = (item: string) => {
         const updatedSettings = {
-            ...generalSettings,
+            ...interviewInvitation,
             option: {
-                ...generalSettings.option,
-                [item]: !generalSettings.option[item as keyof GeneralSettingsNotificationOptions]
+                ...interviewInvitation.option,
+                [item]: !interviewInvitation.option[item as keyof InterviewInvitationState]
             }
         };
-        setGeneralSettings(updatedSettings);
+        setInterviewInvitation(updatedSettings);
         debouncedUpdate(updatedSettings);
     }
 
     return (
-        <div className="w-[90%] flex flex-col self-center font-lato">
+        <div className="w-[95%] md:w-[90%] flex flex-col self-center py-10 font-lato">
             <hr className="w-full border-t border-[#E6E6E6] mb-4"/>
 
             {/* Page Title */}
             <h2 className="text-black font-bold text-[24px] text-left text-xl">
-                General Settings
+                Interview Invitation
             </h2>
 
             {/* White Box Container */}
             <div
-                className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-8 mt-4">
+                className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-4 mt-4">
                 {/* Header Titles */}
                 <div className="grid grid-cols-2 w-full font-bold text-md text-black">
-                    <h3>Notify me when:</h3>
+                    <h3>Notify me:</h3>
                     <h3>Notification Type</h3>
                 </div>
 
@@ -117,17 +122,17 @@ const GeneralSettings = () => {
                 <hr className="w-full border-t border-[#E6E6E6] my-3"/>
 
                 {/* Two-Column Layout */}
-                <div className="grid grid-cols-2 w-full gap-x-8 p-8">
-                    {/* Left Column - General Settings Notifications */}
+                <div className="grid grid-cols-2 w-full gap-x-8 px-2 py-8">
+                    {/* Left Column - Interview Updates */}
                     <div className="w-full">
                         <div className="space-y-4 mt-2">
-                            {generalSettingsState.map((item, index) => (
+                            {interviewUpdates.map((item, index) => (
                                 <label key={index} className="flex items-center justify-between">
                                     <span
-                                        className="text-[16px] text-[#8E8E8E]">{getGeneralSettingsStateField(item)}</span>
+                                        className="text-[16px] text-[#8E8E8E]">{getInterviewInvitationStateField(item)}</span>
                                     <ToggleSwitch
-                                        isOn={generalSettings.option[item as keyof GeneralSettingsNotificationOptions]}
-                                        onToggle={() => handleGeneralSettingsToggle(item)}
+                                        isOn={interviewInvitation.option[item as keyof InterviewInvitationState]}
+                                        onToggle={() => handleInterviewInvitationToggle(item)}
                                     />
                                 </label>
                             ))}
@@ -142,7 +147,7 @@ const GeneralSettings = () => {
                                     <span
                                         className="text-[16px] text-[#8E8E8E]">{getNotificationTypeStateField(item)}</span>
                                     <ToggleSwitch
-                                        isOn={generalSettings.notificationType[item as keyof NotificationType]}
+                                        isOn={interviewInvitation.notificationType[item as keyof NotificationType]}
                                         onToggle={() => handleNotificationTypeToggle(item)}
                                     />
                                 </label>
@@ -155,4 +160,4 @@ const GeneralSettings = () => {
     );
 };
 
-export default GeneralSettings;
+export default InterviewInvitation;

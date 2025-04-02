@@ -5,7 +5,7 @@ import JobMatchCard from "../features/JobMatchCard.tsx";
 
 const BelowApplicationStats: FC = ()=>{
     return <>
-        <div className="w-full flex flex-col md:flex-row md:items-center md:justify-evenly gap-x-6 gap-y-3">
+        <div className="w-full flex flex-col md:grid md:grid-cols-[60%_35%] md:items-center md:justify-evenly gap-x-6 gap-y-3">
             <JobMatchCard
                 title="Visual Designer"
                 company="Facebook"
