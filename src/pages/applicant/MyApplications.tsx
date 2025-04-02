@@ -8,13 +8,13 @@ import {
   applicantNavItemsMobile,
 } from "../../utils/constants";
 
-import { Pagination, Tag, Select, Input, Button, Spin, Space } from "antd";
+import { Pagination, Select, Input, Button, Spin, Space } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
 enum ApplicationStatus {
-  PENDING = "PENDING",
+  PENDING = "Pending",
   HIRED = "Hired",
   INTERVIEW = "Interview Scheduled",
   REJECTED = "Rejected",
@@ -171,8 +171,8 @@ const MyApplications: React.FC = () => {
         />
       </div>
       <div className="flex w-full justify-center ">
-        <div className="flex w-[70%] flex-col items-center">
-          <div className="my-4 flex h-[64px] w-[96%] items-center justify-between rounded-[16px] bg-white px-4">
+        <div className="flex w-[70%] flex-col justify-center px-10">
+          <div className="my-4 flex h-[64px] w-[96%] max-w-[960px] items-center justify-between rounded-[16px] bg-white px-4">
             <div className="flex w-full items-center justify-between gap-2">
               <div className="flex w-[80%] items-center">
                 <img src={Search} alt="search icon" className="fill-black" />
@@ -205,25 +205,20 @@ const MyApplications: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="flex w-[96%] justify-between rounded-[16px] bg-white px-4 py-4 mb-4">
+          <div className="flex flex-col w-[96%] max-w-[960px] justify-between rounded-[16px] bg-white px-4 py-4 mb-4">
             {/* <div className="my-2 flex items-center"><p className="font-bold text-[20px]">My Application</p>
-          </div>
-          <div className="w-[80%] flex gap-2 bg-[#F7F7F7] items-center pl-4 rounded-[16px] py-2">
+          </div> */}
+          <div className="w-full flex justify-between gap-2 bg-[#F7F7F7] items-center px-4 rounded-[16px] py-2">
               <p className="font-bold">Filter By:</p>
               <div className="border border-[#E6E6E6] py-[9px] px-[42px] bg-white rounded-[10px]">Pending</div>
               <div className="border border-[#E6E6E6] py-[9px] px-[42px] bg-white rounded-[10px]">Accepted</div>
               <div className="border border-[#E6E6E6] py-[9px] px-[42px] bg-white rounded-[10px]">Rejected</div>
               <div className="border border-[#E6E6E6] py-[9px] px-[42px] bg-white rounded-[10px]">Shortlisted</div>
             </div>
-            <div>
-
-            </div> */}
 
             <div className="w-full">
-              <h2>Job Applications</h2>
-
               {/* Filters */}
-              <div className="filters-container">
+              {/* <div className="filters-container">
                 <Space style={{ marginBottom: 16 }}>
                   <Select
                     placeholder="Filter by Status"
@@ -274,7 +269,7 @@ const MyApplications: React.FC = () => {
                     Search
                   </Button>
                 </Space>
-              </div>
+              </div> */}
 
               {/* Applications list */}
               {loading ? (
@@ -285,11 +280,11 @@ const MyApplications: React.FC = () => {
                   <Spin size="large" />
                 </div>
               ) : (
-                <div className="flex w-full flex-col">
+                <div className="flex w-full flex-col mt-5">
                   {applications.length > 0 ? (
                     applications.map((app: Application) => (
                       <div key={app.id} className="my-2 flex w-full">
-                        <div className="flex h-[63px] w-full items-center rounded-[16px] bg-[#F7F7F7] px-2">
+                        <div className="flex h-[63px] items-center rounded-[16px] bg-[#F7F7F7] px-2">
                           <div className="flex w-[300px] items-center gap-2">
                             <div className="h-[46px] w-[51px] rounded-[10px] bg-[#D9D9D9]"></div>
                             <div>
@@ -348,7 +343,7 @@ const MyApplications: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="mx-2 my-4 flex w-[30%] flex-col items-center justify-center">
+        <div className="mx-2 my-4 flex w-[30%] flex-col items-center">
           <div className="flex w-full items-center">
             <div className="flex w-full">
               <ApplicantSchedules />
