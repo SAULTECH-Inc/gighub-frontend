@@ -95,7 +95,7 @@ const SkillsAndCompetences: React.FC = () => {
                     <Skills
                         isEditable={isEditable}
                         options={skillsOptions}
-                        skills={cvDetails?.skills?.map(s => s?.skill) as string[] || [] as string[]}
+                        skills={cvDetails?.skills?.map(s => s?.skill) as string[]}
                         addSkill={addSkill}
                         removeSkill={removeSkill}
                     />

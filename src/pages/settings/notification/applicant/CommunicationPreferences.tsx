@@ -1,39 +1,39 @@
 import {useCallback, useEffect} from "react";
-import ToggleSwitch from "../../../components/common/ToggleSwitch.tsx";
+import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
-    EmployerActionNotification, EmployerActionOption,
+    CommunicationNotification, CommunicationNotificationOption,
     NotificationType,
     useSettingsStore
-} from "../../../store/useSettingsStore.ts";
+} from "../../../../store/useSettingsStore.ts";
 import {debounce} from "lodash";
 import {toast} from "react-toastify";
 
-const EmployerAction = () => {
-    const {applicantSettings, employerAction, setEmployerAction, updateEmployerAction} = useSettingsStore();
+const CommunicationPreferences = () => {
+    const {applicantSettings, communication, setCommunication, updateCommunication} = useSettingsStore();
     const notificationTypes = ["all", "emailNotification", "pushNotification"];
-    const employerActions = [
-        "viewedMyProfile",
-    "downloadedMyResume",
-    "sentDirectMessage",
+    const communicationNotificationState = [
+        "promotionalOffers",
+    "fromPlatform"
     ];
 
+
     useEffect(() => {
-        if(applicantSettings){
-            setEmployerAction(applicantSettings.notifications.options.employerAction);
+        if (applicantSettings) {
+            setCommunication(applicantSettings.notifications.options.communication);
         }
     }, [applicantSettings]);
 
 
     const debouncedUpdate = useCallback(
-        debounce(async (settings: EmployerActionNotification) => {
-            const response = await updateEmployerAction(settings);
+        debounce(async (settings: CommunicationNotification) => {
+            const response = await updateCommunication(settings);
             if (response) {
-                setEmployerAction(response);
+                setCommunication(response);
             } else {
                 toast.error("Failed to update application status notification settings");
             }
         }, 500),
-        [employerAction]
+        [communication]
     );
 
     useEffect(() => {
@@ -42,14 +42,12 @@ const EmployerAction = () => {
         };
     }, [debouncedUpdate]);
 
-    const getEmployerActionStateField = (item: string) => {
+    const getCommunicationStateField = (item: string) => {
         switch (item) {
-            case "viewedMyProfile":
-                return "Views my profile";
-            case "downloadedMyResume":
-                return "Downloads my Resume";
+            case "promotionalOffers":
+                return "From employers";
             default:
-                return "Sends a direct message";
+                return "From platform";
         }
     }
 
@@ -67,42 +65,42 @@ const EmployerAction = () => {
 
     const handleNotificationTypeToggle = (item: string) => {
         const updatedSettings = {
-            ...employerAction,
+            ...communication,
             notificationType: {
-                ...employerAction.notificationType,
-                [item]:!employerAction.notificationType[item as keyof NotificationType]
+                ...communication.notificationType,
+                [item]: !communication.notificationType[item as keyof NotificationType]
             }
         };
-        setEmployerAction(updatedSettings);
+        setCommunication(updatedSettings);
         debouncedUpdate(updatedSettings);
     };
 
-    const handleEmployerActionsToggle = (item: string) => {
+    const handleCommunicationSettingsToggle = (item: string) => {
         const updatedSettings = {
-            ...employerAction,
+            ...communication,
             option: {
-                ...employerAction.option,
-                [item]:!employerAction.option[item as keyof EmployerActionOption]
+                ...communication.option,
+                [item]: !communication.option[item as keyof CommunicationNotificationOption]
             }
         };
-        setEmployerAction(updatedSettings);
+        setCommunication(updatedSettings);
         debouncedUpdate(updatedSettings);
     }
 
     return (
-        <div className="w-[90%] flex flex-col self-center font-lato">
+        <div className="w-[95%] md:w-[90%] flex flex-col self-center py-10 font-lato">
             <hr className="w-full border-t border-[#E6E6E6] mb-4" />
 
             {/* Page Title */}
             <h2 className="text-black font-bold text-[24px] text-left text-xl">
-                Employer Action
+                Communication Preferences
             </h2>
 
             {/* White Box Container */}
-            <div className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-8 mt-4">
+            <div className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-4 md:px-8 mt-4">
                 {/* Header Titles */}
                 <div className="grid grid-cols-2 w-full font-bold text-md text-black">
-                    <h3>Notify me when an employer:</h3>
+                    <h3>Receive Promotional Offers</h3>
                     <h3>Notification Type</h3>
                 </div>
 
@@ -110,16 +108,16 @@ const EmployerAction = () => {
                 <hr className="w-full border-t border-[#E6E6E6] my-3" />
 
                 {/* Two-Column Layout */}
-                <div className="grid grid-cols-2 w-full gap-x-8 p-8">
-                    {/* Left Column - Employer Actions */}
+                <div className="grid grid-cols-2 w-full gap-x-8 px-2 py-8">
+                    {/* Left Column - Promotional Offers */}
                     <div className="w-full">
                         <div className="space-y-4 mt-2">
-                            {employerActions.map((item, index) => (
+                            {communicationNotificationState.map((item, index) => (
                                 <label key={index} className="flex items-center justify-between">
-                                    <span className="text-[16px] text-[#8E8E8E]">{getEmployerActionStateField(item)}</span>
+                                    <span className="text-[16px] text-[#8E8E8E]">{getCommunicationStateField(item)}</span>
                                     <ToggleSwitch
-                                        isOn={employerAction.option[item as keyof EmployerActionOption]}
-                                        onToggle={() => handleEmployerActionsToggle(item)}
+                                        isOn={communication.option[item as keyof CommunicationNotificationOption]}
+                                        onToggle={() => handleCommunicationSettingsToggle(item)}
                                     />
                                 </label>
                             ))}
@@ -133,7 +131,7 @@ const EmployerAction = () => {
                                 <label key={index} className="flex items-center justify-between">
                                     <span className="text-[16px] text-[#8E8E8E]">{getNotificationTypeStateField(item)}</span>
                                     <ToggleSwitch
-                                        isOn={employerAction.notificationType[item as keyof NotificationType]}
+                                        isOn={communication.notificationType[item as keyof NotificationType]}
                                         onToggle={() => handleNotificationTypeToggle(item)}
                                     />
                                 </label>
@@ -146,4 +144,4 @@ const EmployerAction = () => {
     );
 };
 
-export default EmployerAction;
+export default CommunicationPreferences;

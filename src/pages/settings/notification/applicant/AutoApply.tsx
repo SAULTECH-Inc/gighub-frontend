@@ -1,40 +1,40 @@
 import {useCallback, useEffect} from "react";
-import ToggleSwitch from "../../../components/common/ToggleSwitch.tsx";
+import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
-    NotificationType, SavedJobNotification, SavedJobStates,
+    AutoApplyState,
+    AutoApplyNotification,NotificationType,
     useSettingsStore
-} from "../../../store/useSettingsStore.ts";
+} from "../../../../store/useSettingsStore.ts";
 import {debounce} from "lodash";
 import {toast} from "react-toastify";
 
-const SavedJobsAlert = () => {
+const AutoApply = () => {
     // State to track toggle status for each item
-    const {applicantSettings, savedJob, setSavedJob, updateSavedJob} = useSettingsStore();
+    const {applicantSettings, autoApply, setAutoApply, updateAutoApply} = useSettingsStore();
     const notificationTypes = ["all", "emailNotification", "pushNotification"];
-    const savedJobsState = [
-        "aboutToExpire",
-    "expired",
-    "closed",
-    "updatedByEmployer",
+    const autoApplyOptions = [
+        "jobAutoApplied",
+    "jobMatchFound",
+    "jobMatchedButFailedToApply"
     ];
 
     useEffect(() => {
         if(applicantSettings){
-            setSavedJob(applicantSettings.notifications.options.savedJob);
+            setAutoApply(applicantSettings.notifications.options.autoApply);
         }
     }, [applicantSettings]);
 
 
     const debouncedUpdate = useCallback(
-        debounce(async (settings: SavedJobNotification) => {
-            const response = await updateSavedJob(settings);
+        debounce(async (settings: AutoApplyNotification) => {
+            const response = await updateAutoApply(settings);
             if (response) {
-                setSavedJob(response);
+                setAutoApply(response);
             } else {
                 toast.error("Failed to update application status notification settings");
             }
         }, 500),
-        [savedJob]
+        [autoApply]
     );
 
     useEffect(() => {
@@ -43,16 +43,14 @@ const SavedJobsAlert = () => {
         };
     }, [debouncedUpdate]);
 
-    const getSavedJobStateField = (item: string) => {
+    const getAutoApplyStateField = (item: string) => {
         switch (item) {
-            case "aboutToExpire":
-                return "A saved job is about to expire";
-            case "expired":
-                return "A saved job has expired";
-            case "closed":
-                return "A saved job has been closed";
+            case "jobAutoApplied":
+                return "A job is auto-applied successfully";
+            case "jobMatchFound":
+                return "Job Match Found";
             default:
-                return "Updated by employer";
+                return "Job matches my profile but fails to apply";
         }
     }
 
@@ -70,39 +68,38 @@ const SavedJobsAlert = () => {
 
     const handleNotificationTypeToggle = (item: string) => {
         const updatedSettings = {
-            ...savedJob,
+            ...autoApply,
             notificationType: {
-                ...savedJob.notificationType,
-                [item]:!savedJob.notificationType[item as keyof NotificationType]
+                ...autoApply.notificationType,
+                [item]:!autoApply.notificationType[item as keyof NotificationType]
             }
         };
-        setSavedJob(updatedSettings);
+        setAutoApply(updatedSettings);
         debouncedUpdate(updatedSettings);
     };
 
-    const handleSavedJobsToggle = (item: string) => {
+    const handleAutoApplyToggle = (item: string) => {
         const updatedSettings = {
-            ...savedJob,
+            ...autoApply,
             option: {
-                ...savedJob.option,
-                [item]:!savedJob.option[item as keyof SavedJobStates]
+                ...autoApply.option,
+                [item]:!autoApply.option[item as keyof AutoApplyState]
             }
         };
-        setSavedJob(updatedSettings);
+        setAutoApply(updatedSettings);
         debouncedUpdate(updatedSettings);
     }
-
     return (
-        <div className="w-[90%] flex flex-col self-center py-10 font-lato">
+        <div className="w-[95%] md:w-[90%] flex flex-col self-center font-lato">
             <hr className="w-full border-t border-[#E6E6E6] mb-4" />
 
             {/* Page Title */}
             <h2 className="text-black font-bold text-[24px] text-left text-xl">
-                Saved Jobs Alert
+                Auto Apply Notification
             </h2>
 
             {/* White Box Container */}
-            <div className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-8 mt-4">
+            <div className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-4 md:px-8 mt-4">
                 {/* Header Titles */}
                 <div className="grid grid-cols-2 w-full font-bold text-md text-black">
                     <h3>Notify me when:</h3>
@@ -113,16 +110,16 @@ const SavedJobsAlert = () => {
                 <hr className="w-full border-t border-[#E6E6E6] my-3" />
 
                 {/* Two-Column Layout */}
-                <div className="grid grid-cols-2 w-full gap-x-8 p-8">
-                    {/* Left Column - Saved Jobs Alerts */}
+                <div className="grid grid-cols-2 w-full gap-x-8 px-2 py-8">
+                    {/* Left Column - Auto Apply Updates */}
                     <div className="w-full">
                         <div className="space-y-4 mt-2">
-                            {savedJobsState.map((item, index) => (
+                            {autoApplyOptions.map((item, index) => (
                                 <label key={index} className="flex items-center justify-between">
-                                    <span className="text-[16px] text-[#8E8E8E]">{getSavedJobStateField(item)}</span>
+                                    <span className="text-[16px] text-[#8E8E8E]">{getAutoApplyStateField(item)}</span>
                                     <ToggleSwitch
-                                        isOn={savedJob.option[item as keyof SavedJobStates]}
-                                        onToggle={() => handleSavedJobsToggle(item)}
+                                        isOn={autoApply.option[item as keyof AutoApplyState]}
+                                        onToggle={() => handleAutoApplyToggle(item)}
                                     />
                                 </label>
                             ))}
@@ -136,7 +133,7 @@ const SavedJobsAlert = () => {
                                 <label key={index} className="flex items-center justify-between">
                                     <span className="text-[16px] text-[#8E8E8E]">{getNotificationTypeStateField(item)}</span>
                                     <ToggleSwitch
-                                        isOn={savedJob.notificationType[item as keyof NotificationType]}
+                                        isOn={autoApply.notificationType[item as keyof NotificationType]}
                                         onToggle={() => handleNotificationTypeToggle(item)}
                                     />
                                 </label>
@@ -149,4 +146,4 @@ const SavedJobsAlert = () => {
     );
 };
 
-export default SavedJobsAlert;
+export default AutoApply;

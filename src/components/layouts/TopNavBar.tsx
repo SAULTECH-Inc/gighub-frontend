@@ -151,7 +151,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
 
 
     return (
-        <div>
+        <div className="w-full mx-0 p-0">
             <nav
                 className="relative flex justify-between items-center px-10 py-4 bg-white border-b-[1px] border-b-[#E6E6E6] h-[calc(70px-5px)]">
                 {/* Left: Logo */}
@@ -197,7 +197,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                             <input
                                 ref={searchInputRef}
                                 type="text"
-                                className="w-[calc(220px+5px)] px-4 py-2 border-[0.5px] border-[#ccc] rounded-full shadow-sm text-sm focus:outline-none focus:border-[#ccc] active:border-[#ccc] focus:ring-0"
+                                className="w-[calc(220px+5px)] hidden md:flex px-4 py-2 border-[0.5px] border-[#ccc] rounded-full shadow-sm text-sm focus:outline-none focus:border-[#ccc] active:border-[#ccc] focus:ring-0"
                                 placeholder="Search..."
                             />
                         </div>

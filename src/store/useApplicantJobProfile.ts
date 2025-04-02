@@ -55,7 +55,7 @@ interface ApplicantJobProfile {
     error: string | null;
     loading: boolean;
     fetchPreferences: (applicantId: number) => Promise<JobPreferenceResponse | null>;
-    fetchCvDetails: (applicantId: number) => Promise<CvResponseDto | null>;
+    fetchCvDetails: () => Promise<CvResponseDto | null>;
     fetchApplicantEducation: () => Promise<EducationResponseDto[]>;
     setPreference: (preference: JobPreference) => void;
     updatePreference: (preference: JobPreference) => Promise<JobPreferenceResponse | null>;
@@ -193,12 +193,12 @@ export const useApplicantJobProfile = create<ApplicantJobProfile>()(
                         });
                     }
                 },
-                fetchCvDetails: async (applicantId: number) => {
+                fetchCvDetails: async () => {
                     set((state) => {
                         state.loading = true;
                     });
                     try {
-                        const response = await privateApiClient.get<APIResponse<CvResponseDto>>(`/cvs/get-details/${applicantId}`);
+                        const response = await privateApiClient.get<APIResponse<CvResponseDto>>(`/cv/get-details`);
                         set((state) => {
                             state.cvDetails = response.data?.data;
                             state.success = true;

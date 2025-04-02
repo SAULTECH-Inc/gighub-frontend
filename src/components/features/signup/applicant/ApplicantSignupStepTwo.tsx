@@ -99,7 +99,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
         setUploadedFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
     };
 
-    
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>)=>{
         const { name, value } = e.target as HTMLInputElement & HTMLSelectElement;
         if (name === "documentType") {
@@ -123,7 +123,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
 
     return (
         <motion.div
-            className="w-[310px] md:w-[680px] lg:w-[500px] mt-5 md:mr-28 md:mt-32 px-[10px] lg:px-0"
+            className="w-[100%-2rem] md:w-[680px] lg:w-[500px] mt-5 md:mr-28 md:mt-32 px-[10px] lg:px-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

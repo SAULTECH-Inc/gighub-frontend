@@ -1,9 +1,9 @@
-import ToggleSwitch from "../../../components/common/ToggleSwitch.tsx";
+import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
     ApplicationStatus,
     ApplicationStatusNotification,
     NotificationType, useSettingsStore,
-} from "../../../store/useSettingsStore.ts";
+} from "../../../../store/useSettingsStore.ts";
 import {toast} from "react-toastify";
 import { debounce } from 'lodash';
 import {useCallback, useEffect} from "react";
@@ -101,14 +101,14 @@ const JobApplicationUpdate = () => {
 
 
     return (
-        <div className="w-[90%] flex flex-col self-center py-10 font-lato">
+        <div className="w-[95%] md:w-[90%] flex flex-col self-center py-10 font-lato">
             {/* Title */}
             <h2 className="text-black font-bold text-[24px] text-left text-xl">
                 Job Application Update
             </h2>
 
             {/* Privacy Box */}
-            <div className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[265px] flex flex-col items-start py-6 px-8 mt-4">
+            <div className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[265px] flex flex-col items-start py-6 px-4 md:px-8 mt-4">
                 {/* Two Column Headings */}
                 <div className="grid grid-cols-2 w-full">
                     <h3 className="text-black text-md font-bold">Receive Update on Application Status</h3>
@@ -119,7 +119,7 @@ const JobApplicationUpdate = () => {
                 <hr className="w-full border-t border-[#E6E6E6] my-3" />
 
                 {/* Two-Column Layout */}
-                <div className="grid grid-cols-2 w-full gap-x-8 p-8">
+                <div className="grid grid-cols-2 w-full gap-x-8 px-2 py-8">
                     {/* Left Column - Application Status */}
                     <div className="w-full space-y-4">
                         {applicationUpdates.map((item, index) => (

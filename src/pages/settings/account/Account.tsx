@@ -3,7 +3,6 @@ import Camera from "../../../assets/images/cam.svg";
 import { useAuth } from "../../../store/useAuth.ts";
 import React, { useEffect, useState } from "react";
 import { checkPasswordStrength } from "../../../utils/helpers.ts";
-import AlertBox from "../../../components/common/AlertBox.tsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { Action } from "../../../utils/enums.ts";
 import { useFileUploadStore } from "../../../store/useFileUploadStore.ts";
@@ -45,15 +44,6 @@ const Account = () => {
         setProfilePicture(applicant?.profilePicture);
     }, [applicant]);
 
-    const [alertData, setAlertData] = useState<{
-        show: boolean;
-        type: "error" | "success";
-        message: string;
-    }>({
-        show: false,
-        type: "error",
-        message: "",
-    });
 
     const [passwordChangeRequest, setPasswordChangeRequest] = useState<IPasswordChangeRequest>({
         newPassword: "",
@@ -81,11 +71,6 @@ const Account = () => {
         e.preventDefault();
 
         if (passwordChangeRequest.confirmPassword !== passwordChangeRequest.newPassword) {
-            setAlertData({
-                show: true,
-                type: "error",
-                message: "Confirm password does not match.",
-            });
             return;
         }
 
@@ -96,11 +81,6 @@ const Account = () => {
         );
 
         if (response) {
-            setAlertData({
-                show: true,
-                type: "success",
-                message: "Password changed successfully.",
-            });
             setPasswordChangeRequest({
                 newPassword: "",
                 oldPassword: "",
@@ -108,11 +88,6 @@ const Account = () => {
             });
             setPasswordStrength(-1);
         } else {
-            setAlertData({
-                show: true,
-                type: "error",
-                message: "Failed to change password.",
-            });
         }
     };
 
@@ -163,18 +138,8 @@ const Account = () => {
     const role = applicant?.cv?.professionalTitle || applicant?.professionalTitle || "";
 
     return (
-        <>
-            {alertData.show && (
-                <AlertBox
-                    type={alertData.type}
-                    message={alertData.message}
-                    autoClose={true}
-                    position="auto"
-                />
-            )}
-
             <div className="w-full flex justify-center items-start min-h-screen pt-12 bg-gray-100 shadow-md">
-                <div className="flex flex-col w-[90%] h-auto min-h-[580px] bg-white rounded-[16px]">
+                <div className="flex flex-col w-[90%] h-auto min-h-[680px] md:min-h-[590px] bg-white rounded-[16px]">
                     {/* Profile Section */}
                     <div className="p-10 flex items-center gap-4">
                         <div className="relative w-[95px] h-[95px]">
@@ -217,31 +182,31 @@ const Account = () => {
 
                     <hr className="w-full border-t border-[#E6E6E6] my-3" />
 
-                    <div className="flex flex-col px-10 self-center">
+                    <div className="w-full flex flex-col px-10 self-center">
                         <h3 className="text-lg font-semibold">Change Password</h3>
-                        <form className="mt-4 space-y-4">
-                            <div className="flex gap-x-6">
+                        <form className="w-full flex flex-col mt-4 gap-y-8">
+                            <div className="flex flex-col md:flex-row w-full md:gap-x-6 gap-y-8">
                                 {/* Current Password */}
-                                <div className="flex flex-col">
+                                <div className="flex w-full flex-col">
                                     <label className="text-gray-700 font-medium">Current Password</label>
                                     <input
                                         type="password"
                                         name="oldPassword"
                                         value={passwordChangeRequest.oldPassword}
                                         onChange={handlePasswordChange}
-                                        className="focus:outline-none focus:border-[#E6E6E6] focus:ring-0 w-[359px] h-[38px] px-3 border-[#E6E6E6] bg-[#F7F7F7] rounded-md outline-none"
+                                        className="focus:outline-none focus:border-[#E6E6E6] focus:ring-0 w-full h-[38px] px-3 border-[#E6E6E6] bg-[#F7F7F7] rounded-md outline-none"
                                     />
                                 </div>
 
                                 {/* New Password */}
-                                <div className="flex flex-col">
-                                    <label className="text-gray-700 ml-5 font-medium">New Password</label>
+                                <div className="flex w-full flex-col">
+                                    <label className="text-gray-700 font-medium">New Password</label>
                                     <input
                                         type="password"
                                         name="newPassword"
                                         value={passwordChangeRequest.newPassword}
                                         onChange={handlePasswordChange}
-                                        className="focus:outline-none focus:border-[#E6E6E6] focus:ring-0 w-[359px] h-[38px] px-3 border-[#E6E6E6] bg-[#F7F7F7] outline-none"
+                                        className="focus:outline-none focus:border-[#E6E6E6] focus:ring-0 h-[38px] px-3 border-[#E6E6E6] bg-[#F7F7F7] outline-none"
                                     />
 
                                     {/* Password Strength Indicator */}
@@ -251,7 +216,7 @@ const Account = () => {
                                                 initial={{ opacity: 0, y: -4 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0 }}
-                                                className="mt-1"
+                                                className=""
                                             >
                         <span
                             className="text-xs"
@@ -275,14 +240,14 @@ const Account = () => {
                             </div>
 
                             {/* Confirm Password */}
-                            <div className="flex flex-col">
+                            <div className="flex w-full flex-col">
                                 <label className="text-gray-700 font-medium">Confirm Password</label>
                                 <input
                                     type="password"
                                     name="confirmPassword"
                                     value={passwordChangeRequest.confirmPassword}
                                     onChange={handlePasswordChange}
-                                    className="focus:outline-none focus:border-[#E6E6E6] focus:ring-0 w-[754px] h-[38px] px-3 border-[#E6E6E6] bg-[#F7F7F7] outline-none"
+                                    className="focus:outline-none focus:border-[#E6E6E6] focus:ring-0 w-full h-[38px] px-3 border-[#E6E6E6] bg-[#F7F7F7] outline-none"
                                 />
                                 <AnimatePresence>
                                     {passwordChangeRequest.confirmPassword &&
@@ -304,7 +269,7 @@ const Account = () => {
                                     type="button"
                                     onClick={handleSaveChanges}
                                     disabled={!isFormValid}
-                                    className={`mt-4 w-[164px] h-[47px] text-white px-5 py-2 font-medium rounded-[10px] ${
+                                    className={`mt-4 md:w-[164px] h-[47px] text-white px-5 py-2 font-medium rounded-[10px] ${
                                         isFormValid
                                             ? "bg-[#6438C2] hover:bg-[#5730af]"
                                             : "bg-gray-400 cursor-not-allowed"
@@ -317,7 +282,6 @@ const Account = () => {
                     </div>
                 </div>
             </div>
-        </>
     );
 };
 

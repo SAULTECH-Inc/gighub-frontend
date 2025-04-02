@@ -32,7 +32,7 @@ export const JobDetails: React.FC<JobMatchCardProps> = ({
     };
     return (
         <div
-            className="w-full md:w-[556px] h-[280px] rounded-[16px] cursor-pointer bg-[#F7F8FA] p-4 flex flex-col space-y-6 mx-auto">
+            className="w-full h-[350px] md:h-[280px] rounded-[16px] cursor-pointer bg-[#F7F8FA] p-4 flex flex-col space-y-8 mx-auto">
             {/* Header */}
             <div className="relative flex justify-between items-center">
                 <div className="flex space-x-3 items-center">
@@ -71,7 +71,7 @@ export const JobDetails: React.FC<JobMatchCardProps> = ({
             </Link>
 
             {/* Job Info */}
-            <div className="w-full flex flex-wrap md:justify-between items-center md:gap-2 gap-x-4 gap-y-3 justify-start">
+            <div className="w-full flex flex-wrap items-center gap-x-4 gap-y-3 justify-start">
                 <div className="flex items-center space-x-2">
                     <img src={jobTypeIcon} alt="Job Type Icon" className="w-4 h-4"/>
                     <p className="text-[11px] md:text-[13px] text-gray-600">{type}</p>
