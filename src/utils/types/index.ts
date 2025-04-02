@@ -578,6 +578,7 @@ export interface Socials {
     twitterProfile: string;
     linkedInProfile: string;
     instagramProfile: string;
+    githubProfile: string;
 }
 
 export interface ComplianceAndVerifications {

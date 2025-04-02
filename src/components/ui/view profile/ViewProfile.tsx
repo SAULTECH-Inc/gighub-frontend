@@ -19,11 +19,11 @@ import {
   applicantNavItems,
   applicantNavItemsMobile,
 } from "../../../utils/constants";
-import { 
-  FaFacebook, 
-  FaTwitter, 
-  FaLinkedin, 
-  FaGithub 
+import {
+  FaFacebook,
+  FaTwitter,
+  FaLinkedin,
+  FaGithub
 } from 'react-icons/fa';
 
 const ViewProfile: React.FC = () => {
@@ -31,7 +31,7 @@ const ViewProfile: React.FC = () => {
   const navigate = useNavigate();
   const { applicant } = useAuth();
   const [showAllExperiences, setShowAllExperiences] = useState(false);
-  
+
     const formatExperienceDates = (
       startDate: Date | string | undefined,
       endDate: Date | string | undefined,
@@ -39,7 +39,7 @@ const ViewProfile: React.FC = () => {
       const startYear =
         startDate instanceof Date ? startDate.getFullYear() : startDate;
       const endYear = endDate instanceof Date ? endDate.getFullYear() : endDate;
-  
+
       if (startYear && endYear && startYear !== endYear) {
         return `${startYear} - ${endYear}`;
       } else if (startYear && endYear && startYear === endYear) {
@@ -52,15 +52,20 @@ const ViewProfile: React.FC = () => {
         return "";
       }
     };
-  
+
     const displayExperiences = showAllExperiences
       ? applicant.cv.experiences || []
       : applicant.cv?.experiences?.slice(0, 2) || [];
-  
+
     const hasMoreExperiences = (applicant.cv?.experiences?.length || 0) > 2;
-  
+
 
   console.log("Private User Data:", JSON.stringify(applicant));
+  const v=400;
+  let shortDetail = "";
+  if(applicant.city) {shortDetail +=applicant.city;}
+  if(applicant.country) {shortDetail += ", "+applicant.country+". ";}
+  if(v >= 300) {shortDetail += 400+"k Connections";}
 
   return (
     <div className="flex w-full flex-col items-center gap-5 bg-[#F7F8FA]">
@@ -102,7 +107,7 @@ const ViewProfile: React.FC = () => {
       )}
 
       {!isWorksampleAvailable && (
-        <div className="relative w-full max-w-[900px] bg-white md:my-5">
+        <div className="relative w-full max-w-[1000px] bg-white md:my-5">
           <div className="sticky top-0 z-10 flex w-[100%] flex-col items-center bg-white">
             <div className="flex w-[100%] flex-col items-center">
               <div className="flex h-[94px] w-full flex-col">
@@ -136,7 +141,7 @@ const ViewProfile: React.FC = () => {
               </div>
               <div className="my-2 flex w-[90%] flex-col gap-2">
                 <p className="text-[#8E8E8E]">
-                  {applicant.city}, {applicant.country} . {400}k Connections
+                  {shortDetail}
                 </p>
               </div>
               <hr className="w-[90%] border-[#E6E6E6]" />
@@ -200,7 +205,7 @@ const ViewProfile: React.FC = () => {
                 <div className="my-4 flex flex-col gap-2">
                     <p className="font-bold">Software Skills</p>
                     <div className="text-[#8E8E8E] text-[13px] flex flex-wrap">
-                      {applicant.cv?.skills.join(", ")}
+                      {applicant?.cv?.skills && applicant?.cv?.skills.join(", ")}
                     </div>
                   </div>
               </div>
@@ -252,7 +257,7 @@ const ViewProfile: React.FC = () => {
                                   </button>
                                 )}
                               </div>
-                
+
                 <hr className="my-5 w-full border-[#E6E6E6]" />
                 <p className="mb-3 w-full font-bold">Testimonies</p>
                 <div className="flex w-[90%] flex-col">

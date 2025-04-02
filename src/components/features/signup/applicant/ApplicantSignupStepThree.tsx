@@ -7,8 +7,8 @@ import useModalStore from "../../../../store/modalStateStores.ts";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../../../store/useAuth.ts";
-import {UserType} from "../../../../utils/types/enums.ts";
 import {ApplicantSignupRequest} from "../../../../utils/types";
+import {UserType} from "../../../../utils/enums.ts";
 
 interface StepTwoProp {
     handlePrev: () => void;
@@ -87,7 +87,7 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({
 
     return (
         <motion.div
-            className="w-[310px] md:w-[680px] lg:w-[500px] mt-5 md:mr-28 md:mt-32 px-[10px] lg:px-0 space-y-10"
+            className="w-[400px - 10px] md:w-[680px] lg:w-[500px] mt-5 md:mr-28 md:mt-32 px-[10px] lg:px-0 space-y-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

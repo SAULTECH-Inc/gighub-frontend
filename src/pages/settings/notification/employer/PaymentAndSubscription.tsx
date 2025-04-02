@@ -1,50 +1,49 @@
-import {useCallback, useEffect} from "react";
-import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
-import {
-    InterviewInvitationState, InterviewInvitationNotification, NotificationType,
+import {NotificationType, PaymentAndBillingNotification, PaymentAndBillingNotificationOptions,
     useSettingsStore
 } from "../../../../store/useSettingsStore.ts";
-import {debounce} from "lodash";
-import {toast} from "react-toastify";
+import {useCallback, useEffect} from "react";
 import {USER_TYPE} from "../../../../utils/helpers.ts";
 import {UserType} from "../../../../utils/enums.ts";
+import {debounce} from "lodash";
+import {toast} from "react-toastify";
+import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 
-const InterviewInvitation = () => {
+const PaymentAndSubscription = () => {
     // State to track toggle status for each item
     const {
         applicantSettings,
         employerSettings,
-        interviewInvitation,
-        setInterviewInvitation,
-        updateInterviewInvitation
+        paymentAndBilling,
+        setPaymentAndBilling,
+        updatePaymentAndBilling
     } = useSettingsStore();
     const notificationTypes = ["all", "emailNotification", "pushNotification"];
     const interviewUpdates = [
-        "scheduleCancelled",
-        "scheduleRescheduled",
-        "notifyForUpcomingInterviews",
-        "notifyForInterviewConfirmation"
+        "subscriptionDue",
+        "subscriptionCancelled",
+        "subscriptionExpired",
+        "subscriptionSuccessful"
     ];
 
     useEffect(() => {
         if (applicantSettings && USER_TYPE === UserType.APPLICANT) {
-            setInterviewInvitation(applicantSettings.notifications.options.interviewInvitation);
+            setPaymentAndBilling(applicantSettings.notifications.options.paymentAndBilling);
         } else {
-            setInterviewInvitation(employerSettings.notifications.options.interviewInvitation);
+            setPaymentAndBilling(employerSettings.notifications.options.paymentAndBilling);
         }
     }, [applicantSettings]);
 
 
     const debouncedUpdate = useCallback(
-        debounce(async (settings: InterviewInvitationNotification) => {
-            const response = await updateInterviewInvitation(settings);
+        debounce(async (settings: PaymentAndBillingNotification) => {
+            const response = await updatePaymentAndBilling(settings);
             if (response) {
-                setInterviewInvitation(response);
+                setPaymentAndBilling(response);
             } else {
                 toast.error("Failed to update application status notification settings");
             }
         }, 500),
-        [interviewInvitation]
+        [paymentAndBilling]
     );
 
     useEffect(() => {
@@ -55,14 +54,14 @@ const InterviewInvitation = () => {
 
     const getInterviewInvitationStateField = (item: string) => {
         switch (item) {
-            case "scheduleRescheduled":
-                return "When An employer schedules an interview";
-            case "scheduleCancelled":
-                return "When An interview is cancelled";
-            case "notifyForUpcomingInterviews":
-                return "For upcoming interviews";
+            case "subscriptionDue":
+                return "Notify me when a subscription payment is due";
+            case "subscriptionCancelled":
+                return "Notify me when a subscription is cancelled";
+            case "subscriptionExpired":
+                return "Notify me when a subscription is expired";
             default:
-                return "For interview confirmation";
+                return "Notify me when a subscription payment is successful";
         }
     }
 
@@ -78,40 +77,40 @@ const InterviewInvitation = () => {
     }
     const handleNotificationTypeToggle = (item: string) => {
         const updatedSettings = {
-            ...interviewInvitation,
+            ...paymentAndBilling,
             notificationType: {
-                ...interviewInvitation.notificationType,
-                [item]: !interviewInvitation.notificationType[item as keyof NotificationType]
+                ...paymentAndBilling.notificationType,
+                [item]: !paymentAndBilling.notificationType[item as keyof NotificationType]
             }
         };
-        setInterviewInvitation(updatedSettings);
+        setPaymentAndBilling(updatedSettings);
         debouncedUpdate(updatedSettings);
     };
 
     const handleInterviewInvitationToggle = (item: string) => {
         const updatedSettings = {
-            ...interviewInvitation,
+            ...paymentAndBilling,
             option: {
-                ...interviewInvitation.option,
-                [item]: !interviewInvitation.option[item as keyof InterviewInvitationState]
+                ...paymentAndBilling.option,
+                [item]: !paymentAndBilling.option[item as keyof PaymentAndBillingNotificationOptions]
             }
         };
-        setInterviewInvitation(updatedSettings);
+        setPaymentAndBilling(updatedSettings);
         debouncedUpdate(updatedSettings);
     }
 
     return (
-        <div className="w-[95%] md:w-[90%] flex flex-col self-center py-10 font-lato">
+        <div className="w-[90%] flex flex-col self-center py-10 font-lato">
             <hr className="w-full border-t border-[#E6E6E6] mb-4"/>
 
             {/* Page Title */}
             <h2 className="text-black font-bold text-[24px] text-left text-xl">
-                Interview Invitation
+                Payment and Billing
             </h2>
 
             {/* White Box Container */}
             <div
-                className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-4 mt-4">
+                className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-8 mt-4">
                 {/* Header Titles */}
                 <div className="grid grid-cols-2 w-full font-bold text-md text-black">
                     <h3>Notify me:</h3>
@@ -122,7 +121,7 @@ const InterviewInvitation = () => {
                 <hr className="w-full border-t border-[#E6E6E6] my-3"/>
 
                 {/* Two-Column Layout */}
-                <div className="grid grid-cols-2 w-full gap-x-8 px-2 py-8">
+                <div className="grid grid-cols-2 w-full gap-x-8 p-8">
                     {/* Left Column - Interview Updates */}
                     <div className="w-full">
                         <div className="space-y-4 mt-2">
@@ -131,7 +130,7 @@ const InterviewInvitation = () => {
                                     <span
                                         className="text-[16px] text-[#8E8E8E]">{getInterviewInvitationStateField(item)}</span>
                                     <ToggleSwitch
-                                        isOn={interviewInvitation.option[item as keyof InterviewInvitationState]}
+                                        isOn={paymentAndBilling.option[item as keyof PaymentAndBillingNotificationOptions]}
                                         onToggle={() => handleInterviewInvitationToggle(item)}
                                     />
                                 </label>
@@ -147,7 +146,7 @@ const InterviewInvitation = () => {
                                     <span
                                         className="text-[16px] text-[#8E8E8E]">{getNotificationTypeStateField(item)}</span>
                                     <ToggleSwitch
-                                        isOn={interviewInvitation.notificationType[item as keyof NotificationType]}
+                                        isOn={paymentAndBilling.notificationType[item as keyof NotificationType]}
                                         onToggle={() => handleNotificationTypeToggle(item)}
                                     />
                                 </label>
@@ -158,6 +157,6 @@ const InterviewInvitation = () => {
             </div>
         </div>
     );
-};
+}
 
-export default InterviewInvitation;
+export default PaymentAndSubscription;

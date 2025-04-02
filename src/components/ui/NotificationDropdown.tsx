@@ -1,5 +1,6 @@
 import { FC } from "react";
-import { AiOutlineSetting } from "react-icons/ai"; // Settings icon (top-right)
+import { AiOutlineSetting } from "react-icons/ai";
+import {Link} from "react-router-dom"; // Settings icon (top-right)
 
 interface NotificationItem {
     id: number;
@@ -111,9 +112,9 @@ const NotificationDropdown: FC<NotificationDropdownProps> = ({ onClose }) => {
             <div className="mt-4">
                 <hr style={dividerStyle} className="-mx-6 mb-4" />
                 <div className="text-center">
-                    <button className="text-sm font-medium text-white bg-purple-600 px-4 py-2 rounded-lg hover:bg-purple-700">
+                    <Link to="/notification" className="text-sm font-medium text-white bg-purple-600 px-4 py-2 rounded-lg hover:bg-purple-700">
                         View all notifications
-                    </button>
+                    </Link>
                 </div>
             </div>
         </div>
