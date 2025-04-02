@@ -70,9 +70,14 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({modalId}) => {
 
     if (!isOpen) return null;
 
-    return (<div className="fixed w-screen h-screen -top-3 inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-        <form
-            className="relative m-2 w-[360px] h-auto md:w-[690px] p-5 md:p-8 lg:p-10 shadow-lg bg-white rounded-[16px] flex flex-col gap-y-5 overflow-y-scroll md:overflow-y-hidden">
+    return (<div
+        className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 -top-4"
+        onClick={() => closeModal(modalId)}
+    >
+        <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-[70%] max-h-[95vh] overflow-y-auto md:w-[690px] lg:w-[820px] p-8 md:p-8 lg:p-10 shadow-sm bg-white rounded-[16px] flex flex-col gap-y-5 mr-6"
+        >
             <div className="w-full flex flex-col md:flex-row gap-x-2 mg:gap-x-6 gap-y-3">
                 <div className="w-full flex flex-col gap-y-2">
                     <label>Company name</label>
@@ -166,7 +171,7 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({modalId}) => {
 
             <div className="w-full flex flex-col gap-y-2 mb-0 py-0">
                 <label>Description</label>
-                <RichTextEditor value={experience?.description || ""}
+                <RichTextEditor value={description || ""}
                                 onChange={setDescription}/>
             </div>
 
@@ -184,7 +189,7 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({modalId}) => {
                     Cancel
                 </button>
             </div>
-        </form>
+        </div>
     </div>)
 }
 

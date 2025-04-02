@@ -52,7 +52,7 @@ const AppRoutes = () => {
                 <Route path="/applicant/profile" element={<PrivateRoute allowedTypes={[UserType.APPLICANT]}><ApplicantProfile/></PrivateRoute>}/>
                 <Route path="/employer/public-profile" element={<EmployerPublicProfile/>}/>
                 <Route path="/employer/manage-applicants" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><ManageApplicant/></PrivateRoute>}/>
-                <Route path="/settings" element={<UserSettings/>}/>
+                <Route path="/settings" element={<PrivateRoute allowedTypes={[UserType.APPLICANT,UserType.EMPLOYER]}><UserSettings/></PrivateRoute>}/>
                 <Route path="/job-details" element={<JobDetails/>}/>
                 <Route path="/job-list" element={<JobList/>}/>
                 <Route path="/job-filter" element={<FilterJob/>}/>

@@ -4,7 +4,7 @@ import CompanyInfo from "../../components/ui/employer/profile/CompanyInfo.tsx";
 import CompanyContactInfo from "../../components/ui/employer/profile/CompanyContactInfo.tsx";
 import CompanyBrandingVisualIdentity from "../../components/ui/employer/profile/CompanyBrandingVisualIdentity.tsx";
 import CompanyOverview from "../../components/ui/employer/profile/CompanyOverview.tsx";
-import CompanySocials from "../../components/ui/employer/profile/CompanySocials.tsx";
+import SocialsSection from "../../components/ui/SocialsSection.tsx";
 import ComplianceAndVerification from "../../components/ui/employer/profile/ComplianceAndVerification.tsx";
 import ProfileCard from "../../components/ui/employer/profile/ProfileCard.tsx";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
@@ -63,7 +63,7 @@ const EmployerProfile: FC = () => {
                         <CompanyOverview/>
 
                         {/* Social and Professional Links */}
-                        <CompanySocials/>
+                        <SocialsSection/>
 
                         {/* Compliance and Verifications */}
                         <ComplianceAndVerification/>

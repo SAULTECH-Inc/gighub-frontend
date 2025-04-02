@@ -90,7 +90,7 @@ const AutoApply = () => {
         debouncedUpdate(updatedSettings);
     }
     return (
-        <div className="w-[90%] flex flex-col self-center font-lato">
+        <div className="w-[95%] md:w-[90%] flex flex-col self-center font-lato">
             <hr className="w-full border-t border-[#E6E6E6] mb-4" />
 
             {/* Page Title */}
@@ -99,7 +99,7 @@ const AutoApply = () => {
             </h2>
 
             {/* White Box Container */}
-            <div className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-8 mt-4">
+            <div className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-4 md:px-8 mt-4">
                 {/* Header Titles */}
                 <div className="grid grid-cols-2 w-full font-bold text-md text-black">
                     <h3>Notify me when:</h3>
@@ -110,7 +110,7 @@ const AutoApply = () => {
                 <hr className="w-full border-t border-[#E6E6E6] my-3" />
 
                 {/* Two-Column Layout */}
-                <div className="grid grid-cols-2 w-full gap-x-8 p-8">
+                <div className="grid grid-cols-2 w-full gap-x-8 px-2 py-8">
                     {/* Left Column - Auto Apply Updates */}
                     <div className="w-full">
                         <div className="space-y-4 mt-2">

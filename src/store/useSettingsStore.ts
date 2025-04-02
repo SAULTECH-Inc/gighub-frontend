@@ -151,14 +151,14 @@ interface SubscriptionDetails {
 }
 
 // Payment & Billing Notifications
-interface PaymentAndBillingNotificationOptions {
+export interface PaymentAndBillingNotificationOptions {
     subscriptionDue: boolean;
     subscriptionCancelled: boolean;
     subscriptionExpired: boolean;
     subscriptionSuccessful: boolean;
 }
 
-interface PaymentAndBillingNotification {
+export interface PaymentAndBillingNotification {
     notificationType: NotificationType;
     option: PaymentAndBillingNotificationOptions;
 }
@@ -301,6 +301,9 @@ export interface SettingsStore {
     interviewInvitation: InterviewInvitationNotification;
     setInterviewInvitation: (invitation: InterviewInvitationNotification)=>void;
     updateInterviewInvitation: (invitation: InterviewInvitationNotification)=>Promise<InterviewInvitationNotification>;
+    paymentAndBilling: PaymentAndBillingNotification;
+    setPaymentAndBilling: (paymentAndBilling: PaymentAndBillingNotification)=>void;
+    updatePaymentAndBilling: (paymentAndBilling: PaymentAndBillingNotification)=>Promise<PaymentAndBillingNotification>;
     autoApply: AutoApplyNotification;
     setAutoApply: (autoApply: AutoApplyNotification)=>void;
     updateAutoApply: (autoApply: AutoApplyNotification)=>Promise<AutoApplyNotification>;
@@ -767,6 +770,41 @@ export const useSettingsStore = create<SettingsStore>()(
                         handleError(err);
                         return {} as JobPostingStatusNotification;
                     }
+                },
+                paymentAndBilling: {
+                    notificationType: {
+                        all: false,
+                        emailNotification: false,
+                        pushNotification: false,
+                        smsNotification: false
+                    },
+                    option: {
+                        subscriptionDue: false,
+                        subscriptionCancelled: false,
+                        subscriptionExpired: false,
+                        subscriptionSuccessful: false
+                    }
+                },
+                setPaymentAndBilling: (paymentAndBilling: PaymentAndBillingNotification) => set((state) => {
+                    if(USER_TYPE === UserType.APPLICANT){
+                        state.applicantSettings.notifications.options.paymentAndBilling = paymentAndBilling
+                    }else{
+                        state.employerSettings.notifications.options.paymentAndBilling = paymentAndBilling
+                    }
+                }),
+                updatePaymentAndBilling: async (paymentAndBilling: PaymentAndBillingNotification) => {
+                    const SETTINGS_URL = `${API_BASE_URL}/settings/payment-and-billing/update`;
+
+                    try {
+                        const response = await privateApiClient.put<APIResponse<PaymentAndBillingNotification>>(SETTINGS_URL, paymentAndBilling);
+                        set((state) => {
+                            state.paymentAndBilling = paymentAndBilling;
+                        });
+                        return response?.data?.data;
+                    } catch (err: any) {
+                        handleError(err);
+                        return {} as PaymentAndBillingNotification;
+                    }
                 }
             })),
             {
@@ -787,7 +825,8 @@ export const useSettingsStore = create<SettingsStore>()(
                     applicationStatusNotification: state.applicationStatusNotification,
                     employerSettings: state.employerSettings,
                     manageJobApplications: state.manageJobApplications,
-                    jobPostingStatus: state.jobPostingStatus
+                    jobPostingStatus: state.jobPostingStatus,
+                    paymentAndBilling: state.paymentAndBilling
                 })
             }
         )
