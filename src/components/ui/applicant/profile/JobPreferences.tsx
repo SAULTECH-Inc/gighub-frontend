@@ -4,14 +4,14 @@ import {JobPreference, Location, SalaryRange} from "../../../../utils/types";
 import {useAuth} from "../../../../store/useAuth.ts";
 import {useApplicantJobProfile} from "../../../../store/useApplicantJobProfile.ts";
 import {useSectionEditable} from "../../../../store/useEditable.ts";
+import {countries} from "../../../../utils/Countries.ts";
+import {jobTypes} from "../../../../utils/employmentTypes.ts";
 
 const JobPreferencesForm: React.FC = () => {
     const {applicant} = useAuth();
     const {preferences, fetchPreferences, setPreference, updatePreference} = useApplicantJobProfile();
     const {isEditable, toggleEdit} = useSectionEditable("job-preference");
     const categoryOptions = ["UI/UX", "Graphic Design", "Software Engineering", "Marketing"];
-    const jobTypeOptions = ["Full Time", "Remote", "Part Time", "Freelance"];
-    const countryOptions = ["Nigeria", "USA", "UK", "Canada"];
     const cityOptions = ["Apapa", "Ikeja", "Victoria Island", "Abuja"];
 
     const [salary, setSalary] = useState<SalaryRange>({currency: "NGN", minAmount: 0, maxAmount: 0});
@@ -197,7 +197,7 @@ const JobPreferencesForm: React.FC = () => {
                     <PreferredLocationSelector isEditable={isEditable} preferences={preferences as JobPreference}
                                                cityOptions={cityOptions}
                                                handleLocationSelect={handleLocationSelect}
-                                               removeLocation={removeLocation} countryOptions={countryOptions}/>
+                                               removeLocation={removeLocation} countryOptions={countries.map(country=>country.value)}/>
 
                     {/* Preferred Job Type */}
                     <div>
@@ -209,15 +209,15 @@ const JobPreferencesForm: React.FC = () => {
                                 className="w-full p-2 border-[#E6E6E6] rounded-[10px] bg-[#F7F8FA]"
                                 value=""
                                 disabled={!isEditable}
-                                onChange={(e) => {
-                                    handleJobTypeSelect(e.target.value);
+                                onChange={async (e) => {
+                                    await handleJobTypeSelect(e.target.value);
                                     e.target.value = ""; // Reset to keep the placeholder visible
                                 }}
                             >
                                 <option value="Job type" disabled>
 
                                 </option>
-                                {jobTypeOptions.map((type) => (<option key={type} value={type}>
+                                {jobTypes.map((type) => (<option key={type} value={type}>
                                         {type}
                                     </option>))}
                             </select>
