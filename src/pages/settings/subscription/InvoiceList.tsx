@@ -10,7 +10,7 @@ const InvoicesList = () => {
     ];
 
     return (
-        <div className="w-[93%] h-[481px] bg-white shadow-md rounded-lg p-6 font-lato">
+        <div className="w-[95%] md:w-[88%] h-[481px] bg-white shadow-md rounded-lg p-6 font-lato">
             {/* Header Section */}
             <div className="flex justify-between items-center">
                 <h2 className="text-black text-lg font-bold">Invoices 200</h2>

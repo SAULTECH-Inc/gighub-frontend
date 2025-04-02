@@ -1,8 +1,11 @@
 import React from "react";
 import {motion} from "framer-motion";
 import questionMark from "../../assets/icons/question.svg";
+import ApplicantScheduleModal from "../ui/ApplicantScheduleModal.tsx";
+import useModalStore from "../../store/modalStateStores.ts";
 
 const UpcomingEvent: React.FC = () => {
+    const {openModal} = useModalStore();
     return (
         <div className="mt-6 mx-auto w-full h-full">
             <div className="flex items-center justify-evenly md:space-x-[100px]">
@@ -49,6 +52,9 @@ const UpcomingEvent: React.FC = () => {
                             </div>
                             {/* View Button */}
                             <button
+                                onClick={() => {
+                                    openModal("applicant-schedule-modal");
+                                }}
                                 className="px-4 py-1 w-[65px] h-[30px] text-[13px] font-semibold text-[#6E4AED] bg-white rounded-full hover:bg-purple-500 hover:text-white transition"
                             >
                                 View
@@ -57,6 +63,10 @@ const UpcomingEvent: React.FC = () => {
                     </div>
                 </motion.div>
             ))}
+
+            <ApplicantScheduleModal
+                modalId="applicant-schedule-modal"
+            />
 
         </div>
     );

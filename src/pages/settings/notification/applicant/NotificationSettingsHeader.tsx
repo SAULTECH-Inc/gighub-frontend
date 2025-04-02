@@ -1,9 +1,9 @@
-import {useNavMenuStore} from "../../../store/useNavMenuStore.ts";
+import {useNavMenuStore} from "../../../../store/useNavMenuStore.ts";
 
 const NotificationSettingsHeader = () => {
     const {settings} = useNavMenuStore();
     return (
-        <div className="sticky w-full h-[101px] bg-[#6438C2] rounded-t-[16px] flex items-center pl-10">
+        <div className="hidden sticky w-full h-[101px] bg-[#6438C2] rounded-t-[16px] md:flex items-center pl-10">
             <h1 className="text-white text-[32px] font-bold">
                 {settings.notification && "Notification Settings"}
                 {settings.subscription && "Subscription Settings"}

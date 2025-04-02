@@ -1,5 +1,5 @@
 import {FC, useEffect} from "react";
-import CompanySocials from "../../components/ui/employer/profile/CompanySocials.tsx";
+import SocialsSection from "../../components/ui/SocialsSection.tsx";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import PersonalInfo from "../../components/ui/applicant/profile/PersonalInfo.tsx";
 import ProfessionalSummary from "../../components/ui/applicant/profile/ProfessionalSummary.tsx";
@@ -18,12 +18,15 @@ import ResumeAndCoverLetter from "../../components/ui/applicant/profile/ResumeAn
 
 const ApplicantProfile: FC = () => {
     const {applicant} = useAuth();
-    const {setCvDetails} = useApplicantJobProfile();
+    const {setCvDetails, fetchCvDetails} = useApplicantJobProfile();
     useEffect(() => {
-        if(applicant.cv){
-            console.log("Applicant: ", applicant);
-            setCvDetails(applicant.cv);
+        const doFetchCvDetails = async()=>{
+            const response = await fetchCvDetails();
+            if(response){
+                setCvDetails(response);
+            }
         }
+        doFetchCvDetails();
     }, [applicant]);
     return (
         <div className="bg-[#F7F8FA] min-h-screen">
@@ -49,7 +52,7 @@ const ApplicantProfile: FC = () => {
                         <SkillsAndCompetences />
                         <ResumeAndCoverLetter />
                         <WorkSample />
-                        <CompanySocials />
+                        <SocialsSection />
                         <Verification />
 
                         <div className="flex justify-between items-center space-x-4 mt-4 pt-5 border-t-[2px] border-t-[#E6E6E6]">

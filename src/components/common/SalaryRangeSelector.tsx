@@ -145,7 +145,7 @@ export default function SalaryRangeSelector({
                         max={convertValue(baseMax, selectedCurrency, selectedFrequency)}
                         value={minValue}
                         onChange={(e) => setMinValue(Number(e.target.value))}
-                        className="w-full h-2 bg-purple-300 rounded-lg appearance-none cursor-pointer transition-all duration-300 accent-purple-500"
+                        className="w-full h-2 bg-purple-300 rounded-lg appearance-none cursor-pointer transition-all duration-300"
                     />
 
                     {/* Max Salary Slider */}
@@ -155,7 +155,7 @@ export default function SalaryRangeSelector({
                         max={convertValue(baseMax, selectedCurrency, selectedFrequency)}
                         value={maxValue}
                         onChange={(e) => setMaxValue(Number(e.target.value))}
-                        className="w-full h-2 bg-purple-300 rounded-lg appearance-none cursor-pointer transition-all duration-300 accent-purple-500"
+                        className="w-full h-2 bg-purple-300 rounded-lg appearance-none cursor-pointer transition-all duration-300"
                     />
                 </div>
             </div>

@@ -50,7 +50,7 @@ const ApplicantSchedules: React.FC = () => {
 
     return (
         <div className="w-full flex flex-col">
-            <div className="w-full h-[530px] mx-auto bg-white rounded-[16px] shadow p-5">
+            <div className="w-[95%] h-[530px] mx-auto bg-white rounded-[16px] shadow p-5">
                 {/* Header */}
                 <motion.div
                     className="flex justify-center items-center mb-4"

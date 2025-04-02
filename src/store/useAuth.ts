@@ -7,13 +7,14 @@ import {
     ApplicantSignupRequest, EducationResponseDto,
     EmployerData, EmployerSignupRequest,
     PasswordResetRequest, ProfessionalSummaryData,
-    Role
+    Role, Socials
 } from "../utils/types";
 import {privateApiClient, publicApiClient} from "../api/axios.ts";
 import {immer} from "zustand/middleware/immer";
 import secureLocalStorage from "react-secure-storage";
 import {API_BASE_URL, NODE_ENV, secureStorageWrapper} from "../utils/constants.ts";
 import {UserType} from "../utils/enums.ts";
+import {handleError} from "../utils/helpers.ts";
 
 
 export const removeFromLocalStorage = async (nodeEnv: string)=>{
@@ -29,6 +30,7 @@ export const removeFromLocalStorage = async (nodeEnv: string)=>{
         localStorage.removeItem("settings");
         localStorage.removeItem("fileUploadStore");
         localStorage.removeItem("user-subscription");
+        localStorage.removeItem("employer-job-form");
     }else{
         secureLocalStorage.removeItem('auth-storage');
         secureLocalStorage.removeItem('chat-store');
@@ -41,6 +43,7 @@ export const removeFromLocalStorage = async (nodeEnv: string)=>{
         secureLocalStorage.removeItem("settings");
         secureLocalStorage.removeItem("fileUploadStore");
         secureLocalStorage.removeItem("user-subscription");
+        secureLocalStorage.removeItem("employer-job-form");
     }
 }
 
@@ -100,6 +103,7 @@ export interface AuthData {
     resetApplicantSignupRequest: ()=>void;
     changePassword: (newPassword: string, currentPassword: string, confirmPassword: string) => Promise<boolean>;
     verifyPassword: (password: string)=> Promise<boolean>;
+    updateApplicantSocial: (socials: Socials)=> Promise<Socials>;
 }
 
 export const useAuth = create<AuthData>()(
@@ -654,6 +658,15 @@ export const useAuth = create<AuthData>()(
                 } catch (err: any) {
                     toast.error(err.response?.data?.message || "Error verifying password");
                     return false;
+                }
+            },
+            updateApplicantSocial: async (socials: Socials)=>{
+                try {
+                    const response = await privateApiClient.put<APIResponse<Socials>>(`${API_BASE_URL}/users/applicant/update/company-socials`, socials);
+                    return response?.data?.data;
+                }catch (err: any) {
+                    handleError(err)
+                    return {} as Socials;
                 }
             }
         })),
