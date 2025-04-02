@@ -60,7 +60,7 @@ const ApplicantProfileCard: React.FC = () => {
                             profilePictureUploadResponse?.url || Image7
                         }
                         alt="Profile Picture"
-                        className="w-[60px] h-[60px] md:w-[85px] md:h-[85px] lg:w-[95px] lg:h-[95px] rounded-full border-[4px] bg-white border-white"
+                        className="w-[80px] h-[80px] md:w-[85px] md:h-[85px] lg:w-[95px] lg:h-[95px] rounded-full border-[4px] bg-white border-white"
                     />
                     <input
                         id="file-dialog-opener"
@@ -78,10 +78,10 @@ const ApplicantProfileCard: React.FC = () => {
 
                 {/* Details */}
                 <div className="flex flex-col gap-y-1 lg:gap-y-2">
-                    <h2 className="text-[11px] md:text-[20px] lg:text-lg font-semibold">
+                    <h2 className="text-[16px] md:text-[20px] lg:text-lg font-semibold">
                         {applicant?.firstName + " " + applicant?.lastName}
                     </h2>
-                    <p className="text-[10px] md:text-[15px] lg:text-sm text-gray-200">Lagos Nigeria</p>
+                    <p className="text-[14px] md:text-[15px] lg:text-sm text-gray-200">Lagos Nigeria</p>
                 </div>
             </div>
         </div>

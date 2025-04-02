@@ -3,13 +3,22 @@ import { FaAngleLeft, FaChevronRight } from "react-icons/fa";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import SearchIcon from "../../components/common/SearchIcon.tsx";
 import Chat from "../../assets/icons/bubble-chat.svg";
-import {applicantNavBarItemMap, applicantNavItems, applicantNavItemsMobile} from "../../utils/constants.ts";
+import {
+  applicantNavBarItemMap,
+  applicantNavItems,
+  applicantNavItemsMobile, employerNavBarItemMap,
+  employerNavItems, employerNavItemsMobile
+} from "../../utils/constants.ts";
+import { useNavigate } from "react-router-dom";
+import {USER_TYPE} from "../../utils/helpers.ts";
+import {UserType} from "../../utils/enums.ts";
 
 export const ApplicantNetwork: FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [displayScrollIcons, setDisplayScrollIcons] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const navigate = useNavigate();
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -44,7 +53,11 @@ export const ApplicantNetwork: FC = () => {
 
   return (
     <div className="bg-[#F7F8FA] min-h-screen">
-      <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile} navbarItemsMap={applicantNavBarItemMap}/>
+      {
+        USER_TYPE === UserType.APPLICANT ?
+            (<TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile} navbarItemsMap={applicantNavBarItemMap}/>)
+            : <TopNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
+      }
       <div className="w-full flex flex-col items-center py-6">
         <div className="w-[94%] flex flex-col items-center justify-center py-6">
           <div className="w-full py-[10px] pl-[30px] pr-[12px] bg-[#FFFFFF] rounded-2xl flex flex-col sm:flex-row items-center gap-2">
@@ -110,8 +123,8 @@ export const ApplicantNetwork: FC = () => {
                 <p className="w-[50%] font-medium text-[#8E8E8E]">
                   500 mutual friends
                 </p>
-                <div className="border border-[#E6E6E6] rounded-[10px] py-[6px] px-[16px]">
-                  <button className="font-medium text-[#000000]">
+                  {/* <button className="font-medium text-[#000000]" onClick={() => navigate("/user/publicprofileview/[id]")}> */}
+                  <button className="font-medium bg-red-600 px-5 text-[#000000]" onClick={() => navigate(`/applicant/dashboard/network/publicprofileview/${1}`)}>
                     View Profile
                   </button>
                 </div>
@@ -596,7 +609,6 @@ export const ApplicantNetwork: FC = () => {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 };

@@ -1,25 +1,48 @@
-@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
-
+/* Import Google Font - Nunito (based on usage) */
+@import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ============================
+   Global Styles
+============================ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+
 
 html {
     scroll-behavior: smooth;
-  font-family: "Lato", sans-serif;
     line-height: 1.6;
-
+    font-family: "Nunito", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
 }
 
+
 body {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-/* Custom CSS for the dropdown arrow */
+
+
+/* ============================
+   Custom Utility Classes
+============================ */
+
+/* Wrapper for select with custom dropdown arrow */
+.custom-select-wrapper {
+    position: relative;
+}
+
+/* Dropdown arrow styling */
 .custom-select-wrapper::after {
     content: '▼';
     position: absolute;
@@ -30,17 +53,36 @@ body {
     color: white;
 }
 
-/* Custom CSS for the dropdown options */
+/* Styling for select options */
 .custom-select option {
     background-color: #f0f0f0; /* Light gray background */
-    color: black; /* Black text */
+    color: black;              /* Black text */
 }
 
-
+/* Truncate message after 3 lines */
 .truncate-message {
     display: -webkit-box;
     -webkit-line-clamp: 3; /* Limit to 3 lines */
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+
+input[type='range']::-webkit-slider-thumb {
+    appearance: none;
+    background: #6E4AED;
+    cursor: pointer;
+}
+
+input[type='range']::-moz-range-thumb {
+    appearance: none;
+    background: #6E4AED;
+    cursor: pointer;
+}
+
+input[type='range']::-ms-thumb {
+    appearance: none;
+    background: #6E4AED;
+    cursor: pointer;
 }

@@ -38,3 +38,6 @@ export { default as Download } from "./icons/download-04.svg";
 export { default as Delete } from "./icons/delete-02.svg"; 
 export { default as Setting } from "./icons/settings icon.svg"; 
 export { default as ArrowDown } from "./icons/arrow-down-01.svg"; 
+export { default as Retweet } from "./icons/retweet.svg"; 
+export { default as Chatbob } from "./icons/bubble-chat2.svg";
+export { default as Cancel } from "./icons/cancel.svg";

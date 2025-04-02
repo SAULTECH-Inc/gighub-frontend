@@ -7,6 +7,7 @@ import { calculatePasswordStrength } from "../../../../utils/helpers.ts";
 import {useAuth} from "../../../../store/useAuth.ts";
 import {ApplicantSignupRequest} from "../../../../utils/types";
 import {Link} from "react-router-dom";
+import {FiEye, FiEyeOff} from "react-icons/fi";
 
 interface StepOneProp {
     handleNext: () => void;
@@ -50,7 +51,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
 
     return (
         <motion.div
-            className="w-[310px] md:w-[680px] lg:w-[500px] mt-5 md:mr-28 md:mt-32 px-[10px] lg:px-0"
+            className="w-[100%-2rem] md:w-[680px] lg:w-[500px] mt-5 md:mr-28 md:mt-32 px-[10px] lg:px-0"
             initial={{opacity: 0}}
             animate={{opacity: 1}}
             exit={{opacity: 0}}
@@ -166,7 +167,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({handleNext }) => {
                         onClick={togglePasswordVisibility}
                         className="absolute top-[12px] right-[10px] text-[#6E4AED] focus:outline-none"
                     >
-                        {passwordVisible ? "Hide" : "Show"}
+                        {passwordVisible ? <FiEyeOff /> : <FiEye />}
                     </button>
                 </div>
             </motion.div>

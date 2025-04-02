@@ -123,7 +123,7 @@ const ExperienceUpdateForm: React.FC<ExperienceUpdateFormProps> = ({
 
         <div className="w-full flex flex-col gap-y-2 mb-0 py-0">
             <label>Description</label>
-            <RichTextEditor value={description === null || description === "" ? experienceData?.description as string : description} disabled={!isEditable} onChange={setDescription}/>
+            <RichTextEditor value={description} disabled={!isEditable} onChange={setDescription}/>
         </div>
     </div>)
 }

@@ -43,6 +43,7 @@ const WorkExperienceDetails: React.FC<ExperienceDetailsProps> = ({
         e.preventDefault();
 
         try {
+
             const response = await updateExperience(experience);
 
             if (response) {

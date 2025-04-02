@@ -36,7 +36,17 @@ const Certifications: React.FC<CertificationProps> = ({
 
     };
     const formatCertification = (certification: CertificationResponseDto) => {
-        return `${certification.certification} - ${certification.institution} (${certification.yearObtained})`;
+        let details = "";
+        if (certification.certification) {
+            details += certification.certification + " - ";
+        }
+        if (certification.institution) {
+            details += certification.institution;
+        }
+        if (certification.yearObtained) {
+            details += ` - ${certification.yearObtained}`;
+        }
+        return details;
     }
 
     return (
@@ -96,7 +106,7 @@ const Certifications: React.FC<CertificationProps> = ({
                         <h2 className="text-lg font-semibold mb-4">Add Certification</h2>
 
                         {/* Form to prevent default submission */}
-                        <form>
+                        <div>
                             {/* Certification Name */}
                             <input
                                 type="text"
@@ -150,7 +160,7 @@ const Certifications: React.FC<CertificationProps> = ({
                                     Add
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             )}

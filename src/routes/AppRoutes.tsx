@@ -30,6 +30,8 @@ import ApplicantJobdetails from "../pages/applicant/ApplicantJobdetails.tsx";
 import CompanyList from "../pages/company list/CompanyList.tsx";
 import ApplicantShortList from "../pages/applicant/ApplicantShortList.tsx";
 import MyApplications from "../pages/applicant/MyApplications.tsx";
+import PublicProfileView from "../components/ui/view profile/PublicProfileView.tsx";
+import ViewProfile from "../components/ui/view profile/ViewProfile.tsx";
 
 const AppRoutes = () => {
     return (
@@ -44,11 +46,13 @@ const AppRoutes = () => {
                 <Route path="/user-type-selection" element={<UserTypeSelection/>}/>
                 <Route path="/applicant/signup" element={<ApplicantMultistepForm/>}/>
                 <Route path="/employer/signup" element={<EmployerMultistepForm/>}/>
+                <Route path="/user/viewprofile" element={<ViewProfile/>}/>
+                <Route path="/applicant/dashboard/network/publicprofileview/:id" element={<PublicProfileView/>}/>
                 <Route path="/employer/profile" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><EmployerProfile/></PrivateRoute>}/>
                 <Route path="/applicant/profile" element={<PrivateRoute allowedTypes={[UserType.APPLICANT]}><ApplicantProfile/></PrivateRoute>}/>
                 <Route path="/employer/public-profile" element={<EmployerPublicProfile/>}/>
                 <Route path="/employer/manage-applicants" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><ManageApplicant/></PrivateRoute>}/>
-                <Route path="/settings" element={<UserSettings/>}/>
+                <Route path="/settings" element={<PrivateRoute allowedTypes={[UserType.APPLICANT,UserType.EMPLOYER]}><UserSettings/></PrivateRoute>}/>
                 <Route path="/job-details" element={<JobDetails/>}/>
                 <Route path="/job-list" element={<JobList/>}/>
                 <Route path="/job-filter" element={<FilterJob/>}/>
