@@ -8,8 +8,23 @@ export enum EmploymentType {
     TEMPORARY = "Temporary",
     VOLUNTEER = 'Volunteer',
     SEASONAL = 'Seasonal',
-    PER_DIEM = 'Per Diem', 
+    PER_DIEM = 'Per Diem',
     CONSULTANT = 'Consultant',
     APPRENTICESHIP = 'Apprenticeship'
 
   }
+
+  export const jobTypes: string[] = [
+      EmploymentType.FULL_TIME,
+      EmploymentType.PART_TIME,
+      EmploymentType.CONTRACT,
+      EmploymentType.FREELANCE,
+      EmploymentType.REMOTE,
+      EmploymentType.INTERNSHIP,
+      EmploymentType.TEMPORARY,
+      EmploymentType.VOLUNTEER,
+      EmploymentType.SEASONAL,
+      EmploymentType.PER_DIEM,
+      EmploymentType.CONSULTANT,
+      EmploymentType.APPRENTICESHIP,
+  ]
