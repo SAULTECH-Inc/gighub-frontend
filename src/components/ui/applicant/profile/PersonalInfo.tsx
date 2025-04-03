@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import CustomDropdown from "../../../common/CustomDropdown.tsx";
 import {useAuth} from "../../../../store/useAuth.ts";
-import {ApplicantPersonalInfo, Option} from "../../../../utils/types";
+import {ApplicantPersonalInfo, countries, Option} from "../../../../utils/types";
 import {useSectionEditable} from "../../../../store/useEditable.ts";
 
 const cities: Option[] = [
@@ -18,15 +18,6 @@ const cities: Option[] = [
     { label: "Dallas", value: "DAL" },
     { label: "San Diego", value: "SAN" },
     { label: "San Jose", value: "SJC" },
-]
-
-const countries: Option[] = [
-    {label: "United States", value: "US" },
-    { label: "Canada", value: "CA" },
-    { label: "United Kingdom", value: "UK" },
-    { label: "Australia", value: "AU" },
-    { label: "Nigeria", value: "NG" },
-    { label: "India", value: "IN" },
 ]
 const PersonalInfo: React.FC = () => {
     const {applicant,applicantPersonalInfo, setProfileData, setApplicantPersonalInfo, updateApplicantPersonalInfo} = useAuth();
