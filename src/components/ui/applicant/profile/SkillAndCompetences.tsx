@@ -1,11 +1,11 @@
 import React from "react";
 import Certifications from "./Certifications.tsx";
 import Skills from "./Skills.tsx";
-import { skills as skillsOptions } from "../../../../utils/dumm.ts";
 import {CertificationResponseDto, CvResponseDto, SkillsResponseDto} from "../../../../utils/types";
 import {SkillsAndCompetency, useApplicantJobProfile} from "../../../../store/useApplicantJobProfile.ts";
 import {useSectionEditable} from "../../../../store/useEditable.ts";
 import {toast} from "react-toastify";
+import {jobSkills} from "../../../../utils/JobType.ts";
 
 export interface CertParams{
     id?: number;
@@ -94,7 +94,12 @@ const SkillsAndCompetences: React.FC = () => {
                     {/* Skills Section */}
                     <Skills
                         isEditable={isEditable}
-                        options={skillsOptions}
+                        options={jobSkills.map(skill=>{
+                            return {
+                                value: skill,
+                                label: skill,
+                            };
+                        })}
                         skills={cvDetails?.skills?.map(s => s?.skill) as string[]}
                         addSkill={addSkill}
                         removeSkill={removeSkill}

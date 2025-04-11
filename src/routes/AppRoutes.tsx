@@ -32,6 +32,7 @@ import ApplicantShortList from "../pages/applicant/ApplicantShortList.tsx";
 import MyApplications from "../pages/applicant/MyApplications.tsx";
 import PublicProfileView from "../components/ui/view profile/PublicProfileView.tsx";
 import ViewProfile from "../components/ui/view profile/ViewProfile.tsx";
+import Network from "../pages/network/Network.tsx";
 
 const AppRoutes = () => {
     return (
@@ -40,7 +41,7 @@ const AppRoutes = () => {
                 <Route path="/not-authorized" element={<NotAuthorized/>}/>
                 <Route path="*" element={<NotFound/>}/>
                 <Route path="/login" element={<Login/>}/>
-                <Route path="/applicant/network" element={<PrivateRoute allowedTypes={[UserType.APPLICANT]}><ApplicantNetwork/></PrivateRoute>}/>
+                <Route path="/applicant/network" element={<PrivateRoute allowedTypes={[UserType.APPLICANT]}><Network/></PrivateRoute>}/>
                 <Route path="/applicant/dashboard" element={<PrivateRoute allowedTypes={[UserType.APPLICANT]}><ApplicantDashboard/></PrivateRoute>}/>
                 <Route path="/employer/dashboard" element={<PrivateRoute allowedTypes={[UserType.EMPLOYER]}><EmployerDashboard/></PrivateRoute>}/>
                 <Route path="/user-type-selection" element={<UserTypeSelection/>}/>

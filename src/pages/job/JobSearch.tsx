@@ -85,7 +85,7 @@ const JobSearch: React.FC = () => {
 
             <JobSearchTopBar toggleSidebar={handleToggleSidebar} />
 
-            <div className="w-full grid grid-cols-1 gap-y-6 md:grid-cols-[30%_70%] lg:grid-cols-[20%_45%_30%] justify-evenly gap-x-4 bg-[#F7F8FA] md:p-4">
+            <div className="w-full grid grid-cols-1 gap-y-6 md:grid-cols-[30%_70%] xl:grid-cols-[20%_45%_30%] justify-evenly gap-x-4 bg-[#F7F8FA] md:p-4">
                 <div className={`md:w-full w-full hidden md:flex`}>
                     <JobSearchSidebar
                         jobType={jobType}
@@ -119,7 +119,7 @@ const JobSearch: React.FC = () => {
                         ))}
                 </div>
 
-                <div className="w-full md:col-span-2 mdl:flex mdl:flex-row lg:flex-col lg:col-span-1 lg:w-full flex flex-col gap-y-4">
+                <div className="w-full lg:col-span-2 md:flex md:flex-row xl:flex-col xl:col-span-1 lg:w-full flex flex-col gap-y-4">
                     <ApplicantSchedules/>
                     <TopHiringCompanies/>
                 </div>

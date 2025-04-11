@@ -323,7 +323,6 @@ const MyApplications: React.FC = () => {
               )}
 
               <div className="flex w-full justify-center">
-                {/* Pagination */}
                 <Pagination
                   current={pagination.current}
                   total={pagination.total}
