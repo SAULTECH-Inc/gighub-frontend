@@ -2,32 +2,22 @@ import React from "react";
 import searchFilterButton from "../../assets/icons/search-filter-button.svg";
 import CustomRadioButton from "../common/CustomRadioButton.tsx";
 import CustomCheckbox from "../common/CustomCheckbox.tsx";
-import SalaryRangeSelector from "../common/SalaryRangeSelector.tsx";
+import SalaryRangeSelector, {CurrencyType, FrequencyType} from "../common/SalaryRangeSelector.tsx";
+import {UseJobSearchSettings, useJobSearchSettings} from "../../store/useJobSearchSettings.ts";
 
 interface JobSearchSidebar{
     jobType: string[];
-    setJobType: React.Dispatch<React.SetStateAction<string[]>>;
     experience: string[];
-    setExperience: React.Dispatch<React.SetStateAction<string[]>>;
     location: string;
-    setLocation: React.Dispatch<React.SetStateAction<string>>;
-    resetFilters: () => void;
     sortBy: string;
-    setSortBy: React.Dispatch<React.SetStateAction<string>>;
-    handleCheckboxChange: (category: string[], setCategory: React.Dispatch<React.SetStateAction<string[]>>, value: string)=>void;
 }
 const JobSearchSidebar: React.FC<JobSearchSidebar> = ({
     jobType,
-    setJobType,
     experience,
-    setExperience,
     location,
-    setLocation,
-    resetFilters,
     sortBy,
-    setSortBy,
-    handleCheckboxChange,
                                                       })=>{
+    const {settings, setSettings, resetSettings} = useJobSearchSettings();
     return (
         <div className="w-full bg-white grid grid-cols-1 px-4 border-2 border-[#F5F5F5]">
             {/* Filter Header */}
@@ -36,7 +26,7 @@ const JobSearchSidebar: React.FC<JobSearchSidebar> = ({
                     <img src={searchFilterButton} className="cursor-pointer" alt="search filter button"/>
                     <p>Filter</p>
                 </div>
-                <p className="cursor-pointer text-[#6438C2]" onClick={resetFilters}>Reset</p>
+                <p className="cursor-pointer text-[#6438C2]" onClick={resetSettings}>Reset</p>
             </div>
             <hr className="w-full border-[#E6E6E6]"/>
 
@@ -50,7 +40,12 @@ const JobSearchSidebar: React.FC<JobSearchSidebar> = ({
                             name="sortBy"
                             value={option}
                             checked={sortBy === option}
-                            onChange={() => setSortBy(option)}
+                            onChange={() => {
+                                setSettings({
+                                    ...settings,
+                                    sortBy: option,
+                                } as UseJobSearchSettings);
+                            }}
                             label={option}
                             size={19}
                             color="#6E4AED"
@@ -67,8 +62,15 @@ const JobSearchSidebar: React.FC<JobSearchSidebar> = ({
                     {["Full-time", "Freelance", "Part-time", "Contract", "Internship", "Volunteer"].map((option) => (
                         <CustomCheckbox
                             key={option}
-                            checked={jobType.includes(option)}
-                            onChange={() => handleCheckboxChange(jobType, setJobType, option)}
+                            checked={jobType?.includes(option)}
+                            onChange={() => {
+                                setSettings({
+                                    ...settings,
+                                    jobType: jobType.includes(option)
+                                        ? jobType.filter((type) => type !== option)
+                                        : [...jobType, option],
+                                } as UseJobSearchSettings);
+                            }}
                             label={option}
                             size={19}
                             borderColor="#D9D9D9"
@@ -78,10 +80,21 @@ const JobSearchSidebar: React.FC<JobSearchSidebar> = ({
                 </div>
             </div>
             <hr className="w-full border-[#E6E6E6]"/>
-
-            <SalaryRangeSelector onChange={
+            {/*baseMin = 0,*/}
+            {/*baseMax = 100000,*/}
+            {/*currency = "USD",*/}
+            {/*frequency = "year",*/}
+            <SalaryRangeSelector
+                baseMax={settings?.salaryRange?.max}
+                baseMin={settings?.salaryRange?.min}
+                currency={settings?.salaryRange?.currency as CurrencyType}
+                frequency={settings?.salaryRange?.frequency as FrequencyType}
+                onChange={
                 (v)=>{
-                   console.log(v);
+                    setSettings({
+                        ...settings,
+                        salaryRange: v,
+                } as UseJobSearchSettings);
                 }
             }/>
 
@@ -94,8 +107,16 @@ const JobSearchSidebar: React.FC<JobSearchSidebar> = ({
                     {["Under 1 Year", "1 - 2 Years", "2 - 5 Years", "5+ Years"].map((option) => (
                         <CustomCheckbox
                             key={option}
-                            checked={experience.includes(option)}
-                            onChange={() => handleCheckboxChange(experience, setExperience, option)}
+                            checked={experience?.includes(option)}
+                            onChange={() => {
+                                setSettings({
+                                    ...settings,
+                                    experience: experience.includes(option)
+                                        ? experience.filter((type) => type !== option)
+                                        : [...experience, option],
+
+                                } as UseJobSearchSettings);
+                            }}
                             label={option}
                             size={19}
                             borderColor="#D9D9D9"
@@ -116,7 +137,12 @@ const JobSearchSidebar: React.FC<JobSearchSidebar> = ({
                             name="location"
                             value={option}
                             checked={location === option}
-                            onChange={() => setLocation(option)}
+                            onChange={() => {
+                                setSettings({
+                                    ...settings,
+                                    location: option,
+                                } as UseJobSearchSettings);
+                            }}
                             label={option}
                             size={19}
                             color="#6E4AED"
