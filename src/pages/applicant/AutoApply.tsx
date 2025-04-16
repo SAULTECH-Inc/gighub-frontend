@@ -11,7 +11,7 @@ import {
 import JobMatchingForm from "../../components/layouts/JobMatchingForm";
 import ApplicationSettings from "../../components/layouts/ApplicationSetting";
 
-const Auto_Apply = () => {
+const AutoApply = () => {
     const [toggledItems, setToggledItems] = useState<{ [key: string]: boolean }>({});
     const getFormattedDate = (): string => {
         // Get current date
@@ -40,7 +40,7 @@ const Auto_Apply = () => {
             <div className="bg-white shadow-md p-6 flex flex-col gap-10 rounded-[16px]">
             {Array(7).fill("").map((index)=>(
                             <JobApplied
-                            key={index} 
+                            key={index}
                             companyName="Fundy Inc"
                             jobTitle="Product Design"
                             jobType="Remote"
@@ -71,7 +71,7 @@ const Auto_Apply = () => {
             <hr className="mt-10" />
             <div className="flex items-center justify-between mt-10">
                 <div className="sm:flex items-center bg-white shadow-md p-6 rounded-[16px] hidden">
-                {["Recieve notification when auto apply submit an application"].map((item, index) => (
+                {["Receive notification when auto apply submit an application"].map((item, index) => (
                              <label key={index} className="flex items-center justify-between">
                                     <span className="text-[20px] text-black">{item}</span>
                                     <ToggleSwitch
@@ -88,4 +88,4 @@ const Auto_Apply = () => {
   )
 }
 
-export default Auto_Apply
+export default AutoApply

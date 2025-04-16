@@ -37,7 +37,7 @@ const JobSearchSidebarMobile = forwardRef<HTMLDivElement, Props>(
 
     return (
         <div ref={ref} className={`fixed inset-0 z-50 items-start justify-start bg-black bg-opacity-50 overflow-y-auto ${isOpened ? "flex" : "hidden"}`}>
-            <div className="relative w-[300px] bg-white grid grid-cols-1 px-4 py-4 border-2 border-[#F5F5F5] overflow-y-auto">
+            <div className="relative w-[300px] min-h-screen bg-white grid grid-cols-1 px-4 py-4 border-2 border-[#F5F5F5] overflow-y-auto">
                 {/* Filter Header */}
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-x-4">

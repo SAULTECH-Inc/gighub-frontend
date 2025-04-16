@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import {useState, useEffect, useMemo, useRef} from "react";
 
-type FrequencyType = "hour" | "week" | "month" | "year";
-type CurrencyType = keyof typeof exchangeRates;
+export type FrequencyType = "hour" | "week" | "month" | "year";
+export type CurrencyType = keyof typeof exchangeRates;
 
 interface SalaryRangeProps {
     label?: string;
@@ -87,13 +87,33 @@ export default function SalaryRangeSelector({
         setPrevFrequency(selectedFrequency);
     }, [selectedCurrency, selectedFrequency]);
 
+    const lastSubmitted = useRef<{
+        currency: CurrencyType;
+        frequency: FrequencyType;
+        min: number;
+        max: number;
+    }>();
+
     useEffect(() => {
-        onChange({
+        const newValue = {
             currency: selectedCurrency,
+            frequency: selectedFrequency,
             min: Math.round(minValue),
             max: Math.round(maxValue),
-            frequency: selectedFrequency,
-        });
+        };
+
+        const prev = lastSubmitted.current;
+        const hasChanged =
+            !prev ||
+            prev.currency !== newValue.currency ||
+            prev.frequency !== newValue.frequency ||
+            prev.min !== newValue.min ||
+            prev.max !== newValue.max;
+
+        if (hasChanged) {
+            lastSubmitted.current = newValue;
+            onChange(newValue);
+        }
     }, [minValue, maxValue, selectedCurrency, selectedFrequency, onChange]);
 
     return (

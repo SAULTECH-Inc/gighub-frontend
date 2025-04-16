@@ -12,32 +12,15 @@ import TopHiringCompanies from "./TopHiringCompanies.tsx";
 import JobSearchSidebarMobile from "../../components/ui/JobSearchSidebarMobile.tsx";
 import JobSearchTopBar from "../../components/ui/JobSearchTopBar.tsx";
 import {AnimatePresence, motion} from "framer-motion";
+import {useJobSearchSettings} from "../../store/useJobSearchSettings.ts";
 
 const JobSearch: React.FC = () => {
     const [showSideBarMenu, setShowSideBarMenu] = useState(false);
     // States for different filter sections
-    const [sortBy, setSortBy] = useState("Most Relevant");
-    const [location, setLocation] = useState("Onsite");
-
-    const [jobType, setJobType] = useState<string[]>([]);
-    const [experience, setExperience] = useState<string[]>([]);
+    const {settings} = useJobSearchSettings();
     const sidebarRef = useRef<HTMLDivElement>(null);
 
     // Handle checkbox changes (toggle in array)
-    const handleCheckboxChange = (category: string[], setCategory: React.Dispatch<React.SetStateAction<string[]>>, value: string) => {
-        category.forEach(console.log);
-        setCategory((prev) =>
-            prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
-        );
-    };
-
-    // Reset all filters
-    const resetFilters = () => {
-        setSortBy("Most Relevant");
-        setLocation("Onsite");
-        setJobType([]);
-        setExperience([]);
-    };
 
     const handleToggleSidebar = () => {
         setShowSideBarMenu((prev) => !prev);
@@ -88,16 +71,10 @@ const JobSearch: React.FC = () => {
             <div className="w-full grid grid-cols-1 gap-y-6 md:grid-cols-[30%_70%] xl:grid-cols-[20%_45%_30%] justify-evenly gap-x-4 bg-[#F7F8FA] md:p-4">
                 <div className={`md:w-full w-full hidden md:flex`}>
                     <JobSearchSidebar
-                        jobType={jobType}
-                        setJobType={setJobType}
-                        experience={experience}
-                        setExperience={setExperience}
-                        resetFilters={resetFilters}
-                        sortBy={sortBy}
-                        setSortBy={setSortBy}
-                        location={location}
-                        setLocation={setLocation}
-                        handleCheckboxChange={handleCheckboxChange}
+                        jobType={settings?.jobType as string[]}
+                        experience={settings?.experienceLevel as string[]}
+                        sortBy={settings?.sortBy as string}
+                        location={settings?.location as string}
                     />
                 </div>
 
