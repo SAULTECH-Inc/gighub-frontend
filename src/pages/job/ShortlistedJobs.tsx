@@ -3,7 +3,7 @@ import dangote from '../../assets/images/dangote-logo.svg';
 import safarico from '../../assets/images/safarico.svg';
 const ShortlistedJobs = ()=>{
   return  <>
-        <div className="w-full h-[365px] mx-auto flex justify-center">
+        <div className="w-full mx-auto flex justify-center">
             <div className="bg-white p-4 w-[95%] rounded-[16px] shadow">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-[20px] font-bold">Shortlisted Jobs</h2>
