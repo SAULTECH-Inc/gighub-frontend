@@ -8,13 +8,15 @@ import {
     applicantNavItemsMobile, employerNavBarItemMap,
     employerNavItems, employerNavItemsMobile
 } from "../../utils/constants.ts";
-import {NetworkHeader} from "./NetworkHeader.tsx";
-import NetworkCard from "./NetworkCard.tsx";
-import NetworkConnectionsCard from "./NetworkConnectionsCard.tsx";
+import {useNetworkTab} from "../../store/useNetworkTab.ts";
+import {FindConnections} from "./FindConnections.tsx";
+import MyNetwork from "./MyNetwork.tsx";
 
-const Network: React.FC = ()=>{
+const Network: React.FC = () => {
+    /* active tab */
+    const { activeTab, setActiveTab } = useNetworkTab();
     return <>
-        <div className="w-full flex flex-col mx-auto border-2 border-black">
+        <div className="w-full flex flex-col mx-auto">
             {
                 USER_TYPE === UserType.APPLICANT ?
                     (<TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile}
@@ -22,27 +24,39 @@ const Network: React.FC = ()=>{
                     : <TopNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile}
                                  navbarItemsMap={employerNavBarItemMap}/>
             }
-            <NetworkHeader/>
-            <div
-                className="w-full mx-auto flex flex-col md:flex-row gap-6 justify-center p-4 border-2 border-black">
-                {/* Main Content Area */}
-                <div className="w-full grid sm:grid-cols-1 lg:grid-cols-4 gap-6 border-2">
-                    <NetworkCard/>
-                    <NetworkCard/>
-                    <NetworkCard/>
-                    <NetworkCard/>
-                    <NetworkCard/>
-                    <NetworkCard/>
-                </div>
-
-                {/* Sidebar */}
-                <div className="flex flex-col gap-6">
-                    <h2 className="font-semibold text-lg">Find New Connections</h2>
-                    <NetworkConnectionsCard/>
-                    <NetworkConnectionsCard/>
-                    <NetworkConnectionsCard/>
+            <div className="w-full flex justify-center items-center px-4 py-6 bg-white border-b border-[#E6E6E6] mt-12">
+                <div className="flex gap-6">
+                    <button
+                        onClick={() => setActiveTab("find-new-connections")}
+                        className={`pb-2 border-b-4 transition-colors ${
+                            activeTab === "find-new-connections"
+                                ? "text-purple-600 border-purple-600 font-medium"
+                                : "text-gray-600 border-transparent hover:text-purple-600 hover:border-purple-600"
+                        }`}
+                    >
+                        Find New Connections
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("my-connections")}
+                        className={`pb-2 border-b-4 transition-colors ${
+                            activeTab === "my-connections"
+                                ? "text-purple-600 border-purple-600 font-medium"
+                                : "text-gray-600 border-transparent hover:text-purple-600 hover:border-purple-600"
+                        }`}
+                    >
+                        My Connections
+                    </button>
                 </div>
             </div>
+
+
+
+            {/* Main Content Area */}
+            {
+                activeTab === "find-new-connections"
+                    ? <FindConnections/>
+                    : <MyNetwork/>
+            }
 
         </div>
     </>
