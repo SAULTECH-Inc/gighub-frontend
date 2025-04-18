@@ -10,13 +10,13 @@ type companyInterface = {
 
 const Companies: React.FC<companyInterface> = ({title, description}) => {
   return (
-    <div className=" bg-white border-[1px] border-[#E6E6E6] rounded-[16px] w-[263px] max-md:w-full max-sm:w-full ">
-        <div className="flex flex-col items-start">
-            <div className="relative">
-            <div className="h-[0.8px] w-[263px] max-md:w-[300px] max-sm:w-[400px] bg-[#AFAFAF] absolute top-14" />
-                <div className="bg-[#AFAFAF] h-20 w-20 rounded-full absolute top-5 left-5"></div>
+    <div className=" bg-white border-[1px] border-[#E6E6E6] rounded-[16px]  max-w-[500px] sm:max-w-[280px] lg:max-w-[263px]">
+        <div className="w-full flex flex-col items-start">
+            <div className="mt-[33px] relative h-20 w-full flex items-center">
+            <hr className="absolute border border-[#AFAFAF] w-full" />
+                <div className="bg-[#AFAFAF] h-full w-20 rounded-full left-5 absolute"></div>
             </div>
-            <div className="flex flex-col items-start mt-24 p-4">
+            <div className="flex flex-col items-start p-4">
                 <h4 className="font-bold text-black text-[20px]">{title}</h4>
                 <p className="text-sm text-[#8E8E8E]">{description}</p>
                 <div className="flex items-start justify-between space-x-4 my-3">
