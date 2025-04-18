@@ -38,7 +38,7 @@ const Skills: React.FC<SkillsProps> = ({ options, skills, addSkill, removeSkill,
                             className="text-left w-full p-2 border border-[#E6E6E6] rounded-[10px] bg-[#F7F8FA]"
                         />
                     </div>
-                    {skills?.map((skill) => (
+                    {skills?.map((skill: string) => (
                         <div
                             key={skill}
                             className="px-4 py-2 bg-[#FA4E09] text-white rounded-[10px] flex items-center space-x-2"

@@ -27,7 +27,7 @@ const ApplicantProfile: FC = () => {
             }
         }
         doFetchCvDetails();
-    }, [applicant]);
+    }, [applicant, fetchCvDetails, setCvDetails]);
     return (
         <div className="bg-[#F7F8FA] min-h-screen">
             <TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile} navbarItemsMap={applicantNavBarItemMap}/>

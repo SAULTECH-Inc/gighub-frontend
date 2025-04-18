@@ -29,7 +29,7 @@ import {UserType} from "../utils/enums.ts";
 import ApplicantJobdetails from "../pages/applicant/ApplicantJobdetails.tsx";
 import CompanyList from "../pages/company list/CompanyList.tsx";
 import ApplicantShortList from "../pages/applicant/ApplicantShortList.tsx";
-import MyApplications from "../pages/applicant/MyApplications.tsx";
+import MyApplications from "../pages/applications/MyApplications.tsx";
 import PublicProfileView from "../components/ui/view profile/PublicProfileView.tsx";
 import ViewProfile from "../components/ui/view profile/ViewProfile.tsx";
 import Network from "../pages/network/Network.tsx";

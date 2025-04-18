@@ -1,48 +1,42 @@
-import linkedin from "../../assets/icons/linkedin-round.svg";
-import twitter from "../../assets/icons/twitter-rounded.svg";
-import chatIcon from "../../assets/icons/chat-icon.svg";
+import React from 'react'
+import {ApplicantData} from "../../utils/types";
 
-const NetworkConnectionsCard = ()=>{
-    return <>
-        <div className="w-[70%] sm:w-[298px] h-[380px] rounded-[16px] border-[1px] p-[18px] border-[#E6E6E6] space-y-4">
-            <div className="w-[60px] h-[60px] rounded-full bg-[#D9D9D9] "></div>
-            <div className="flex flex-col">
-                <h3 className="text-[20px] text-[#000000] font-semibold">Jona johnson</h3>
-                <p>Lagos, Nigeria</p>
-            </div>
-            <div className="flex justify-between items-center">
-                <div className="flex gap-x-2">
-                    <div className=" cursor-pointer w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#E6E6E6] border-[1px]">
-                        <img src={linkedin} alt="linkedin-icon"/>
-                    </div>
-                    <div className="cursor-pointer w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#E6E6E6] border-[1px]">
-                        <img src={twitter} alt="twitter icon"/>
-                    </div>
-                </div>
-                <div>
-                    <div className="cursor-pointer bg-[#6438C2] w-[60px] h-[60px] rounded-full flex justify-center items-center border-[#E6E6E6] border-[1px]">
-                        <img src={chatIcon} alt="chat icon"/>
-                    </div>
-                </div>
-            </div>
-            <hr className="w-full border-[#AFAFAF] border-[1px]"/>
-            <div className="flex justify-between items-center font-bold text-[#6438C2] text-[16px]">
-                <p>Product Designer</p>
-                <p>Senior level</p>
-            </div>
-            <div className="flex justify-between items-center font-bold text-[#6438C2] text-[16px]">
-                <p className="w-[50%] font-medium text-[#8E8E8E]">
-                    500 mutual friends
-                </p>
-                <div className="border border-[#E6E6E6] rounded-[10px] py-[6px] px-[16px]">
-                    <button className="font-medium text-[#000000] text-[16px]">
-                        View Profile
-                    </button>
-                </div>
-            </div>
 
+interface NetworkConnectionsCardProps {
+    userDetails: ApplicantData;
+}
+const NetworkConnectionsCard:React.FC<NetworkConnectionsCardProps> = ({
+    userDetails
+                                                                      }) => {
+    return (
+        <div className="mx-auto flex max-w-[353px] flex-col space-y-6 rounded-[16px] bg-white px-4 py-6 border border-[#E6E6E6] shadow">
+        <div className="relative flex flex-col gap-4">
+          <div className="self-end rounded-[10px] border border-[#E6E6E6] px-4 py-[6px]">
+            <button className="font-bold text-[#000000]">
+              Send message
+            </button>
+          </div>
+          <hr />
+          <div className="absolute left-4 top-3 h-[60px] w-[60px] rounded-full bg-[#D9D9D9]"></div>
         </div>
-    </>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[20px] font-bold text-[#000000]">
+                {userDetails?.firstName} {userDetails?.lastName}
+            </p>
+            <p className="font-bold text-[#8E8E8E]">Lagos Nigeria</p>
+          </div>
+          <div className="h-[40px] w-[40px] rounded-full bg-[#D9D9D9]"></div>
+        </div>
+        <div className="w-full flex justify-between items-center gap-x-4 self-center font-bold mt-4">
+          <button className="block rounded-[10px] bg-[#E6E6E6] px-10 py-[6px] text-[#000000]">
+            Reject
+          </button>
+          <button className="block rounded-[10px] bg-[#6438C2] px-10 py-[7px] text-[#FFFFFF]">
+            Accept
+          </button>
+        </div>
+      </div>)
 }
 
-export default NetworkConnectionsCard;
+export default NetworkConnectionsCard
