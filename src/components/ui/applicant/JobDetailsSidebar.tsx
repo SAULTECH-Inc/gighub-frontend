@@ -45,19 +45,19 @@ const JobDetailsSidebar: React.FC<JobMatchCardProps> = ({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-5">
             <div className="flex items-center space-x-2 mt-5">
                 <img src={jobTypeIcon} alt={type} />
-                <span className="text-gray text-sm">{type}</span>
+                <span className="text-gray text-[13px] md:text-sm">{type}</span>
             </div>
             <div className="flex items-center space-x-2 mt-5">
                 <img src={locationIcon} alt={type} />
-                <span className="text-gray text-sm">{location}</span>
+                <span className="text-gray text-[13px] md:text-sm">{location}</span>
             </div>
             <div className="flex items-center space-x-2 mt-5">
                 <img src={peopleApplied} alt={type} />
-                <span className="text-gray text-sm">{applicants} Applied</span>
+                <span className="text-gray text-[13px] md:text-sm">{applicants} Applied</span>
             </div>
             <div className="flex items-center space-x-2 mt-5">
                 <img src={numberOfDaysRemaining} alt={type} />
-                <span className="text-gray text-xs">{daysLeft} days left</span>
+                <span className="text-gray text-[12px] md:text-sm">{daysLeft} days left</span>
             </div>
         </div>
     </div>
