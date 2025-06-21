@@ -29,7 +29,7 @@ export const PreferredJobRole: React.FC = () => {
   };
   return (
     <div>
-      <label className="mb-2 block font-lato text-lg text-gray-700">
+      <label className="text-gray-700 mb-2 block font-lato text-lg">
         Preferred Job Roles
       </label>
       <div className="w-full rounded-[16px] border-[1px] border-[#E6E6E6] bg-white p-4">

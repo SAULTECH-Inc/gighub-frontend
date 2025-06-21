@@ -210,7 +210,7 @@ const SubscriptionPlansView: React.FC = () => {
             <h1 className="mb-4 bg-gradient-to-r from-[#6438C2] to-[#FA4E09] bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
               Supercharge Your Job Search
             </h1>
-            <p className="mx-auto mb-8 max-w-3xl text-xl text-gray-600 md:text-2xl">
+            <p className="text-gray-600 mx-auto mb-8 max-w-3xl text-xl md:text-2xl">
               Let AI do the heavy lifting while you focus on what matters -
               landing your dream job
             </p>
@@ -241,10 +241,10 @@ const SubscriptionPlansView: React.FC = () => {
       {/* Pricing Section */}
       <div className="container mx-auto px-4 py-16">
         <div className="mb-12 text-center">
-          <h2 className="mb-4 text-3xl font-bold text-gray-800 md:text-4xl">
+          <h2 className="text-gray-800 mb-4 text-3xl font-bold md:text-4xl">
             Choose Your Success Plan
           </h2>
-          <p className="mx-auto max-w-2xl text-xl text-gray-600">
+          <p className="text-gray-600 mx-auto max-w-2xl text-xl">
             Start with our 7-day free trial. No credit card required.
           </p>
         </div>
@@ -268,7 +268,7 @@ const SubscriptionPlansView: React.FC = () => {
               <div className="p-8">
                 <div className="mb-6 text-center">
                   <div className="mb-2 text-4xl">{plan.icon}</div>
-                  <h3 className="text-2xl font-bold text-gray-800">
+                  <h3 className="text-gray-800 text-2xl font-bold">
                     {plan.name}
                   </h3>
                   <p className="text-gray-600">{plan.period}</p>
@@ -283,7 +283,7 @@ const SubscriptionPlansView: React.FC = () => {
                       /{plan.period.toLowerCase()}
                     </span>
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-gray-500 text-sm">
                     <span className="mr-2 line-through">
                       ${plan.originalPrice}
                     </span>
@@ -291,7 +291,7 @@ const SubscriptionPlansView: React.FC = () => {
                       Save ${plan.originalPrice - plan.price}
                     </span>
                   </div>
-                  <div className="mt-2 text-sm text-gray-600">
+                  <div className="text-gray-600 mt-2 text-sm">
                     {plan.applications} applications included
                   </div>
                 </div>
@@ -300,7 +300,7 @@ const SubscriptionPlansView: React.FC = () => {
                   {plan.features.map((feature, idx) => (
                     <div key={idx} className="flex items-start gap-3">
                       <div className="mt-0.5 text-lg text-green-500">✓</div>
-                      <span className="text-sm text-gray-700">{feature}</span>
+                      <span className="text-gray-700 text-sm">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -322,7 +322,7 @@ const SubscriptionPlansView: React.FC = () => {
 
         {/* Feature Grid */}
         <div className="mb-16">
-          <h3 className="mb-12 text-center text-3xl font-bold text-gray-800">
+          <h3 className="text-gray-800 mb-12 text-center text-3xl font-bold">
             Why Choose Auto Apply?
           </h3>
           <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-3">
@@ -332,7 +332,7 @@ const SubscriptionPlansView: React.FC = () => {
                 className="transform rounded-xl bg-white p-6 text-center shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
                 <div className="mb-4 text-4xl">{feature.icon}</div>
-                <h4 className="mb-2 text-xl font-semibold text-gray-800">
+                <h4 className="text-gray-800 mb-2 text-xl font-semibold">
                   {feature.title}
                 </h4>
                 <p className="text-gray-600">{feature.desc}</p>
@@ -343,7 +343,7 @@ const SubscriptionPlansView: React.FC = () => {
 
         {/* Testimonials */}
         <div className="mb-16">
-          <h3 className="mb-12 text-center text-3xl font-bold text-gray-800">
+          <h3 className="text-gray-800 mb-12 text-center text-3xl font-bold">
             Success Stories
           </h3>
           <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-3">
@@ -354,19 +354,19 @@ const SubscriptionPlansView: React.FC = () => {
               >
                 <div className="mb-4 flex">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <span key={i} className="text-lg text-yellow-400">
+                    <span key={i} className="text-yellow-400 text-lg">
                       ★
                     </span>
                   ))}
                 </div>
-                <p className="mb-4 italic text-gray-700">
+                <p className="text-gray-700 mb-4 italic">
                   "{testimonial.text}"
                 </p>
                 <div className="border-t pt-4">
-                  <div className="font-semibold text-gray-800">
+                  <div className="text-gray-800 font-semibold">
                     {testimonial.name}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-gray-600 text-sm">
                     {testimonial.role} at {testimonial.company}
                   </div>
                 </div>
@@ -386,7 +386,7 @@ const SubscriptionPlansView: React.FC = () => {
           </p>
           <button
             onClick={() => handleSubscription()}
-            className="rounded-lg bg-white px-8 py-4 text-lg font-bold text-[#6438C2] transition-colors duration-300 hover:bg-gray-100"
+            className="hover:bg-gray-100 rounded-lg bg-white px-8 py-4 text-lg font-bold text-[#6438C2] transition-colors duration-300"
           >
             Start Your 7-Day Free Trial
           </button>

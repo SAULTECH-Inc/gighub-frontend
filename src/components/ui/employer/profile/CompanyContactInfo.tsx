@@ -59,12 +59,12 @@ const CompanyContactInfo: React.FC = () => {
           Save
         </button>
       </div>
-      <h3 className="mb-4 font-lato text-[20px] text-gray-700">
+      <h3 className="text-gray-700 mb-4 font-lato text-[20px]">
         Contact Information
       </h3>
       <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-10">
         <div className="flex w-full flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">
+          <label className="text-gray-600 mb-1 text-[16px]">
             Email Address
           </label>
           <input
@@ -77,7 +77,7 @@ const CompanyContactInfo: React.FC = () => {
           />
         </div>
         <div className="flex w-full flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">Phone Number</label>
+          <label className="text-gray-600 mb-1 text-[16px]">Phone Number</label>
           <input
             type="tel"
             value={contactInfo?.companyPhone}
@@ -88,7 +88,7 @@ const CompanyContactInfo: React.FC = () => {
           />
         </div>
         <div className="flex w-full flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">
+          <label className="text-gray-600 mb-1 text-[16px]">
             Manager Email
           </label>
           <input
@@ -101,7 +101,7 @@ const CompanyContactInfo: React.FC = () => {
           />
         </div>
         <div className="flex w-full flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">
+          <label className="text-gray-600 mb-1 text-[16px]">
             Manager Phone Number
           </label>
           <input

@@ -86,9 +86,9 @@ export default function SalaryRangeSelector({
       </div>
 
       <div className="mb-4">
-        <label className="mb-2 block text-sm font-medium text-gray-600">
+        <label className="text-gray-600 mb-2 block text-sm font-medium">
           <span className="mr-2">Range:</span>
-          <span className="font-bold text-gray-800">
+          <span className="text-gray-800 font-bold">
             {selectedCurrencySymbol} {Math.round(minValue).toLocaleString()} -{" "}
             {selectedCurrencySymbol} {Math.round(maxValue).toLocaleString()}{" "}
             {frequencyLabels[selectedFrequency]}
@@ -97,9 +97,9 @@ export default function SalaryRangeSelector({
 
         <div className="mt-2 flex gap-4">
           <div className="flex-1">
-            <label className="mb-1 block text-sm text-gray-600">Minimum</label>
+            <label className="text-gray-600 mb-1 block text-sm">Minimum</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+              <span className="text-gray-500 absolute left-3 top-1/2 -translate-y-1/2">
                 {selectedCurrencySymbol}
               </span>
               <input
@@ -118,9 +118,9 @@ export default function SalaryRangeSelector({
           </div>
 
           <div className="flex-1">
-            <label className="mb-1 block text-sm text-gray-600">Maximum</label>
+            <label className="text-gray-600 mb-1 block text-sm">Maximum</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+              <span className="text-gray-500 absolute left-3 top-1/2 -translate-y-1/2">
                 {selectedCurrencySymbol}
               </span>
               <input

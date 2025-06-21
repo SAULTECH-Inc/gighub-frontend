@@ -46,15 +46,15 @@ const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
               : employer?.companyLogo) || avatarIcon
           }
           alt="Avatar"
-          className="bg-gray flex h-[50px] w-[50px] items-center justify-center rounded-full"
+          className="flex h-[50px] w-[50px] items-center justify-center rounded-full bg-gray"
         />
         <div>
-          <h3 className="text-lg font-bold text-gray-800">
+          <h3 className="text-gray-800 text-lg font-bold">
             {USER_TYPE === UserType.APPLICANT
               ? applicant.firstName + " " + applicant.lastName
               : employer?.companyName}
           </h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-gray-500 text-sm">
             {USER_TYPE === UserType.APPLICANT
               ? applicant?.cv?.professionalTitle
               : "Company"}
@@ -74,7 +74,7 @@ const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
       {/* Menu Items */}
       <ul className="space-y-4 text-sm font-medium">
         <li
-          className="flex cursor-pointer items-center gap-3 text-gray-500 hover:text-gray-800"
+          className="text-gray-500 hover:text-gray-800 flex cursor-pointer items-center gap-3"
           onClick={() => {
             setActiveItem("Profile");
             navigate(`/${userType}/profile`);
@@ -83,7 +83,7 @@ const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
           <CiUser className="text-lg" /> Profile
         </li>
         <li
-          className="flex cursor-pointer items-center gap-3 text-gray-500 hover:text-gray-800"
+          className="text-gray-500 hover:text-gray-800 flex cursor-pointer items-center gap-3"
           onClick={() => {
             setActiveItem("Settings");
             navigate(`/settings`);
@@ -92,7 +92,7 @@ const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
           <PiGearSixLight className="text-lg" /> Settings
         </li>
         <li
-          className="flex cursor-pointer items-center gap-3 text-gray-500 hover:text-gray-800"
+          className="text-gray-500 hover:text-gray-800 flex cursor-pointer items-center gap-3"
           onClick={() => {
             navigate(`/help-and-support`);
           }}

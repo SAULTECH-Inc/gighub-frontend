@@ -150,7 +150,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
         </div>
 
         {/* Center: Navigation Links (Desktop) */}
-        <ul className="hidden flex-wrap justify-center gap-6 font-lato text-[16px] text-gray-700 lg:flex">
+        <ul className="text-gray-700 hidden flex-wrap justify-center gap-6 font-lato text-[16px] lg:flex">
           {navItems.map((item) => (
             <li
               key={item}
@@ -267,15 +267,15 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                   : employer?.companyLogo) || avatarIcon
               }
               alt="Avatar"
-              className="bg-gray flex h-[50px] w-[50px] items-center justify-center rounded-full"
+              className="flex h-[50px] w-[50px] items-center justify-center rounded-full bg-gray"
             />
             <div>
-              <h3 className="text-lg font-bold text-gray-800">
+              <h3 className="text-gray-800 text-lg font-bold">
                 {USER_TYPE === UserType.APPLICANT
                   ? applicant.firstName + " " + applicant.lastName
                   : employer?.companyName}
               </h3>
-              <p className="text-sm text-gray-500">
+              <p className="text-gray-500 text-sm">
                 {USER_TYPE === UserType.APPLICANT
                   ? applicant?.cv?.professionalTitle
                   : "Company"}
@@ -305,7 +305,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                   handleSetItems(item);
                   setMobileNavOpen(false);
                 }}
-                className={`flex cursor-pointer items-center gap-3 rounded-lg px-4 py-2 font-lato text-[16px] text-gray-600 transition-colors duration-200 hover:bg-[#6438C2]/10 hover:text-[#6438C2]`}
+                className={`text-gray-600 flex cursor-pointer items-center gap-3 rounded-lg px-4 py-2 font-lato text-[16px] transition-colors duration-200 hover:bg-[#6438C2]/10 hover:text-[#6438C2]`}
               >
                 {item === "Dashboard" && (
                   <AiOutlineDashboard className="text-lg" />

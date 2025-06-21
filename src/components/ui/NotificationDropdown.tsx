@@ -63,13 +63,13 @@ const NotificationDropdown: FC = () => {
       <div className="absolute -right-10 top-8 z-50 w-[352px] rounded-[16px] bg-white p-4 font-lato shadow-lg md:right-0">
         <div>
           <div className="relative mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-bold text-gray-800">Notification</h3>
+            <h3 className="text-gray-800 text-lg font-bold">Notification</h3>
             <button
               onClick={() => {
                 openModal("notification-settings-dropdown");
               }}
             >
-              <AiOutlineSetting className="cursor-pointer text-xl text-gray-500" />
+              <AiOutlineSetting className="text-gray-500 cursor-pointer text-xl" />
             </button>
             {isModalOpen("notification-settings-dropdown") && (
               <NotificationSettingsDropdown modalId="notification-settings-dropdown" />
@@ -86,7 +86,7 @@ const NotificationDropdown: FC = () => {
               const Icon = notificationIconMap[notification.type] ?? FaBell;
               return (
                 <li key={index} className="relative">
-                  <div className="flex cursor-pointer items-center justify-between gap-4 p-2 hover:bg-gray-100">
+                  <div className="hover:bg-gray-100 flex cursor-pointer items-center justify-between gap-4 p-2">
                     <div
                       style={{
                         backgroundColor: eventTypeColorMap[notification.type],
@@ -101,10 +101,10 @@ const NotificationDropdown: FC = () => {
                     </div>
 
                     <div className="flex-1">
-                      <p className="text-[16px] font-semibold text-gray-800">
+                      <p className="text-gray-800 text-[16px] font-semibold">
                         {notification.title}
                       </p>
-                      <p className="text-[16px] text-gray-600">
+                      <p className="text-gray-600 text-[16px]">
                         {getFirstNWords(notification.content, 5).concat("...")}
                       </p>
                       <div className="mt-1 flex items-center justify-between">
@@ -150,18 +150,18 @@ const NotificationDropdown: FC = () => {
       {viewedMessageDetails && (
         <div className="absolute right-[calc(340px+1rem)] top-14 z-50 mr-4 w-[400px] rounded-[16px] bg-white p-4 font-lato shadow-lg">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-bold text-gray-800">
+            <h3 className="text-gray-800 text-lg font-bold">
               {viewedMessageDetails.title} Details
             </h3>
             <button
               onClick={handleCloseDetails}
-              className="cursor-pointer text-xl text-gray-500"
+              className="text-gray-500 cursor-pointer text-xl"
             >
               &times;
             </button>
           </div>
           <hr style={dividerStyle} className="-mx-4 mb-4" />
-          <p className="whitespace-pre-wrap text-[16px] text-gray-800">
+          <p className="text-gray-800 whitespace-pre-wrap text-[16px]">
             {viewedMessageDetails.content}
           </p>
         </div>

@@ -33,7 +33,7 @@ const JobDetailsSidebar: React.FC<JobMatchCardProps> = ({
           <h2 className="text-sm font-medium text-black sm:text-[20px]">
             {title}
           </h2>
-          <span className="text-gray text-sm">{location}</span>
+          <span className="text-sm text-gray">{location}</span>
         </div>
         <button className="rounded-[10px] border-[1px] border-[#E6E6E6] px-4 py-1 text-[#6438C2]">
           Apply
@@ -53,21 +53,21 @@ const JobDetailsSidebar: React.FC<JobMatchCardProps> = ({
       <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
         <div className="mt-5 flex items-center space-x-2">
           <img src={jobTypeIcon} alt={type} />
-          <span className="text-gray text-[13px] md:text-sm">{type}</span>
+          <span className="text-[13px] text-gray md:text-sm">{type}</span>
         </div>
         <div className="mt-5 flex items-center space-x-2">
           <img src={locationIcon} alt={type} />
-          <span className="text-gray text-[13px] md:text-sm">{location}</span>
+          <span className="text-[13px] text-gray md:text-sm">{location}</span>
         </div>
         <div className="mt-5 flex items-center space-x-2">
           <img src={peopleApplied} alt={type} />
-          <span className="text-gray text-[13px] md:text-sm">
+          <span className="text-[13px] text-gray md:text-sm">
             {applicants} Applied
           </span>
         </div>
         <div className="mt-5 flex items-center space-x-2">
           <img src={numberOfDaysRemaining} alt={type} />
-          <span className="text-gray text-[12px] md:text-sm">
+          <span className="text-[12px] text-gray md:text-sm">
             {daysLeft} days left
           </span>
         </div>

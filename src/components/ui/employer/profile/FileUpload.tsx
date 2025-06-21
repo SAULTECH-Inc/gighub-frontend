@@ -21,7 +21,7 @@ const FileUpload: React.FC = () => {
     <div className="mx-auto h-[376px] w-full border border-[#E6E6E6] bg-[#FFFFFF] p-4">
       {/* Header */}
       <div className="mb-4 flex h-[42px] w-full cursor-pointer items-center justify-between rounded-[16px] border-[1px] border-[#E6E6E6] p-6">
-        <span className="font-lato text-sm text-gray-700">Upload Files</span>
+        <span className="text-gray-700 font-lato text-sm">Upload Files</span>
         <div className="relative inline-block">
           {/* Hidden native file input */}
           <input type="file" id="fileInput" className="hidden" />

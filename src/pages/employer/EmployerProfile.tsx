@@ -72,7 +72,7 @@ const EmployerProfile: FC = () => {
         navItemsMobile={employerNavItemsMobile}
         navbarItemsMap={employerNavBarItemMap}
       />
-      <div className="mx-auto flex min-h-screen w-full items-start justify-center gap-x-5 bg-gray-100 pt-6 md:px-5 lg:px-10">
+      <div className="bg-gray-100 mx-auto flex min-h-screen w-full items-start justify-center gap-x-5 pt-6 md:px-5 lg:px-10">
         {/* Sidebar */}
         <EmployerProfileSidebar />
 

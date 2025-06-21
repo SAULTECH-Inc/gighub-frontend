@@ -77,7 +77,7 @@ const EmployerSignupStepFour: React.FC<StepTwoProp> = ({ handlePrev }) => {
         transition={{ duration: 0.5 }}
       >
         <motion.label
-          className="text-[13px] text-gray-100"
+          className="text-gray-100 text-[13px]"
           initial={{ y: 50 }}
           animate={{ y: 0 }}
           transition={{ duration: 0.5 }}
@@ -86,7 +86,7 @@ const EmployerSignupStepFour: React.FC<StepTwoProp> = ({ handlePrev }) => {
           Company Description
         </motion.label>
         <textarea
-          className="h-[182px] w-full resize-none rounded-[16px] border-[1px] border-[#ccc] p-5 text-[16px] placeholder-gray-500 focus:border-[1px] focus:border-[#ccc] focus:outline-none focus:ring-0"
+          className="placeholder-gray-500 h-[182px] w-full resize-none rounded-[16px] border-[1px] border-[#ccc] p-5 text-[16px] focus:border-[1px] focus:border-[#ccc] focus:outline-none focus:ring-0"
           placeholder="Write here..."
           id="company-description"
           value={employerSignupRequest?.companyDescription} // ✅ Updated to `employer`

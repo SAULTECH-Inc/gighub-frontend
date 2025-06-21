@@ -91,12 +91,12 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
               <button
                 type="button"
                 onClick={handleCloseApplicationModal}
-                className="cursor-pointer text-xl text-gray-500"
+                className="text-gray-500 cursor-pointer text-xl"
               >
                 ×
               </button>
             </div>
-            <p className="mb-5 w-[214px] text-justify text-[13px] text-gray-600">
+            <p className="text-gray-600 mb-5 w-[214px] text-justify text-[13px]">
               We will automatically help you figure out the raised
             </p>
           </div>
@@ -193,7 +193,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
             <Link
               to={`/employers/${jobToApply?.employer?.id}/${jobToApply?.employer?.companyName}/profile`}
               type="button"
-              className="h-[34px] w-[169px] rounded-[8px] border-[1px] border-[#ccc] px-5 py-1 text-[13px] text-gray-700"
+              className="text-gray-700 h-[34px] w-[169px] rounded-[8px] border-[1px] border-[#ccc] px-5 py-1 text-[13px]"
             >
               Go to recruiter profile
             </Link>

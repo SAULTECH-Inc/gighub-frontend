@@ -52,7 +52,7 @@ const ShortlistedJobs = () => {
                     >
                       {job?.company}. {job?.title}
                     </Link>
-                    <p className="text-xs text-gray-500 md:text-sm">
+                    <p className="text-gray-500 text-xs md:text-sm">
                       2 people in your network work here
                     </p>
                   </div>

@@ -27,8 +27,9 @@ import Button from "../components/common/Button";
 import TestimonialCarousel from "../components/common/TestimonialCarousel";
 import Footer from "../components/layouts/Footer";
 import Header from "../components/layouts/Header";
+import { memo } from "react";
 
-export const Home = () => {
+const HomeComponent = () => {
   return (
     <>
       <Header />
@@ -407,7 +408,7 @@ export const Home = () => {
       {/* Latest jobs section */}
       <div className="mt-5 px-3 md:mt-[90px] md:px-10 lg:px-[90px]">
         <h1 className="font-lato text-[40px] font-black">
-          <span className="text-tertiary">Latest and Top</span>Jobs Openings
+          <span className="text-tertiary">Latest and Top</span> Jobs Openings
         </h1>
         <p className="mt-3 font-lato text-xs font-black text-[#d9d9d9]">
           Explore the latest and top job openings in your area. Discover
@@ -694,3 +695,5 @@ export const Home = () => {
     </>
   );
 };
+
+export const Home = memo(HomeComponent);

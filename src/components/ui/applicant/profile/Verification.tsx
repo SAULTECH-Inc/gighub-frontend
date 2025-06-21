@@ -60,7 +60,7 @@ const ComplianceAndVerification: React.FC = () => {
       <h3 className="mb-4 font-lato text-[20px]">Verification</h3>
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col space-y-2">
-          <label className="mb-1 text-sm text-gray-600">Government ID</label>
+          <label className="text-gray-600 mb-1 text-sm">Government ID</label>
           <input
             type="url"
             name="governmentIdentificationNumber"

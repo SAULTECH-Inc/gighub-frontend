@@ -39,7 +39,7 @@ const ApplicantProfile: FC = () => {
         navItemsMobile={applicantNavItemsMobile}
         navbarItemsMap={applicantNavBarItemMap}
       />
-      <div className="mx-auto flex min-h-screen justify-center gap-x-10 bg-gray-100 px-2 pt-6 lg:px-5">
+      <div className="bg-gray-100 mx-auto flex min-h-screen justify-center gap-x-10 px-2 pt-6 lg:px-5">
         {/* Sidebar */}
         <ApplicantProfileSidebar />
 

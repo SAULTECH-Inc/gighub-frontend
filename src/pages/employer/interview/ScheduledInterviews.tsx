@@ -32,8 +32,9 @@ interface InfoProps {
 
 const ScheduledInterviews: React.FC = () => {
   const { setRecipient, setRecipientDetails, setIsClosed } = useChatStore();
-  const [interview, setInterview] =
-    useState<InterviewScheduleDetailsResponse>({} as InterviewScheduleDetailsResponse);
+  const [interview, setInterview] = useState<InterviewScheduleDetailsResponse>(
+    {} as InterviewScheduleDetailsResponse,
+  );
   const [showAll, setShowAll] = useState(false);
   const maxToShow = 1;
 
@@ -64,7 +65,7 @@ const ScheduledInterviews: React.FC = () => {
   }, [interviewId]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50 min-h-screen">
       <TopNavBar
         navItems={employerNavItems}
         navItemsMobile={employerNavItemsMobile}
@@ -74,7 +75,7 @@ const ScheduledInterviews: React.FC = () => {
       <div className="mx-auto mt-10 max-w-4xl rounded-2xl border border-[#E6E6E6] bg-white p-8 shadow-md">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#A0A0A0] pb-4">
-          <h2 className="text-3xl font-semibold text-gray-800">
+          <h2 className="text-gray-800 text-3xl font-semibold">
             Interview: {interview.title}
           </h2>
         </div>
@@ -84,17 +85,17 @@ const ScheduledInterviews: React.FC = () => {
           {applicantsToShow.map((applicant, idx) => (
             <div
               key={idx}
-              className="flex items-center justify-between rounded-xl border border-[#A0A0A0] bg-gray-50 p-4"
+              className="bg-gray-50 flex items-center justify-between rounded-xl border border-[#A0A0A0] p-4"
             >
               <div className="flex items-center gap-4">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-purple-100 text-xl font-bold uppercase text-purple-800 shadow-sm">
                   {applicant?.firstName && applicant?.firstName[0]}
                 </div>
                 <div>
-                  <p className="text-lg font-medium text-gray-800">
+                  <p className="text-gray-800 text-lg font-medium">
                     {applicant.firstName} {applicant.lastName}
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-gray-500 text-sm">
                     {applicant.professionalTitle}
                   </p>
                 </div>
@@ -155,7 +156,7 @@ const ScheduledInterviews: React.FC = () => {
         {/* Virtual/Physical Info */}
         {interview.interviewLink &&
           interview.interviewType !== InterviewType.IN_PERSON && (
-            <div className="mt-6 rounded-lg bg-gray-50 p-4">
+            <div className="bg-gray-50 mt-6 rounded-lg p-4">
               <p className="mb-2 text-sm font-semibold">Meeting Link:</p>
               <a
                 href={interview.interviewLink}
@@ -194,7 +195,7 @@ const ScheduledInterviews: React.FC = () => {
         {interview.notes && (
           <div className="mt-6">
             <p className="text-sm font-semibold">Notes:</p>
-            <p className="text-sm italic text-gray-600">{interview.notes}</p>
+            <p className="text-gray-600 text-sm italic">{interview.notes}</p>
           </div>
         )}
 
@@ -221,10 +222,10 @@ const ScheduledInterviews: React.FC = () => {
 
         {/* Action Buttons */}
         <div className="mt-8 flex flex-wrap justify-between gap-4">
-          <button className="rounded-md border border-[#E6E6E6] bg-gray-100 px-6 py-2 text-gray-700 hover:bg-gray-200">
+          <button className="bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-md border border-[#E6E6E6] px-6 py-2">
             Delete Schedule
           </button>
-          <button className="rounded-md border border-[#E6E6E6] bg-gray-100 px-6 py-2 text-gray-700 hover:bg-gray-200">
+          <button className="bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-md border border-[#E6E6E6] px-6 py-2">
             Edit Schedule
           </button>
           <button className="rounded-md bg-purple-600 px-6 py-2 font-semibold text-white hover:bg-purple-700">
@@ -241,7 +242,7 @@ const Info: React.FC<InfoProps> = ({ icon, label }) => (
     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F7F8FA] text-lg text-[#8E8E8E]">
       {icon}
     </div>
-    <span className="font-medium leading-5 text-gray-700">{label}</span>
+    <span className="text-gray-700 font-medium leading-5">{label}</span>
   </div>
 );
 

@@ -1,13 +1,13 @@
 const CustomTextEditor = () => {
   return (
     <form>
-      <div className="mb-4 w-full rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-700">
-        <div className="flex items-center justify-between border-b border-gray-200 px-3 py-2 dark:border-gray-600">
-          <div className="flex flex-wrap items-center divide-gray-200 dark:divide-gray-600 sm:divide-x sm:rtl:divide-x-reverse">
+      <div className="border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-700 mb-4 w-full rounded-lg border">
+        <div className="border-gray-200 dark:border-gray-600 flex items-center justify-between border-b px-3 py-2">
+          <div className="divide-gray-200 dark:divide-gray-600 flex flex-wrap items-center sm:divide-x sm:rtl:divide-x-reverse">
             <div className="flex items-center space-x-1 sm:pe-4 rtl:space-x-reverse">
               <button
                 type="button"
-                className="cursor-pointer rounded-sm p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 cursor-pointer rounded-sm p-2 dark:hover:text-white"
               >
                 <svg
                   className="h-4 w-4"
@@ -27,7 +27,7 @@ const CustomTextEditor = () => {
               </button>
               <button
                 type="button"
-                className="cursor-pointer rounded-sm p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 cursor-pointer rounded-sm p-2 dark:hover:text-white"
               >
                 <svg
                   className="h-4 w-4"
@@ -42,7 +42,7 @@ const CustomTextEditor = () => {
               </button>
               <button
                 type="button"
-                className="cursor-pointer rounded-sm p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 cursor-pointer rounded-sm p-2 dark:hover:text-white"
               >
                 <svg
                   className="h-4 w-4"
@@ -58,7 +58,7 @@ const CustomTextEditor = () => {
               </button>
               <button
                 type="button"
-                className="cursor-pointer rounded-sm p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 cursor-pointer rounded-sm p-2 dark:hover:text-white"
               >
                 <svg
                   className="h-4 w-4"
@@ -74,7 +74,7 @@ const CustomTextEditor = () => {
               </button>
               <button
                 type="button"
-                className="cursor-pointer rounded-sm p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 cursor-pointer rounded-sm p-2 dark:hover:text-white"
               >
                 <svg
                   className="h-4 w-4"
@@ -91,7 +91,7 @@ const CustomTextEditor = () => {
             <div className="flex flex-wrap items-center space-x-1 sm:ps-4 rtl:space-x-reverse">
               <button
                 type="button"
-                className="cursor-pointer rounded-sm p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 cursor-pointer rounded-sm p-2 dark:hover:text-white"
               >
                 <svg
                   className="h-4 w-4"
@@ -112,7 +112,7 @@ const CustomTextEditor = () => {
               </button>
               <button
                 type="button"
-                className="cursor-pointer rounded-sm p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 cursor-pointer rounded-sm p-2 dark:hover:text-white"
               >
                 <svg
                   className="h-4 w-4"
@@ -127,7 +127,7 @@ const CustomTextEditor = () => {
               </button>
               <button
                 type="button"
-                className="cursor-pointer rounded-sm p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 cursor-pointer rounded-sm p-2 dark:hover:text-white"
               >
                 <svg
                   className="h-4 w-4"
@@ -143,7 +143,7 @@ const CustomTextEditor = () => {
               </button>
               <button
                 type="button"
-                className="cursor-pointer rounded-sm p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 cursor-pointer rounded-sm p-2 dark:hover:text-white"
               >
                 <svg
                   className="h-4 w-4"
@@ -162,7 +162,7 @@ const CustomTextEditor = () => {
           <button
             type="button"
             data-tooltip-target="tooltip-fullscreen"
-            className="cursor-pointer rounded-sm p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white sm:ms-auto"
+            className="text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 cursor-pointer rounded-sm p-2 dark:hover:text-white sm:ms-auto"
           >
             <svg
               className="h-4 w-4"
@@ -184,20 +184,20 @@ const CustomTextEditor = () => {
           <div
             id="tooltip-fullscreen"
             role="tooltip"
-            className="shadow-xs tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 transition-opacity duration-300 dark:bg-gray-700"
+            className="shadow-xs tooltip bg-gray-900 dark:bg-gray-700 invisible absolute z-10 inline-block rounded-lg px-3 py-2 text-sm font-medium text-white opacity-0 transition-opacity duration-300"
           >
             Show full screen
             <div className="tooltip-arrow" data-popper-arrow=""></div>
           </div>
         </div>
-        <div className="rounded-b-lg bg-white px-4 py-2 dark:bg-gray-800">
+        <div className="dark:bg-gray-800 rounded-b-lg bg-white px-4 py-2">
           <label htmlFor="editor" className="sr-only">
             Publish post
           </label>
           <textarea
             id="editor"
             rows={8}
-            className="block w-full border-0 bg-white px-0 text-sm text-gray-800 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+            className="text-gray-800 dark:bg-gray-800 dark:placeholder-gray-400 block w-full border-0 bg-white px-0 text-sm focus:ring-0 dark:text-white"
             placeholder="Write an article..."
             required
           ></textarea>

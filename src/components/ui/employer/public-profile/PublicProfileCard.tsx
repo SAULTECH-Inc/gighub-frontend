@@ -13,7 +13,7 @@ const PublicProfileCard: React.FC<PublicProfileCardProp> = ({ user }) => {
     <div className="h-[150px] w-full items-center justify-between rounded-t-[16px] bg-[#6B5AED] p-4 text-white mdl:h-[118px]">
       <section className="mt-10 flex h-fit w-full flex-col items-center gap-y-6 bg-white p-6 shadow md:justify-between mdl:flex-row">
         <div className="flex w-full items-center gap-x-4 gap-y-3">
-          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gray-300">
+          <div className="bg-gray-300 flex h-24 w-24 items-center justify-center rounded-full">
             {/* Company logo or image */}
             <img
               src={user?.companyLogo || Image7} // Replace with your logo URL

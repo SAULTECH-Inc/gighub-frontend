@@ -88,7 +88,7 @@ const CreateJobStepThree: React.FC = () => {
             </div>
           )}
           <div className="w-full self-start rounded-[16px] bg-[#F7F8FA] p-6">
-            <h5 className="mb-4 text-lg font-semibold text-gray-800">
+            <h5 className="text-gray-800 mb-4 text-lg font-semibold">
               Application Method
             </h5>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

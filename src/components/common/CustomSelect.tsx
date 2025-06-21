@@ -69,7 +69,7 @@ const CustomSelect: React.FC<DropdownProps> = ({
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen(!isOpen)}
-        className={`relative flex w-full items-center justify-between rounded-md border border-gray-300 bg-white px-4 py-2 focus:outline-none ${className}`}
+        className={`border-gray-300 relative flex w-full items-center justify-between rounded-md border bg-white px-4 py-2 focus:outline-none ${className}`}
       >
         <span className="block truncate">
           {selectedOption ? selectedOption.label : placeholder || "\u00A0"}
@@ -88,7 +88,7 @@ const CustomSelect: React.FC<DropdownProps> = ({
           {/* Search input */}
           <input
             type="text"
-            className="mb-2 w-full border-b border-gray-300 px-3 py-2 focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="border-gray-300 mb-2 w-full border-b px-3 py-2 focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
             placeholder="Search..."
             value={search}
             disabled={disabled}

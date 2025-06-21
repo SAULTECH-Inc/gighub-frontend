@@ -77,7 +77,7 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
         <form onSubmit={handleSubmit(onSubmit)} className="mx-auto space-y-6">
           <div className="mx-auto flex flex-col gap-y-2">
             <div className="mx-auto flex h-[31px] w-[410px] items-center justify-between">
-              <div className="mb-1 block font-medium text-gray-700">
+              <div className="text-gray-700 mb-1 block font-medium">
                 Selected Plan
               </div>
               <div className="mb-4 text-right text-lg font-semibold text-purple-700">

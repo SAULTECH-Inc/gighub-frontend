@@ -50,7 +50,7 @@ const PublicProfileView: React.FC = () => {
       }
     };
 
-    if (id) fetchApplicant().then(r=>r);
+    if (id) fetchApplicant().then((r) => r);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 

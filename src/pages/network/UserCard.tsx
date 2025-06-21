@@ -47,9 +47,11 @@ const UserCard: React.FC<NetworkCardProps> = ({
           <h3 className="text-[20px] font-semibold text-[#000000]">
             {userDetails?.firstName} {userDetails?.lastName}
           </h3>
-          {
-            userDetails?.city && userDetails?.city && (<p className="font-bold text-[#8E8E8E]">{userDetails?.city} {userDetails?.country}</p>)
-          }
+          {userDetails?.city && userDetails?.city && (
+            <p className="font-bold text-[#8E8E8E]">
+              {userDetails?.city} {userDetails?.country}
+            </p>
+          )}
         </div>
         <div className="flex items-center justify-between">
           <div className="flex gap-x-2">

@@ -97,11 +97,11 @@ const MyApplications: React.FC = () => {
               {/* Search fields container */}
               <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-0">
                 {/* Job Title Field */}
-                <div className="flex flex-1 items-center rounded-lg bg-gray-50 py-2 pl-3 pr-2 sm:rounded-r-none">
+                <div className="bg-gray-50 flex flex-1 items-center rounded-lg py-2 pl-3 pr-2 sm:rounded-r-none">
                   <img
                     src={Search}
                     alt="search"
-                    className="h-5 w-5 shrink-0 text-gray-400"
+                    className="text-gray-400 h-5 w-5 shrink-0"
                   />
                   <div className="flex w-full items-center justify-between">
                     <input
@@ -120,7 +120,7 @@ const MyApplications: React.FC = () => {
                       onClick={() =>
                         setSearchQuery({ ...searchQuery, jobTitle: "" })
                       }
-                      className="hidden h-7 w-7 items-center justify-center rounded-full bg-gray-100 sm:flex"
+                      className="bg-gray-100 hidden h-7 w-7 items-center justify-center rounded-full sm:flex"
                     >
                       <img src={Cancel} alt="clear" className="h-3 w-3" />
                     </div>
@@ -128,14 +128,14 @@ const MyApplications: React.FC = () => {
                 </div>
 
                 {/* Divider - Hidden on mobile */}
-                <div className="hidden h-px bg-gray-300 sm:block sm:h-auto sm:w-px"></div>
+                <div className="bg-gray-300 hidden h-px sm:block sm:h-auto sm:w-px"></div>
 
                 {/* Company Name Field */}
-                <div className="flex flex-1 items-center rounded-lg bg-gray-50 py-2 pl-3 pr-2 sm:rounded-l-none sm:pl-4">
+                <div className="bg-gray-50 flex flex-1 items-center rounded-lg py-2 pl-3 pr-2 sm:rounded-l-none sm:pl-4">
                   <img
                     src={Search}
                     alt="search"
-                    className="h-5 w-5 shrink-0 text-gray-400"
+                    className="text-gray-400 h-5 w-5 shrink-0"
                   />
                   <input
                     type="text"
@@ -153,7 +153,7 @@ const MyApplications: React.FC = () => {
                     onClick={() =>
                       setSearchQuery({ ...searchQuery, companyName: "" })
                     }
-                    className="hidden h-7 w-7 items-center justify-center rounded-full bg-gray-100 sm:flex"
+                    className="bg-gray-100 hidden h-7 w-7 items-center justify-center rounded-full sm:flex"
                   >
                     <img src={Cancel} alt="clear" className="h-3 w-3" />
                   </div>
