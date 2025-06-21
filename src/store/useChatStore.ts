@@ -201,13 +201,13 @@ export const useChatStore = create(
           });
         },
 
-        isMinimized: false,
+        isMinimized: true,
         setIsMinimized: (isMinimized) => {
           set((state) => {
             state.isMinimized = isMinimized;
           });
         },
-        isClosed: false,
+        isClosed: true,
         setIsClosed: (isClosed) => {
           set((state) => {
             state.isClosed = isClosed;
