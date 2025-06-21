@@ -33,7 +33,7 @@ const ApplicantMultistepForm: React.FC = () => {
 
       {/* Step Indicator */}
       <div className="absolute left-1/2 top-10 flex -translate-x-1/2 transform flex-col gap-y-2 md:left-1/2 md:top-5 md:transform">
-        <span className="block text-left">{step} of 3</span>
+        <span className="block text-left mt-4">{step} of 3</span>
         <div className="flex justify-evenly gap-x-2">
           {[1, 2, 3].map((stepNumber) => (
             <div
