@@ -8,8 +8,13 @@ import JobSearchTopBar from "../../components/ui/JobSearchTopBar";
 import JobDetailsSidebar from "../../components/ui/applicant/job/JobDetailsSidebar.tsx";
 import JobDescription from "../../components/ui/applicant/job/JobDescription.tsx";
 import CompanyInfo from "../../components/ui/applicant/job/CompanyInfo.tsx";
+import { useState } from "react";
+import { JobPostResponse } from "../../utils/types";
 
-const ApplicantJobdetails = () => {
+const ApplicantJobDetails = () => {
+
+  const [, setJobs] = useState<JobPostResponse[]>([]);
+  const [, setTotalPages] = useState(0);
   return (
     <div>
       <TopNavBar
@@ -18,7 +23,7 @@ const ApplicantJobdetails = () => {
         navbarItemsMap={applicantNavBarItemMap}
       />
       <div className="hidden sm:block">
-        <JobSearchTopBar />
+        <JobSearchTopBar toggleSidebar={()=>{}} setJobs={setJobs} setTotalPages={setTotalPages} />
       </div>
       <div className="flex items-start justify-between bg-[#F7F8FA] p-3 max-lg:flex-col-reverse sm:p-6">
         <div className="flex flex-col gap-y-4 rounded-[16px] p-4 max-lg:grid max-lg:grid-cols-2 max-lg:gap-x-2 max-sm:grid-cols-1">
@@ -52,4 +57,4 @@ const ApplicantJobdetails = () => {
   );
 };
 
-export default ApplicantJobdetails;
+export default ApplicantJobDetails;

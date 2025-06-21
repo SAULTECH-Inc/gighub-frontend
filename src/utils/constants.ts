@@ -167,8 +167,6 @@ export const emojiList = [
   "🦼",
   "🦶",
 ];
-export const DEFAULT_PAGE = 0;
-export const PER_PAGE = 20;
 
 export const VITE_API_FILE_SERVICE =
   import.meta.env.VITE_API_FILE_SERVICE || "http://localhost:3008";
@@ -406,6 +404,7 @@ export const notificationIconMap: Record<EventType, IconType> = {
 
   // Interview & Resume Events
   [EventType.INTERVIEW_INVITE]: FaCalendarCheck,
+  [EventType.INTERVIEW_CREATED]: FaCalendarCheck,
   [EventType.RESUME_DOWNLOADED]: FaFileAlt,
 
   // Recommendation
@@ -473,6 +472,7 @@ export const eventTypeColorMap: Record<EventType, string> = {
 
   // Interview & Resume Events
   [EventType.INTERVIEW_INVITE]: "#FF7675",
+  [EventType.INTERVIEW_CREATED]: "#FF7675",
   [EventType.RESUME_DOWNLOADED]: "#0984E3",
 
   // Recommendation
