@@ -19,7 +19,7 @@ const JobDetailsBody: React.FC<JobDetailsBodyProp> = ({
   const { openModal } = useModalStore();
   const { setJobToApply } = useJobSearchSettings();
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center bg-gray-100">
+    <div className="bg-gray-100 flex h-full w-full flex-col items-center justify-center">
       {/* Top Section */}
       <div className="flex h-fit w-full flex-col items-start justify-center rounded-[16px] bg-white px-6 py-4 shadow-sm md:h-[84px] md:flex-row md:items-center md:justify-between">
         <h2 className="font-lato text-lg font-bold text-black">{job.title}</h2>

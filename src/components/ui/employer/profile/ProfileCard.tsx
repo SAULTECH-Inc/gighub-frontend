@@ -90,7 +90,7 @@ const ProfileCard: React.FC = () => {
             {employerProfile?.companyName || "Company"}
           </h2>
           {!employerProfile?.city && employerProfile?.country && (
-            <p className="text-xs text-gray-200 md:text-sm">
+            <p className="text-gray-200 text-xs md:text-sm">
               {employerProfile?.city || "City"},{" "}
               {employerProfile?.country || "Country"}
             </p>

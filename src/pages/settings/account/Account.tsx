@@ -144,7 +144,7 @@ const Account = () => {
     applicant?.cv?.professionalTitle || applicant?.professionalTitle || "";
 
   return (
-    <div className="flex min-h-screen w-full items-start justify-center bg-gray-100 pt-12 shadow-md">
+    <div className="bg-gray-100 flex min-h-screen w-full items-start justify-center pt-12 shadow-md">
       <div className="flex h-auto min-h-[680px] w-[90%] flex-col rounded-[16px] bg-white md:min-h-[590px]">
         {/* Profile Section */}
         <div className="flex items-center gap-4 p-10">
@@ -190,7 +190,7 @@ const Account = () => {
             <div className="flex w-full flex-col gap-y-8 md:flex-row md:gap-x-6">
               {/* Current Password */}
               <div className="flex w-full flex-col">
-                <label className="font-medium text-gray-700">
+                <label className="text-gray-700 font-medium">
                   Current Password
                 </label>
                 <input
@@ -204,7 +204,7 @@ const Account = () => {
 
               {/* New Password */}
               <div className="flex w-full flex-col">
-                <label className="font-medium text-gray-700">
+                <label className="text-gray-700 font-medium">
                   New Password
                 </label>
                 <input
@@ -230,7 +230,7 @@ const Account = () => {
                       >
                         {strengthInfo[passwordStrength]?.label}
                       </span>
-                      <div className="mt-1 h-1 w-full rounded bg-gray-200">
+                      <div className="bg-gray-200 mt-1 h-1 w-full rounded">
                         <div
                           className="h-full rounded transition-all duration-300"
                           style={{
@@ -248,7 +248,7 @@ const Account = () => {
 
             {/* Confirm Password */}
             <div className="flex w-full flex-col">
-              <label className="font-medium text-gray-700">
+              <label className="text-gray-700 font-medium">
                 Confirm Password
               </label>
               <input
@@ -282,7 +282,7 @@ const Account = () => {
                 className={`mt-4 h-[47px] rounded-[10px] px-5 py-2 font-medium text-white md:w-[164px] ${
                   isFormValid
                     ? "bg-[#6438C2] hover:bg-[#5730af]"
-                    : "cursor-not-allowed bg-gray-400"
+                    : "bg-gray-400 cursor-not-allowed"
                 }`}
               >
                 Save Changes

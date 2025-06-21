@@ -5,7 +5,7 @@ const ApplicantProfileSidebar: FC = () => {
   return (
     <div className="hidden h-[3920px] w-[20%] flex-col items-center justify-between rounded-[16px] bg-transparent xs:hidden lg:flex">
       <div className="flex h-[664px] w-full flex-col justify-between rounded-[16px] bg-white p-10">
-        <ul className="space-y-6 font-lato text-[16px] text-gray-800">
+        <ul className="text-gray-800 space-y-6 font-lato text-[16px]">
           <li className="cursor-pointer text-[#6438C2] hover:text-purple-700">
             <Link
               to="personal-info"

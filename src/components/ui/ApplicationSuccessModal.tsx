@@ -28,7 +28,7 @@ const ApplicationSuccessModal: React.FC<SuccessModalProps> = ({ modalId }) => {
       >
         <button
           onClick={handleCloseApplicationSuccessModal}
-          className="absolute right-3 top-3 cursor-pointer text-xl text-gray-500"
+          className="text-gray-500 absolute right-3 top-3 cursor-pointer text-xl"
         >
           ×
         </button>
@@ -65,7 +65,7 @@ const ApplicationSuccessModal: React.FC<SuccessModalProps> = ({ modalId }) => {
           Congratulations!
         </h2>
 
-        <p className="mb-6 w-[360px] text-center text-[13px] text-gray-600">
+        <p className="text-gray-600 mb-6 w-[360px] text-center text-[13px]">
           Your application has been successfully submitted, and all your details
           have been received by the recruiter. You can monitor your application
           status by visiting your Job Application Dashboard. Thank you for

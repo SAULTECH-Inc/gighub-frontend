@@ -305,11 +305,11 @@ const Schedules: React.FC = () => {
             </div>
             <div className="text-sm text-red-800">Cancelled</div>
           </div>
-          <div className="rounded-lg bg-yellow-50 p-4">
-            <div className="text-2xl font-bold text-yellow-600">
+          <div className="bg-yellow-50 rounded-lg p-4">
+            <div className="text-yellow-600 text-2xl font-bold">
               {stats.upcomingToday}
             </div>
-            <div className="text-sm text-yellow-800">Today</div>
+            <div className="text-yellow-800 text-sm">Today</div>
           </div>
         </div>
       </div>
@@ -480,7 +480,7 @@ const Schedules: React.FC = () => {
                 </button>
                 <button
                   onClick={() => handleBulkAction("reschedule")}
-                  className="flex items-center gap-2 rounded-lg bg-yellow-600 px-3 py-1.5 text-sm text-white transition hover:bg-yellow-700"
+                  className="bg-yellow-600 hover:bg-yellow-700 flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-white transition"
                 >
                   <RefreshCw className="h-3 w-3" />
                   Reschedule
@@ -552,7 +552,7 @@ const Schedules: React.FC = () => {
                             type="checkbox"
                             checked={bulkSelected.includes(interview.id)}
                             onChange={() => handleBulkSelect(interview.id)}
-                            className="h-4 w-4 rounded border-gray-300 bg-gray-100 text-purple-600 focus:ring-purple-500"
+                            className="border-gray-300 bg-gray-100 h-4 w-4 rounded text-purple-600 focus:ring-purple-500"
                             onClick={(e) => e.stopPropagation()}
                           />
                         </div>

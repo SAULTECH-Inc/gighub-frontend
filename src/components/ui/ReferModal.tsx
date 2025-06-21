@@ -151,7 +151,7 @@ const ReferModal: React.FC<ReferModalProp> = ({ modalId, handleRefer }) => {
                         ...(prev || []),
                       ]);
                     }}
-                    className="ml-1 font-bold text-white hover:text-gray-300"
+                    className="hover:text-gray-300 ml-1 font-bold text-white"
                   >
                     &times;
                   </button>
@@ -183,7 +183,7 @@ const ReferModal: React.FC<ReferModalProp> = ({ modalId, handleRefer }) => {
 
                 {/* Title & Rating */}
                 <div className="flex w-full items-center gap-x-2">
-                  <p className="text-sm text-gray-700">
+                  <p className="text-gray-700 text-sm">
                     {referee.user.professionalTitle}
                   </p>
                   <Rating value={2} readOnly={true} />

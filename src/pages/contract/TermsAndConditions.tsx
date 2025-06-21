@@ -45,10 +45,10 @@ const Section: React.FC<SectionProps> = ({
   return (
     <div
       id={id}
-      className="mb-8 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg"
+      className="border-gray-200 mb-8 overflow-hidden rounded-lg border bg-white shadow-lg"
     >
       <div
-        className={`to-orange-50 border-b border-gray-200 bg-gradient-to-r from-purple-100 px-6 py-4 ${
+        className={`to-orange-50 border-gray-200 border-b bg-gradient-to-r from-purple-100 px-6 py-4 ${
           isCollapsible
             ? "hover:to-orange-100 cursor-pointer transition-colors hover:from-purple-200"
             : ""
@@ -58,7 +58,7 @@ const Section: React.FC<SectionProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             {icon && <div className="text-purple-600">{icon}</div>}
-            <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
+            <h2 className="text-gray-800 text-xl font-semibold">{title}</h2>
           </div>
           {isCollapsible && (
             <div className="text-gray-500">
@@ -68,7 +68,7 @@ const Section: React.FC<SectionProps> = ({
         </div>
       </div>
       {isExpanded && (
-        <div className="px-6 py-6 leading-relaxed text-gray-700">
+        <div className="text-gray-700 px-6 py-6 leading-relaxed">
           {children}
         </div>
       )}
@@ -126,7 +126,7 @@ const TermsAndConditions: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50 min-h-screen">
       {USER_TYPE === UserType.EMPLOYER ? (
         <TopNavBar
           navItems={employerNavItems}
@@ -170,7 +170,7 @@ const TermsAndConditions: React.FC = () => {
                 placeholder="Search terms..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-purple-500 sm:w-64"
+                className="border-gray-300 w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-purple-500 sm:w-64"
               />
             </div>
             <button
@@ -254,7 +254,7 @@ const TermsAndConditions: React.FC = () => {
             GigHub is a comprehensive professional platform that connects job
             seekers with employers and facilitates career development through:
           </p>
-          <ul className="mb-4 list-inside list-disc space-y-2 text-gray-700">
+          <ul className="text-gray-700 mb-4 list-inside list-disc space-y-2">
             <li>
               <strong className="text-purple-600">
                 Job Search & Discovery:
@@ -641,7 +641,7 @@ const TermsAndConditions: React.FC = () => {
         </Section>
 
         {/* Footer */}
-        <div className="mt-12 border-t border-gray-200 pt-8 text-center text-gray-500">
+        <div className="border-gray-200 text-gray-500 mt-12 border-t pt-8 text-center">
           <p className="mb-2">© 2025 GigHub, Inc. All rights reserved.</p>
           <p className="text-sm">
             Empowering careers and connecting talent worldwide

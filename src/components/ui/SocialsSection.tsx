@@ -105,12 +105,12 @@ const SocialsSection: React.FC = () => {
           Save
         </button>
       </div>
-      <h3 className="mb-4 font-lato text-[20px] text-gray-700">
+      <h3 className="text-gray-700 mb-4 font-lato text-[20px]">
         Social and Professional Links
       </h3>
       <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-10">
         <div className="flex flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">
+          <label className="text-gray-600 mb-1 text-[16px]">
             LinkedIn Profile
           </label>
           <input
@@ -124,7 +124,7 @@ const SocialsSection: React.FC = () => {
         </div>
         {USER_TYPE === UserType.EMPLOYER && (
           <div className="flex flex-col">
-            <label className="mb-1 text-[16px] text-gray-600">Facebook</label>
+            <label className="text-gray-600 mb-1 text-[16px]">Facebook</label>
             <input
               type="url"
               name="facebookProfile"
@@ -136,7 +136,7 @@ const SocialsSection: React.FC = () => {
           </div>
         )}
         <div className="flex flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">Twitter</label>
+          <label className="text-gray-600 mb-1 text-[16px]">Twitter</label>
           <input
             type="url"
             name="twitterProfile"
@@ -147,7 +147,7 @@ const SocialsSection: React.FC = () => {
           />
         </div>
         <div className="flex flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">Instagram</label>
+          <label className="text-gray-600 mb-1 text-[16px]">Instagram</label>
           <input
             type="url"
             name="instagramProfile"
@@ -159,7 +159,7 @@ const SocialsSection: React.FC = () => {
         </div>
         {USER_TYPE === UserType.APPLICANT && (
           <div className="flex flex-col">
-            <label className="mb-1 text-[16px] text-gray-600">Github</label>
+            <label className="text-gray-600 mb-1 text-[16px]">Github</label>
             <input
               type="url"
               name="githubProfile"

@@ -53,14 +53,14 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
       {/* Sidebar Items */}
       <div className="flex items-center gap-x-3">
         <img src={RemoteIcon} alt="Remote work" className="h-6 w-6" />
-        <span className="font-lato text-[16px] font-medium leading-[20px] text-gray-700">
+        <span className="text-gray-700 font-lato text-[16px] font-medium leading-[20px]">
           {job.jobType}
         </span>
       </div>
 
       <div className="flex items-center gap-x-3">
         <img src={FullTimeIcon} alt="Full Time" className="h-6 w-6" />
-        <span className="font-lato text-[16px] font-medium leading-[20px] text-gray-700">
+        <span className="text-gray-700 font-lato text-[16px] font-medium leading-[20px]">
           {job.employmentType}
         </span>
       </div>
@@ -68,7 +68,7 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
       {job?.salaryRange?.maximumAmount > 0 && (
         <div className="flex items-center gap-x-3">
           <img src={SalaryIcon} alt="Salary" className="h-6 w-6" />
-          <span className="font-lato text-[16px] font-medium leading-[20px] text-gray-700">
+          <span className="text-gray-700 font-lato text-[16px] font-medium leading-[20px]">
             {job.salaryRange.currency}
             {numeral(job.salaryRange.minimumAmount).format("0,0a")} -{" "}
             {job.salaryRange.currency}
@@ -80,7 +80,7 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
 
       <div className="flex items-center gap-x-3">
         <img src={LevelIcon} alt="Mid Level" className="h-6 w-6" />
-        <span className="font-lato text-[16px] font-medium leading-[20px] text-gray-700">
+        <span className="text-gray-700 font-lato text-[16px] font-medium leading-[20px]">
           {job.level}
         </span>
       </div>
@@ -88,7 +88,7 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
       {/* Experience */}
       <div className="flex items-center gap-x-3">
         <MdOutlineMoreTime className="h-6 w-6" />
-        <span className="text-[16px] font-medium leading-[20px] text-gray-700">
+        <span className="text-gray-700 text-[16px] font-medium leading-[20px]">
           {job.experienceYears + "+ years experience" || "2+ yrs experience"}
         </span>
       </div>
@@ -114,14 +114,14 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
           />
         </svg>
 
-        <span className="text-[16px] font-medium leading-[20px] text-gray-700">
+        <span className="text-gray-700 text-[16px] font-medium leading-[20px]">
           {job.location}
         </span>
       </div>
 
       <div className="flex items-center gap-x-3">
         <img src={CalendarIcon} alt="Date" className="h-6 w-6" />
-        <span className="font-lato text-[16px] font-medium leading-[20px] text-gray-700">
+        <span className="text-gray-700 font-lato text-[16px] font-medium leading-[20px]">
           Closing {moment(job.startDate).format("D MMM YYYY - HH:mm")}
         </span>
       </div>
@@ -157,7 +157,7 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
       {/* Total Applicants */}
       <div className="flex items-center gap-x-3">
         <PiUsers className="h-5 w-5" />
-        <span className="text-[16px] font-medium leading-[20px] text-gray-700">
+        <span className="text-gray-700 text-[16px] font-medium leading-[20px]">
           {job.applicantsCount || 0} applied
         </span>
       </div>

@@ -56,10 +56,10 @@ const JobDescription = () => {
             {jobCurrentlyViewed?.title}
           </h2>
           <div className="flex gap-10">
-            <span className="text-gray text-sm font-bold">
+            <span className="text-sm font-bold text-gray">
               {jobCurrentlyViewed?.company}
             </span>
-            <span className="text-gray text-sm font-bold">
+            <span className="text-sm font-bold text-gray">
               {jobCurrentlyViewed?.applicantsCount &&
               jobCurrentlyViewed?.applicantsCount > 1
                 ? jobCurrentlyViewed?.applicantsCount +
@@ -67,7 +67,7 @@ const JobDescription = () => {
                 : "no applicants yet"}{" "}
             </span>
           </div>
-          <p className="text-gray mt-3 text-sm font-bold">
+          <p className="mt-3 text-sm font-bold text-gray">
             3 people from your network work in this company, or once worked
             here,{" "}
             <span className="text-[#6438C2]">
@@ -79,12 +79,12 @@ const JobDescription = () => {
           <h2 className="font-lato text-[18px] font-medium text-black sm:text-[20px]">
             {jobCurrentlyViewed?.title}
           </h2>
-          <span className="text-gray text-sm font-bold">
+          <span className="text-sm font-bold text-gray">
             {jobCurrentlyViewed?.company}
           </span>
         </div>
       </div>
-      <p className="text-gray mt-3 block text-sm font-bold sm:hidden">
+      <p className="mt-3 block text-sm font-bold text-gray sm:hidden">
         3 people from your network work in this company, or once worked here,{" "}
         <span className="text-[#6438C2]">
           <a href="">see connections</a>
@@ -129,7 +129,7 @@ const JobDescription = () => {
       <div className="mt-4 flex w-full flex-col items-start p-4">
         <h1 className="font-bold text-black">About</h1>
         <div
-          className="prose max-w-none whitespace-pre-wrap text-base leading-relaxed text-gray-700"
+          className="text-gray-700 prose max-w-none whitespace-pre-wrap text-base leading-relaxed"
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(jobCurrentlyViewed?.description || ""),
           }}
@@ -138,7 +138,7 @@ const JobDescription = () => {
       <div className="w-full p-4">
         <h1 className="font-bold text-black">Responsibilities</h1>
         <div
-          className="prose max-w-none whitespace-pre-wrap text-base leading-relaxed text-gray-700"
+          className="text-gray-700 prose max-w-none whitespace-pre-wrap text-base leading-relaxed"
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(
               jobCurrentlyViewed?.responsibility || "",
@@ -151,7 +151,7 @@ const JobDescription = () => {
         <div className="w-full p-4">
           <h1 className="font-bold text-black">Requirements</h1>
           <div
-            className="prose max-w-none whitespace-pre-wrap text-base leading-relaxed text-gray-700"
+            className="text-gray-700 prose max-w-none whitespace-pre-wrap text-base leading-relaxed"
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(
                 jobCurrentlyViewed?.requirements || "",
@@ -162,7 +162,7 @@ const JobDescription = () => {
       )}
       <hr className="mt-16 h-[1px] w-full text-[#E6E6E6]" />
       <div className="mt-5 items-center justify-between sm:flex">
-        <span className="text-gray hidden text-sm sm:block">
+        <span className="hidden text-sm text-gray sm:block">
           Posted {moment(jobCurrentlyViewed?.createdAt as Date).fromNow()}
         </span>
         <div className="flex items-center justify-between sm:space-x-4">

@@ -111,7 +111,7 @@ const ApplicantProfileCard: React.FC = () => {
           <h2 className="text-[16px] font-semibold md:text-[20px] lg:text-lg">
             {applicant?.firstName + " " + applicant?.lastName}
           </h2>
-          <p className="text-[14px] text-gray-200 md:text-[15px] lg:text-sm">
+          <p className="text-gray-200 text-[14px] md:text-[15px] lg:text-sm">
             Lagos Nigeria
           </p>
         </div>

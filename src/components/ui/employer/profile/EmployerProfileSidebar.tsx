@@ -6,7 +6,7 @@ const EmployerProfileSidebar: FC = () => {
   return (
     <div className="relative hidden h-[2385px] min-h-screen w-[35%] grid-cols-1 justify-between rounded-[16px] bg-transparent md:grid md:w-[29%] lg:w-[25%] xl:w-[22%]">
       <div className="flex h-fit w-full flex-col justify-between gap-y-36 rounded-[16px] bg-white px-5 py-8">
-        <ul className="w-full space-y-6 font-lato text-[16px] text-gray-800">
+        <ul className="text-gray-800 w-full space-y-6 font-lato text-[16px]">
           <li className="cursor-pointer text-[#6438C2] hover:text-purple-700">
             Basic Company Information
           </li>

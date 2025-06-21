@@ -38,10 +38,10 @@ const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
 
   return (
     <div>
-      <label className="mb-2 block font-lato text-lg text-gray-700">
+      <label className="text-gray-700 mb-2 block font-lato text-lg">
         Preferred Job Location
       </label>
-      <div className="w-full rounded-[16px] border border-[#E6E6E6] border-gray-300 bg-white p-4">
+      <div className="border-gray-300 w-full rounded-[16px] border border-[#E6E6E6] bg-white p-4">
         <div className="mb-4 flex space-x-4">
           <select
             className="w-1/2 rounded-[10px] border border-[#E6E6E6] bg-[#F7F8FA] p-2"

@@ -71,7 +71,7 @@ const ChatWindow: React.FC = () => {
       decrementUnread();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[]);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -130,7 +130,7 @@ const ChatWindow: React.FC = () => {
             </button>
           </div>
           <div className="flex items-center gap-x-2">
-            <div className="h-[60px] w-[60px] overflow-hidden rounded-full bg-gray-300">
+            <div className="bg-gray-300 h-[60px] w-[60px] overflow-hidden rounded-full">
               <img
                 src={recipientDetails?.profilePicture || avatarIcon}
                 alt="Profile"
@@ -162,7 +162,7 @@ const ChatWindow: React.FC = () => {
                 >
                   {/* Recipient Avatar */}
                   {!isSender && (
-                    <div className="mr-2 h-[40px] w-[40px] overflow-hidden rounded-full bg-gray-300">
+                    <div className="bg-gray-300 mr-2 h-[40px] w-[40px] overflow-hidden rounded-full">
                       <img
                         src={msg.recipientAvatar || avatarIcon}
                         alt="Profile"
@@ -180,9 +180,9 @@ const ChatWindow: React.FC = () => {
                     }`}
                   >
                     <div>{msg.content}</div>
-                    <div className="mt-1 flex items-center justify-end gap-1 text-xs text-gray-200">
+                    <div className="text-gray-200 mt-1 flex items-center justify-end gap-1 text-xs">
                       {msg.createdAt && (
-                        <span className="text-[10px] text-gray-200">
+                        <span className="text-gray-200 text-[10px]">
                           {formatChatTimestamp(new Date(msg.createdAt))}
                         </span>
                       )}
@@ -197,7 +197,7 @@ const ChatWindow: React.FC = () => {
 
                   {/* Sender Avatar */}
                   {isSender && (
-                    <div className="ml-2 h-[40px] w-[40px] overflow-hidden rounded-full bg-gray-300">
+                    <div className="bg-gray-300 ml-2 h-[40px] w-[40px] overflow-hidden rounded-full">
                       <img
                         src={msg.senderAvatar || avatarIcon}
                         alt="Profile"

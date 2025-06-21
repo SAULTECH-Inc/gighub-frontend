@@ -212,7 +212,7 @@ const CreateJobStepTwo: React.FC = () => {
     <div className="flex w-full flex-col items-center">
       <div className="flex h-full min-h-[500px] w-[96%] max-w-[900px] flex-col items-center rounded-[10px] bg-white px-2 py-2">
         <div className="flex w-full flex-col gap-2 sm:w-[95%]">
-          <div className="my-3 flex justify-between border-b-[1px] text-gray-600">
+          <div className="text-gray-600 my-3 flex justify-between border-b-[1px]">
             <div
               onClick={() => handleSelectedOption("company")}
               className={`flex-1 cursor-pointer text-center text-sm ${
@@ -470,7 +470,7 @@ const CreateJobStepTwo: React.FC = () => {
                     {selectOption === "option2" && (
                       <div className="flex w-full flex-col justify-between gap-2 sm:flex-row">
                         <div className="flex h-10 w-full items-center overflow-hidden rounded-[10px] border border-[#E6E6E6]">
-                          <span className="p-1 text-[12px] text-gray-500 sm:text-sm">
+                          <span className="text-gray-500 p-1 text-[12px] sm:text-sm">
                             {job.currency}
                           </span>
                           <input

@@ -179,7 +179,7 @@ const ApplicantScheduleModal: React.FC<ModalProps> = ({
         <div className="mt-6 flex items-center justify-between gap-x-4 px-6 py-4">
           <button
             onClick={() => closeModal(modalId)}
-            className="w-[181px] rounded-[10px] border-[1px] border-[#E6E6E6] bg-white px-6 py-2 text-[16px] text-gray-700 hover:bg-gray-100"
+            className="text-gray-700 hover:bg-gray-100 w-[181px] rounded-[10px] border-[1px] border-[#E6E6E6] bg-white px-6 py-2 text-[16px]"
           >
             Close
           </button>
