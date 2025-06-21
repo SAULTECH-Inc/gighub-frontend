@@ -37,7 +37,7 @@ const UserTypeSelection: React.FC = () => {
   };
 
   return (
-    <div className="my-auto flex h-screen items-center justify-around gap-x-0 border-2 py-2">
+    <div className="my-auto flex h-screen items-center justify-around gap-x-0 py-2">
       {/* Left Section */}
       <motion.div
         className="flex w-full flex-col items-start lg:w-1/2"
@@ -50,7 +50,7 @@ const UserTypeSelection: React.FC = () => {
         </div>
         <div className="mx-auto flex h-[824px] w-full flex-col justify-evenly">
           <div className="w-full text-center">
-            <h1 className="text-gray-600 text-[20px] font-bold lg:text-[24px]">
+            <h1 className="text-gray-600 text-[18px] font-bold lg:text-[24px]">
               How are You Planning To Use Gighub
             </h1>
             <p className="text-gray-600 text-[13px]">
