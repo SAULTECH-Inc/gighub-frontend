@@ -136,7 +136,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
 
   return (
     <motion.div
-      className="mt-5 w-[100%-2rem] px-[10px] md:mr-28 md:mt-32 md:w-[680px] lg:w-[500px] lg:px-0"
+      className="mt-5 w-[85%] px-[10px] md:mr-28 md:mt-32 md:w-[680px] lg:w-[500px] lg:px-0 mx-auto"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

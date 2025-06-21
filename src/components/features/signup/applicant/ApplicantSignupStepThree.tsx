@@ -109,7 +109,7 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({ handlePrev }) => {
 
   return (
     <motion.div
-      className="w-[400px - 10px] mt-5 space-y-10 px-[10px] md:mr-28 md:mt-32 md:w-[680px] lg:w-[500px] lg:px-0"
+      className="mt-5 w-[85%] px-[10px] md:mr-28 md:mt-32 md:w-[680px] lg:w-[500px] lg:px-0 mx-auto"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
