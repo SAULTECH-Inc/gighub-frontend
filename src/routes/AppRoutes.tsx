@@ -24,7 +24,7 @@ import PasswordResetSuccess from "../pages/auth/PasswordResetSuccess.tsx";
 import EmployerDashboard from "../pages/employer/EmployerDashboard.tsx";
 import JobSearch from "../pages/job/JobSearch.tsx";
 import { UserType } from "../utils/enums.ts";
-import ApplicantJobdetails from "../pages/applicant/ApplicantJobdetails.tsx";
+import ApplicantJobDetails from "../pages/applicant/ApplicantJobDetails.tsx";
 import CompanyList from "../pages/company list/CompanyList.tsx";
 import ApplicantShortList from "../pages/applicant/ApplicantShortList.tsx";
 import MyApplications from "../pages/applications/MyApplications.tsx";
@@ -150,7 +150,7 @@ const AppRoutes = () => {
       />
       <Route
         path="/applicant/job-details/:title"
-        element={<ApplicantJobdetails />}
+        element={<ApplicantJobDetails />}
       />
       <Route path="/employer/network" element={<EmployerNetwork />} />
       <Route
