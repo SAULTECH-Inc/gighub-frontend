@@ -66,7 +66,7 @@ const VerifyOtpToResetPassword: React.FC = () => {
   };
 
   const handleResendOtp = async () => {
-    await verifyAccount(email as string, "RESET_PASSWORD");
+    await verifyAccount(email as string);
   };
 
   return (
