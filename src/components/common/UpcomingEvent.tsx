@@ -22,9 +22,9 @@ const UpcomingEvent: React.FC<UpcomingEventProps> = ({
   return (
     <div className="mx-auto mt-6 h-full w-full">
       <div className="flex items-center justify-evenly md:space-x-[100px]">
-        <h3 className="text-lg font-medium text-gray-700">Upcoming Schedule</h3>
+        <h3 className="text-gray-700 text-lg font-medium">Upcoming Schedule</h3>
         <div
-          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-gray-100 text-[#6E4AED] hover:bg-gray-200"
+          className="bg-gray-100 hover:bg-gray-200 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[#6E4AED]"
           aria-label="Help"
           title="Upcoming events information"
         >
@@ -35,9 +35,9 @@ const UpcomingEvent: React.FC<UpcomingEventProps> = ({
       </div>
 
       {loading ? (
-        <p className="mt-6 text-center text-gray-500">Loading events...</p>
+        <p className="text-gray-500 mt-6 text-center">Loading events...</p>
       ) : events.length === 0 ? (
-        <p className="mt-6 text-center text-gray-500">
+        <p className="text-gray-500 mt-6 text-center">
           No upcoming interviews.
         </p>
       ) : (
@@ -51,15 +51,15 @@ const UpcomingEvent: React.FC<UpcomingEventProps> = ({
           return (
             <motion.div
               key={event.id}
-              className="my-10 flex h-[59px] w-full items-center bg-gray-50 p-3 md:my-4"
+              className="bg-gray-50 my-10 flex h-[59px] w-full items-center p-3 md:my-4"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               <div className="flex w-full items-center justify-between gap-x-2 md:gap-x-5">
                 {/* Date */}
                 <div className="flex h-[59px] w-[10%] flex-col items-center justify-center text-center">
-                  <p className="text-sm text-gray-600">{weekday}</p>
-                  <p className="text-lg font-bold text-gray-800">{day}</p>
+                  <p className="text-gray-600 text-sm">{weekday}</p>
+                  <p className="text-gray-800 text-lg font-bold">{day}</p>
                 </div>
 
                 {/* Event */}
@@ -73,10 +73,10 @@ const UpcomingEvent: React.FC<UpcomingEventProps> = ({
                         : "border-l-[#6E4AED]"
                     } flex flex-col justify-between pl-2`}
                   >
-                    <p className="text-xs font-semibold text-gray-800 md:text-sm">
+                    <p className="text-gray-800 text-xs font-semibold md:text-sm">
                       {event.title}
                     </p>
-                    <p className="text-xs text-gray-500 md:text-[10px]">
+                    <p className="text-gray-500 text-xs md:text-[10px]">
                       {event.startTime} - {event.endTime} &bull;{" "}
                       {event.interviewPlatform || "TBD"}
                     </p>

@@ -100,10 +100,10 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
         </button>
 
         {isOpen && (
-          <div className="absolute z-10 mt-2 w-full rounded-lg border border-gray-300 bg-white p-3 shadow-lg">
+          <div className="border-gray-300 absolute z-10 mt-2 w-full rounded-lg border bg-white p-3 shadow-lg">
             <input
               type="text"
-              className="w-full border-b border-gray-300 px-3 py-2 text-sm focus:outline-none"
+              className="border-gray-300 w-full border-b px-3 py-2 text-sm focus:outline-none"
               placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -121,7 +121,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                   </li>
                 ))
               ) : (
-                <li className="px-4 py-2 text-sm text-gray-500">
+                <li className="text-gray-500 px-4 py-2 text-sm">
                   No results found
                 </li>
               )}

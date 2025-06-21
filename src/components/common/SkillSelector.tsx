@@ -36,7 +36,7 @@ const SkillSelector: React.FC<SkillSelectorProps> = ({
         {/* Skill Input */}
         <input
           type="text"
-          className="min-w-[50%] rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-0"
+          className="border-gray-300 min-w-[50%] rounded-lg border px-3 py-2 focus:outline-none focus:ring-0"
           placeholder={placeholderSkill}
           value={selectedSkill}
           onChange={(e) => setSelectedSkill(e.target.value)}
@@ -51,7 +51,7 @@ const SkillSelector: React.FC<SkillSelectorProps> = ({
         {/* Years of Experience Input */}
         <input
           type="number"
-          className="min-w-14 rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:w-24"
+          className="border-gray-300 min-w-14 rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:w-24"
           placeholder={placeholderYears}
           value={years}
           onChange={(e) => setYears(e.target.value)}
@@ -74,7 +74,7 @@ const SkillSelector: React.FC<SkillSelectorProps> = ({
         {skillsList.map(({ skill, years }) => (
           <div
             key={skill}
-            className="flex items-center gap-2 rounded-lg border border-zinc-400 bg-[#e3dfe2] bg-gray-100 px-3 py-1"
+            className="bg-gray-100 flex items-center gap-2 rounded-lg border border-zinc-400 bg-[#e3dfe2] px-3 py-1"
           >
             <span className="text-gray-700">
               {skill} {years && `/ ${years}yrs`}

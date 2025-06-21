@@ -203,7 +203,7 @@ const JobSearch: React.FC = () => {
                   }));
                 }
               }}
-              className="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300 disabled:opacity-50"
+              className="bg-gray-200 hover:bg-gray-300 rounded px-4 py-2 disabled:opacity-50"
             >
               Previous
             </button>
@@ -217,7 +217,7 @@ const JobSearch: React.FC = () => {
                   }));
                 }
               }}
-              className="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300"
+              className="bg-gray-200 hover:bg-gray-300 rounded px-4 py-2"
             >
               Next
             </button>

@@ -24,7 +24,6 @@ import PasswordResetSuccess from "../pages/auth/PasswordResetSuccess.tsx";
 import EmployerDashboard from "../pages/employer/EmployerDashboard.tsx";
 import JobSearch from "../pages/job/JobSearch.tsx";
 import { UserType } from "../utils/enums.ts";
-import ApplicantJobDetails from "../pages/applicant/ApplicantJobDetails.tsx";
 import CompanyList from "../pages/company list/CompanyList.tsx";
 import ApplicantShortList from "../pages/applicant/ApplicantShortList.tsx";
 import MyApplications from "../pages/applications/MyApplications.tsx";
@@ -37,6 +36,8 @@ import SubscriptionPlansView from "../pages/subscription/SubscriptionPlansView.t
 import HelpAndSupport from "../pages/help-and-support/HelpAndSupport.tsx";
 import TermsAndConditions from "../pages/contract/TermsAndConditions.tsx";
 import MySchedules from "../pages/schedules/MySchedules.tsx";
+import { memo } from "react";
+import ApplicantJobDetails from "../pages/applicant/ApplicantJobDetails.tsx";
 
 const AppRoutes = () => {
   return (
@@ -224,4 +225,4 @@ const AppRoutes = () => {
   );
 };
 
-export default AppRoutes;
+export default memo(AppRoutes);

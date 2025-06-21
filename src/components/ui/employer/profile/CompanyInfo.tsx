@@ -60,7 +60,7 @@ const CompanyInfo: React.FC = () => {
       <h3 className="mb-4 font-lato text-[20px]">Company Information</h3>
       <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-10">
         <div className="flex flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">Company Name</label>
+          <label className="text-gray-600 mb-1 text-[16px]">Company Name</label>
           <input
             type="text"
             value={companyInfo?.companyName as string}
@@ -71,7 +71,7 @@ const CompanyInfo: React.FC = () => {
           />
         </div>
         <div className="flex w-full flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">Industry</label>
+          <label className="text-gray-600 mb-1 text-[16px]">Industry</label>
           <CustomDropdown
             placeholder={companyInfo?.industry as string}
             handleSelect={(option: Option) => {
@@ -90,7 +90,7 @@ const CompanyInfo: React.FC = () => {
           />
         </div>
         <div className="flex w-full flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">Company Size</label>
+          <label className="text-gray-600 mb-1 text-[16px]">Company Size</label>
           <CustomSelect
             options={CompanySizes}
             placeholder={companyInfo?.companySize}
@@ -109,7 +109,7 @@ const CompanyInfo: React.FC = () => {
           />
         </div>
         <div className="flex w-full flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">Country</label>
+          <label className="text-gray-600 mb-1 text-[16px]">Country</label>
           <CustomSelect
             options={countries}
             placeholder={companyInfo?.country}
@@ -129,7 +129,7 @@ const CompanyInfo: React.FC = () => {
         </div>
 
         <div className="flex flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">City</label>
+          <label className="text-gray-600 mb-1 text-[16px]">City</label>
           <input
             type="text"
             value={companyInfo?.city}
@@ -141,7 +141,7 @@ const CompanyInfo: React.FC = () => {
         </div>
 
         <div className="flex w-full flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">Address</label>
+          <label className="text-gray-600 mb-1 text-[16px]">Address</label>
           <input
             value={companyInfo?.companyAddress}
             name="companyAddress"

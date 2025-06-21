@@ -26,11 +26,11 @@ const InvoicesList = () => {
             {/* Left - File Icon & File Name */}
             <div className="flex items-center gap-4">
               <img src={FileIcon} alt="File" className="h-6 w-6" />
-              <span className="text-sm text-gray-700">{invoice.fileName}</span>
+              <span className="text-gray-700 text-sm">{invoice.fileName}</span>
             </div>
 
             {/* Right - Invoice Date */}
-            <div className="text-sm text-gray-600">
+            <div className="text-gray-600 text-sm">
               <span className="font-bold">Date of invoice</span> {invoice.date}
             </div>
           </div>

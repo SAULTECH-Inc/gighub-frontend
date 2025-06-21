@@ -17,7 +17,7 @@ const EmployeesTestimonial = () => {
   ];
 
   return (
-    <section className="w-full rounded-lg bg-gray-100 p-6 shadow">
+    <section className="bg-gray-100 w-full rounded-lg p-6 shadow">
       <h2 className="mb-4 text-xl font-semibold">Employees Testimonial</h2>
       <div className="flex flex-col gap-y-4 md:flex-row md:space-x-8">
         {testimonials.map((testimonial, index) => (
@@ -37,7 +37,7 @@ const EmployeesTestimonial = () => {
                 <p className="text-sm text-[#6B5AED]">{testimonial.position}</p>
               </div>
             </div>
-            <p className="text-sm text-gray-700">{testimonial.message}</p>
+            <p className="text-gray-700 text-sm">{testimonial.message}</p>
           </div>
         ))}
       </div>

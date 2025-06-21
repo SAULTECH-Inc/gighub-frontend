@@ -49,7 +49,6 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
     }
   };
 
-
   const handlePaste = (
     e: React.ClipboardEvent<HTMLInputElement>,
     index: number,

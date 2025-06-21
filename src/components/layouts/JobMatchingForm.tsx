@@ -6,14 +6,14 @@ const JobMatchingForm = () => {
         {/* Left Column */}
         <div className="space-y-4">
           <div>
-            <label className="block text-gray-700">Job Title</label>
+            <label className="text-gray-700 block">Job Title</label>
             <input
               type="text"
               className="w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#F7F8FA] p-2"
             />
           </div>
           <div>
-            <label className="block text-gray-700">Job Type</label>
+            <label className="text-gray-700 block">Job Type</label>
             <input
               type="text"
               className="w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#F7F8FA] p-2"
@@ -21,7 +21,7 @@ const JobMatchingForm = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-700">Salary Range</label>
+            <label className="text-gray-700 block">Salary Range</label>
             <div className="flex gap-2">
               <input
                 type="text"
@@ -40,7 +40,7 @@ const JobMatchingForm = () => {
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-gray-700">Country</label>
+              <label className="text-gray-700 block">Country</label>
               <input
                 type="text"
                 className="w-full rounded-[10px] border-[#E6E6E6] bg-[#F7F8FA] p-2 marker:border-[1px]"
@@ -48,7 +48,7 @@ const JobMatchingForm = () => {
               />
             </div>
             <div>
-              <label className="block text-gray-700">City</label>
+              <label className="text-gray-700 block">City</label>
               <input
                 type="text"
                 className="w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#F7F8FA] p-2"
@@ -57,7 +57,7 @@ const JobMatchingForm = () => {
             </div>
           </div>
           <div>
-            <label className="block text-gray-700">Industry/Category</label>
+            <label className="text-gray-700 block">Industry/Category</label>
             <input
               type="text"
               className="w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#F7F8FA] p-2"
@@ -65,7 +65,7 @@ const JobMatchingForm = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-700">Experience Level</label>
+            <label className="text-gray-700 block">Experience Level</label>
             <input
               type="text"
               className="w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#F7F8FA] p-2"

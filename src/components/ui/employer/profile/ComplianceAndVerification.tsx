@@ -52,7 +52,7 @@ const ComplianceAndVerification: React.FC = () => {
       </h3>
       <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-10">
         <div className="flex flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">
+          <label className="text-gray-600 mb-1 text-[16px]">
             Business Registration Number
           </label>
           <input
@@ -73,7 +73,7 @@ const ComplianceAndVerification: React.FC = () => {
           />
         </div>
         <div className="flex flex-col">
-          <label className="mb-1 text-[16px] text-gray-600">
+          <label className="text-gray-600 mb-1 text-[16px]">
             Tax Identification number
           </label>
           <input

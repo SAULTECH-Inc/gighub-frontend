@@ -1,8 +1,6 @@
-
-
 const ApplicationSettings = () => {
   return (
-    <div className="rounded-lg bg-gray-50 p-6 shadow-md">
+    <div className="bg-gray-50 rounded-lg p-6 shadow-md">
       <h2 className="mb-4 text-lg font-semibold">Application Settings</h2>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Upload Resume */}

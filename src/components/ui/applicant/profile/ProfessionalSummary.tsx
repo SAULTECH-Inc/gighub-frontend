@@ -89,7 +89,7 @@ const ProfessionalSummary: React.FC = () => {
       <div className="flex w-full flex-col">
         <label
           htmlFor="professionalTitle"
-          className="mb-1 text-sm text-gray-600"
+          className="text-gray-600 mb-1 text-sm"
         >
           Professional Title
         </label>
@@ -103,7 +103,7 @@ const ProfessionalSummary: React.FC = () => {
         />
       </div>
       <div className="mt-4 flex flex-col">
-        <label className="mb-5 text-[16px] text-gray-600">Short bio</label>
+        <label className="text-gray-600 mb-5 text-[16px]">Short bio</label>
 
         {/* Textarea */}
         <TextEditor

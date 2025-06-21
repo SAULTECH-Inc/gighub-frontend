@@ -118,7 +118,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   return (
     <div className="relative" ref={pickerRef}>
       {label && (
-        <label className="mb-1 block text-sm font-medium text-gray-700">
+        <label className="text-gray-700 mb-1 block text-sm font-medium">
           {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
@@ -147,7 +147,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
             : placeholder}
         </span>
         <svg
-          className="h-5 w-5 shrink-0 text-gray-500"
+          className="text-gray-500 h-5 w-5 shrink-0"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -162,7 +162,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
       </button>
 
       {isOpen && !disabled && (
-        <div className="animate-fade-in-down absolute z-10 mt-2 w-full rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
+        <div className="animate-fade-in-down border-gray-200 absolute z-10 mt-2 w-full rounded-lg border bg-white p-4 shadow-lg">
           <style>{`
             @keyframes fade-in-down {
               from { opacity: 0; transform: translateY(-10px); }
@@ -203,7 +203,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
 
           {viewMode === "days" && (
             <>
-              <div className="mb-1 grid grid-cols-7 text-center text-xs text-gray-500">
+              <div className="text-gray-500 mb-1 grid grid-cols-7 text-center text-xs">
                 {dayNames.map((day) => (
                   <div key={day}>{day}</div>
                 ))}

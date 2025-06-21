@@ -50,12 +50,13 @@ const NetworkConnectionsCard: React.FC<NetworkConnectionsCardProps> = ({
           <p className="text-[20px] font-bold text-[#000000]">
             {userDetails?.firstName} {userDetails?.lastName}
           </p>
-          {
-            userDetails?.city && userDetails?.city && (<p className="font-bold text-[#8E8E8E]">{userDetails?.city} {userDetails?.country}</p>)
-          }
+          {userDetails?.city && userDetails?.city && (
+            <p className="font-bold text-[#8E8E8E]">
+              {userDetails?.city} {userDetails?.country}
+            </p>
+          )}
         </div>
-        <div
-          className="flex h-[40px] w-[40px] flex-row items-center justify-center rounded-full border-[1px] border-[#E6E6E6] bg-white">
+        <div className="flex h-[40px] w-[40px] flex-row items-center justify-center rounded-full border-[1px] border-[#E6E6E6] bg-white">
           <img
             src={pro}
             alt="Profile"

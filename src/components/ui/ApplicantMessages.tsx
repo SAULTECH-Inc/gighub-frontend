@@ -51,7 +51,7 @@ const ApplicantMessages: FC = () => {
                     <h3 className="text-sm font-medium md:text-lg">
                       {message.senderName}
                     </h3>
-                    <p className="text-xs text-gray-500 md:text-sm">
+                    <p className="text-gray-500 text-xs md:text-sm">
                       {message.content}
                     </p>
                   </div>

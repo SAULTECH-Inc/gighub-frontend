@@ -108,7 +108,7 @@ const ResumeAndCoverLetter: React.FC = () => {
         {/* File Upload Section */}
         <div className="flex flex-col gap-6 md:flex-row">
           <div className="flex h-[194px] w-full flex-col items-center justify-center rounded-[16px] border-[2px] border-dashed border-[#6438C2] bg-white p-4 text-center md:w-[30%]">
-            <p className="mb-4 text-center text-[16px] text-gray-600">
+            <p className="text-gray-600 mb-4 text-center text-[16px]">
               Drag and drop your files here
               <br />
               <span>OR</span>
@@ -149,7 +149,7 @@ const ResumeAndCoverLetter: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => removeFile("Resume")}
-                    className="text-lg font-semibold text-black hover:text-gray-400"
+                    className="hover:text-gray-400 text-lg font-semibold text-black"
                     style={{ fontSize: "20px" }}
                   >
                     &times;
@@ -171,7 +171,7 @@ const ResumeAndCoverLetter: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => removeFile("Cover Letter")}
-                      className="text-lg font-semibold text-black hover:text-gray-400"
+                      className="hover:text-gray-400 text-lg font-semibold text-black"
                       style={{ fontSize: "20px" }}
                     >
                       &times;
@@ -192,7 +192,7 @@ const ResumeAndCoverLetter: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => removeFile("Video")}
-                    className="text-lg font-semibold text-black hover:text-gray-400"
+                    className="hover:text-gray-400 text-lg font-semibold text-black"
                     style={{ fontSize: "20px" }}
                   >
                     &times;

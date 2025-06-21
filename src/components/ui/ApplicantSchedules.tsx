@@ -97,7 +97,7 @@ const ApplicantSchedules: React.FC = () => {
         >
           <motion.h2
             key={`${headerDate.month}-${headerDate.date}-${headerDate.year}`}
-            className="text-xl font-semibold text-gray-800"
+            className="text-gray-800 text-xl font-semibold"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -139,7 +139,7 @@ const ApplicantSchedules: React.FC = () => {
                   }`}
                 >
                   <span className="text-sm">{day.dayName}</span>
-                  <span className="text-xs text-gray-500">{day.date}</span>
+                  <span className="text-gray-500 text-xs">{day.date}</span>
 
                   {/* Events */}
                   {eventsForDay.length > 0 && (

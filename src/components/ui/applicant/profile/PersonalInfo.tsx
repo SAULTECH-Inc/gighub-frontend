@@ -83,7 +83,7 @@ const PersonalInfo: React.FC = () => {
       <div className="flex w-full flex-col gap-y-5">
         <div className="grid w-full grid-cols-1 items-center gap-x-8 lg:flex">
           <div className="flex w-full flex-col">
-            <label className="mb-1 text-sm text-gray-600">First Name</label>
+            <label className="text-gray-600 mb-1 text-sm">First Name</label>
             <input
               type="text"
               onChange={handleChange}
@@ -94,7 +94,7 @@ const PersonalInfo: React.FC = () => {
             />
           </div>
           <div className="flex w-full flex-col">
-            <label className="mb-1 text-sm text-gray-600">Middle Name</label>
+            <label className="text-gray-600 mb-1 text-sm">Middle Name</label>
             <input
               type="text"
               onChange={handleChange}
@@ -105,7 +105,7 @@ const PersonalInfo: React.FC = () => {
             />
           </div>
           <div className="flex w-full flex-col">
-            <label className="mb-1 text-sm text-gray-600">Last Name</label>
+            <label className="text-gray-600 mb-1 text-sm">Last Name</label>
             <input
               type="text"
               onChange={handleChange}
@@ -116,7 +116,7 @@ const PersonalInfo: React.FC = () => {
             />
           </div>
           <div className="flex w-full flex-col">
-            <label className="mb-1 text-sm text-gray-600">Email address</label>
+            <label className="text-gray-600 mb-1 text-sm">Email address</label>
             <input
               type="text"
               onChange={handleChange}
@@ -129,7 +129,7 @@ const PersonalInfo: React.FC = () => {
         </div>
         <div className="grid w-full grid-cols-1 items-center gap-x-8 lg:flex">
           <div className="flex w-full flex-col">
-            <label className="mb-1 text-sm text-gray-600">Phone number</label>
+            <label className="text-gray-600 mb-1 text-sm">Phone number</label>
             <input
               type="text"
               name="phoneNumber"
@@ -140,7 +140,7 @@ const PersonalInfo: React.FC = () => {
             />
           </div>
           <div className="flex w-full flex-col">
-            <label className="mb-1 text-sm text-gray-600">Date of birth</label>
+            <label className="text-gray-600 mb-1 text-sm">Date of birth</label>
             <DatePicker
               selectedDate={
                 new Date(applicantPersonalInfo?.dateOfBirth || "2025-01-10")
@@ -159,7 +159,7 @@ const PersonalInfo: React.FC = () => {
         </div>
         <div className="grid w-full grid-cols-1 items-center gap-x-8 lg:flex">
           <div className="flex w-full flex-col">
-            <label className="mb-1 text-sm text-gray-600">Country</label>
+            <label className="text-gray-600 mb-1 text-sm">Country</label>
             <CustomDropdown
               options={countries}
               handleSelect={(country) => {
@@ -176,7 +176,7 @@ const PersonalInfo: React.FC = () => {
           </div>
 
           <div className="flex w-full flex-col gap-x-8">
-            <label className="mb-1 text-sm text-gray-600">City</label>
+            <label className="text-gray-600 mb-1 text-sm">City</label>
             <CustomDropdown
               options={cities}
               handleSelect={(city) => {
@@ -194,7 +194,7 @@ const PersonalInfo: React.FC = () => {
         </div>
 
         <div className="flex w-full flex-col">
-          <label className="mb-1 text-sm text-gray-600">Address</label>
+          <label className="text-gray-600 mb-1 text-sm">Address</label>
           <input
             type="text"
             onChange={handleChange}

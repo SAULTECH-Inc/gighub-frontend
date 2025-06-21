@@ -85,7 +85,7 @@ const FileUploadForm: React.FC = () => {
       <div className="flex flex-col space-x-0 space-y-6 md:flex-row md:items-start md:space-x-6 md:space-y-0">
         {/* LINKS INPUT BOX */}
         <div className="min-h-[250px] w-full rounded-[16px] border border-[#E6E6E6] bg-white p-6 md:h-[250px]">
-          <span className="font-lato text-sm text-gray-700">Provide Links</span>
+          <span className="text-gray-700 font-lato text-sm">Provide Links</span>
 
           {cvDetails?.portfolioLink?.map((link, index) => (
             <div
@@ -99,13 +99,13 @@ const FileUploadForm: React.FC = () => {
                 disabled={!isEditable}
                 onChange={(e) => handleLinkChange(index, e.target.value)}
                 placeholder="Enter a link"
-                className="focus:border-gray ml-2 flex-1 border border-[#E6E6E6] bg-[#F9FAFB] p-2 text-sm focus:border-[1px] focus:outline-none focus:ring-0"
+                className="ml-2 flex-1 border border-[#E6E6E6] bg-[#F9FAFB] p-2 text-sm focus:border-[1px] focus:border-gray focus:outline-none focus:ring-0"
               />
               <button
                 type="button"
                 disabled={!isEditable}
                 onClick={() => removeLink(index)}
-                className="ml-2 text-sm text-gray-600 hover:text-gray-800"
+                className="text-gray-600 hover:text-gray-800 ml-2 text-sm"
               >
                 <IoMdClose />
               </button>

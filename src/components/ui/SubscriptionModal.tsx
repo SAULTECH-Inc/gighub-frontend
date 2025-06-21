@@ -24,7 +24,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ modalId }) => {
         {/* Close Button */}
         <button
           onClick={() => closeModal(modalId)}
-          className="absolute right-2 top-2 text-2xl text-gray-500 hover:text-gray-700 focus:outline-none md:right-4 md:top-4 md:text-[32px]"
+          className="text-gray-500 hover:text-gray-700 absolute right-2 top-2 text-2xl focus:outline-none md:right-4 md:top-4 md:text-[32px]"
           aria-label="Close Modal"
         >
           &times;
@@ -45,7 +45,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ modalId }) => {
               className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-gradient-to-r from-[#6438C2] to-[#FA4E09] p-3 text-white transition-transform duration-300 ease-in-out hover:scale-[1.02] md:p-4"
             >
               <div className="flex items-center">
-                <div className="mr-2 text-xl text-yellow-300 md:mr-4 md:text-2xl">
+                <div className="text-yellow-300 mr-2 text-xl md:mr-4 md:text-2xl">
                   ⭐
                 </div>
                 <div>
@@ -96,7 +96,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ modalId }) => {
                 BEST VALUE
               </div>
               <div className="flex items-center">
-                <div className="mr-2 text-xl text-yellow-300 md:mr-4 md:text-2xl">
+                <div className="text-yellow-300 mr-2 text-xl md:mr-4 md:text-2xl">
                   🏆
                 </div>
                 <div>
@@ -138,7 +138,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ modalId }) => {
               What's Included
             </h4>
             <ul className="space-y-3 md:space-y-4">
-              <li className="border-b border-gray-300 pb-3">
+              <li className="border-gray-300 border-b pb-3">
                 <span className="mb-1 block text-sm font-bold text-[#6438C2] md:text-base">
                   Monthly
                 </span>
@@ -151,7 +151,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ modalId }) => {
                 </div>
               </li>
 
-              <li className="border-b border-gray-300 pb-3">
+              <li className="border-gray-300 border-b pb-3">
                 <span className="mb-1 block text-sm font-bold text-[#6438C2] md:text-base">
                   Quarterly
                 </span>

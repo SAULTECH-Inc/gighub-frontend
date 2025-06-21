@@ -18,7 +18,7 @@ const JobSearchBar = () => {
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#F7F7F7]">
             <IoClose className="text-2xl font-normal" />
           </div>
-          <div className="bg-gray ml-5 h-[29px] w-[0.5px]" />
+          <div className="ml-5 h-[29px] w-[0.5px] bg-gray" />
         </div>
 
         <div className="flex items-center justify-between bg-white p-2">
