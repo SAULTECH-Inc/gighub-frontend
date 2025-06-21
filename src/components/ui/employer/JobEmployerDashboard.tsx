@@ -1,20 +1,20 @@
 import React from "react";
 import useModalStore from "../../../store/modalStateStores";
 
-const JobEmployerDashboard:React.FC = () => {
+const JobEmployerDashboard: React.FC = () => {
   const { openModal } = useModalStore();
 
   // Function to open the job form modal
   const handleAddNewJob = () => {
-    openModal('addJobModal');
+    openModal("addJobModal");
   };
 
   return (
     <div className="dashboard-container p-6">
-      <div className="flex justify-between items-center mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Job Listings</h1>
         <button
-          className="bg-[#6438C2] text-white px-4 py-2 rounded-md hover:bg-[#522da3] transition-colors"
+          className="rounded-md bg-[#6438C2] px-4 py-2 text-white transition-colors hover:bg-[#522da3]"
           onClick={handleAddNewJob}
         >
           Add New Job

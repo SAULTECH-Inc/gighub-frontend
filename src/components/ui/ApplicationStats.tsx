@@ -1,46 +1,62 @@
 import jobApplied from "../../assets/icons/jobApplied.svg";
 import shortlisted from "../../assets/icons/shortlisted.svg";
 import pending from "../../assets/icons/pending.svg";
-import {FC} from "react";
+import { FC } from "react";
+import numeral from "numeral";
+import { useMetrics } from "../../store/useMetrics.ts";
 
-const ApplicationStats: FC = ()=>{
-    return <>
-        <div
-            className="w-full md:h-[122px] bg-[#FFFFFF] grid grid-cols-3 gap-x-2 md:gap-x-6 p-2 md:p-4 sm:items-baseline items-center justify-center">
-            <div className="cursor-pointer md:bg-[#F7F7F7] p-2 flex md:justify-between items-center border-r-[1px] border-r-[#ccc] md:border-none">
-                <div className="text-sm md:text-2xl">
-                    <h3 className="text-gray-700">Jobs Applied</h3>
-                    <p className="font-bold text-[#000000]">123k</p>
-                </div>
-                <div
-                    className="hidden bg-[#56E5A1] h-[60px] w-[60px] rounded-[50%] md:flex justify-center items-center">
-                    <img src={jobApplied} alt="job applied" className="w-fit h-auto rounded"/>
-                </div>
-            </div>
+const ApplicationStats: FC = () => {
+  const { metric } = useMetrics();
 
-            <div className="cursor-pointer md:bg-[#F7F7F7] p-2 flex justify-between items-center border-r-[1px] border-r-[#ccc] md:border-none">
-                <div className="text-sm md:text-2xl">
-                    <h3 className="text-gray-700">Shortlisted</h3>
-                    <p className="font-bold text-orange-500">10k</p>
-                </div>
-                <div
-                    className="hidden bg-[#FA4E09] h-[60px] w-[60px] rounded-[50%] md:flex justify-center items-center">
-                    <img src={shortlisted} alt="shortlisted" className="w-fit h-auto rounded"/>
-                </div>
-            </div>
-
-            <div className="cursor-pointer md:bg-[#F7F7F7] p-2 flex justify-between items-center">
-                <div className="text-sm md:text-2xl">
-                    <h3 className="text-gray-700">Pending</h3>
-                    <p className="font-bold text-yellow-500">123k</p>
-                </div>
-                <div
-                    className="hidden bg-[#FD7E14] h-[60px] w-[60px] rounded-[50%] md:flex justify-center items-center">
-                    <img src={pending} alt="pending" className="w-fit h-auto rounded"/>
-                </div>
-            </div>
+  return (
+    <>
+      <div className="grid w-full grid-cols-3 items-center justify-center gap-x-2 bg-[#FFFFFF] p-2 sm:items-baseline md:h-[122px] md:gap-x-6 md:p-4">
+        <div className="flex cursor-pointer items-center border-r-[1px] border-r-[#ccc] p-2 md:justify-between md:border-none md:bg-[#F7F7F7]">
+          <div className="text-sm md:text-2xl">
+            <h3 className="text-gray-700">Jobs Applied</h3>
+            <p className="font-bold text-[#000000]">
+              {numeral(metric.jobsApplied).format("0.0a")}
+            </p>
+          </div>
+          <div className="hidden h-[60px] w-[60px] items-center justify-center rounded-[50%] bg-[#56E5A1] md:flex">
+            <img
+              src={jobApplied}
+              alt="job applied"
+              className="h-auto w-fit rounded"
+            />
+          </div>
         </div>
+
+        <div className="flex cursor-pointer items-center justify-between border-r-[1px] border-r-[#ccc] p-2 md:border-none md:bg-[#F7F7F7]">
+          <div className="text-sm md:text-2xl">
+            <h3 className="text-gray-700">Shortlisted</h3>
+            <p className="font-bold text-[#000000]">
+              {numeral(metric.shortlisted).format("0.0a")}
+            </p>
+          </div>
+          <div className="hidden h-[60px] w-[60px] items-center justify-center rounded-[50%] bg-[#FA4E09] md:flex">
+            <img
+              src={shortlisted}
+              alt="shortlisted"
+              className="h-auto w-fit rounded"
+            />
+          </div>
+        </div>
+
+        <div className="flex cursor-pointer items-center justify-between p-2 md:bg-[#F7F7F7]">
+          <div className="text-sm md:text-2xl">
+            <h3 className="text-gray-700">Pending</h3>
+            <p className="font-bold text-[#000000]">
+              {numeral(metric.pending).format("0.0a")}
+            </p>
+          </div>
+          <div className="hidden h-[60px] w-[60px] items-center justify-center rounded-[50%] bg-[#FD7E14] md:flex">
+            <img src={pending} alt="pending" className="h-auto w-fit rounded" />
+          </div>
+        </div>
+      </div>
     </>
-}
+  );
+};
 
 export default ApplicationStats;

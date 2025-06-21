@@ -9,25 +9,76 @@ import {
 import ShortlistedJobs from "../job/ShortlistedJobs";
 import ApplicationCard from "./ApplicationCard";
 import ApplicationSearch from "./ApplicationSearch";
-import { getApplications } from "../../utils/dummyApplications";
 import { Cancel, Search } from "../../assets/icons";
 import { Pagination } from "antd";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { ApplicationResponse, SortBy } from "../../utils/types";
+import { getMyApplications } from "../../services/api";
+import useModalStore from "../../store/modalStateStores.ts";
+import ViewApplicationMethodModal from "../../components/ui/ViewApplicationMethodModal.tsx";
+import { showErrorToast } from "../../utils/toastConfig.tsx";
 
 const MyApplications: React.FC = () => {
-  const allApplications = getApplications();
+  const [applicationToView, setApplicationToView] =
+    useState<ApplicationResponse | null>(null);
+  const { isModalOpen, openModal } = useModalStore();
+  const [allApplications, setAllApplications] = useState<ApplicationResponse[]>(
+    [],
+  );
+  const [sort, setSort] = useState<SortBy>({
+    sortDirection: "desc",
+    orderBy: "createdAt",
+  });
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [applicationStatus, setApplicationStatus] = useState<string | null>(
+    null,
+  );
+  const [pageSize, setPageSize] = useState(20);
+  const [searchQuery, setSearchQuery] = useState({
+    jobTitle: "",
+    companyName: "",
+  });
+  useEffect(() => {
+    const doFetchApplications = async () => {
+      return await getMyApplications(
+        applicationStatus,
+        sort,
+        currentPage,
+        pageSize,
+      );
+    };
+    doFetchApplications()
+      .then((response) => {
+        setAllApplications(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching applications:", error);
+        showErrorToast(error?.response?.data?.message);
+      });
+  }, [currentPage, pageSize, applicationStatus, sort]);
 
   const handlePageChange = (page: number, size?: number) => {
     setCurrentPage(page);
     if (size) setPageSize(size);
   };
 
-  const paginatedApplications = allApplications.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize,
-  );
+  const handleSearchApplications = async () => {
+    await getMyApplications(
+      applicationStatus,
+      sort,
+      currentPage,
+      pageSize,
+      searchQuery.jobTitle,
+      searchQuery.companyName,
+    )
+      .then((res) => {
+        setAllApplications(res?.data);
+      })
+      .catch((err) => {
+        console.error(err);
+        showErrorToast(err?.response?.data?.message);
+      });
+  };
 
   return (
     <div className="min:h-screen flex w-full flex-col items-center bg-[#F7F8FA]">
@@ -38,55 +89,106 @@ const MyApplications: React.FC = () => {
           navbarItemsMap={applicantNavBarItemMap}
         />
       </div>
-      <div className="flex w-[96%] flex-col items-center justify-center lg:items-start xl:flex-row">
+      <div className="flex w-[96%] flex-col items-center justify-center gap-6 lg:items-start xl:flex-row">
         <div className="flex w-full flex-col xl:w-[70%]">
-          <div className="my-4 flex h-[64px] w-full items-center justify-between rounded-[16px] bg-white px-1 md:px-4">
-            <div className="flex w-full items-center justify-between gap-1 md:gap-2">
-              <div className="flex w-[30%] items-center sm:w-full">
-                <img src={Search} alt="search icon" className="fill-black" />
-                <div className="flex w-full items-center justify-between">
-                  <input
-                    type="text"
-                    placeholder="Job Title"
-                    className="border-none outline-none placeholder:text-[13px] placeholder:font-bold placeholder:text-[#000000] focus:ring-0 md:placeholder:text-[16px]"
+          {/*Search Bar*/}
+          <div className="my-4 w-full rounded-2xl bg-white p-2 md:p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              {/* Search fields container */}
+              <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-0">
+                {/* Job Title Field */}
+                <div className="flex flex-1 items-center rounded-lg bg-gray-50 py-2 pl-3 pr-2 sm:rounded-r-none">
+                  <img
+                    src={Search}
+                    alt="search"
+                    className="h-5 w-5 shrink-0 text-gray-400"
                   />
-                  <div className="md::w-[30px] hidden h-[30px] items-center justify-center rounded-full bg-[#F7F7F7] sm:flex">
-                    <img src={Cancel} alt="cancel" />
+                  <div className="flex w-full items-center justify-between">
+                    <input
+                      type="text"
+                      placeholder="Job Title"
+                      value={searchQuery?.jobTitle}
+                      onChange={(e) =>
+                        setSearchQuery({
+                          ...searchQuery,
+                          jobTitle: e.target.value,
+                        })
+                      }
+                      className="ml-2 w-full border-none bg-transparent text-sm font-bold text-black placeholder-black outline-none focus:ring-0 md:text-base"
+                    />
+                    <div
+                      onClick={() =>
+                        setSearchQuery({ ...searchQuery, jobTitle: "" })
+                      }
+                      className="hidden h-7 w-7 items-center justify-center rounded-full bg-gray-100 sm:flex"
+                    >
+                      <img src={Cancel} alt="clear" className="h-3 w-3" />
+                    </div>
                   </div>
                 </div>
-                <div className="mx-4 hidden h-[29px] border-l border-[#7F7F7F] md:block"></div>
-                <div className="flex w-full items-center justify-between">
+
+                {/* Divider - Hidden on mobile */}
+                <div className="hidden h-px bg-gray-300 sm:block sm:h-auto sm:w-px"></div>
+
+                {/* Company Name Field */}
+                <div className="flex flex-1 items-center rounded-lg bg-gray-50 py-2 pl-3 pr-2 sm:rounded-l-none sm:pl-4">
+                  <img
+                    src={Search}
+                    alt="search"
+                    className="h-5 w-5 shrink-0 text-gray-400"
+                  />
                   <input
                     type="text"
                     placeholder="Company Name"
-                    className="border-none outline-none placeholder:text-[13px] placeholder:font-bold placeholder:text-[#000000] focus:ring-0 md:placeholder:text-[16px]"
+                    value={searchQuery?.companyName}
+                    onChange={(e) =>
+                      setSearchQuery({
+                        ...searchQuery,
+                        companyName: e.target.value,
+                      })
+                    }
+                    className="w-full border-none bg-transparent text-sm font-bold text-black placeholder-black outline-none focus:ring-0 md:text-base"
                   />
-                  <div className="hidden h-[30px] items-center justify-center rounded-full bg-[#F7F7F7] sm:flex md:w-[30px]">
-                    <img src={Cancel} alt="cancel" />
+                  <div
+                    onClick={() =>
+                      setSearchQuery({ ...searchQuery, companyName: "" })
+                    }
+                    className="hidden h-7 w-7 items-center justify-center rounded-full bg-gray-100 sm:flex"
+                  >
+                    <img src={Cancel} alt="clear" className="h-3 w-3" />
                   </div>
                 </div>
               </div>
-              <div className="hidden items-center justify-end sm:flex">
-                <button className="h-[42px] rounded-[10px] bg-[#6B5AED] text-white sm:w-[90px] md:w-[175px]">
-                  Find Job
-                </button>
-              </div>
-              <div className="flex items-center justify-end sm:hidden">
-                <button className="h-[24px] w-full rounded-[10px] bg-[#6B5AED] px-2 text-white">
-                  Search
-                </button>
-              </div>
+
+              {/* Search Button */}
+              <button
+                onClick={handleSearchApplications}
+                className="h-12 rounded-xl bg-[#6B5AED] px-4 font-medium text-white transition-colors hover:bg-[#5849d2] sm:h-11 sm:w-32 md:w-40"
+              >
+                <span className="hidden sm:inline">Find Job</span>
+                <span className="sm:hidden">Search</span>
+              </button>
             </div>
           </div>
-          <div className="my-2 flex w-full flex-col justify-between overflow-hidden rounded-[16px] bg-white px-2">
+
+          {/*Main*/}
+          <div className="my-2 flex w-full flex-col justify-between gap-4 overflow-hidden rounded-[16px] bg-white p-4">
             <div className="mb-4">
-              <ApplicationSearch />
+              <ApplicationSearch
+                setApplicationStatus={setApplicationStatus}
+                setSort={setSort}
+                sort={sort}
+              />
             </div>
             <div className="flex w-full flex-col gap-4">
-              {paginatedApplications.map((application) => (
+              {allApplications.map((application, index) => (
                 <ApplicationCard
-                  key={application.id}
+                  key={index}
                   application={application}
+                  onView={() => {
+                    setApplicationToView(application);
+                    openModal("application-method");
+                  }}
                 />
               ))}
             </div>
@@ -111,10 +213,18 @@ const MyApplications: React.FC = () => {
             </div>
           </div>
           <div className="my-3 w-full overflow-y-auto scrollbar-hide md:w-[50%] xl:w-full">
-            <ShortlistedJobs />
+            <div className="flex w-full">
+              <ShortlistedJobs />
+            </div>
           </div>
         </div>
       </div>
+      {isModalOpen("application-method") && applicationToView && (
+        <ViewApplicationMethodModal
+          modalId="application-method"
+          application={applicationToView}
+        />
+      )}
     </div>
   );
 };

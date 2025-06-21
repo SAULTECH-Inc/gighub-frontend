@@ -3,7 +3,6 @@ import { ASAbubakar } from "../../../assets/images";
 import { ApplicantData } from "../../../utils/types";
 import { FaFacebook, FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 
-
 const ProfileDetails: React.FC<{ person: ApplicantData }> = ({ person }) => {
   return (
     <div className="flex w-full flex-col items-center text-[#000000]">
@@ -50,32 +49,50 @@ const ProfileDetails: React.FC<{ person: ApplicantData }> = ({ person }) => {
           </div>
           <hr className="border-[#E6E6E6]" />
           <div className="my-4 flex flex-col gap-2">
-          <p className="text-[13px] sm:text-[16px] font-semibold">Social media  handles</p>
- <div className="flex text-[13px] text-[#6438C2] gap-5">
-                     {!person.facebookProfile && (
-                       <a href={person?.facebookProfile ?? undefined} target="_blank" rel="noopener noreferrer">
-                         <FaFacebook className="mr-2 h-5 w-5 cursor-pointer fill-[#1877F2] text-[#8E8E8E]" />
-                       </a>
-                     )}
-                     {!person.twitterProfile && (
-                       <a href={person?.twitterProfile ?? undefined}  target="_blank" rel="noopener noreferrer">
-                         {" "}
-                         <FaTwitter className="mr-2 h-5 w-5 cursor-pointer fill-[#1DA1F2] text-[#8E8E8E]" />
-                       </a>
-                     )}
-                     {!person.linkedInProfile && (
-                       <a href={person?.linkedInProfile ?? undefined}  target="_blank" rel="noopener noreferrer">
-                         {" "}
-                         <FaLinkedin className="mr-2 h-5 w-5 cursor-pointer fill-[#0077B5] text-[#8E8E8E]" />
-                       </a>
-                     )}
-                     {!person.githubProfile && (
-                       <a href={person?.githubProfile ?? undefined}  target="_blank" rel="noopener noreferrer">
-                         {" "}
-                         <FaGithub className="mr-2 h-5 w-5 cursor-pointer fill-[#181717] text-[#8E8E8E]" />
-                       </a>
-                     )}
-                   </div>
+            <p className="text-[13px] font-semibold sm:text-[16px]">
+              Social media handles
+            </p>
+            <div className="flex gap-5 text-[13px] text-[#6438C2]">
+              {!person.facebookProfile && (
+                <a
+                  href={person?.facebookProfile ?? undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FaFacebook className="mr-2 h-5 w-5 cursor-pointer fill-[#1877F2] text-[#8E8E8E]" />
+                </a>
+              )}
+              {!person.twitterProfile && (
+                <a
+                  href={person?.twitterProfile ?? undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {" "}
+                  <FaTwitter className="mr-2 h-5 w-5 cursor-pointer fill-[#1DA1F2] text-[#8E8E8E]" />
+                </a>
+              )}
+              {!person.linkedInProfile && (
+                <a
+                  href={person?.linkedInProfile ?? undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {" "}
+                  <FaLinkedin className="mr-2 h-5 w-5 cursor-pointer fill-[#0077B5] text-[#8E8E8E]" />
+                </a>
+              )}
+              {!person.githubProfile && (
+                <a
+                  href={person?.githubProfile ?? undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {" "}
+                  <FaGithub className="mr-2 h-5 w-5 cursor-pointer fill-[#181717] text-[#8E8E8E]" />
+                </a>
+              )}
+            </div>
           </div>
           <hr className="border-[#E6E6E6]" />
           <div className="my-4 flex flex-col gap-2">
@@ -90,7 +107,7 @@ const ProfileDetails: React.FC<{ person: ApplicantData }> = ({ person }) => {
           <hr className="border-[#E6E6E6]" />
           <div className="my-4 flex flex-col gap-2">
             <p className="font-medium">Software Skills</p>
-             {/* <div className="text-[#8E8E8E] text-[13px] flex flex-wrap">
+            {/* <div className="text-[#8E8E8E] text-[13px] flex flex-wrap">
                                   {person?.cv?.skills?.map((skill: SkillsResponseDto) => skill.skill).join(", ")}
                                 </div> */}
           </div>

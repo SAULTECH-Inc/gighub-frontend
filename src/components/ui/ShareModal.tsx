@@ -1,102 +1,115 @@
-import React from 'react';
+import React, { useState } from "react";
 import useModalStore from "../../store/modalStateStores.ts";
 
 interface ShareModalProps {
-    modelId: string;
+  modalId: string;
+  url: string;
 }
 
-const ShareModal: React.FC<ShareModalProps> = ({ modelId }) => {
-    const { isModalOpen, closeModal } = useModalStore();
-    if (!isModalOpen(modelId)) return null;
+const ShareModal: React.FC<ShareModalProps> = ({ modalId, url }) => {
+  const { isModalOpen, closeModal } = useModalStore();
+  const [copied, setCopied] = useState(false);
 
-    return (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
-            onClick={()=>closeModal(modelId)} // Close the modal when clicking outside of it
+  const handleCopy = () => {
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  if (!isModalOpen(modalId)) return null;
+
+  const encodedUrl = encodeURIComponent(url);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20"
+      onClick={() => closeModal(modalId)}
+    >
+      <div
+        className="relative flex h-[279px] w-[314px] flex-col justify-center rounded-[10px] bg-white p-6 shadow-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close Button */}
+        <button
+          onClick={() => closeModal(modalId)}
+          className="absolute right-2 top-2 p-2 text-[24px] text-gray-500 hover:text-gray-700"
         >
-            {/* Modal Content */}
-            <div
-                className="bg-white w-[314px] h-[279px] rounded-[10px] shadow-lg p-6 flex flex-col justify-center relative"
-                onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
+          ✕
+        </button>
+
+        {/* Copy Link Section */}
+        <div className="mb-4">
+          <label className="mb-2 block text-left text-sm text-gray-600">
+            Copy link
+          </label>
+          <div className="flex items-center rounded-[10px] border border-[#E6E6E6] p-2">
+            <input
+              type="text"
+              value={url}
+              readOnly
+              className="flex-grow border-0 text-sm text-gray-800 outline-none"
+            />
+            <button
+              onClick={handleCopy}
+              className="ml-2 font-medium text-purple-600 hover:text-purple-700"
             >
-                {/* Close Button */}
-                <button
-                    onClick={()=>closeModal(modelId)}
-                    className="absolute top-2 right-2 text-[24px] text-gray-500 hover:text-gray-700 p-2"
-                >
-                    ✕
-                </button>
-
-                {/* Copy Link Section */}
-                <div className="mb-4">
-                    <label className="block text-sm text-gray-600 mb-2 text-left">Copy link</label>
-                    <div className="flex items-center border-[#E6E6E6] border-[1px] rounded-[10px] w-[262px] h-[43px] p-2">
-                        <input
-                            type="text"
-                            value="https://example.com/share"
-                            readOnly
-                            className="flex-grow text-sm text-gray-800 outline-none border-0"
-                        />
-                        <button
-                            className="ml-2 text-purple-600 hover:text-purple-700 font-medium"
-                            onClick={() => navigator.clipboard.writeText('https://example.com/share')}
-                        >
-                            Copy
-                        </button>
-                    </div>
-                </div>
-
-                {/* Share Link Options */}
-                <div>
-                    <p className="text-sm text-gray-600 mb-2 text-left">Share Link</p>
-                    <div className="flex justify-between">
-                        {/* WhatsApp */}
-                        <a
-                            href="https://wa.me/?text=https://example.com/share"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex flex-col items-center text-center text-sm text-gray-600 hover:text-purple-600"
-                        >
-                            <img
-                                src="https://img.icons8.com/color/48/whatsapp.png"
-                                alt="WhatsApp"
-                                className="w-8 h-8"
-                            />
-                            WhatsApp
-                        </a>
-                        {/* LinkedIn */}
-                        <a
-                            href="https://www.linkedin.com/shareArticle?url=https://example.com/share"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex flex-col items-center text-center text-sm text-gray-600 hover:text-purple-600"
-                        >
-                            <img
-                                src="https://img.icons8.com/color/48/linkedin.png"
-                                alt="LinkedIn"
-                                className="w-8 h-8"
-                            />
-                            LinkedIn
-                        </a>
-                        {/* X.com */}
-                        <a
-                            href="https://x.com/share?url=https://example.com/share"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex flex-col items-center text-center text-sm text-gray-600 hover:text-purple-600"
-                        >
-                            <img
-                                src="https://img.icons8.com/ios-glyphs/48/000000/twitter.png"
-                                alt="X.com"
-                                className="w-8 h-8"
-                            />
-                            X.com
-                        </a>
-                    </div>
-                </div>
-            </div>
+              {copied ? "Copied!" : "Copy"}
+            </button>
+          </div>
         </div>
-    );
+
+        {/* Share Options */}
+        <div>
+          <p className="mb-2 text-left text-sm text-gray-600">Share Link</p>
+          <div className="flex justify-between gap-3">
+            {/* WhatsApp */}
+            <a
+              href={`https://wa.me/?text=${encodedUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center text-sm text-gray-600 hover:text-purple-600"
+            >
+              <img
+                src="https://img.icons8.com/color/48/whatsapp.png"
+                alt="WhatsApp"
+                className="h-8 w-8"
+              />
+              WhatsApp
+            </a>
+            {/* LinkedIn */}
+            <a
+              href={`https://www.linkedin.com/shareArticle?url=${encodedUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center text-sm text-gray-600 hover:text-purple-600"
+            >
+              <img
+                src="https://img.icons8.com/color/48/linkedin.png"
+                alt="LinkedIn"
+                className="h-8 w-8"
+              />
+              LinkedIn
+            </a>
+            {/* X (Twitter) */}
+            <a
+              href={`https://twitter.com/intent/tweet?url=${encodedUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center text-sm text-gray-600 hover:text-purple-600"
+            >
+              <img
+                src="https://img.icons8.com/ios-glyphs/48/000000/twitter.png"
+                alt="X.com"
+                className="h-8 w-8"
+              />
+              X.com
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default ShareModal;

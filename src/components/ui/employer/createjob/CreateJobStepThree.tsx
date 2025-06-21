@@ -4,8 +4,11 @@ import { skills as skillsOptions } from "../../../../utils/dumm.ts";
 import { countries } from "../../../../utils/Countries.ts";
 import MultiSelect from "../../../common/MultiSelect.tsx";
 import { Crown } from "../../../../assets/images.ts";
+import CustomCheckbox from "../../../common/CustomCheckbox.tsx";
+import { useSubscriptionStore } from "../../../../store/useSubscriptionStore.ts";
 
 const CreateJobStepThree: React.FC = () => {
+  const { isSubscribed } = useSubscriptionStore();
   const { nextStep, prevStep, job, setJobData } = useJobFormStore();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -25,9 +28,9 @@ const CreateJobStepThree: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-col items-center">
-      <div className="w-[96%] max-w-[900px] min-h-[400px] bg-white flex flex-col items-center rounded-[10px] py-4">
-        <div className="w-[95%] flex flex-col gap-3">
+    <div className="flex w-full flex-col items-center">
+      <div className="flex min-h-[400px] w-[96%] max-w-[900px] flex-col items-center rounded-[10px] bg-white py-4">
+        <div className="flex w-[95%] flex-col gap-3">
           <div className="flex flex-col gap-2">
             <MultiSelect
               label="Skill Set"
@@ -55,19 +58,21 @@ const CreateJobStepThree: React.FC = () => {
               }}
             />
             {errors.skillSet && (
-              <p className="text-red-500 text-xs">{errors.skillSet}</p>
+              <p className="text-xs text-red-500">{errors.skillSet}</p>
             )}
           </div>
-          <div className="w-fit flex gap-1 bg-[#6438C2] py-[3px] px-[6px] rounded-[7px]">
-            <img src={Crown} alt="premium crown" className="w-4" />
-            <p className="text-white text-sm">Premium</p>
-          </div>
+          {!isSubscribed && (
+            <div className="flex w-fit gap-1 rounded-[7px] bg-[#6438C2] px-[6px] py-[3px]">
+              <img src={Crown} alt="premium crown" className="w-4" />
+              <p className="text-sm text-white">Premium</p>
+            </div>
+          )}
           <MultiSelect
             label="Preferred Candidate Country"
             placeholder="Select or add a country"
             options={countries}
             selectedItems={(job.preferredCandidateCountry || []).map(
-              (country) => ({ label: country, value: country })
+              (country) => ({ label: country, value: country }),
             )}
             setSelectedItems={(items) =>
               setJobData({
@@ -76,17 +81,105 @@ const CreateJobStepThree: React.FC = () => {
               })
             }
           />
+          {!isSubscribed && (
+            <div className="flex w-fit gap-1 rounded-[7px] bg-[#6438C2] px-[6px] py-[3px]">
+              <img src={Crown} alt="premium crown" className="w-4" />
+              <p className="text-sm text-white">Premium</p>
+            </div>
+          )}
+          <div className="w-full self-start rounded-[16px] bg-[#F7F8FA] p-6">
+            <h5 className="mb-4 text-lg font-semibold text-gray-800">
+              Application Method
+            </h5>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <CustomCheckbox
+                checked={job?.applicationMethod?.byCv ?? false}
+                size={20}
+                checkColor="#6438C2"
+                label="Apply With CV"
+                onChange={(e) => {
+                  setJobData({
+                    ...job,
+                    applicationMethod: {
+                      ...job?.applicationMethod,
+                      byCv: e.target.checked,
+                    },
+                  });
+                }}
+              />
+              <CustomCheckbox
+                checked={job?.applicationMethod?.byProfile ?? false}
+                size={20}
+                checkColor="#6438C2"
+                label="Apply With Profile"
+                onChange={(e) => {
+                  setJobData({
+                    ...job,
+                    applicationMethod: {
+                      ...job?.applicationMethod,
+                      byProfile: e.target.checked,
+                    },
+                  });
+                }}
+              />
+              <CustomCheckbox
+                checked={job?.applicationMethod?.byPortfolio ?? false}
+                size={20}
+                checkColor="#6438C2"
+                label="Apply With Portfolio"
+                onChange={(e) => {
+                  setJobData({
+                    ...job,
+                    applicationMethod: {
+                      ...job?.applicationMethod,
+                      byPortfolio: e.target.checked,
+                    },
+                  });
+                }}
+              />
+              <CustomCheckbox
+                checked={job?.applicationMethod?.byCoverLetter ?? false}
+                size={20}
+                checkColor="#6438C2"
+                label="Apply With Cover Letter"
+                onChange={(e) => {
+                  setJobData({
+                    ...job,
+                    applicationMethod: {
+                      ...job?.applicationMethod,
+                      byCoverLetter: e.target.checked,
+                    },
+                  });
+                }}
+              />
+              <CustomCheckbox
+                checked={job?.applicationMethod?.byVideo ?? false}
+                size={20}
+                checkColor="#6438C2"
+                label="Apply With Video"
+                onChange={(e) => {
+                  setJobData({
+                    ...job,
+                    applicationMethod: {
+                      ...job?.applicationMethod,
+                      byVideo: e.target.checked,
+                    },
+                  });
+                }}
+              />
+            </div>
+          </div>
         </div>
       </div>
-      <div className="w-[96%]  my-2 max-w-[900px] flex justify-end gap-1 sm:gap-6 mx-2">
+      <div className="mx-2 my-2 flex w-[96%] max-w-[900px] justify-end gap-1 sm:gap-6">
         <button
-          className="w-[35%] sm:w-[29%] py-[8px] bg-[#F7F7F7] border border-[#E6E6E6] rounded-[15px] self-end"
+          className="w-[35%] self-end rounded-[15px] border border-[#E6E6E6] bg-[#F7F7F7] py-[8px] sm:w-[29%]"
           onClick={prevStep}
         >
           Back
         </button>
         <button
-          className="w-[35%] sm:w-[29%] py-[8px] bg-[#6438C2] text-white rounded-[15px]"
+          className="w-[35%] rounded-[15px] bg-[#6438C2] py-[8px] text-white sm:w-[29%]"
           onClick={handleNextStep}
         >
           Proceed

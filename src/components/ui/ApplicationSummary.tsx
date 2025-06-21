@@ -1,50 +1,59 @@
-import {FC} from "react";
+import { FC } from "react";
+import { useMetrics } from "../../store/useMetrics.ts";
 
 const ApplicationSummary: FC = () => {
-    return (
-        <div className="bg-white p-4 rounded-[16px] shadow h-[382px] w-full flex flex-col justify-between pb-20 px-8">
-            <h2 className="justify-center flex text-xl font-lato font-[20px] font-bold-[700] mb-4">Application Summary</h2>
-            <hr className="w-full mx-auto mb-4 border-t border-[#E6E6E6]"/>
+  const { metric } = useMetrics();
+  const total = metric.jobsApplied;
 
-            {/* Horizontal Bar */}
-            <div className="flex justify-center space-x-1 mb-6 w-full">
-                <span className="h-[12px] w-[107px] bg-[#6438C2] rounded-l-full"></span>
-                <span className="h-[12px] w-[83px] bg-[#FD7E14]"></span>
-                <span className="h-[12px] w-[131px] bg-[#56E5A1] rounded-r-full"></span>
-            </div>
+  // Guard against division by zero
+  const onsitePercent = total ? (metric.onsite / total) * 100 : 0;
+  const remotePercent = total ? (metric.remote / total) * 100 : 0;
+  const hybridPercent = total ? (metric.hybrid / total) * 100 : 0;
+  return (
+    <div className="flex h-full w-full flex-col justify-between rounded-[16px] bg-white p-4 px-8 pb-20 shadow">
+      <h2 className="font-bold-[700] mb-4 flex justify-center font-lato text-xl font-[20px]">
+        Application Summary
+      </h2>
+      <hr className="mx-auto mb-4 w-full border-t border-[#E6E6E6]" />
 
-            {/* List Items */}
-            <ul className="space-y-8">
-                {/* Onsite */}
-                <li className="flex justify-between items-center">
-                    <div className="flex items-center space-x-2">
-                        <div className="h-4 w-4 rounded-full bg-[#56E5A1]"></div>
-                        <span className="font-[16px] text-gray-700">Onsite</span>
-                    </div>
-                    <span className="text-green-500 font-bold">230</span>
-                </li>
+      {/* Horizontal Bar */}
+      <div className="mb-6 flex h-[12px] w-full justify-center space-x-0 overflow-hidden rounded-full">
+        <span style={{ width: `${onsitePercent}%` }} className="bg-[#56E5A1]" />
+        <span style={{ width: `${remotePercent}%` }} className="bg-[#6438C2]" />
+        <span style={{ width: `${hybridPercent}%` }} className="bg-[#FD7E14]" />
+      </div>
 
-                {/* Remote */}
-                <li className="flex justify-between items-center">
-                    <div className="flex items-center space-x-2">
-                        <div className="h-4 w-4 rounded-full bg-[#6438C2]"></div>
-                        <span className="font-[16px] text-gray-700">Remote</span>
-                    </div>
-                    <span className="text-blue-500 font-bold">300</span>
-                </li>
+      {/* List Items */}
+      <ul className="space-y-8">
+        {/* Onsite */}
+        <li className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="h-4 w-4 rounded-full bg-[#56E5A1]"></div>
+            <span className="font-[16px] text-gray-700">Onsite</span>
+          </div>
+          <span className="font-bold text-green-500">{metric.onsite}</span>
+        </li>
 
-                {/* Hybrid */}
-                <li className="flex justify-between items-center">
-                    <div className="flex items-center space-x-2">
-                        <div className="h-4 w-4 rounded-full bg-[#FD7E14]"></div>
-                        <span className="font-[16px] text-gray-700">Hybrid</span>
-                    </div>
-                    <span className="text-orange-500 font-bold">300</span>
-                </li>
-            </ul>
-        </div>
+        {/* Remote */}
+        <li className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="h-4 w-4 rounded-full bg-[#6438C2]"></div>
+            <span className="font-[16px] text-gray-700">Remote</span>
+          </div>
+          <span className="font-bold text-blue-500">{metric.remote}</span>
+        </li>
 
-    );
+        {/* Hybrid */}
+        <li className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="h-4 w-4 rounded-full bg-[#FD7E14]"></div>
+            <span className="font-[16px] text-gray-700">Hybrid</span>
+          </div>
+          <span className="text-orange-500 font-bold">{metric.hybrid}</span>
+        </li>
+      </ul>
+    </div>
+  );
 };
 
 export default ApplicationSummary;

@@ -4,7 +4,7 @@ import {
   JobFormData,
   useJobFormStore,
 } from "../../../../store/useJobFormStore";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import DatePicker from "../../../common/DatePicker";
 import { DepartmentType } from "../../../../utils/DepartmentType";
 import SearchableSelectWithAdd from "../../../common/SearchableSelectWithAdd";
@@ -15,6 +15,7 @@ import CustomSelect from "../../../common/CustomSelect";
 import CustomRadioButton from "../../../common/CustomRadioButton";
 import { currencies } from "../../../../utils/Countries";
 import { FaAsterisk } from "react-icons/fa";
+import { jobLevels } from "../../../../utils/types";
 
 interface Option {
   value: string;
@@ -80,17 +81,20 @@ const CreateJobStepTwo: React.FC = () => {
       ...job,
       title: title,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title]);
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedDate(e.target.value);
+  const handleDateChange = (value: Date) => {
+    setSelectedDate(value.toLocaleDateString()); // Fix here
+
     setJobData({
       ...job,
-      endDate: e.target.value,
+      endDate: value.toISOString(), // You may prefer ISO format for consistency/storage
     });
+
     setErrors({
       ...errors,
-      endDate: e.target.value ? "" : "Please select end date.",
+      endDate: value ? "" : "Please select end date.",
     });
   };
 
@@ -125,7 +129,7 @@ const CreateJobStepTwo: React.FC = () => {
 
   const handleNumberInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: keyof JobFormData
+    field: keyof JobFormData,
   ) => {
     let value = parseInt(e.target.value);
     if (isNaN(value) || value < 0) value = 0;
@@ -205,15 +209,15 @@ const CreateJobStepTwo: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-col items-center">
-      <div className="w-[96%] max-w-[900px] min-h-[400px] bg-white px-2 py-2 flex flex-col items-center rounded-[10px]">
-        <div className="w-full sm:w-[95%] flex flex-col gap-2">
-          <div className="flex justify-between border-b-[1px] my-3 text-gray-600">
+    <div className="flex w-full flex-col items-center">
+      <div className="flex h-full min-h-[500px] w-[96%] max-w-[900px] flex-col items-center rounded-[10px] bg-white px-2 py-2">
+        <div className="flex w-full flex-col gap-2 sm:w-[95%]">
+          <div className="my-3 flex justify-between border-b-[1px] text-gray-600">
             <div
               onClick={() => handleSelectedOption("company")}
-              className={`cursor-pointer text-center text-sm flex-1 ${
+              className={`flex-1 cursor-pointer text-center text-sm ${
                 selectedOption === "company"
-                  ? "text-[#6438C2] border-b-4 border-[#6438C2]"
+                  ? "border-b-4 border-[#6438C2] text-[#6438C2]"
                   : "text-gray-600"
               }`}
             >
@@ -221,9 +225,9 @@ const CreateJobStepTwo: React.FC = () => {
             </div>
             <div
               onClick={() => handleSelectedOption("job")}
-              className={`cursor-pointer text-center text-sm flex-1 ${
+              className={`flex-1 cursor-pointer text-center text-sm ${
                 selectedOption === "job"
-                  ? "text-[#6438C2] border-b-4 border-[#6438C2]"
+                  ? "border-b-4 border-[#6438C2] text-[#6438C2]"
                   : "text-gray-600"
               }`}
             >
@@ -232,73 +236,93 @@ const CreateJobStepTwo: React.FC = () => {
           </div>
         </div>
         {selectedOption === "company" && (
-          <div className="w-full sm:w-[95%] flex flex-col gap-2">
-            <label className="text-[#000000] font-medium text-sm sm:text-base">
-              Department
-            </label>
-            <SearchableSelectWithAdd
-              placeholder={job?.department || "Choose a Department..."}
-              options={DepartmentType}
-              className="text-left w-full p-2 border border-[#E6E6E6] rounded-[10px]  text-sm sm:text-base"
-              onChange={handleDepartmentChange}
-            />
-            <label className="text-[#000000]  text-sm sm:text-base">
-              Hiring Manager
-            </label>
-            <div className="border border-[#E6E6E6] w-full h-10 px-4 rounded-[10px] flex gap-3">
-              <img src={Referrer1} alt="" width={27} />
-              <input
-                type="text"
-                placeholder="Shedrach Adam"
-                className="w-full outline-none border-none focus:outline-none  text-sm sm:text-base focus:ring-0 focus:border-none"
-              />
-              <img src={Teams} alt="ArrowDown" />
+          <div className="flex w-full flex-col gap-2 sm:w-[95%]">
+            {/*First Row*/}
+            <div className="flex flex-col gap-x-3 md:flex-row md:items-center md:justify-evenly">
+              <div className="flex w-full flex-col">
+                <label className="text-sm font-medium text-[#000000] sm:text-base">
+                  Department
+                </label>
+                <SearchableSelectWithAdd
+                  placeholder={job?.department || "Choose a Department..."}
+                  options={DepartmentType}
+                  className="w-full rounded-[10px] border border-[#E6E6E6] p-2 text-left text-sm sm:text-base"
+                  onChange={handleDepartmentChange}
+                />
+              </div>
+              <div className="flex w-full flex-col">
+                <label className="text-sm text-[#000000] sm:text-base">
+                  Hiring Manager
+                </label>
+                <div className="flex h-10 w-full gap-3 rounded-[10px] border border-[#E6E6E6] px-4">
+                  <img src={Referrer1} alt="" width={27} />
+                  <input
+                    type="text"
+                    placeholder="Full name"
+                    value={job?.hiringManager}
+                    onChange={(e) => {
+                      setJobData({
+                        ...job,
+                        hiringManager: e.target.value,
+                      });
+                    }}
+                    className="w-full border-none text-sm outline-none focus:border-none focus:outline-none focus:ring-0 sm:text-base"
+                  />
+                  <img src={Teams} alt="ArrowDown" />
+                </div>
+              </div>
             </div>
-            <div className="relative">
-              <DatePicker
-                label="Select Application End Date"
-                requiredAsterisk={true}
-                value={job.endDate || selectedDate}
-                name="applicationPeriod"
-                onChange={handleDateChange}
-                disabled={false}
-                className="border border-[#E6E6E6] w-full h-10 px-4  text-sm sm:text-base rounded-[10px]"
-                min={new Date().toISOString().split("T")[0]}
-              />
-              {errors.endDate && (
-                <p className="text-red-500 text-xs">{errors.endDate}</p>
-              )}
-            </div>
-            <div className="text-[#000000] flex gap-1 items-center  text-sm sm:text-base">
-              Location <FaAsterisk className="w-2 fill-[#FA4E09] " />
-            </div>
+            {/*Second row*/}
+            <div className="flex flex-col gap-x-3 md:flex-row md:items-center md:justify-evenly">
+              <div className="flex w-full flex-col">
+                <label className="text-sm text-[#000000] sm:text-base">
+                  End Date
+                </label>
+                <div className="relative">
+                  <DatePicker
+                    required={true}
+                    selectedDate={new Date(job.endDate)}
+                    onDateChange={(date) => {
+                      handleDateChange(date as Date);
+                    }}
+                    disabled={false}
+                    className="h-10 w-full rounded-[10px] border border-[#E6E6E6] px-4 text-sm outline-none focus:border-[#E6E6E6] focus:outline-none focus:ring-0 sm:text-base"
+                  />
+                  {errors.endDate && (
+                    <p className="text-xs text-red-500">{errors.endDate}</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex w-full flex-col">
+                <label className="flex items-center gap-1 text-sm text-[#000000] sm:text-base">
+                  Location <FaAsterisk className="w-2 fill-[#FA4E09]" />
+                </label>
 
-            <SearchableSelectWithAdd
-              placeholder={job.location || "Choose a Location..."}
-              className="text-left w-full px-4 h-10 border border-[#E6E6E6] rounded-[10px]  text-sm sm:text-base"
-              options={JobLocations}
-              onChange={handleLocationChange}
-              onAddOption={handleAddOption}
-            />
-            {errors.location && (
-              <p className="text-red-500 text-xs">{errors.location}</p>
-            )}
+                <SearchableSelectWithAdd
+                  placeholder={job.location || "Choose a Location..."}
+                  className="h-10 w-full rounded-[10px] border border-[#E6E6E6] px-4 text-left text-sm sm:text-base"
+                  options={JobLocations}
+                  onChange={handleLocationChange}
+                  onAddOption={handleAddOption}
+                />
+              </div>
+            </div>
           </div>
         )}
 
         {selectedOption === "job" && (
-          <div className="w-full sm:w-[95%] flex flex-col gap-3 py-2 sm:py-0">
-            <div className="flex flex-col sm:flex-row gap-2 w-full justify-between  text-sm sm:text-base">
-              <div className="w-full flex flex-col gap-2">
-                <div className="text-[#000000] flex gap-1 items-center">
+          <div className="flex w-full flex-col gap-3 py-2 sm:w-[95%] sm:py-0">
+            <div className="flex w-full flex-col justify-between gap-2 text-sm sm:flex-row sm:text-base">
+              <div className="flex w-full flex-col gap-2">
+                <div className="flex items-center gap-1 text-[#000000]">
                   Job Title <FaAsterisk className="w-2 fill-[#FA4E09]" />
                 </div>
 
-                <div className="border border-[#E6E6E6] h-10 px-4 rounded-[10px] flex">
+                <div className="flex h-10 rounded-[10px] border border-[#E6E6E6] px-4">
                   <input
                     type="text"
                     placeholder="Graphic Designer"
-                    className="w-full outline-none border-none focus:outline-none focus:ring-0 focus:border-none text-sm sm:text-base"
+                    className="w-full border-none text-sm outline-none focus:border-none focus:outline-none focus:ring-0 sm:text-base"
                     onChange={(e) => {
                       setTitle(e.target.value);
                       setErrors({
@@ -312,20 +336,20 @@ const CreateJobStepTwo: React.FC = () => {
                   />
                 </div>
                 {errors.title && (
-                  <p className="text-red-500 text-xs">{errors.title}</p>
+                  <p className="text-xs text-red-500">{errors.title}</p>
                 )}
               </div>
-              <div className="w-full flex flex-col gap-2 ">
-                <div className="text-[#000000] flex gap-1 items-center">
+              <div className="flex w-full flex-col gap-2">
+                <div className="flex items-center gap-1 text-[#000000]">
                   Experience in years/ Level
                   <FaAsterisk className="w-2 fill-[#FA4E09]" />
                 </div>
-                <div className="relative w-full flex border border-[#E6E6E6] rounded-[10px] overflow-hidden">
-                  <div className="border-r border-[#E6E6E6] h-10 w-[60%] flex">
+                <div className="relative flex w-full overflow-hidden rounded-[10px] border border-[#E6E6E6]">
+                  <div className="flex h-10 w-[60%] border-r border-[#E6E6E6]">
                     <input
                       type="number"
                       placeholder="Years"
-                      className="w-full text-sm sm:text-base outline-none border-none focus:outline-none focus:ring-0 focus:border-none no-arrows"
+                      className="no-arrows w-full border-none text-sm outline-none focus:border-none focus:outline-none focus:ring-0 sm:text-base"
                       onChange={(e) => {
                         handleNumberInputChange(e, "experienceYears");
                         setErrors({
@@ -339,38 +363,35 @@ const CreateJobStepTwo: React.FC = () => {
                     />
                   </div>
                   <select
-                    className="text-sm border-none h-full sm:text-base outline-none focus:ring-0 focus:border-none"
+                    className="h-full border-none text-sm outline-none focus:border-none focus:ring-0 sm:text-base"
                     value={job.level || ""}
                     onChange={handleLevelChange}
                   >
                     <option value="" disabled>
                       Select Level
                     </option>
-                    <option value="Beginner">Beginner</option>
-                    <option value="Junior">Junior</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Mid">Mid</option>
-                    <option value="Senior">Senior</option>
-                    <option value="Lead">Lead</option>
-                    <option value="Manager">Manager</option>
-                    <option value="Executive">Executive</option>
+                    {jobLevels.map((level, key) => (
+                      <option key={key} value={level.value}>
+                        {level.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 {errors.experienceYears && (
-                  <p className="text-red-500 text-xs">
+                  <p className="text-xs text-red-500">
                     {errors.experienceYears}
                   </p>
                 )}
                 {errors.level && (
-                  <p className="text-red-500 text-xs">{errors.level}</p>
+                  <p className="text-xs text-red-500">{errors.level}</p>
                 )}
               </div>
             </div>
-            <label className="w-full text-[#000000]  text-sm sm:text-base">
+            <label className="w-full text-sm text-[#000000] sm:text-base">
               Salary Budget
             </label>
-            <div className="w-full flex flex-col gap-1 sm:gap-4">
-              <div className="w-full flex flex-wrap gap-2 sm:gap-10 border-[#E6E6E6] ">
+            <div className="flex w-full flex-col gap-1 sm:gap-4">
+              <div className="flex w-full flex-wrap gap-2 border-[#E6E6E6] sm:gap-10">
                 <CustomRadioButton
                   name="paymentOption"
                   value="option1"
@@ -407,16 +428,16 @@ const CreateJobStepTwo: React.FC = () => {
                 />
               </div>
               {(selectOption === "option1" || selectOption === "option2") && (
-                <div className="w-full flex-col md:flex-row flex gap-2">
+                <div className="flex w-full flex-col gap-2 md:flex-row">
                   <div className="w-full">
                     {selectOption === "option1" && (
-                      <div className="border border-[#E6E6E6] h-10 px-4 rounded-[10px] flex gap-3 relative">
-                        <span className=" text-sm sm:text-base flex items-center">
+                      <div className="relative flex h-10 gap-3 rounded-[10px] border border-[#E6E6E6] px-4">
+                        <span className="flex items-center text-sm sm:text-base">
                           {job.currency}
                         </span>
                         <input
                           type="number"
-                          className="text-sm w-full sm:text-base border-[#E6E6E6] border-r-0 sm:border-1 sm:border-x-1 border-y-0 outline-none focus:outline-none focus:ring-0 focus:border-none no-arrows"
+                          className="sm:border-1 sm:border-x-1 no-arrows w-full border-y-0 border-r-0 border-[#E6E6E6] text-sm outline-none focus:border-none focus:outline-none focus:ring-0 sm:text-base"
                           placeholder="Exact Amount"
                           value={job.maximumAmount || ""}
                           onChange={(e) => {
@@ -431,7 +452,7 @@ const CreateJobStepTwo: React.FC = () => {
                           }}
                         />
                         <select
-                          className="hidden sm:block w-full text-sm border-r-0 border-y-0 border-l-1 border-[#E6E6E6] h-[full] outline-none focus:ring-0 focus:border-none"
+                          className="border-l-1 hidden h-[full] w-full border-y-0 border-r-0 border-[#E6E6E6] text-sm outline-none focus:border-none focus:ring-0 sm:block"
                           value={job.frequency || ""}
                           onChange={handleFrequencyChange}
                         >
@@ -447,14 +468,14 @@ const CreateJobStepTwo: React.FC = () => {
                       </div>
                     )}
                     {selectOption === "option2" && (
-                      <div className="w-full flex flex-col sm:flex-row justify-between gap-2">
-                        <div className="w-full border border-[#E6E6E6] h-10 rounded-[10px] overflow-hidden flex items-center">
-                          <span className="text-[12px] sm:text-sm p-1 text-gray-500">
+                      <div className="flex w-full flex-col justify-between gap-2 sm:flex-row">
+                        <div className="flex h-10 w-full items-center overflow-hidden rounded-[10px] border border-[#E6E6E6]">
+                          <span className="p-1 text-[12px] text-gray-500 sm:text-sm">
                             {job.currency}
                           </span>
                           <input
                             type="number"
-                            className="text-sm w-full border-x-[#E6E6E6] border-y-0 outline-none focus:outline-none focus:ring-0 focus:border-none no-arrows"
+                            className="no-arrows w-full border-y-0 border-x-[#E6E6E6] text-sm outline-none focus:border-none focus:outline-none focus:ring-0"
                             placeholder="Minimum"
                             value={job.minimumAmount || ""}
                             onChange={(e) =>
@@ -463,7 +484,7 @@ const CreateJobStepTwo: React.FC = () => {
                           />
                           <input
                             type="number"
-                            className="text-sm w-full border-r-0 border-l-0 border-y-0 outline-none focus:outline-none focus:ring-0 focus:border-none no-arrows"
+                            className="no-arrows w-full border-y-0 border-l-0 border-r-0 text-sm outline-none focus:border-none focus:outline-none focus:ring-0"
                             placeholder="Maximum"
                             value={job.maximumAmount || ""}
                             onChange={(e) =>
@@ -472,7 +493,7 @@ const CreateJobStepTwo: React.FC = () => {
                           />
                           <div className="border border-[#E6E6E6]">
                             <select
-                              className="hidden sm:block border-none h-full outline-none focus:ring-0 focus:border-none"
+                              className="hidden h-full border-none outline-none focus:border-none focus:ring-0 sm:block"
                               value={job.frequency || ""}
                               onChange={handleFrequencyChange}
                             >
@@ -490,9 +511,9 @@ const CreateJobStepTwo: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  <div className="w-full md:w-[50%] flex gap-2">
+                  <div className="flex w-full gap-2 md:w-[50%]">
                     <select
-                      className="w-[50%] sm:hidden text-sm border border-[#E6E6E6] rounded-[10px] h-full outline-none focus:ring-0 focus:border-none"
+                      className="h-full w-[50%] rounded-[10px] border border-[#E6E6E6] text-sm outline-none focus:border-none focus:ring-0 sm:hidden"
                       value={job.frequency || ""}
                       onChange={handleFrequencyChange}
                     >
@@ -508,33 +529,33 @@ const CreateJobStepTwo: React.FC = () => {
                       <CustomSelect
                         placeholder={job.currency || "Choose currency..."}
                         options={currencies}
-                        className="text-left text-sm w-full px-2 md:text-[12px] overflow-hidden border h-10 border-[#E6E6E6] rounded-[10px] bg-[#F7F8FA]"
+                        className="h-10 w-full overflow-hidden rounded-[10px] border border-[#E6E6E6] bg-[#F7F8FA] px-2 text-left text-sm md:text-[12px]"
                         onChange={handleCurrencySelect}
                       />
                     </div>
                   </div>
                 </div>
               )}
-              <p className="text-red-500 text-[10px]">{error}</p>
+              <p className="text-[10px] text-red-500">{error}</p>
             </div>
-            <div className="flex flex-wrap gap-2 w-full justify-between">
-              <div className="w-full sm:w-[48%] flex flex-col gap-2">
-                <div className="text-[#000000] flex gap-1 items-center">
+            <div className="flex w-full flex-wrap justify-between gap-2">
+              <div className="flex w-full flex-col gap-2 sm:w-[48%]">
+                <div className="flex items-center gap-1 text-[#000000]">
                   Job Type
                   <FaAsterisk className="w-2 fill-[#FA4E09]" />
                 </div>
                 <CustomSelect
                   placeholder={job.jobType || "Choose..."}
                   options={JobType}
-                  className="text-left w-full text-sm px-2 border h-10 border-[#E6E6E6] rounded-[10px] bg-[#F7F8FA]"
+                  className="h-10 w-full rounded-[10px] border border-[#E6E6E6] bg-[#F7F8FA] px-2 text-left text-sm"
                   onChange={handleJobSelect}
                 />
                 {errors.jobType && (
-                  <p className="text-red-500 text-xs">{errors.jobType}</p>
+                  <p className="text-xs text-red-500">{errors.jobType}</p>
                 )}
               </div>
-              <div className="w-full sm:w-[48%] flex flex-col gap-2">
-                <div className="text-[#000000] flex gap-1 items-center">
+              <div className="flex w-full flex-col gap-2 sm:w-[48%]">
+                <div className="flex items-center gap-1 text-[#000000]">
                   Employment Type
                   <FaAsterisk className="w-2 fill-[#FA4E09]" />
                 </div>
@@ -542,28 +563,63 @@ const CreateJobStepTwo: React.FC = () => {
                 <CustomSelect
                   placeholder={job.employmentType || "Choose ..."}
                   options={EmploymentType}
-                  className="text-left w-full px-2 h-10 text-sm border border-[#E6E6E6] rounded-[10px] bg-[#F7F8FA]"
+                  className="h-10 w-full rounded-[10px] border border-[#E6E6E6] bg-[#F7F8FA] px-2 text-left text-sm"
                   onChange={handleEmploymentSelect}
                 />
                 {errors.employmentType && (
-                  <p className="text-red-500 text-xs">
+                  <p className="text-xs text-red-500">
                     {errors.employmentType}
                   </p>
+                )}
+              </div>
+
+              <div className="flex w-full flex-col gap-2 sm:w-[48%]">
+                <div className="flex items-center gap-1 text-[#000000]">
+                  Priority
+                  <FaAsterisk className="w-2 fill-[#FA4E09]" />
+                </div>
+
+                <CustomSelect
+                  placeholder={job.priority || "Choose ..."}
+                  options={[
+                    {
+                      label: "High",
+                      value: "HIGH",
+                    },
+                    {
+                      label: "Medium",
+                      value: "MEDIUM",
+                    },
+                    {
+                      label: "Low",
+                      value: "LOW",
+                    },
+                  ]}
+                  className="h-10 w-full rounded-[10px] border border-[#E6E6E6] bg-[#F7F8FA] px-2 text-left text-sm"
+                  onChange={(option) => {
+                    setJobData({
+                      ...job,
+                      priority: option.value,
+                    });
+                  }}
+                />
+                {errors.priority && (
+                  <p className="text-xs text-red-500">{errors.priority}</p>
                 )}
               </div>
             </div>
           </div>
         )}
       </div>
-      <div className="w-[96%] max-w-[900px] my-2 text-sm flex justify-end gap-6 mx-2">
+      <div className="mx-2 my-2 flex w-[96%] max-w-[900px] justify-end gap-6 text-sm">
         <button
-          className="w-[35%] sm:w-[29%] py-[8px] bg-[#F7F7F7] border border-[#E6E6E6] rounded-[15px] self-end"
+          className="w-[35%] self-end rounded-[15px] border border-[#E6E6E6] bg-[#F7F7F7] py-[8px] sm:w-[29%]"
           onClick={prevStep}
         >
           Back
         </button>
         <button
-          className="w-[35%] sm:w-[29%] py-[8px] bg-[#6438C2] text-white rounded-[15px]"
+          className="w-[35%] rounded-[15px] bg-[#6438C2] py-[8px] text-white sm:w-[29%]"
           onClick={handleNextStep}
         >
           Proceed

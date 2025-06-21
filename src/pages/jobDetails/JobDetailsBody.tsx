@@ -1,78 +1,158 @@
 import React from "react";
+import { JobPostResponse } from "../../utils/types";
+import DOMPurify from "dompurify";
+import { USER_TYPE } from "../../utils/helpers.ts";
+import { UserType } from "../../utils/enums.ts";
+import useModalStore from "../../store/modalStateStores.ts";
+import { useJobSearchSettings } from "../../store/useJobSearchSettings.ts";
 
-const JobDetailsBody: React.FC = () => {
-    return (
-        <div className="flex flex-col ml-[-360px] mt-[-60px] items-center justify-center bg-gray-100 ">
-            {/* Top Section */}
-            <div className="w-[986px] h-[84px] bg-white flex items-center justify-between px-6 shadow-md top-[20px] rounded-md ">
-                <h2 className="text-black font-lato text-lg font-bold">Product Designer</h2>
-                <div className="flex space-x-4 text-[#6438C2] font-bold text-[20px] leading-[24px] tracking-[0%] font-lato text-md">
-                    <span>Full Time/ Remote</span>
-                    <span>|</span>
-                    <span>Mid Level</span>
-                </div>
-            </div>
-
-            {/* Job Details Box */}
-            <div className="w-[986px] h-[747px] bg-white shadow-lg rounded-[16px] mt-[20px] p-8">
-                {/* Job Description Section */}
-                <div className="w-[921px] h-[40px] bg-[#6438C2] rounded-[16px] flex items-center px-4">
-                    <span className="text-white font-lato font-bold text-lg">Job Description</span>
-                </div>
-                <p className="text-[#8E8E8E] font-lato  text-[16px] leading-[19.2px] tracking-[0%] mt-4">
-                    We are looking for a creative and detail-oriented Product Designer to join our dynamic team.
-                    In this role, you will collaborate with cross-functional teams to design and improve user-centered
-                    products
-                    that solve complex problems. Your work will directly impact the user experience,
-                    ensuring our products are not only functional but also aesthetically appealing and intuitive.
-                </p>
-
-                {/* Key Responsibilities */}
-                <div className="w-[921px] h-[40px] bg-[#6438C2] rounded-[16px] flex items-center px-4 mt-6">
-                    <span className="text-white font-lato font-bold text-lg">Key Responsibility</span>
-                </div>
-                <ul className="text-[#8E8E8E] font-lato text-[16px] leading-[19.2px] list-disc list-inside marker:text-purple-600 mt-4 space-y-3">
-                    <li>User-Centered Design: Conduct user research, create user personas, and map customer journeys to
-                        inform design decisions.
-                    </li>
-                    <li>Concept Development: Develop wireframes, mockups, and prototypes to communicate design concepts
-                        effectively.
-                    </li>
-                    <li>Collaboration: Work closely with product managers, developers, and stakeholders to align on
-                        design goals and deliverables.
-                    </li>
-                    <li>Visual Design: Design high-fidelity UI elements and ensure they align with the company’s brand
-                        and style guidelines.
-                    </li>
-                    <li>Iterative Design Process: Gather feedback, test prototypes with users, and iterate designs to
-                        improve usability and user satisfaction.
-                    </li>
-                    <li>Design Systems: Maintain and contribute to the company’s design system, ensuring consistency
-                        across all products.
-                    </li>
-                    <li>Problem Solving: Analyze user pain points and business challenges to deliver innovative and
-                        practical design solutions.
-                    </li>
-                    <li>Handoff to Development: Prepare design assets and collaborate with developers to ensure seamless
-                        implementation of designs.
-                    </li>
-                </ul>
-
-
-                <div className="top-20">
-                    {/* Horizontal Rule */}
-                    <hr className="w-[910.5px] border border-black mt-[150px]"/>
-
-                    {/* Edit Job Button */}
-                    <button
-                        className="w-[225px] h-[46px] bg-[#6438C2] text-white font-lato text-md font-bold rounded-[15px] mt-[20px] px-10 py-3 ml-[670px]"
-                    >
-                        Edit Job
-                    </button>
-                </div>
-            </div>
+interface JobDetailsBodyProp {
+  job: JobPostResponse;
+  handleEditJob: () => void;
+  handleBookmark?: () => void;
+}
+const JobDetailsBody: React.FC<JobDetailsBodyProp> = ({
+  job,
+  handleEditJob,
+  handleBookmark,
+}) => {
+  const { openModal } = useModalStore();
+  const { setJobToApply } = useJobSearchSettings();
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-gray-100">
+      {/* Top Section */}
+      <div className="flex h-fit w-full flex-col items-start justify-center rounded-[16px] bg-white px-6 py-4 shadow-sm md:h-[84px] md:flex-row md:items-center md:justify-between">
+        <h2 className="font-lato text-lg font-bold text-black">{job.title}</h2>
+        <div className="mt-2 flex flex-wrap space-x-4 text-[14px] font-bold text-[#6438C2] md:mt-0 md:text-[20px]">
+          <span>
+            {job.jobType} / {job.employmentType}
+          </span>
+          <span className="">|</span>
+          <span>{job.level}</span>
         </div>
-    );
+      </div>
+
+      {/* Job Details Box */}
+      <div className="mt-[20px] min-h-[747px] w-full rounded-[16px] bg-white p-4 shadow-sm md:p-8">
+        {/* Job Description Section */}
+        <div className="flex flex-col">
+          <div className="flex h-[40px] w-full items-center rounded-[16px] bg-[#6438C2] px-4">
+            <span className="font-lato text-lg font-bold text-white">
+              Job Description
+            </span>
+          </div>
+          <div
+            className="prose mt-4 w-full max-w-none whitespace-pre-wrap p-1 font-lato text-[16px] leading-[19.2px] tracking-[0%] text-[#8E8E8E] md:p-4"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(job.description),
+            }}
+          ></div>
+        </div>
+
+        {/* Key Responsibilities */}
+        <div className="flex flex-col">
+          <div className="mt-6 flex h-[40px] w-full items-center rounded-[16px] bg-[#6438C2] px-4">
+            <span className="font-lato text-lg font-bold text-white">
+              Key Responsibility
+            </span>
+          </div>
+          <div
+            className="prose mt-4 w-full max-w-none list-inside list-disc space-y-3 whitespace-pre-wrap p-1 font-lato text-[16px] leading-[19.2px] text-[#8E8E8E] marker:text-purple-600 md:p-4"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(job.responsibility),
+            }}
+          ></div>
+        </div>
+
+        {/* Key Requirements */}
+        {job.requirements && (
+          <div className="flex flex-col">
+            <div className="mt-6 flex h-[40px] w-full items-center rounded-[16px] bg-[#6438C2] px-4">
+              <span className="font-lato text-lg font-bold text-white">
+                Requirements
+              </span>
+            </div>
+            <div
+              className="prose mt-4 w-full max-w-none list-inside list-disc space-y-3 whitespace-pre-wrap p-1 font-lato text-[16px] leading-[19.2px] text-[#8E8E8E] marker:text-purple-600 md:p-4"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(job.requirements),
+              }}
+            />
+          </div>
+        )}
+
+        {/* Key Skills */}
+        <div className="flex flex-col">
+          <div className="mt-6 flex h-[40px] w-full items-center rounded-[16px] bg-[#6438C2] px-4">
+            <span className="font-lato text-lg font-bold text-white">
+              Skills
+            </span>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2 px-4">
+            {job?.skillSet?.map((skill, idx) => (
+              <span
+                key={idx}
+                className="rounded-full bg-[#E9D8FD] px-3 py-1 font-lato text-sm font-medium text-[#4B0082]"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="top-20">
+          {/* Horizontal Rule */}
+          <hr className="mt-[50px] w-full border border-black" />
+
+          {/* Edit Job Button */}
+          <div className="mt-10 flex w-full flex-col-reverse flex-wrap items-center gap-x-2 gap-y-3 md:flex-row md:justify-end">
+            {/* Bookmark - soft lavender tone for a non-primary action */}
+
+            {/* Apply - strong purple as primary CTA */}
+            {USER_TYPE === UserType.APPLICANT ? (
+              <>
+                <button
+                  onClick={() => handleBookmark && handleBookmark()}
+                  type="button"
+                  className="text-md block w-full rounded-[15px] bg-[#E9D8FD] px-10 py-3 font-lato font-bold text-[#4B0082] transition hover:bg-[#D8B4FE] md:w-[225px]"
+                >
+                  Bookmark
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    openModal("refer-modal");
+                  }}
+                  className="text-md block w-full rounded-[15px] bg-[#C026D3] px-10 py-3 font-lato font-bold text-white transition hover:bg-[#A21CAF] md:w-[225px]"
+                >
+                  Refer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setJobToApply(job);
+                    openModal("application-modal");
+                  }}
+                  className="text-md block w-full rounded-[15px] bg-[#6438C2] px-10 py-3 font-lato font-bold text-white transition hover:bg-[#5126a9] md:w-[225px]"
+                >
+                  Apply
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => handleEditJob && handleEditJob()}
+                className="text-md block w-full rounded-[15px] bg-[#6438C2] px-10 py-3 font-lato font-bold text-white transition hover:bg-[#5126a9] md:w-[225px]"
+              >
+                Edit
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default JobDetailsBody;

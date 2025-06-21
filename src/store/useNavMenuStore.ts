@@ -4,48 +4,48 @@ import { create } from "zustand";
 import { NODE_ENV, secureStorageWrapper } from "../utils/constants.ts";
 
 interface ISettingsNavItems {
-    account: boolean;
-    notification: boolean;
-    privacy: boolean;
-    subscription: boolean;
+  account: boolean;
+  notification: boolean;
+  privacy: boolean;
+  subscription: boolean;
 }
 
 interface NavMenuStore {
-    settings: ISettingsNavItems;
-    toggleSetting: (setting: keyof ISettingsNavItems) => void;
+  settings: ISettingsNavItems;
+  toggleSetting: (setting: keyof ISettingsNavItems) => void;
 }
 
 export const useNavMenuStore = create<NavMenuStore>()(
-    devtools(
-        persist(
-            immer<NavMenuStore>((set) => ({
-                settings: {
-                    account: true,
-                    notification: false,
-                    privacy: false,
-                    subscription: false,
-                },
-                toggleSetting: (setting: keyof ISettingsNavItems) => {
-                    set((state) => {
-                        // Disable all settings first
-                        Object.keys(state.settings).forEach((key) => {
-                            state.settings[key as keyof ISettingsNavItems] = false;
-                        });
+  devtools(
+    persist(
+      immer<NavMenuStore>((set) => ({
+        settings: {
+          account: true,
+          notification: false,
+          privacy: false,
+          subscription: false,
+        },
+        toggleSetting: (setting: keyof ISettingsNavItems) => {
+          set((state) => {
+            // Disable all settings first
+            Object.keys(state.settings).forEach((key) => {
+              state.settings[key as keyof ISettingsNavItems] = false;
+            });
 
-                        // Enable the clicked setting
-                        state.settings[setting] = true;
-                    });
-                },
-            })),
-            {
-                name: "nav-menu-store",
-                partialize: (state) => ({
-                    settings: state.settings,
-                }),
-                storage: createJSONStorage(() =>
-                    NODE_ENV === "production" ? secureStorageWrapper : localStorage
-                ),
-            }
-        )
-    )
+            // Enable the clicked setting
+            state.settings[setting] = true;
+          });
+        },
+      })),
+      {
+        name: "nav-menu-store",
+        partialize: (state) => ({
+          settings: state.settings,
+        }),
+        storage: createJSONStorage(() =>
+          NODE_ENV === "production" ? secureStorageWrapper : localStorage,
+        ),
+      },
+    ),
+  ),
 );

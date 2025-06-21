@@ -1,96 +1,70 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { HiArrowLongRight } from "react-icons/hi2";
-import { Application, ApplicationStatus } from "../../utils/dummyApplications";
+import { ApplicationResponse } from "../../utils/types";
+import moment from "moment";
+import { getStatusColor } from "../../utils/helpers.ts";
 
-const ApplicationCard: React.FC<{ application: Application }> = ({
-  application,
-}) => {
-  const getStatusColor = (status: ApplicationStatus) => {
-    switch (status) {
-      case ApplicationStatus.PENDING:
-        return "#FFD900";
-      case ApplicationStatus.INTERVIEWED:
-        return "#65FF81";
-      case ApplicationStatus.HIRED:
-        return "#56E5A1";
-      case ApplicationStatus.SHORTLISTED:
-        return "#56E5A1";
-      case ApplicationStatus.WITHDRAW:
-        return "#FF5733";
-      case ApplicationStatus.REJECTED:
-        return "#FA4E09";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  function truncateText(text: string, maxChars: number) {
-    if (!text) return "";
-    if (text.length <= maxChars) return text;
-    return text.slice(0, maxChars) + "...";
-  }
+const ApplicationCard: React.FC<{
+  application: ApplicationResponse;
+  onView: () => void;
+}> = ({ application, onView }) => {
+  const statusColor = useMemo(
+    () => getStatusColor(application.status),
+    [application.status],
+  );
+  console.log("STATUS COLOR ::: " + statusColor);
 
   return (
-    <div className="my-2 flex w-full">
-      <div className="flex h-[63px] w-full items-center justify-between rounded-[16px] bg-[#F7F7F7] px-2 sm:hidden">
-        <div className="flex items-center gap-2">
-          <div className="h-[46px] w-[51px] rounded-[10px] bg-[#D9D9D9]"></div>
-          <div>
-            <p className="font-bold">
-              {truncateText(application.companyName, 10)}
-            </p>
-            <p className="text-[13px] font-bold text-[#7F7F7F]">
-              {truncateText(application.location, 10)}
+    <div className="grid w-full grid-cols-[calc(63%+10%)_calc(40%-10%)] items-center justify-between rounded-[16px] bg-[#F5F5F5] p-2 md:grid-cols-[20%_24%_12%_14%_12%] mdl:grid-cols-[20%_14%_24%_12%_14%_12%]">
+      {/*Profile*/}
+      <div className="flex w-full items-center gap-2">
+        <div className="h-[46px] w-[51px] rounded-[10px] bg-[#D9D9D9]">
+          <img
+            className="h-full w-full rounded-[10px]"
+            src={application?.job?.employer?.companyLogo || ""}
+            alt="company logo"
+          />
+        </div>
+        <div>
+          <p className="hidden font-bold md:flex">{application.job.company}</p>
+          <p className="font-bold md:hidden">{application.job.title}</p>
+          <div className="flex text-[13px] font-bold text-[#7F7F7F]">
+            <p className="">{application.job.location}&nbsp;</p>
+            <p className="text-[#6B5AED] md:hidden">
+              - {application.job.company}
             </p>
           </div>
         </div>
-
-        <div className={`flex items-center gap-2 text-[13px]`}>
-          <div
-            className={`h-[16px] w-[16px] rounded-full bg-[${getStatusColor(application.status)}]`}
-          ></div>
-          <p className={`text-[${getStatusColor(application.status)}]`}>
-            {application.status}
-          </p>
-        </div>
+      </div>
+      {/*Date*/}
+      <div className="hidden w-full items-center justify-start text-[13px] mdl:flex">
+        <p>{moment(application.createdAt).format("DD MMM, YYYY")}</p>
       </div>
-      <div className="hidden h-[63px] w-full items-center rounded-[16px] bg-[#F7F7F7] px-2 sm:flex">
-        <div className="flex w-[30%] items-center gap-2">
-          <div className="h-[46px] w-[51px] rounded-[10px] bg-[#D9D9D9]"></div>
-          <div>
-            <p className="font-bold">
-              {truncateText(application.companyName, 13)}
-            </p>
-            <p className="text-[13px] font-bold text-[#7F7F7F]">
-              {truncateText(application.location, 13)}
-            </p>
-          </div>
-        </div>
-        <div className="flex w-[70%]">
-          <div className="flex w-full items-center justify-around md:justify-between">
-            <div className="hidden w-[100px] justify-start text-[13px] lg:flex">
-              {application.appliedDate}
-            </div>
-            <div className="hidden w-[100px] justify-start text-[13px] md:flex">
-              {application.position}
-            </div>
-            <div className="hidden w-[140px] justify-start text-[13px] mdl:flex">
-              {application.jobLocation}
-            </div>
-            <div className={`flex w-[180px] items-center gap-2 text-[13px]`}>
-              <div
-                className={`h-[16px] w-[16px] rounded-full bg-[${getStatusColor(application.status)}]`}
-              ></div>
-              <p className={`text-[${getStatusColor(application.status)}]`}>
-                {application.status}
-              </p>
-            </div>
-          </div>
-          <div className="flex justify-end sm:w-[30%]">
-            <div className="ml-2 hidden h-[41px] w-[41px] items-center justify-center rounded-full bg-[#6B5AED4F] sm:flex">
-              <HiArrowLongRight className="fill-[#6B5AED]" />
-            </div>
-          </div>
+      {/*Role name*/}
+      <div className="hidden w-full flex-wrap justify-start text-[13px] md:flex">
+        <p className="text-left">{application.job.title}</p>
+      </div>
+
+      <div className="hidden w-full justify-start text-[13px] md:flex">
+        {application.job.jobType}
+      </div>
+
+      {/*Status*/}
+      <div className={`flex w-full items-center gap-2 text-[13px]`}>
+        <div
+          className={`h-[16px] w-[16px] rounded-full`}
+          style={{ backgroundColor: statusColor }}
+        ></div>
+        <p style={{ color: statusColor }}>{application.status}</p>
+      </div>
+
+      {/*Control*/}
+      <div className="hidden justify-end md:flex">
+        <div
+          onClick={onView}
+          className="ml-2 hidden h-[41px] w-[41px] cursor-pointer items-center justify-center rounded-full bg-[#6B5AED4F] sm:flex"
+        >
+          <HiArrowLongRight className="fill-[#6B5AED]" />
         </div>
       </div>
     </div>
