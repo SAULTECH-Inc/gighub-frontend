@@ -44,10 +44,11 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
     e: React.KeyboardEvent<HTMLInputElement>,
     index: number,
   ) => {
-    if (e.key === "Backspace" && !otp?.at(index) && index > 0) {
+    if (e.key === "Backspace" && !otp?.[index] && index > 0) {
       otpRefs.current[index - 1]?.focus();
     }
   };
+
 
   const handlePaste = (
     e: React.ClipboardEvent<HTMLInputElement>,
