@@ -3,54 +3,37 @@ import { useJobFormStore } from "../../../../store/useJobFormStore";
 import { PreferredCompanies, universities } from "../../../../utils/Countries";
 import MultiSelect from "../../../common/MultiSelect";
 import { Crown } from "../../../../assets/images";
-// import { useAuth } from "../../../../store/useAuth";
+import { toast } from "react-toastify";
+import { useSubscriptionStore } from "../../../../store/useSubscriptionStore.ts";
 
 const CreateJobStepFour: React.FC = () => {
-  // const {isAuthenticated, employer} = useAuth();
-  const { prevStep, job, setJobData } = useJobFormStore();
-  const employerId = 20; // employer?.id;
+  const { isSubscribed } = useSubscriptionStore();
+  const { prevStep, job, setJobData, postJob, resetFormData } =
+    useJobFormStore();
 
-  const submitJob = async (employerId: number) => {
+  const submitJob = async () => {
     try {
-      const { job } = useJobFormStore.getState(); // Get job data from Zustand store
-      // Convert skillSet to an array of strings
-      const skillSet = job.skillSet || []; // Define skillSet
-      const formattedJob = {
-        ...job,
-        skillSet: skillSet.map((skill) => skill.skill || skill), // Ensure each value is a string
-      };
-
-      const response = await fetch(
-        `http://localhost:3005/jobs/create/${employerId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formattedJob),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to create job");
+      const response = await postJob(job);
+      if (response.statusCode === 201) {
+        console.log("Job created successfully:", response.data);
+        toast.success("Job created successfully");
+        resetFormData();
       }
-
-      const result = await response.json();
-      console.log("Job created successfully:", result);
-      useJobFormStore.getState().resetFormData(); // Reset form after submission
     } catch (error) {
       console.error("Error creating job:", error);
     }
   };
 
   return (
-    <div className="w-full flex flex-col items-center">
-      <div className="w-[96%] max-w-[900px] min-h-[400px] bg-white flex flex-col items-center py-4 rounded-[10px]">
-        <div className="w-[95%] flex gap-3 flex-col">
-          <div className="w-fit flex gap-1 bg-[#6438C2] py-[3px] px-[6px] rounded-[7px]">
-            <img src={Crown} alt="premium crown" className="w-4" />
-            <p className="text-white text-[12px] sm:text-base">Premium</p>
-          </div>
+    <div className="flex w-full flex-col items-center">
+      <div className="flex min-h-[400px] w-[96%] max-w-[900px] flex-col items-center rounded-[10px] bg-white py-4">
+        <div className="flex w-[95%] flex-col gap-3">
+          {!isSubscribed && (
+            <div className="flex w-fit gap-1 rounded-[7px] bg-[#6438C2] px-[6px] py-[3px]">
+              <img src={Crown} alt="premium crown" className="w-4" />
+              <p className="text-[12px] text-white sm:text-base">Premium</p>
+            </div>
+          )}
           <div className="">
             <MultiSelect
               label="Preferred Candidate Previous Company"
@@ -60,22 +43,24 @@ const CreateJobStepFour: React.FC = () => {
                 (company) => ({
                   label: company,
                   value: company,
-                })
+                }),
               )}
               setSelectedItems={(items) =>
                 setJobData({
                   ...job,
                   preferredCandidatePreviousCompany: items.map(
-                    (item) => item.value
+                    (item) => item.value,
                   ), // Keep it as string[]
                 })
               }
             />
           </div>
-          <div className="w-fit flex gap-1 bg-[#6438C2] py-[3px] px-[6px] rounded-[7px]">
-            <img src={Crown} alt="premium crown" className="w-4" />
-            <p className="text-white text-[12px] sm:text-base">Premium</p>
-          </div>
+          {!isSubscribed && (
+            <div className="flex w-fit gap-1 rounded-[7px] bg-[#6438C2] px-[6px] py-[3px]">
+              <img src={Crown} alt="premium crown" className="w-4" />
+              <p className="text-[12px] text-white sm:text-base">Premium</p>
+            </div>
+          )}
           <MultiSelect
             label="Preferred Candidate University"
             placeholder="Search or add university"
@@ -84,7 +69,7 @@ const CreateJobStepFour: React.FC = () => {
               (university) => ({
                 label: university,
                 value: university,
-              })
+              }),
             )}
             setSelectedItems={(items) =>
               setJobData({
@@ -95,17 +80,17 @@ const CreateJobStepFour: React.FC = () => {
           />
         </div>
       </div>
-      <div className="w-[96%] my-2 max-w-[900px] flex justify-end gap-6 mx-2">
+      <div className="mx-2 my-2 flex w-[96%] max-w-[900px] justify-end gap-6">
         <button
-          className="w-[35%] sm:w-[29%] py-[8px] bg-[#F7F7F7] border border-[#E6E6E6] rounded-[15px] text-sm self-end"
+          className="w-[35%] self-end rounded-[15px] border border-[#E6E6E6] bg-[#F7F7F7] py-[8px] text-sm sm:w-[29%]"
           onClick={prevStep}
         >
           Back
         </button>
         <button
           type="button"
-          onClick={() => submitJob(employerId)} // Replace 123 with the actual employerId
-          className="w-[35%] sm:w-[29%] py-[8px] px-1 bg-[#6438C2] border border-[#E6E6E6] rounded-[15px] text-white text-sm"
+          onClick={() => submitJob()} // Replace 123 with the actual employerId
+          className="w-[35%] rounded-[15px] border border-[#E6E6E6] bg-[#6438C2] px-1 py-[8px] text-sm text-white sm:w-[29%]"
         >
           Submit Job
         </button>

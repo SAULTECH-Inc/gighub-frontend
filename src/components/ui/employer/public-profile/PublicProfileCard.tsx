@@ -1,40 +1,50 @@
 import React from "react";
 import Image7 from "../../../../assets/images/image7.png";
+import { EmployerData } from "../../../../utils/types";
+import { useChatStore } from "../../../../store/useChatStore.ts";
 
+interface PublicProfileCardProp {
+  user: EmployerData;
+}
 
-const PublicProfileCard: React.FC = () => {
-    return (
-
-        <div
-            className="items-center justify-between bg-[#6B5AED] text-white p-4 rounded-t-[16px] w-[1366px] h-[115px] -ml-4">
-            <section className="bg-white p-6 w-[1309px] h-[130px] shadow flex justify-between items-center ml-4 mt-10">
-                <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
-                        {/* Company logo or image */}
-                        <img
-                            src={Image7} // Replace with your logo URL
-                            alt="Company Logo"
-                            className="w-fit h-fit border-[4px] bg-white border-white"
-                        />
-                    </div>
-                    <div>
-                        <h2 className="text-2xl text-black font-bold">Fundy Inc</h2>
-                        <p className="text-black">Innovating Tomorrow Today</p>
-                    </div>
-                </div>
-                <div className="flex space-x-4">
-                    <button
-                        className="px-6 py-2 bg-[#F7F7F7]  text-black rounded-[10px] h-[45px] w-[150px]  transition duration-200">
-                        Follow us
-                    </button>
-                    <button
-                        className="px-6 py-2 bg-[#6438C2] text-white rounded-lg hover:bg-purple-700 transition duration-200">
-                        Send Message
-                    </button>
-                </div>
-            </section>
+const PublicProfileCard: React.FC<PublicProfileCardProp> = ({ user }) => {
+  const { setIsClosed, setRecipient } = useChatStore();
+  return (
+    <div className="h-[150px] w-full items-center justify-between rounded-t-[16px] bg-[#6B5AED] p-4 text-white mdl:h-[118px]">
+      <section className="mt-10 flex h-fit w-full flex-col items-center gap-y-6 bg-white p-6 shadow md:justify-between mdl:flex-row">
+        <div className="flex w-full items-center gap-x-4 gap-y-3">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gray-300">
+            {/* Company logo or image */}
+            <img
+              src={user?.companyLogo || Image7} // Replace with your logo URL
+              alt="Company Logo"
+              className="h-full w-full rounded-full border-[4px] border-white bg-white"
+            />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-black">
+              {user?.companyName}
+            </h2>
+            <p className="text-black">{user?.aboutCompany}</p>
+          </div>
         </div>
-    );
+        <div className="flex w-full gap-x-4 gap-y-3">
+          <button className="h-[45px] w-[150px] rounded-[10px] bg-[#F7F7F7] px-6 py-2 text-black transition duration-200">
+            Follow us
+          </button>
+          <button
+            onClick={() => {
+              setRecipient(user?.email);
+              setIsClosed(false);
+            }}
+            className="w-[200px] rounded-lg bg-[#6438C2] px-6 py-2 text-white transition duration-200 hover:bg-purple-700"
+          >
+            Send Message
+          </button>
+        </div>
+      </section>
+    </div>
+  );
 };
 
 export default PublicProfileCard;

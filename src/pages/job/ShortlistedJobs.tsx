@@ -1,54 +1,69 @@
-import paystack from '../../assets/images/paystack-logo.svg';
-import dangote from '../../assets/images/dangote-logo.svg';
-import safarico from '../../assets/images/safarico.svg';
-const ShortlistedJobs = ()=>{
-  return  <>
-        <div className="w-full mx-auto flex justify-center">
-            <div className="bg-white p-4 w-[95%] rounded-[16px] shadow">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-[20px] font-bold">Shortlisted Jobs</h2>
-                    <button className="text-[#6B5AED] font-bold text-sm">See all</button>
-                </div>
+import paystack from "../../assets/images/paystack-logo.svg";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { fetchShortlistedJobs } from "../../services/api";
+import { JobPostResponse } from "../../utils/types";
+const ShortlistedJobs = () => {
+  const [jobs, setJobs] = useState<JobPostResponse[]>();
+  const [pagination] = useState({
+    page: 1,
+    limit: 5,
+  });
 
-                <div>
-                    {/*Messages*/}
-                    <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center space-x-3">
-                            <img src={paystack} alt="Dangote Logo" className="w-[57px] h-[57px] rounded-[16px]"/>
-                            <div className="flex flex-col space-y-1 py-4">
-                                <h3 className="text-sm md:text-lg font-medium">Paystack Inc  .  hiring UIUX</h3>
-                                <p className="text-xs md:text-sm text-gray-500">
-                                    2 people in your network work here
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center space-x-3">
-                            <img src={dangote} className="w-[57px] h-[57px] bg-[#D9D9D9] rounded-[16px]" alt="dangote"/>
-                            <div className="flex flex-col space-y-1 py-4">
-                                <h3 className="text-sm md:text-lg font-medium">Dangote Group  .  Analyst</h3>
-                                <p className="text-xs md:text-sm text-gray-500">
-                                    2 people in your network work here
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex items-start justify-between">
-                        <div className="flex items-center space-x-3">
-                            <img src={safarico} className="w-[57px] h-[57px] bg-[#D9D9D9] rounded-[16px]" alt="safarico"/>
-                            <div className="flex flex-col space-y-1 py-4">
-                                <h3 className="text-sm md:text-lg font-medium">Safaricom  .  Product Designer</h3>
-                                <p className="text-xs md:text-sm text-gray-500">
-                                    2 people in your network work here
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+  useEffect(() => {
+    const doFetchShortlistedJobs = async () => {
+      return await fetchShortlistedJobs(pagination);
+    };
+
+    doFetchShortlistedJobs()
+      .then((res) => {
+        setJobs(res?.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return (
+    <>
+      <div className="mx-auto flex w-full justify-center">
+        <div className="w-full rounded-[16px] bg-white p-4 shadow">
+          <div className="mb-4 flex items-center justify-between md:px-4">
+            <h2 className="text-[20px] font-bold">Shortlisted Jobs</h2>
+            <button className="text-sm font-bold text-[#6B5AED]">
+              See all
+            </button>
+          </div>
+
+          <div className="w-full md:pl-10">
+            {/*Messages*/}
+            {jobs?.map((job) => (
+              <div className="flex w-full items-start justify-center">
+                <div className="flex w-full items-center space-x-3">
+                  <img
+                    src={paystack}
+                    alt="Dangote Logo"
+                    className="h-[57px] w-[57px] rounded-[16px]"
+                  />
+                  <div className="flex flex-col space-y-1 py-4">
+                    <Link
+                      to=""
+                      className="text-sm font-medium hover:underline md:text-lg"
+                    >
+                      {job?.company}. {job?.title}
+                    </Link>
+                    <p className="text-xs text-gray-500 md:text-sm">
+                      2 people in your network work here
+                    </p>
+                  </div>
                 </div>
-            </div>
+              </div>
+            ))}
+          </div>
         </div>
+      </div>
     </>
-}
+  );
+};
 
 export default ShortlistedJobs;

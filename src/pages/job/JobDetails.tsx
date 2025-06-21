@@ -1,31 +1,59 @@
-import {FC} from "react";
+import { FC, useEffect, useState } from "react";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import JobDetailsSidebar from "../jobDetails/JobDetailsSidebar.tsx";
 import JobDetailsTop from "../jobDetails/JobDetailsTop.tsx";
 import JobDetailsBody from "../jobDetails/JobDetailsBody.tsx";
-import {employerNavBarItemMap, employerNavItems, employerNavItemsMobile} from "../../utils/constants.ts";
+import {
+  employerNavBarItemMap,
+  employerNavItems,
+  employerNavItemsMobile,
+} from "../../utils/constants.ts";
+import { useParams } from "react-router-dom";
+import { JobPostResponse } from "../../utils/types";
+import { fetchJobById } from "../../services/api";
 const JobDetails: FC = () => {
-    return (
-        <div className="mx-auto">
-            <TopNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
-            <div className="flex justify-center bg-gray  min-h-screen pt-6 mx-auto gap-x-10 px-2 lg:px-5">
-                {/* Sidebar */}
-                <JobDetailsSidebar/>
+  const { id } = useParams();
 
+  const [job, setJob] = useState<JobPostResponse>();
+  useEffect(() => {
+    if (!id) return; // Prevents fetching if id is undefined
 
-                {/* Main Content */}
-                <div className=" rounded-[16px]  lg:w-[70%]  p-4 lg:p-8">
-                    {/*<ProfileCard/>*/}
+    const fetchJob = async () => {
+      try {
+        const response = await fetchJobById(Number(id)); // Assuming this returns { data: JobPostResponse }
+        setJob(response.data);
+      } catch (error) {
+        console.error("Failed to fetch job:", error);
+      }
+    };
 
-                    {/*Form */}
-                    <form className="space-y-8">
-                        <JobDetailsTop/>
-                        <JobDetailsBody/>
-                    </form>
-                </div>
-            </div>
+    fetchJob().then((r) => r);
+  }, [id]);
+
+  const handleEditJob = async () => {};
+
+  return (
+    <div className="mx-auto">
+      <TopNavBar
+        navItems={employerNavItems}
+        navItemsMobile={employerNavItemsMobile}
+        navbarItemsMap={employerNavBarItemMap}
+      />
+      <div className="mx-auto flex min-h-screen justify-center gap-x-10 bg-[#F7F8FA] px-2 pt-6 lg:px-5">
+        {/* Main Content */}
+        <div className="flex w-full flex-col gap-y-8 rounded-[16px] p-4 lg:p-8">
+          <JobDetailsTop />
+          {/*Form */}
+          {job && (
+            <form className="mx-auto flex min-h-[600px] w-full flex-col items-start gap-x-4 gap-y-4 md:flex-row">
+              <JobDetailsBody handleEditJob={handleEditJob} job={job} />
+              <JobDetailsSidebar handleEditJob={handleEditJob} job={job} />
+            </form>
+          )}
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default JobDetails;

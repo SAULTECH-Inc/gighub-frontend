@@ -1,68 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import RichTextEditor from "../../../common/RichTextEditor";
 import { useJobFormStore } from "../../../../store/useJobFormStore";
 
 const CreateJobStepOne: React.FC = () => {
   const { job, nextStep, setJobData } = useJobFormStore();
   const [selectedOption, setSelectedOption] = useState("description");
-  const [description, setDescription] = useState(job.description || "");
-  const [responsibility, setResponsibility] = useState(job.responsibility || "");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  
+
   // Helper function to check if rich text content is effectively empty
   const isRichTextEmpty = (content: string): boolean => {
     return (
-      !content || 
-      content.trim() === "" || 
-      content === "<p><br></p>" || 
+      !content ||
+      content.trim() === "" ||
+      content === "<p><br></p>" ||
       content === "<p></p>" ||
       content.replace(/<[^>]*>/g, "").trim() === ""
     );
   };
-  
-  // This effect runs once on component mount to initialize state from job store
-  useEffect(() => {
-    setDescription(job.description || "");
-    setResponsibility(job.responsibility || "");
-  }, [job.description, job.responsibility]);
-  
-  // This effect updates the job store when description or responsibility changes
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setJobData({
-        ...job,
-        description,
-        responsibility,
-      });
-    }, 300); // Debounce updates to prevent excessive store updates
-    
-    return () => clearTimeout(timeoutId);
-  }, [description, responsibility, setJobData, job]);
-  
-  const handleSelectedOption = (type: "description" | "responsibility") => {
-    // Save current data before switching tabs
-    setJobData({
-      ...job,
-      description,
-      responsibility,
-    });
-    
-    setSelectedOption(type);
-  };
-  
+
   const validateFields = () => {
     const newErrors: { [key: string]: string } = {};
-    
-    if (isRichTextEmpty(description)) {
+
+    if (isRichTextEmpty(job.description)) {
       newErrors.description = "Description is required.";
     }
 
-    if (isRichTextEmpty(responsibility)) {
+    if (isRichTextEmpty(job.responsibility)) {
       newErrors.responsibility = "Responsibility is required.";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  // This effect updates the job store when description or responsibility changes
+  const handleSelectedOption = (
+    type: "description" | "responsibility" | "requirements",
+  ) => {
+    setSelectedOption(type);
   };
 
   const handleNextStep = () => {
@@ -71,40 +46,16 @@ const CreateJobStepOne: React.FC = () => {
     }
   };
 
-  const handleDescriptionChange = (value: unknown) => {
-    const textValue = value as string;
-    setDescription(textValue);
-    
-    if (errors.description && !isRichTextEmpty(textValue)) {
-      setErrors({
-        ...errors,
-        description: "",
-      });
-    }
-  };
-
-  const handleResponsibilityChange = (value: unknown) => {
-    const textValue = value as string;
-    setResponsibility(textValue);
-    
-    if (errors.responsibility && !isRichTextEmpty(textValue)) {
-      setErrors({
-        ...errors,
-        responsibility: "",
-      });
-    }
-  };
-
   return (
-    <div className="w-full flex flex-col items-center">
-      <div className="w-full max-w-[900px] h-[400px] bg-white px-2 flex flex-col items-center justify-center rounded-[10px]">
-        <div className="w-full sm:w-[95%] flex flex-col gap-2">
+    <div className="flex w-full flex-col items-center">
+      <div className="flex h-full min-h-[500px] w-full max-w-[900px] flex-col items-center justify-center rounded-[10px] bg-white px-2">
+        <div className="flex w-full flex-col gap-2 sm:w-[95%]">
           <div className="flex justify-between border-b-[1px] text-gray-600">
             <div
               onClick={() => handleSelectedOption("description")}
-              className={`cursor-pointer text-center text-sm flex-1 ${
+              className={`flex-1 cursor-pointer text-center text-sm ${
                 selectedOption === "description"
-                  ? "text-[#6438C2] border-b-4 border-[#6438C2]"
+                  ? "border-b-4 border-[#6438C2] text-[#6438C2]"
                   : "text-gray-600"
               }`}
             >
@@ -112,49 +63,88 @@ const CreateJobStepOne: React.FC = () => {
             </div>
             <div
               onClick={() => handleSelectedOption("responsibility")}
-              className={`cursor-pointer text-center text-sm flex-1 ${
+              className={`flex-1 cursor-pointer text-center text-sm ${
                 selectedOption === "responsibility"
-                  ? "text-[#6438C2] border-b-4 border-[#6438C2]"
+                  ? "border-b-4 border-[#6438C2] text-[#6438C2]"
                   : "text-gray-600"
               }`}
             >
               Job Responsibility
             </div>
+            <div
+              onClick={() => handleSelectedOption("requirements")}
+              className={`flex-1 cursor-pointer text-center text-sm ${
+                selectedOption === "requirements"
+                  ? "border-b-4 border-[#6438C2] text-[#6438C2]"
+                  : "text-gray-600"
+              }`}
+            >
+              Job Requirements
+            </div>
           </div>
-          {selectedOption === "description" ? (
-            <h2 className="text-[#000000] text-sm">Job Description</h2>
-          ) : (
-            <h2 className="text-[#000000] text-sm">Job Responsibility</h2>
+
+          {selectedOption === "description" && (
+            <h2 className="text-wrap text-sm text-[#000000]">
+              Job Description
+            </h2>
           )}
-          {selectedOption === "description" ? (
+          {selectedOption === "responsibility" && (
+            <h2 className="text-sm text-[#000000]">Job Responsibility</h2>
+          )}
+
+          {selectedOption === "requirements" && (
+            <h2 className="text-sm text-[#000000]">Job Requirements</h2>
+          )}
+
+          {selectedOption === "description" && (
             <>
               <RichTextEditor
-                value={description}
-                onChange={handleDescriptionChange}
+                key={selectedOption}
+                value={job.description}
+                className="overflow-y-auto"
+                onChange={(content) => setJobData({ description: content })}
               />
               {errors.description && (
-                <p className="text-red-500 text-xs">{errors.description}</p>
-              )}
-            </>
-          ) : (
-            <>
-              <RichTextEditor
-                value={responsibility}
-                onChange={handleResponsibilityChange}
-              />
-              {errors.responsibility && (
-                <p className="text-red-500 text-xs">{errors.responsibility}</p>
+                <p className="text-xs text-red-500">{errors.description}</p>
               )}
             </>
           )}
-          <p className="flex self-end text-[#8E8E8E] text-[13px]">
+          {selectedOption === "responsibility" && (
+            <>
+              <RichTextEditor
+                key={selectedOption}
+                value={job.responsibility}
+                className="overflow-y-auto"
+                onChange={(content) => setJobData({ responsibility: content })}
+              />
+              {errors.responsibility && (
+                <p className="text-xs text-red-500">{errors.responsibility}</p>
+              )}
+            </>
+          )}
+
+          {selectedOption === "requirements" && (
+            <>
+              <RichTextEditor
+                key={selectedOption}
+                value={job.requirements}
+                className="overflow-y-auto"
+                onChange={(content) => setJobData({ requirements: content })}
+              />
+              {errors.requirements && (
+                <p className="text-xs text-red-500">{errors.requirements}</p>
+              )}
+            </>
+          )}
+
+          <p className="flex self-end text-[13px] text-[#8E8E8E]">
             Maximum 2000 words
           </p>
         </div>
       </div>
-      <div className="w-[96%] max-w-[900px] my-2 flex justify-end">
+      <div className="my-2 flex w-[96%] max-w-[900px] justify-end">
         <button
-          className="w-[25%] py-[8px] bg-[#6438C2] text-white rounded-[15px]"
+          className="w-[25%] rounded-[15px] bg-[#6438C2] py-[8px] text-white"
           onClick={handleNextStep}
         >
           Proceed

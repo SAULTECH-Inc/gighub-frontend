@@ -5,112 +5,184 @@ import video from "../../assets/icons/videoThick.svg";
 import userProfile from "../../assets/icons/userProfile.svg";
 import documentAttachement from "../../assets/icons/documentAttachement.svg";
 import useModalStore from "../../store/modalStateStores.ts";
+import { ApplicationResponse } from "../../utils/types";
+import { withdrawApplication } from "../../services/api";
+import { ApplicationStatus } from "../../utils/dummyApplications.ts";
+import { Link } from "react-router-dom";
+import { UserType } from "../../utils/enums.ts";
+import { USER_TYPE } from "../../utils/helpers.ts";
 
 interface ModalProps {
-    modalId: string;
+  modalId: string;
+  application: ApplicationResponse;
 }
 
 const ViewApplicationMethodModal: React.FC<ModalProps> = ({
-                                                              modalId
-                                                          }) => {
-    const { modals, closeModal } = useModalStore();
-    const isOpen = modals[modalId]; // Reactive state for this modal
-    if (!isOpen) return null;
+  modalId,
+  application,
+}) => {
+  const { modals, closeModal } = useModalStore();
+  const isOpen = modals[modalId]; // Reactive state for this modal
 
-    return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
-            <div className="bg-white rounded-[16px] shadow-xl flex flex-col justify-evenly w-[568px] h-[830px] overflow-hidden">
-                {/* Header */}
-                <div className="relative bg-gradient-to-r from-[#6438C2] to-[#FFFFFF] rounded-t-[16px] h-[113px] flex items-center -mt-9">
-                    {/* Close Button */}
-                    <div
-                        onClick={()=>closeModal(modalId)}
-                        className="cursor-pointer rounded-full w-[36px] h-[34px] bg-white text-black flex justify-center items-center p-2 absolute top-4 right-4 focus:outline-none"
-                    >
-                        <img className="cursor-pointer" src={cancel} alt="cancel" />
-                    </div>
-                    <div className="absolute px-3 top-[70px] w-[530px] flex justify-between items-end">
-                        {/* Profile Image */}
-                        <img
-                            src={profilepics}
-                            className="ml-3 rounded-full w-[100px] h-[100px] flex-shrink-0"
-                            alt="profile pics"
-                        />
-                        <div className="ml-4 mb-0 pb-0 pt-5 flex justify-between items-end flex-1">
-                            {/* Company Info */}
-                            <div className="flex flex-col">
-                                <h2 className="text-black text-[20px] font-bold">
-                                    EdenLife Inc
-                                </h2>
-                                <p className="text-[#7F7F7F] text-[16px]">
-                                    Lagos state Nigeria
-                                </p>
-                            </div>
-                            {/* Remote Work */}
-                            <p className="text-[#6B5AED] text-[20px] font-medium">
-                                Remote work
-                            </p>
-                        </div>
-                    </div>
-                </div>
+  const handleWithdrawApplication = async (jobId: number) => {
+    const response = await withdrawApplication(jobId);
+    if (response) {
+      closeModal(modalId);
+    }
+  };
 
-                {/* Application Pending and View Profile */}
-                <div className="w-full flex justify-between items-center px-6 mt-[100px]">
-                    <div className="bg-[#ffffe0] border-[1px] border-[#FFE4B5] text-[#FFBA00] text-[16px] w-[197px] text-center font-medium py-2 px-3 rounded-[16px]">
-                        Application Pending
-                    </div>
-                    <button className="bg-[#6438C2] hover:bg-purple-600 text-white text-[16px] w-[147px] items-center font-medium px-4 py-2 rounded-[16px]">
-                        View Profile
-                    </button>
-                </div>
+  const profilePath =
+    USER_TYPE === UserType.EMPLOYER
+      ? `/applicant/public-profile-view/${application?.applicant?.id}`
+      : `/employers/${application?.job?.employer?.id}/${application?.job?.employer?.companyName}/profile`;
+  if (!isOpen) return null;
 
-                {/* Application Details */}
-                <div className="flex flex-col justify-evenly items-baseline px-6 py-4 mt-6 w-[512px] h-[318px] rounded-[16px] border-[1px] border-[#E6E6E6] mx-auto">
-                    <h3 className="text-gray-600 font-medium text-sm mb-4">
-                        You Applied with
-                    </h3>
-                    <div className="space-y-4 w-[461px] h-[223px] rounded-[16px] bg-[#F7F7F7] flex flex-col justify-center items-center">
-                        {/* File Item */}
-                        <div className="flex items-center p-3 w-[392px] h-[48px] bg-[#FFFFFF] rounded-[16px]">
-                            <div className="bg-[#D9D9D9] rounded-[10px] w-[35px] h-[33px] object-cover p-1 flex justify-center items-center">
-                                <img src={documentAttachement} alt="work icon" />
-                            </div>
-                            <span className="ml-3 text-gray-600 text-sm">Aliyu_CV.pdf</span>
-                        </div>
-
-                        {/* Video Item */}
-                        <div className="flex items-center p-3 w-[392px] h-[48px] bg-[#FFFFFF] rounded-[16px]">
-                            <div className="bg-[#D9D9D9] rounded-[10px] w-[35px] h-[33px] object-cover p-1 flex justify-center items-center">
-                                <img src={video} alt="video icon" />
-                            </div>
-                            <span className="ml-3 text-gray-600 text-sm">Video</span>
-                        </div>
-
-                        {/* Profile Item */}
-                        <div className="flex items-center p-3 w-[392px] h-[48px] bg-[#FFFFFF] rounded-[16px]">
-                            <div className="bg-[#D9D9D9] rounded-[10px] w-[35px] h-[33px] object-cover p-1 flex justify-center items-center">
-                                <img src={userProfile} alt="profile icon" />
-                            </div>
-                            <span className="ml-3 text-gray-600 text-sm">Profile</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Footer */}
-                <div className="flex items-center justify-end px-6 py-4 mt-6 gap-x-4">
-                    <button
-                        onClick={()=>closeModal(modalId)}
-                        className="bg-gray-100 hover:bg-gray-200 border-[1px] border-[#E6E6E6] w-[181px] text-gray-700 text-[16px] px-6 py-2 rounded-[10px]"
-                    >
-                        Cancel
-                    </button>
-                    <button className="bg-[#6438C2] hover:bg-purple-600 text-white text-[16px] px-6 py-2 rounded-[10px]">
-                        Withdraw application
-                    </button>
-                </div>
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
+      <div className="flex h-[720px] w-[calc(90%-10px)] flex-col justify-evenly overflow-hidden rounded-[16px] bg-white shadow-xl md:h-[830px] md:w-[568px]">
+        {/* Header */}
+        <div className="relative -mt-8 flex h-[113px] items-center rounded-t-[16px] bg-gradient-to-r from-[#6438C2] to-[#FFFFFF] md:-mt-9">
+          {/* Close Button */}
+          <div
+            onClick={() => closeModal(modalId)}
+            className="absolute right-4 top-12 flex h-[34px] w-[36px] cursor-pointer items-center justify-center rounded-full bg-white p-2 text-black focus:outline-none"
+          >
+            <img className="cursor-pointer" src={cancel} alt="cancel" />
+          </div>
+          <div className="absolute top-[70px] flex w-[530px] items-end justify-between px-3">
+            {/* Profile Image */}
+            <img
+              src={
+                USER_TYPE === UserType.EMPLOYER
+                  ? application?.applicant?.profilePicture || profilepics
+                  : application?.job?.employer?.companyLogo || profilepics
+              }
+              className="ml-3 h-[70px] w-[70px] flex-shrink-0 rounded-full md:h-[100px] md:w-[100px]"
+              alt="profile pics"
+            />
+            <div className="mb-0 ml-4 flex flex-1 items-end justify-between pb-0 pt-5">
+              {/* Company Info */}
+              <div className="flex flex-col">
+                <h2 className="text-[20px] font-bold text-black">
+                  {application?.job?.employer?.companyName}
+                </h2>
+                <p className="text-[16px] text-[#7F7F7F]">
+                  {application?.job?.location}
+                </p>
+              </div>
+              {/* Remote Work */}
+              <p className="text-[20px] font-medium text-[#6B5AED]">
+                {application?.job?.jobType}
+              </p>
             </div>
+          </div>
         </div>
-    );
+
+        {/* Application Pending and View Profile */}
+        <div className="mt-[100px] flex w-full flex-col items-center justify-between gap-y-2 px-6 md:flex-row">
+          <div className="w-full rounded-[16px] border-[1px] border-[#FFE4B5] bg-[#ffffe0] px-3 py-2 text-center text-[16px] font-medium text-[#FFBA00] md:w-[197px]">
+            {application?.status}
+          </div>
+          <Link
+            to={profilePath}
+            className="w-full items-center rounded-[16px] bg-[#6438C2] px-4 py-2 text-center text-[16px] font-medium text-white hover:bg-purple-600 md:w-[147px]"
+          >
+            View Profile
+          </Link>
+        </div>
+
+        {/* Application Details */}
+        <div className="mx-auto mt-6 flex h-[318px] w-[90%] flex-col items-baseline justify-evenly rounded-[16px] border-[1px] border-[#E6E6E6] px-6 py-4 md:w-[512px]">
+          <h3 className="mb-4 text-sm font-medium text-gray-600">
+            You Applied with
+          </h3>
+          <div className="flex h-[223px] w-full flex-col items-center justify-center gap-y-4 rounded-[16px] bg-[#F7F7F7] md:w-[461px]">
+            {/* File Item */}
+            {application?.job?.applicationMethod?.byCv && (
+              <div className="flex h-[48px] w-[90%] items-center rounded-[16px] bg-[#FFFFFF] p-3 md:w-[392px]">
+                <div className="flex h-[33px] w-[35px] items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1">
+                  <img src={documentAttachement} alt="work icon" />
+                </div>
+                <span className="ml-3 text-sm text-gray-600">Aliyu_CV.pdf</span>
+              </div>
+            )}
+
+            {/* Video Item */}
+            {application?.job?.applicationMethod?.byVideo && (
+              <div className="flex h-[48px] w-[90%] items-center rounded-[16px] bg-[#FFFFFF] p-3 md:w-[392px]">
+                <div className="flex h-[33px] w-[35px] items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1">
+                  <img src={video} alt="video icon" />
+                </div>
+                <span className="ml-3 text-sm text-gray-600">Video</span>
+              </div>
+            )}
+
+            {/* Profile Item */}
+            {application?.job?.applicationMethod?.byProfile && (
+              <div className="flex h-[48px] w-[90%] items-center rounded-[16px] bg-[#FFFFFF] p-3 md:w-[392px]">
+                <div className="flex h-[33px] w-[35px] items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1">
+                  <img src={userProfile} alt="profile icon" />
+                </div>
+                <span className="ml-3 text-sm text-gray-600">Profile</span>
+              </div>
+            )}
+            {/* Document Item */}
+            {application?.job?.applicationMethod?.byCoverLetter && (
+              <div className="flex h-[48px] w-[90%] items-center rounded-[16px] bg-[#FFFFFF] p-3 md:w-[392px]">
+                <div className="flex h-[33px] w-full items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1 md:w-[392px]">
+                  <img src={documentAttachement} alt="document icon" />
+                </div>
+                <span className="ml-3 text-sm text-gray-600">Document</span>
+              </div>
+            )}
+
+            {/* Video Item */}
+            {application?.job?.applicationMethod?.byPortfolio && (
+              <div className="flex h-[48px] w-full items-center rounded-[16px] bg-[#FFFFFF] p-3 md:w-[392px]">
+                <div className="flex h-[33px] w-[35px] items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1">
+                  <img src={video} alt="video icon" />
+                </div>
+                <span className="ml-3 text-sm text-gray-600">Video</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-6 flex w-full flex-col items-center justify-center gap-x-4 gap-y-2 px-6 py-4 md:flex-row md:justify-end">
+          {USER_TYPE === UserType.EMPLOYER ? (
+            <button
+              onClick={async () => {
+                await handleWithdrawApplication(application.job.id);
+              }}
+              className="w-full rounded-[10px] bg-[#6438C2] px-6 py-2 text-[16px] text-white hover:bg-purple-600 md:w-fit"
+            >
+              Reject
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={() => closeModal(modalId)}
+                className="w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-gray-100 px-6 py-2 text-[16px] text-gray-700 hover:bg-gray-200 md:w-[181px]"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  await handleWithdrawApplication(application.job.id);
+                }}
+                className="w-full rounded-[10px] bg-[#6438C2] px-6 py-2 text-[16px] text-white hover:bg-purple-600 md:w-fit"
+              >
+                {application?.status === ApplicationStatus.WITHDRAW
+                  ? "Re-Apply"
+                  : "Withdraw Application"}
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default ViewApplicationMethodModal;
