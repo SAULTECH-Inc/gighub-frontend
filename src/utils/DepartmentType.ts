@@ -1,7 +1,7 @@
 interface Option {
-    value: string;
-    label: string;
-  }
+  value: string;
+  label: string;
+}
 
 export const DepartmentType: Option[] = [
   { value: "Engineering", label: "Engineering" },
@@ -24,8 +24,7 @@ export const DepartmentType: Option[] = [
 ];
 
 export const EmploymentType: Option[] = [
-    { value: "Onsite", label: "Onsite" },
-    { value: "Remote", label: "Remote" },
-    { value: "Hybrid", label: "Hybrid" },
-  ];
-
+  { value: "Onsite", label: "Onsite" },
+  { value: "Remote", label: "Remote" },
+  { value: "Hybrid", label: "Hybrid" },
+];

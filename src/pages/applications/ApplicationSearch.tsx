@@ -1,127 +1,169 @@
 import React, { useState } from "react";
 import { FilterIcon } from "../../assets/icons";
 import { BiSortAlt2 } from "react-icons/bi";
+import { SortBy } from "../../utils/types";
+import { FiChevronDown } from "react-icons/fi";
 
-const ApplicationSearch: React.FC = () => {
-  const [showFilterModal, setShowFilterModal] = useState(false);
-  const [showSortModal, setShowSortModal] = useState(false);
+interface ApplicationSearchProps {
+  setApplicationStatus: React.Dispatch<React.SetStateAction<string | null>>;
+  setSort: React.Dispatch<React.SetStateAction<SortBy>>;
+  sort: SortBy;
+}
 
-  const ModalOverlay = ({
-    children,
-    onClose,
-  }: {
-    children: React.ReactNode;
-    onClose: () => void;
-  }) => (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 lg:hidden">
-      <div className="w-[80%] max-w-sm rounded-xl bg-white p-4 shadow-lg">
-        <button
-          onClick={onClose}
-          className="text-gray-500 mb-2 ml-auto block text-sm"
-        >
-          Close
-        </button>
-        {children}
-      </div>
-    </div>
-  );
+const statuses = ["All", "Pending", "Hired", "Rejected", "Shortlisted"];
+const sortOptions = [
+  { label: "Company", value: "company" },
+  { label: "Date", value: "createdAt" },
+];
+
+const ApplicationSearch: React.FC<ApplicationSearchProps> = ({
+  setApplicationStatus,
+  setSort,
+  sort,
+}) => {
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
   return (
     <div className="w-full">
-      <div className="my-4 mt-4 flex w-full flex-wrap items-center justify-between sm:flex-nowrap">
-        <div className="flex sm:w-[20%]">
-          <p className="font-bold lg:text-[20px]">My Applications</p>
+      <div className="my-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-xl font-bold">My Applications</p>
+
+        {/* Desktop: Filter + Sort */}
+        <div className="hidden items-center gap-4 lg:flex">
+          {/* Filter By */}
+          <div className="flex items-center gap-2">
+            <span className="font-bold">Filter:</span>
+            {statuses.map((status) => {
+              const isActive =
+                (status === "All" && !selectedStatus) ||
+                selectedStatus === status;
+              return (
+                <button
+                  key={status}
+                  onClick={() => {
+                    const actual = status === "All" ? null : status;
+                    setSelectedStatus(actual);
+                    setApplicationStatus(actual);
+                  }}
+                  className={`rounded-md border px-3 py-1 text-sm ${
+                    isActive
+                      ? "border-[#A78BFA] bg-[#EDE9FE] text-[#5B21B6]"
+                      : "border-gray-300 bg-white text-gray-600"
+                  } hover:bg-gray-100`}
+                >
+                  {status}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Sort By */}
+          <div className="flex items-center gap-2">
+            <span className="font-bold">Sort:</span>
+            {sortOptions.map((opt) => {
+              const isActive = sort.orderBy === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  onClick={() => setSort({ ...sort, orderBy: opt.value })}
+                  className={`rounded-md border px-3 py-1 text-sm ${
+                    isActive
+                      ? "border-[#A78BFA] bg-[#EDE9FE] text-[#5B21B6]"
+                      : "border-gray-300 bg-white text-gray-600"
+                  } hover:bg-gray-100`}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-4 sm:flex-nowrap">
-          <div
-            className="flex cursor-pointer items-center gap-2 rounded-[10px] border border-[#E6E6E6] px-10 py-2 lg:hidden"
-            onClick={() => setShowFilterModal(true)}
-          >
-            <img src={FilterIcon} alt="filter icon" />
-            <p className="font-bold text-[#8E8E8E]">Filter</p>
-          </div>
-          <div
-            className="flex cursor-pointer items-center gap-2 rounded-[10px] border border-[#E6E6E6] px-10 py-2 lg:hidden"
-            onClick={() => setShowSortModal(true)}
-          >
-            <BiSortAlt2 className="size-6 fill-[#8E8E8E]" />
-            <p className="font-bold text-[#8E8E8E]">Sort</p>
-          </div>
-          <div className="hidden w-full flex-col lg:flex">
-            <div className="flex w-fit items-center gap-4 rounded-[16px] bg-[#F7F7F7] px-2 lg:hidden">
-              <span className="font-bold">Sort By:</span>
-              <div className="flex gap-2 py-2">
-                <button className="flex items-center gap-1 rounded-lg border border-[#E6E6E6] px-4 py-1">
-                  Company
-                </button>
-                <button className="flex items-center gap-1 rounded-lg border border-[#E6E6E6] px-4 py-1">
-                  Date
-                </button>
+
+        {/* Mobile: Filter + Sort Dropdowns */}
+        <div className="flex gap-2 self-end lg:hidden">
+          {/* Filter Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => {
+                setFilterOpen(!filterOpen);
+                setSortOpen(false);
+              }}
+              className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2"
+            >
+              <img src={FilterIcon} alt="filter" className="h-4 w-4" />
+              <span className="text-sm font-bold text-gray-600">Filter</span>
+              <FiChevronDown />
+            </button>
+            {filterOpen && (
+              <div className="absolute z-10 mt-2 w-40 rounded-md bg-white shadow-md">
+                {statuses.map((status) => {
+                  const isActive =
+                    (status === "All" && !selectedStatus) ||
+                    selectedStatus === status;
+                  return (
+                    <button
+                      key={status}
+                      onClick={() => {
+                        const actual = status === "All" ? null : status;
+                        setSelectedStatus(actual);
+                        setApplicationStatus(actual);
+                        setFilterOpen(false);
+                      }}
+                      className={`block w-full px-4 py-2 text-left text-sm ${
+                        isActive
+                          ? "bg-[#EDE9FE] text-[#5B21B6]"
+                          : "text-gray-600"
+                      } hover:bg-gray-100`}
+                    >
+                      {status}
+                    </button>
+                  );
+                })}
               </div>
-            </div>
+            )}
           </div>
-        </div>
-        <div className="hidden w-[80%] items-center justify-between gap-2 rounded-[16px] bg-[#F7F7F7] px-4 py-2 lg:flex">
-          <p className="font-bold">Filter By:</p>
-          <button className="rounded-[10px] border border-[#E6E6E6] bg-white px-5 py-1">
-            Pending
-          </button>
-          <button className="rounded-[10px] border border-[#E6E6E6] bg-white px-5 py-1">
-            Hired
-          </button>
-          <button className="rounded-[10px] border border-[#E6E6E6] bg-white px-5 py-1">
-            Rejected
-          </button>
-          <button className="rounded-[10px] border border-[#E6E6E6] bg-white px-5 py-1">
-            Shortlisted
-          </button>
+
+          {/* Sort Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => {
+                setSortOpen(!sortOpen);
+                setFilterOpen(false);
+              }}
+              className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2"
+            >
+              <BiSortAlt2 className="text-gray-600" />
+              <span className="text-sm font-bold text-gray-600">Sort</span>
+              <FiChevronDown />
+            </button>
+            {sortOpen && (
+              <div className="absolute z-10 mt-2 w-40 rounded-md bg-white shadow-md">
+                {sortOptions.map((opt) => {
+                  const isActive = sort.orderBy === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => {
+                        setSort({ ...sort, orderBy: opt.value });
+                        setSortOpen(false);
+                      }}
+                      className={`block w-full px-4 py-2 text-left text-sm ${
+                        isActive
+                          ? "bg-[#EDE9FE] text-[#5B21B6]"
+                          : "text-gray-600"
+                      } hover:bg-gray-100`}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      <div className="hidden w-full flex-col lg:flex">
-        <div className="flex w-fit items-center gap-4 rounded-[16px] bg-[#F7F7F7] px-2">
-          <span className="font-bold">Sort By:</span>
-          <div className="flex gap-2 py-2">
-            <button className="flex items-center gap-1 rounded-lg border border-[#E6E6E6] px-4 py-1">
-              Company
-            </button>
-            <button className="flex items-center gap-1 rounded-lg border border-[#E6E6E6] px-4 py-1">
-              Date
-            </button>
-          </div>
-        </div>
-      </div>
-      {showFilterModal && (
-        <ModalOverlay onClose={() => setShowFilterModal(false)}>
-          <div className="flex flex-col gap-2">
-            <p className="text-gray-600 font-bold">Filter By:</p>
-            <button className="rounded border border-[#E6E6E6] px-4 py-2">
-              Pending
-            </button>
-            <button className="rounded border border-[#E6E6E6] px-4 py-2">
-              Hired
-            </button>
-            <button className="rounded border border-[#E6E6E6] px-4 py-2">
-              Rejected
-            </button>
-            <button className="rounded border border-[#E6E6E6] px-4 py-2">
-              Shortlisted
-            </button>
-          </div>
-        </ModalOverlay>
-      )}
-      {showSortModal && (
-        <ModalOverlay onClose={() => setShowSortModal(false)}>
-          <div className="flex flex-col gap-2">
-            <p className="text-gray-600 font-bold">Sort By:</p>
-            <button className="rounded border border-[#E6E6E6] px-4 py-2">
-              Company
-            </button>
-            <button className="rounded border border-[#E6E6E6] px-4 py-2">
-              Date
-            </button>
-          </div>
-        </ModalOverlay>
-      )}
     </div>
   );
 };

@@ -4,16 +4,19 @@ import { Gighub, Location, Phone } from "../../assets/icons";
 const Footer = () => {
   return (
     <>
-      <div className="px-3 md:px-10 lg:px-[90px] mb-20 flex justify-center">
-        <div className="grid grid-cols-2 md:grid-cols-6 lg:grid-cols-12 gap-10 md:gap-20">
+      <div className="mb-20 flex justify-center px-3 md:px-10 lg:px-[90px]">
+        <div className="grid grid-cols-2 gap-10 md:grid-cols-6 md:gap-20 lg:grid-cols-12">
           <div className="col-span-2 md:col-span-3 lg:col-span-4">
             <div className="flex items-center gap-[10px]">
               <img src={Gighub} alt="Gighub" width={41} height={41} />
-              <h1 className="text-xl font-black font-lato text-orange">Gighub</h1>
+              <h1 className="font-lato text-xl font-black text-orange">
+                Gighub
+              </h1>
             </div>
-            <p className="font-lato mt-9">
-              GigHub connects professionals with flexible job opportunities. Discover gigs that
-              match your skills, work on your terms, and grow your career with ease and flexibility.
+            <p className="mt-9 font-lato">
+              GigHub connects professionals with flexible job opportunities.
+              Discover gigs that match your skills, work on your terms, and grow
+              your career with ease and flexibility.
             </p>
           </div>
 
@@ -81,12 +84,14 @@ const Footer = () => {
             <h1 className="font-lato font-bold">Contact Us</h1>
             <div className="mt-7 flex items-center gap-2">
               <img src={Phone} alt="phone" width={24} height={24} />
-              <p className="font-lato font-bold text-xs">+23479446736</p>
+              <p className="font-lato text-xs font-bold">+23479446736</p>
             </div>
 
             <div className="mt-5 flex items-center gap-2">
               <img src={Location} alt="phone" width={24} height={24} />
-              <p className="font-lato font-bold text-xs">Area 11, Garki, Abuja</p>
+              <p className="font-lato text-xs font-bold">
+                Area 11, Garki, Abuja
+              </p>
             </div>
           </div>
         </div>

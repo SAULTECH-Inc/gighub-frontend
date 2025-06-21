@@ -4,31 +4,25 @@ import typography from "@tailwindcss/typography";
 import aspectRatio from "@tailwindcss/aspect-ratio";
 import tailwindScrollbarHide from "tailwind-scrollbar-hide";
 import defaultTheme from 'tailwindcss/defaultTheme';
-import flowbite from "flowbite-react/tailwind";
+import colors from "tailwindcss/colors";
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-      "./index.html",
+    "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}",
-    "node_modules/flowbite/**/*.{js,ts,jsx,tsx}",
-    flowbite.content(),
+    './node_modules/flowbite/**/*.js',
+    './node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}',
   ],
   darkMode: "class", // Enable dark mode with class toggle
   theme: {
     extend: {
       colors: {
+        ...colors,
         primary: "#6A0DAD",
         secondary: "#FFFFFF",
         tertiary: "#6438c2",
         orange: "#FE691E",
-        yellow: "#F5BD25",
-        "light-yellow": "#FFA203",
-        "light-orange": "#FF8A05",
         white: "#FFFFFF",
-        green: "#0b5d0b",
-        gray: "#9E9E9E",
-        charcoal: "rgba(34, 34, 34, 1)",
       },
       boxShadow: {
         card: "0px 4px 30px 0px rgba(238, 238, 238, 1)",
@@ -72,5 +66,10 @@ export default {
       },
     },
   },
-  plugins: [forms, typography, aspectRatio, tailwindScrollbarHide, flowbite.plugin(),],
+  plugins: [
+    forms,
+    typography,
+    aspectRatio,
+    tailwindScrollbarHide,
+  ],
 };

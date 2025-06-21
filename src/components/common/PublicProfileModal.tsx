@@ -50,6 +50,7 @@ const PublicProfileModal: React.FC<ModalProps> = ({
       window.removeEventListener("resize", handleResize);
       document.removeEventListener("mousedown", handleClickOutside);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formatExperienceDates = (
@@ -154,24 +155,40 @@ const PublicProfileModal: React.FC<ModalProps> = ({
                   </p>
                   <div className="flex text-[13px] text-[#6438C2]">
                     {!person.facebookProfile && (
-                      <a href={person?.facebookProfile ?? undefined} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={person?.facebookProfile ?? undefined}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         <FaFacebook className="mr-2 h-6 w-6 cursor-pointer fill-[#1877F2] text-[#8E8E8E]" />
                       </a>
                     )}
                     {!person.twitterProfile && (
-                      <a href={person?.twitterProfile ?? undefined}  target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={person?.twitterProfile ?? undefined}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {" "}
                         <FaTwitter className="mr-2 h-6 w-6 cursor-pointer fill-[#1DA1F2] text-[#8E8E8E]" />
                       </a>
                     )}
                     {!person.linkedInProfile && (
-                      <a href={person?.linkedInProfile ?? undefined}  target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={person?.linkedInProfile ?? undefined}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {" "}
                         <FaLinkedin className="mr-2 h-6 w-6 cursor-pointer fill-[#0077B5] text-[#8E8E8E]" />
                       </a>
                     )}
                     {!person.githubProfile && (
-                      <a href={person?.githubProfile ?? undefined}  target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={person?.githubProfile ?? undefined}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {" "}
                         <FaGithub className="mr-2 h-6 w-6 cursor-pointer fill-[#181717] text-[#8E8E8E]" />
                       </a>
@@ -242,57 +259,57 @@ const PublicProfileModal: React.FC<ModalProps> = ({
               <hr className="my-5 w-full border-[#E6E6E6]" />
               <p className="w-full font-bold">Testimonies</p>
               <div className="flex w-[90%] flex-col gap-2">
-              <div className="flex flex-col">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center justify-center">
-                      <img src={Ellipse115} alt="Person1" />
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center">
+                        <img src={Ellipse115} alt="Person1" />
+                      </div>
+                      <p className="text-[13px] font-bold">Bashir Umar</p>
                     </div>
-                    <p className="text-[13px] font-bold">Bashir Umar</p>
+                    <p className="text-[13px] text-[#8E8E8E]">2:20 Am</p>
                   </div>
-                  <p className="text-[13px] text-[#8E8E8E]">2:20 Am</p>
+                  <div className="ml-[20px] flex justify-center border-l border-dashed border-[#8E8E8E] py-3">
+                    <p className="w-[90%] text-[13px] font-bold text-[#8E8E8E]">
+                      I really love his job, his that smart guy you may be
+                      searching for
+                    </p>
+                  </div>
                 </div>
-                <div className="ml-[20px] flex justify-center border-l border-dashed border-[#8E8E8E] py-3">
-                  <p className="w-[90%] text-[13px] font-bold text-[#8E8E8E]">
-                    I really love his job, his that smart guy you may be
-                    searching for
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center justify-center">
-                      <img src={Ellipse116} alt="Person1" />
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center">
+                        <img src={Ellipse116} alt="Person1" />
+                      </div>
+                      <p className="text-[13px] font-bold">Bashir Umar</p>
                     </div>
-                    <p className="text-[13px] font-bold">Bashir Umar</p>
+                    <p className="text-[13px] text-[#8E8E8E]">2:20 Am</p>
                   </div>
-                  <p className="text-[13px] text-[#8E8E8E]">2:20 Am</p>
+                  <div className="ml-[20px] flex justify-center border-l border-dashed border-[#8E8E8E] py-3">
+                    <p className="w-[90%] text-[13px] font-bold text-[#8E8E8E]">
+                      I really love his job, his that smart guy you may be
+                      searching for
+                    </p>
+                  </div>
                 </div>
-                <div className="ml-[20px] flex justify-center border-l border-dashed border-[#8E8E8E] py-3">
-                  <p className="w-[90%] text-[13px] font-bold text-[#8E8E8E]">
-                    I really love his job, his that smart guy you may be
-                    searching for
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center justify-center">
-                      <img src={Ellipse117} alt="Person1" />
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center">
+                        <img src={Ellipse117} alt="Person1" />
+                      </div>
+                      <p className="text-[13px] font-bold">Bashir Umar</p>
                     </div>
-                    <p className="text-[13px] font-bold">Bashir Umar</p>
+                    <p className="text-[13px] text-[#8E8E8E]">2:20 Am</p>
                   </div>
-                  <p className="text-[13px] text-[#8E8E8E]">2:20 Am</p>
+                  <div className="ml-[20px] flex justify-center border-l border-dashed border-[#8E8E8E] py-3">
+                    <p className="w-[90%] text-[13px] font-bold text-[#8E8E8E]">
+                      I really love his job, his that smart guy you may be
+                      searching for
+                    </p>
+                  </div>
                 </div>
-                <div className="ml-[20px] flex justify-center border-l border-dashed border-[#8E8E8E] py-3">
-                  <p className="w-[90%] text-[13px] font-bold text-[#8E8E8E]">
-                    I really love his job, his that smart guy you may be
-                    searching for
-                  </p>
-                </div>
-              </div>
               </div>
             </div>
             <button

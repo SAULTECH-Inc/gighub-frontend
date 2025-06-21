@@ -1,34 +1,56 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 import { LuMessageCircleMore } from "react-icons/lu";
 import React from "react";
-
+import { EmployerData } from "../../utils/types";
+import { useChatStore } from "../../store/useChatStore.ts";
 
 type companyInterface = {
-    title: string;
-    description: string
-}
+  company: EmployerData;
+};
 
-const Companies: React.FC<companyInterface> = ({title, description}) => {
+const Companies: React.FC<companyInterface> = ({ company }) => {
+  const { setIsClosed, setRecipient } = useChatStore();
   return (
-    <div className=" bg-white border-[1px] border-[#E6E6E6] rounded-[16px]  max-w-[500px] sm:max-w-[280px] lg:max-w-[263px]">
-        <div className="w-full flex flex-col items-start">
-            <div className="mt-[33px] relative h-20 w-full flex items-center">
-            <hr className="absolute border border-[#AFAFAF] w-full" />
-                <div className="bg-[#AFAFAF] h-full w-20 rounded-full left-5 absolute"></div>
-            </div>
-            <div className="flex flex-col items-start p-4">
-                <h4 className="font-bold text-black text-[20px]">{title}</h4>
-                <p className="text-sm text-[#8E8E8E]">{description}</p>
-                <div className="flex items-start justify-between space-x-4 my-3">
-                    <Link to='/company-profile' className="border-[1px] border-[#E6E6E6] text-black h-[38px] w-[129px] flex items-center justify-center rounded-[10px]">View Profile</Link>
-                    <div className="bg-[#6438C2] h-10 w-10 flex items-center justify-center rounded-full">
-                        <LuMessageCircleMore className="text-white text-[20px]"/>
-                    </div>
-                </div>
-            </div>
+    <div className="max-w-[500px] rounded-[16px] border-[1px] border-[#E6E6E6] bg-white sm:max-w-[280px] lg:max-w-[263px]">
+      <div className="flex w-full flex-col items-start">
+        <div className="relative mt-[33px] flex h-20 w-full items-center">
+          <hr className="absolute w-full border border-[#AFAFAF]" />
+          <div className="absolute left-5 h-full w-20 rounded-full bg-[#AFAFAF]"></div>
         </div>
+        <div className="flex flex-col items-start p-4">
+          <h4 className="text-[20px] font-bold text-black">
+            {company?.companyName}
+          </h4>
+          <div
+            className="text-sm text-[#8E8E8E]"
+            dangerouslySetInnerHTML={{
+              __html:
+                company?.companyDescription ||
+                company?.aboutCompany ||
+                "<p></p>",
+            }}
+          ></div>
+          <div className="my-3 flex items-start justify-between space-x-4">
+            <Link
+              to={`/employers/${company?.id}/${company?.companyName}/profile`}
+              className="flex h-[38px] w-[129px] items-center justify-center rounded-[10px] border-[1px] border-[#E6E6E6] text-black"
+            >
+              View Profile
+            </Link>
+            <div
+              onClick={() => {
+                setRecipient(company.email);
+                setIsClosed(false);
+              }}
+              className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#6438C2]"
+            >
+              <LuMessageCircleMore className="text-[20px] text-white" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Companies
+export default Companies;

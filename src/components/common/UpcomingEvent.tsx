@@ -1,75 +1,110 @@
 import React from "react";
-import {motion} from "framer-motion";
+import { motion } from "framer-motion";
 import questionMark from "../../assets/icons/question.svg";
 import ApplicantScheduleModal from "../ui/ApplicantScheduleModal.tsx";
 import useModalStore from "../../store/modalStateStores.ts";
+import { InterviewScheduleDetailsResponse } from "../../utils/types";
 
-const UpcomingEvent: React.FC = () => {
-    const {openModal} = useModalStore();
-    return (
-        <div className="mt-6 mx-auto w-full h-full">
-            <div className="flex items-center justify-evenly md:space-x-[100px]">
-                <h3 className="text-lg font-medium text-gray-700">Upcoming Schedule</h3>
-                <div
-                    className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full text-[#6E4AED] cursor-pointer hover:bg-gray-200"
-                    aria-label="Help"
-                    title="Upcoming events information"
-                >
-                    <div className="flex justify-center items-center p-1 w-[25px] h-[25px]  rounded-full border-[#D9D9D9] border-[1px]">
-                        <img src={questionMark} alt="question mark" />
-                    </div>
-                </div>
-            </div>
-            {/* Events List */}
-            {[{ color: "border-l-[#F36863]" }, { color: "border-l-[#6E4AED]" }].map((event, idx) => (
-                <motion.div
-                    key={idx}
-                    className="flex items-center bg-gray-50 p-3 my-10 md:my-4 w-full h-[59px]"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                >
-                    {/* Parent Container */}
-                    <div className="flex justify-between items-center w-full gap-x-2 md:gap-x-5">
-                        {/* Date Column */}
-                        <div className="text-center w-[10%] h-[59px] flex flex-col justify-center items-center">
-                            <p className="text-sm text-gray-600">Tue</p>
-                            <p className="text-lg font-bold text-gray-800">10</p>
-                        </div>
+interface UpcomingEventProps {
+  events: any[];
+  selectedEvent: any;
+  loading: boolean;
+  setSelectedEvent: React.Dispatch<React.SetStateAction<any>>;
+}
+const UpcomingEvent: React.FC<UpcomingEventProps> = ({
+  events,
+  selectedEvent,
+  loading,
+  setSelectedEvent,
+}) => {
+  const { openModal } = useModalStore();
 
-                        {/* Event Details */}
-                        <div
-                            className={`flex items-center w-[90%] h-[80px] md:h-[59px] rounded-[16px] bg-[#F5F5F5] pl-3 pr-2`}
-                        >
-                            <div
-                                className={`w-full h-[35px] border-l-[3px] ${event.color} flex flex-col justify-between pl-2`}
-                            >
-                                <p className="text-xs md:text-sm font-semibold text-gray-800">
-                                    Google Job Interview
-                                </p>
-                                <p className="text-xs md:text-[10px] text-gray-500">
-                                    9:00-10:00 &bull; Zoom Meeting
-                                </p>
-                            </div>
-                            {/* View Button */}
-                            <button
-                                onClick={() => {
-                                    openModal("applicant-schedule-modal");
-                                }}
-                                className="px-4 py-1 w-[65px] h-[30px] text-[13px] font-semibold text-[#6E4AED] bg-white rounded-full hover:bg-purple-500 hover:text-white transition"
-                            >
-                                View
-                            </button>
-                        </div>
-                    </div>
-                </motion.div>
-            ))}
-
-            <ApplicantScheduleModal
-                modalId="applicant-schedule-modal"
-            />
-
+  return (
+    <div className="mx-auto mt-6 h-full w-full">
+      <div className="flex items-center justify-evenly md:space-x-[100px]">
+        <h3 className="text-lg font-medium text-gray-700">Upcoming Schedule</h3>
+        <div
+          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-gray-100 text-[#6E4AED] hover:bg-gray-200"
+          aria-label="Help"
+          title="Upcoming events information"
+        >
+          <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full border-[1px] border-[#D9D9D9] p-1">
+            <img src={questionMark} alt="question mark" />
+          </div>
         </div>
-    );
+      </div>
+
+      {loading ? (
+        <p className="mt-6 text-center text-gray-500">Loading events...</p>
+      ) : events.length === 0 ? (
+        <p className="mt-6 text-center text-gray-500">
+          No upcoming interviews.
+        </p>
+      ) : (
+        events.map((event, idx) => {
+          const dateObj = new Date(event.date);
+          const weekday = dateObj.toLocaleDateString("en-US", {
+            weekday: "short",
+          });
+          const day = dateObj.getDate();
+
+          return (
+            <motion.div
+              key={event.id}
+              className="my-10 flex h-[59px] w-full items-center bg-gray-50 p-3 md:my-4"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="flex w-full items-center justify-between gap-x-2 md:gap-x-5">
+                {/* Date */}
+                <div className="flex h-[59px] w-[10%] flex-col items-center justify-center text-center">
+                  <p className="text-sm text-gray-600">{weekday}</p>
+                  <p className="text-lg font-bold text-gray-800">{day}</p>
+                </div>
+
+                {/* Event */}
+                <div
+                  className={`flex h-[80px] w-[90%] items-center rounded-[16px] bg-[#F5F5F5] pl-3 pr-2 md:h-[59px]`}
+                >
+                  <div
+                    className={`h-[35px] w-full border-l-[3px] ${
+                      idx % 2 === 0
+                        ? "border-l-[#F36863]"
+                        : "border-l-[#6E4AED]"
+                    } flex flex-col justify-between pl-2`}
+                  >
+                    <p className="text-xs font-semibold text-gray-800 md:text-sm">
+                      {event.title}
+                    </p>
+                    <p className="text-xs text-gray-500 md:text-[10px]">
+                      {event.startTime} - {event.endTime} &bull;{" "}
+                      {event.interviewPlatform || "TBD"}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setSelectedEvent(
+                        event as InterviewScheduleDetailsResponse,
+                      );
+                      openModal("applicant-schedule-modal");
+                    }}
+                    className="h-[30px] w-[65px] rounded-full bg-white px-4 py-1 text-[13px] font-semibold text-[#6E4AED] transition hover:bg-purple-500 hover:text-white"
+                  >
+                    View
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })
+      )}
+
+      <ApplicantScheduleModal
+        modalId="applicant-schedule-modal"
+        selectedEvent={selectedEvent}
+      />
+    </div>
+  );
 };
 
 export default UpcomingEvent;
