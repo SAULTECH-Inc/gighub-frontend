@@ -14,7 +14,7 @@ const TextArea: FC<TextAreaProps> = ({
   return (
     <div className="mb-4">
       {label && (
-        <label htmlFor={name} className="mb-1 block font-medium text-gray-700">
+        <label htmlFor={name} className="text-gray-700 mb-1 block font-medium">
           {label}
         </label>
       )}
@@ -26,7 +26,7 @@ const TextArea: FC<TextAreaProps> = ({
         placeholder={placeholder}
         onChange={onChange}
         disabled={disabled}
-        className={`w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        className={`border-gray-300 w-full rounded border p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
       />
     </div>
   );

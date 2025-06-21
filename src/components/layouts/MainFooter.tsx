@@ -57,7 +57,7 @@ const MainFooter: React.FC = () => {
   };
 
   return (
-    <footer className="relative mt-0 overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white md:mt-10">
+    <footer className="from-gray-900 via-gray-800 relative mt-0 overflow-hidden bg-gradient-to-br to-black text-white md:mt-10">
       {/* Decorative background elements */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute left-10 top-10 h-32 w-32 rounded-full bg-purple-500 blur-3xl"></div>
@@ -68,14 +68,14 @@ const MainFooter: React.FC = () => {
       {/* Main Footer Content */}
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-12">
         {/* Top Section - Newsletter & Quick Stats */}
-        <div className="mb-12 grid grid-cols-1 gap-8 border-b border-gray-700 pb-12 lg:grid-cols-2">
+        <div className="border-gray-700 mb-12 grid grid-cols-1 gap-8 border-b pb-12 lg:grid-cols-2">
           {/* Newsletter Signup */}
           <div className="space-y-6">
             <div>
               <h3 className="to-orange-400 mb-3 bg-gradient-to-r from-purple-400 bg-clip-text text-2xl font-bold text-transparent">
                 Stay Ahead in Your Career
               </h3>
-              <p className="mb-6 text-gray-300">
+              <p className="text-gray-300 mb-6">
                 Get the latest job opportunities, career tips, and industry
                 insights delivered to your inbox.
               </p>
@@ -88,7 +88,7 @@ const MainFooter: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
-                  className="flex-1 rounded-lg border border-gray-600 bg-gray-800 px-4 py-3 text-white placeholder-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="border-gray-600 bg-gray-800 placeholder-gray-400 flex-1 rounded-lg border px-4 py-3 text-white focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
                 <button
                   onClick={handleNewsletterSubmit}
@@ -109,33 +109,33 @@ const MainFooter: React.FC = () => {
 
           {/* Quick Stats */}
           <div className="grid grid-cols-2 gap-6">
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4 text-center transition-all duration-300 hover:bg-gray-800/70">
+            <div className="border-gray-700 bg-gray-800/50 hover:bg-gray-800/70 rounded-lg border p-4 text-center transition-all duration-300">
               <div className="mb-2 flex items-center justify-center">
                 <Users className="text-green-400" size={24} />
               </div>
               <div className="text-2xl font-bold text-green-400">2.5M+</div>
-              <div className="text-sm text-gray-400">Active Job Seekers</div>
+              <div className="text-gray-400 text-sm">Active Job Seekers</div>
             </div>
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4 text-center transition-all duration-300 hover:bg-gray-800/70">
+            <div className="border-gray-700 bg-gray-800/50 hover:bg-gray-800/70 rounded-lg border p-4 text-center transition-all duration-300">
               <div className="mb-2 flex items-center justify-center">
                 <Briefcase className="text-orange-400" size={24} />
               </div>
               <div className="text-orange-400 text-2xl font-bold">150K+</div>
-              <div className="text-sm text-gray-400">Job Opportunities</div>
+              <div className="text-gray-400 text-sm">Job Opportunities</div>
             </div>
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4 text-center transition-all duration-300 hover:bg-gray-800/70">
+            <div className="border-gray-700 bg-gray-800/50 hover:bg-gray-800/70 rounded-lg border p-4 text-center transition-all duration-300">
               <div className="mb-2 flex items-center justify-center">
                 <TrendingUp className="text-purple-400" size={24} />
               </div>
               <div className="text-2xl font-bold text-purple-400">95%</div>
-              <div className="text-sm text-gray-400">Match Success Rate</div>
+              <div className="text-gray-400 text-sm">Match Success Rate</div>
             </div>
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4 text-center transition-all duration-300 hover:bg-gray-800/70">
+            <div className="border-gray-700 bg-gray-800/50 hover:bg-gray-800/70 rounded-lg border p-4 text-center transition-all duration-300">
               <div className="mb-2 flex items-center justify-center">
                 <Award className="text-yellow-400" size={24} />
               </div>
-              <div className="text-2xl font-bold text-yellow-400">500K+</div>
-              <div className="text-sm text-gray-400">Successful Hires</div>
+              <div className="text-yellow-400 text-2xl font-bold">500K+</div>
+              <div className="text-gray-400 text-sm">Successful Hires</div>
             </div>
           </div>
         </div>
@@ -436,33 +436,33 @@ const MainFooter: React.FC = () => {
         </div>
 
         {/* Contact Information */}
-        <div className="mb-12 grid grid-cols-1 gap-6 border-b border-gray-700 pb-8 md:grid-cols-2 lg:grid-cols-4">
-          <div className="flex items-center gap-3 rounded-lg bg-gray-800/30 p-4 transition-all duration-300 hover:bg-gray-800/50">
+        <div className="border-gray-700 mb-12 grid grid-cols-1 gap-6 border-b pb-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="bg-gray-800/30 hover:bg-gray-800/50 flex items-center gap-3 rounded-lg p-4 transition-all duration-300">
             <MapPin className="flex-shrink-0 text-purple-400" size={20} />
             <div>
               <div className="text-sm font-semibold">Headquarters</div>
-              <div className="text-sm text-gray-400">San Francisco, CA</div>
+              <div className="text-gray-400 text-sm">San Francisco, CA</div>
             </div>
           </div>
-          <div className="flex items-center gap-3 rounded-lg bg-gray-800/30 p-4 transition-all duration-300 hover:bg-gray-800/50">
+          <div className="bg-gray-800/30 hover:bg-gray-800/50 flex items-center gap-3 rounded-lg p-4 transition-all duration-300">
             <Phone className="text-orange-400 flex-shrink-0" size={20} />
             <div>
               <div className="text-sm font-semibold">Phone</div>
-              <div className="text-sm text-gray-400">+1 (555) GIG-JOBS</div>
+              <div className="text-gray-400 text-sm">+1 (555) GIG-JOBS</div>
             </div>
           </div>
-          <div className="flex items-center gap-3 rounded-lg bg-gray-800/30 p-4 transition-all duration-300 hover:bg-gray-800/50">
+          <div className="bg-gray-800/30 hover:bg-gray-800/50 flex items-center gap-3 rounded-lg p-4 transition-all duration-300">
             <Mail className="flex-shrink-0 text-green-400" size={20} />
             <div>
               <div className="text-sm font-semibold">Email</div>
-              <div className="text-sm text-gray-400">hello@gighub.com</div>
+              <div className="text-gray-400 text-sm">hello@gighub.com</div>
             </div>
           </div>
-          <div className="flex items-center gap-3 rounded-lg bg-gray-800/30 p-4 transition-all duration-300 hover:bg-gray-800/50">
+          <div className="bg-gray-800/30 hover:bg-gray-800/50 flex items-center gap-3 rounded-lg p-4 transition-all duration-300">
             <Clock className="flex-shrink-0 text-blue-400" size={20} />
             <div>
               <div className="text-sm font-semibold">Support Hours</div>
-              <div className="text-sm text-gray-400">24/7 Available</div>
+              <div className="text-gray-400 text-sm">24/7 Available</div>
             </div>
           </div>
         </div>
@@ -520,7 +520,7 @@ const MainFooter: React.FC = () => {
                 onClick={(e) => handleLinkClick(e, "app-store")}
                 className="block transition-transform duration-300 hover:scale-105"
               >
-                <div className="flex h-12 w-36 items-center justify-center rounded-lg border border-gray-600 bg-black text-xs text-white">
+                <div className="border-gray-600 flex h-12 w-36 items-center justify-center rounded-lg border bg-black text-xs text-white">
                   <div className="text-center">
                     <div className="mb-1 text-[8px]">Download on the</div>
                     <div className="text-sm font-semibold">App Store</div>
@@ -532,7 +532,7 @@ const MainFooter: React.FC = () => {
                 onClick={(e) => handleLinkClick(e, "google-play")}
                 className="block transition-transform duration-300 hover:scale-105"
               >
-                <div className="flex h-12 w-36 items-center justify-center rounded-lg border border-gray-600 bg-black text-xs text-white">
+                <div className="border-gray-600 flex h-12 w-36 items-center justify-center rounded-lg border bg-black text-xs text-white">
                   <div className="text-center">
                     <div className="mb-1 text-[8px]">Get it on</div>
                     <div className="text-sm font-semibold">Google Play</div>
@@ -544,27 +544,27 @@ const MainFooter: React.FC = () => {
         </div>
 
         {/* Trust Badges & Certifications */}
-        <div className="mb-8 flex flex-wrap items-center justify-center gap-6 border-b border-t border-gray-700 py-6">
-          <div className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-gray-300">
+        <div className="border-gray-700 mb-8 flex flex-wrap items-center justify-center gap-6 border-b border-t py-6">
+          <div className="text-gray-400 hover:text-gray-300 flex items-center gap-2 text-sm transition-colors">
             <Shield size={16} className="text-green-400" />
             <span>SSL Secured</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-gray-300">
+          <div className="text-gray-400 hover:text-gray-300 flex items-center gap-2 text-sm transition-colors">
             <Award size={16} className="text-yellow-400" />
             <span>ISO 27001 Certified</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-gray-300">
+          <div className="text-gray-400 hover:text-gray-300 flex items-center gap-2 text-sm transition-colors">
             <Star size={16} className="text-purple-400" />
             <span>4.9/5 User Rating</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-gray-300">
+          <div className="text-gray-400 hover:text-gray-300 flex items-center gap-2 text-sm transition-colors">
             <CheckCircle size={16} className="text-blue-400" />
             <span>GDPR Compliant</span>
           </div>
         </div>
 
         {/* Bottom Section */}
-        <div className="flex flex-col items-center justify-between gap-4 text-sm text-gray-400 md:flex-row">
+        <div className="text-gray-400 flex flex-col items-center justify-between gap-4 text-sm md:flex-row">
           <div className="flex flex-wrap items-center gap-4">
             <span>© {currentYear} GigHub, Inc. All rights reserved.</span>
             <div className="flex gap-4">

@@ -142,7 +142,7 @@ const JobPreferencesForm: React.FC = () => {
         </button>
       </div>
       <div className="mx-auto w-full space-y-3 rounded-lg bg-white">
-        <h2 className="font-lato text-2xl font-bold text-gray-800">
+        <h2 className="text-gray-800 font-lato text-2xl font-bold">
           Job Preferences
         </h2>
 
@@ -165,7 +165,7 @@ const JobPreferencesForm: React.FC = () => {
 
           {/* Preferred Salary Expectation */}
           <div>
-            <label className="mb-2 flex flex-col text-lg font-medium text-gray-700">
+            <label className="text-gray-700 mb-2 flex flex-col text-lg font-medium">
               Preferred Salary Expectation
             </label>
             <div className="flex h-[55px] w-full flex-row justify-evenly rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#F7F8FA] p-0">

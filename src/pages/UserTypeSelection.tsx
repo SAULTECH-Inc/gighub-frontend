@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import userSelection from "../assets/icons/userSelectionLeftSide.svg";
 import gighubLogo from "../assets/icons/gighubLogoSmall.svg";
 import jobSeekerUser from "../assets/icons/jobSeekerUser.svg";
@@ -50,10 +50,10 @@ const UserTypeSelection: React.FC = () => {
         </div>
         <div className="mx-auto flex h-[824px] w-full flex-col justify-evenly">
           <div className="w-full text-center">
-            <h1 className="text-[20px] font-bold text-gray-600 lg:text-[24px]">
+            <h1 className="text-gray-600 text-[20px] font-bold lg:text-[24px]">
               How are You Planning To Use Gighub
             </h1>
-            <p className="text-[13px] text-gray-600">
+            <p className="text-gray-600 text-[13px]">
               We will streamline your setup experience accordingly
             </p>
           </div>
@@ -117,4 +117,4 @@ const UserTypeSelection: React.FC = () => {
   );
 };
 
-export default UserTypeSelection;
+export default memo(UserTypeSelection);

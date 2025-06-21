@@ -23,6 +23,7 @@ export default {
         tertiary: "#6438c2",
         orange: "#FE691E",
         white: "#FFFFFF",
+        charcoal: "rgba(34, 34, 34, 1)",
       },
       boxShadow: {
         card: "0px 4px 30px 0px rgba(238, 238, 238, 1)",

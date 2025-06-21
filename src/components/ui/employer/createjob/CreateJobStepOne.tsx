@@ -50,7 +50,7 @@ const CreateJobStepOne: React.FC = () => {
     <div className="flex w-full flex-col items-center">
       <div className="flex h-full min-h-[500px] w-full max-w-[900px] flex-col items-center justify-center rounded-[10px] bg-white px-2">
         <div className="flex w-full flex-col gap-2 sm:w-[95%]">
-          <div className="flex justify-between border-b-[1px] text-gray-600">
+          <div className="text-gray-600 flex justify-between border-b-[1px]">
             <div
               onClick={() => handleSelectedOption("description")}
               className={`flex-1 cursor-pointer text-center text-sm ${

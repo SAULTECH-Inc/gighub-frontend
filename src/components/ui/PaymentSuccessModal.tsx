@@ -34,7 +34,7 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
               Subscription Activated!
             </h2>
           </div>
-          <p className="mt-8 text-center text-[13px] text-gray-600">
+          <p className="text-gray-600 mt-8 text-center text-[13px]">
             our payment was successful, and your Auto Apply Monthly Subscription
             is now active—enjoy 200 Automatic Applications Per Month and
             effortless opportunity management!

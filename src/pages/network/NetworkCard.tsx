@@ -34,7 +34,7 @@ const NetworkCard: React.FC<NetworkCardProps> = ({
           <h3 className="text-[20px] font-semibold text-[#000000]">
             {userDetails?.firstName} {userDetails?.lastName}
           </h3>
-          {location && (<p>{location}</p>)}
+          {location && <p>{location}</p>}
         </div>
         <div className="flex items-center justify-between">
           <div className="flex gap-x-2">

@@ -46,7 +46,7 @@ const CompanyOverview: React.FC = () => {
       </div>
       <h5 className="mb-4 font-lato text-[20px]">Company Overview</h5>
       <div className="flex flex-col">
-        <label className="mb-5 text-[16px] text-gray-600">
+        <label className="text-gray-600 mb-5 text-[16px]">
           About the company
         </label>
 

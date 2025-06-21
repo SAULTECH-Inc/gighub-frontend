@@ -29,7 +29,7 @@ const ApplicationSummary: FC = () => {
         <li className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="h-4 w-4 rounded-full bg-[#56E5A1]"></div>
-            <span className="font-[16px] text-gray-700">Onsite</span>
+            <span className="text-gray-700 font-[16px]">Onsite</span>
           </div>
           <span className="font-bold text-green-500">{metric.onsite}</span>
         </li>
@@ -38,7 +38,7 @@ const ApplicationSummary: FC = () => {
         <li className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="h-4 w-4 rounded-full bg-[#6438C2]"></div>
-            <span className="font-[16px] text-gray-700">Remote</span>
+            <span className="text-gray-700 font-[16px]">Remote</span>
           </div>
           <span className="font-bold text-blue-500">{metric.remote}</span>
         </li>
@@ -47,7 +47,7 @@ const ApplicationSummary: FC = () => {
         <li className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="h-4 w-4 rounded-full bg-[#FD7E14]"></div>
-            <span className="font-[16px] text-gray-700">Hybrid</span>
+            <span className="text-gray-700 font-[16px]">Hybrid</span>
           </div>
           <span className="text-orange-500 font-bold">{metric.hybrid}</span>
         </li>

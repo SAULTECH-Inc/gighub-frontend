@@ -39,7 +39,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
           <h3 className="text-[11px] font-semibold text-black md:text-base">
             {jobTitle}
           </h3>
-          <p className="text-[9px] text-gray-500 md:text-sm">
+          <p className="text-gray-500 text-[9px] md:text-sm">
             {location} - <span className="text-purple-600">{companyName}</span>
           </p>
         </div>

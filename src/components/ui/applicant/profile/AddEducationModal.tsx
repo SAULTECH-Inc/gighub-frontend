@@ -266,7 +266,7 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
           </button>
           <button
             onClick={() => closeModal(modalId)}
-            className="ml-4 w-[197px] rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#FFFFFF] px-4 py-2 font-medium text-gray-500"
+            className="text-gray-500 ml-4 w-[197px] rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#FFFFFF] px-4 py-2 font-medium"
           >
             Cancel
           </button>

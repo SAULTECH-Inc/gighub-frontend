@@ -371,7 +371,7 @@ export const DetailPanel: React.FC<{
         </button>
         <button
           onClick={onExport}
-          className="flex items-center gap-2 rounded-lg bg-yellow-100 px-4 py-2 text-yellow-700 transition hover:bg-yellow-200"
+          className="bg-yellow-100 text-yellow-700 hover:bg-yellow-200 flex items-center gap-2 rounded-lg px-4 py-2 transition"
         >
           <FileDown className="h-4 w-4" />
           Export

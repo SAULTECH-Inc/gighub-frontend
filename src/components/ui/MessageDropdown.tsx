@@ -49,7 +49,7 @@ const MessageDropdown: React.FC<MessageDropdownProps> = ({ onClose }) => {
       {/* Header */}
       <div>
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-gray-800">Messages</h3>
+          <h3 className="text-gray-800 text-lg font-bold">Messages</h3>
         </div>
         {/* Divider Below Header */}
         <hr style={dividerStyle} className="-mx-6" />
@@ -69,7 +69,7 @@ const MessageDropdown: React.FC<MessageDropdownProps> = ({ onClose }) => {
             <li key={index}>
               {/* Message Content */}
               <div
-                className="flex cursor-pointer items-center gap-4 p-3 hover:bg-gray-100"
+                className="hover:bg-gray-100 flex cursor-pointer items-center gap-4 p-3"
                 onClick={onClose}
               >
                 {/* Avatar */}
@@ -81,12 +81,12 @@ const MessageDropdown: React.FC<MessageDropdownProps> = ({ onClose }) => {
 
                 {/* Details */}
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-800">
+                  <p className="text-gray-800 text-sm font-semibold">
                     {message.senderName}
                   </p>
-                  <p className="text-xs text-gray-600">{message.content}</p>
+                  <p className="text-gray-600 text-xs">{message.content}</p>
                   <div className="mt-1 flex items-center justify-between">
-                    <p className="text-xs text-gray-400">
+                    <p className="text-gray-400 text-xs">
                       {formatChatTimestamp(
                         new Date(message?.createdAt as string),
                       )}

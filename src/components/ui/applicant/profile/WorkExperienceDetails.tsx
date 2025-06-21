@@ -108,13 +108,13 @@ const WorkExperienceDetails: React.FC<ExperienceDetailsProps> = ({
             </button>
           </div>
         )}
-        <div className="relative flex w-full flex-col items-center justify-between rounded-[16px] border-[1px] border-[#E6E6E6] bg-gray-50 p-3 md:p-4">
+        <div className="bg-gray-50 relative flex w-full flex-col items-center justify-between rounded-[16px] border-[1px] border-[#E6E6E6] p-3 md:p-4">
           {/* Left Content */}
           <div className="mb-5 w-full">
             <p className="text-sm font-semibold">
               {experienceData.position}, {experienceData.company}
             </p>
-            <p className="text-sm font-light text-gray-100">
+            <p className="text-gray-100 text-sm font-light">
               {moment(experienceData?.startDate).format("MMM YYYY")} -{" "}
               {moment(experienceData?.endDate).format("MMM YYYY")}
             </p>

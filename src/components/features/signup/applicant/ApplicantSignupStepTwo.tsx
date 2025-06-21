@@ -182,7 +182,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
             animate={{ scale: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <p className="mb-2 text-center text-gray-600">
+            <p className="text-gray-600 mb-2 text-center">
               Drag and drop your files here
             </p>
             <span className="my-4">OR</span>
@@ -215,7 +215,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
           )}
 
           <motion.p
-            className="mt-[20px] text-[16px] text-gray-600"
+            className="text-gray-600 mt-[20px] text-[16px]"
             initial={{ y: 50 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.5 }}
@@ -238,9 +238,9 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
               >
                 <div className="flex items-center gap-x-2">
                   <img src={file.icon} alt="file icon" />
-                  <div className="text-sm text-gray-400">{file.name}</div>
+                  <div className="text-gray-400 text-sm">{file.name}</div>
                 </div>
-                <div className="text-sm text-gray-600">
+                <div className="text-gray-600 text-sm">
                   {file.progress}% Uploaded
                 </div>
                 <button
@@ -263,7 +263,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
       >
         <button
           onClick={handlePrev}
-          className="h-[44px] w-[162px] rounded-[16px] border border-[#E6E6E6] bg-white font-[13px] text-gray-600 hover:bg-[#F7F8FA] focus:border-none focus:outline-none focus:ring-0"
+          className="text-gray-600 h-[44px] w-[162px] rounded-[16px] border border-[#E6E6E6] bg-white font-[13px] hover:bg-[#F7F8FA] focus:border-none focus:outline-none focus:ring-0"
         >
           Back
         </button>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import loginRight from "../../assets/icons/loginRight.png";
 import googleLogo from "../../assets/icons/gLogo.svg";
 import linkedInLogo from "../../assets/icons/lLogo.svg";
@@ -12,7 +12,7 @@ import { ApplicantData, EmployerData, Role } from "../../utils/types";
 import { UserType } from "../../utils/enums.ts";
 import { useSubscriptionStore } from "../../store/useSubscriptionStore.ts";
 
-export const Login = () => {
+const LoginPage = () => {
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
@@ -205,3 +205,5 @@ export const Login = () => {
     </>
   );
 };
+
+export const Login = memo(LoginPage);
