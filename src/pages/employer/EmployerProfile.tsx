@@ -1,4 +1,4 @@
-import {FC, useEffect, useState} from "react";
+import { FC, useEffect } from "react";
 import EmployerProfileSidebar from "../../components/ui/employer/profile/EmployerProfileSidebar.tsx";
 import CompanyInfo from "../../components/ui/employer/profile/CompanyInfo.tsx";
 import CompanyContactInfo from "../../components/ui/employer/profile/CompanyContactInfo.tsx";
@@ -8,71 +8,105 @@ import SocialsSection from "../../components/ui/SocialsSection.tsx";
 import ComplianceAndVerification from "../../components/ui/employer/profile/ComplianceAndVerification.tsx";
 import ProfileCard from "../../components/ui/employer/profile/ProfileCard.tsx";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
-import {employerNavBarItemMap, employerNavItems, employerNavItemsMobile} from "../../utils/constants.ts";
-import {useAuth} from "../../store/useAuth.ts";
-import {useEmployerProfile} from "../../store/useEmployerProfile.ts";
-import ActionPrompter from "../../components/common/ActionPrompter.tsx";
+import {
+  employerNavBarItemMap,
+  employerNavItems,
+  employerNavItemsMobile,
+} from "../../utils/constants.ts";
+import { useAuth } from "../../store/useAuth.ts";
+import { useEmployerProfile } from "../../store/useEmployerProfile.ts";
 const EmployerProfile: FC = () => {
-    const {employer} = useAuth();
-    const {setEmployerProfile} = useEmployerProfile();
-    const [isOpen, setIsOpen] = useState(true);
+  const { employer } = useAuth();
+  const {
+    setEmployerProfile,
+    setCompanyInfo,
+    setContactInfo,
+    setSocials,
+    setComplianceAndVerification,
+    setBrandAndVisuals,
+    setAboutCompany,
+  } = useEmployerProfile();
+  useEffect(() => {
+    if (employer) {
+      setEmployerProfile(employer);
+      console.log("Employer Profile: ", employer);
+      setCompanyInfo({
+        companyName: employer?.companyName,
+        industry: employer?.industry || "",
+        companySize: employer?.companySize || "",
+        country: employer?.country || "",
+        city: employer.city || "",
+        companyAddress: employer.companyAddress || "",
+      });
+      setContactInfo({
+        managerEmail: employer.managerEmail || "",
+        managerPhoneNumber: employer.managerPhoneNumber || "",
+        companyPhone: employer.companyPhone || "",
+        email: employer.email || "",
+      });
+      setSocials({
+        linkedInProfile: employer.linkedInProfile || "",
+        twitterProfile: employer.twitterProfile || "",
+        facebookProfile: employer.facebookProfile || "",
+        instagramProfile: employer.instagramProfile || "",
+        githubProfile: employer.githubProfile || "",
+      });
+      setBrandAndVisuals({
+        files: employer.brandAndVisuals || [],
+      });
+      setAboutCompany({
+        companyDescription: employer.companyDescription || "",
+      });
+      setComplianceAndVerification({
+        registrationNumber: employer.registrationNumber || "",
+        taxIdentificationNumber: employer.taxIdentificationNumber || "",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [employer]);
+  //w-[35%] md:w-[40%] lg:w-[30%] xl:w-[20%]
+  return (
+    <div className="relative mx-auto w-screen bg-[#F7F8FA]">
+      <TopNavBar
+        navItems={employerNavItems}
+        navItemsMobile={employerNavItemsMobile}
+        navbarItemsMap={employerNavBarItemMap}
+      />
+      <div className="mx-auto flex min-h-screen w-full items-start justify-center gap-x-5 bg-gray-100 pt-6 md:px-5 lg:px-10">
+        {/* Sidebar */}
+        <EmployerProfileSidebar />
 
-    const handleAnswer = (confirmed: boolean) => {
-        if (confirmed) {
-            console.log("User confirmed action");
-            // Perform your action here
-        } else {
-            console.log("User cancelled action");
-        }
-        setIsOpen(false);
-    };
-    useEffect(() => {
-        if (employer){
-            setEmployerProfile(employer);
-        }
-    }, [employer]);
-    //w-[35%] md:w-[40%] lg:w-[30%] xl:w-[20%]
-    return (
-        <div className="relative bg-[#F7F8FA] mx-auto w-screen">
-            <TopNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile} navbarItemsMap={employerNavBarItemMap}/>
-            <div className="w-full flex justify-center items-start bg-gray-100 min-h-screen pt-6 mx-auto gap-x-5 md:px-5 lg:px-10">
-                {/* Sidebar */}
-                <EmployerProfileSidebar/>
+        {/* Main Content */}
+        <div className="h-fit w-full rounded-[16px] border-[1px] border-[#E6E6E6] bg-white p-4 md:w-[70%] lg:w-[67%] lg:p-8 xl:w-[75%]">
+          <div className="flex items-center justify-between pb-4 font-lato text-sm text-[#6438C2] lg:text-[20px]">
+            <p>Your Profile is 80% completed</p>
+            <p>Company Account</p>
+          </div>
+          <ProfileCard />
 
-                {/* Main Content */}
-                <div className="h-fit rounded-[16px] w-full md:w-[70%] lg:w-[67%] xl:w-[75%] bg-white border-[#E6E6E6] border-[1px] p-4 lg:p-8">
-                    <div className="flex justify-between items-center text-[#6438C2] font-lato text-sm lg:text-[20px] pb-4">
-                        <p>Your Profile is 80% completed</p>
-                        <p>Company Account</p>
-                    </div>
-                    <ProfileCard/>
+          {/* Form */}
+          <form className="space-y-8">
+            <CompanyInfo />
 
-                    {/* Form */}
-                    <form className="space-y-8">
-                        <CompanyInfo/>
+            {/* Contact Information */}
+            <CompanyContactInfo />
 
-                        {/* Contact Information */}
-                        <CompanyContactInfo/>
+            {/* Branding and Visual Identity */}
+            <CompanyBrandingVisualIdentity />
 
-                        {/* Branding and Visual Identity */}
-                        <CompanyBrandingVisualIdentity/>
+            {/* Company Overview */}
+            <CompanyOverview />
 
+            {/* Social and Professional Links */}
+            <SocialsSection />
 
-
-                        {/* Company Overview */}
-                        <CompanyOverview/>
-
-                        {/* Social and Professional Links */}
-                        <SocialsSection/>
-
-                        {/* Compliance and Verifications */}
-                        <ComplianceAndVerification/>
-                    </form>
-                </div>
-            </div>
-            <ActionPrompter onAnswer={handleAnswer} open={isOpen} message="Are you sure you want to delete"/>
+            {/* Compliance and Verifications */}
+            <ComplianceAndVerification />
+          </form>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default EmployerProfile;

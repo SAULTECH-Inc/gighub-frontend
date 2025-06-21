@@ -1,54 +1,66 @@
-import paystack from '../../assets/images/paystack-logo.svg';
-import dangote from '../../assets/images/dangote-logo.svg';
-import safarico from '../../assets/images/safarico.svg';
-const TopHiringCompanies = ()=>{
-  return  <>
-        <div className="w-full h-[365px] mx-auto flex justify-center">
-            <div className="bg-white p-4 w-[95%] rounded-[16px] shadow">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-[20px] font-semibold">Top Companies Hiring</h2>
-                    <button className="text-[#6B5AED] text-sm">See all</button>
-                </div>
+import dangote from "../../assets/images/dangote-logo.svg";
+import React from "react";
+import { TopHiringCompanyDto } from "../../utils/types";
+import { useJobSearchSettings } from "../../store/useJobSearchSettings.ts";
+import { Link } from "react-router-dom";
 
-                <div>
-                    {/*Messages*/}
-                    <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center space-x-3">
-                            <img src={paystack} alt="Dangote Logo" className="w-[57px] h-[57px] rounded-[16px]"/>
-                            <div className="flex flex-col space-y-1 py-4">
-                                <h3 className="text-sm md:text-lg font-medium">Paystack Inc  .  hiring UIUX</h3>
-                                <p className="text-xs md:text-sm text-gray-500">
-                                    2 people in your network work here
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center space-x-3">
-                            <img src={dangote} className="w-[57px] h-[57px] bg-[#D9D9D9] rounded-[16px]" alt="dangote"/>
-                            <div className="flex flex-col space-y-1 py-4">
-                                <h3 className="text-sm md:text-lg font-medium">Dangote Group  .  Analyst</h3>
-                                <p className="text-xs md:text-sm text-gray-500">
-                                    2 people in your network work here
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex items-start justify-between">
-                        <div className="flex items-center space-x-3">
-                            <img src={safarico} className="w-[57px] h-[57px] bg-[#D9D9D9] rounded-[16px]" alt="safarico"/>
-                            <div className="flex flex-col space-y-1 py-4">
-                                <h3 className="text-sm md:text-lg font-medium">Safaricom  .  Product Designer</h3>
-                                <p className="text-xs md:text-sm text-gray-500">
-                                    2 people in your network work here
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </>
+interface TopHiringCompaniesProps {
+  topHiringCompanies: TopHiringCompanyDto[];
 }
+const TopHiringCompanies: React.FC<TopHiringCompaniesProps> = ({
+  topHiringCompanies,
+}) => {
+  const { setViewingJob, setCurrentlyViewed, setJobToApply } =
+    useJobSearchSettings();
+  return (
+    <>
+      <div className="mx-auto flex h-[365px] w-full justify-center">
+        <div className="w-[95%] rounded-[16px] bg-white p-4 shadow">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-[20px] font-semibold">Top Companies Hiring</h2>
+            {topHiringCompanies?.length > 5 && (
+              <Link to="/companies" className="text-sm text-[#6B5AED]">
+                See all
+              </Link>
+            )}
+          </div>
+
+          <div>
+            {/*Messages*/}
+            {topHiringCompanies?.map((data: any, index: number) => (
+              <div
+                key={index}
+                className="mb-4 flex items-start justify-between"
+              >
+                <div className="flex items-center space-x-3">
+                  <img
+                    src={data?.employer?.companyLogo || dangote}
+                    alt="Dangote Logo"
+                    className="h-[57px] w-[57px] rounded-[16px]"
+                  />
+                  <div className="flex flex-col space-y-1 py-4">
+                    <h3
+                      onClick={() => {
+                        setJobToApply(data.job);
+                        setCurrentlyViewed(data.job);
+                        setViewingJob(true);
+                      }}
+                      className="cursor-pointer text-sm font-medium hover:underline md:text-lg"
+                    >
+                      {data?.employer?.companyName} . hiring {data?.job?.title}
+                    </h3>
+                    <p className="text-xs text-gray-500 md:text-sm">
+                      2 people in your network work here
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
 
 export default TopHiringCompanies;

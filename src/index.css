@@ -12,26 +12,21 @@
 *,
 *::before,
 *::after {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
-
-
 
 html {
-    scroll-behavior: smooth;
-    line-height: 1.6;
-    font-family: "Nunito", sans-serif;
-    font-optical-sizing: auto;
-    font-style: normal;
+  scroll-behavior: smooth;
+  line-height: 1.6;
+  font-family: "Nunito", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
 }
-
 
 body {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
-
-
 
 /* ============================
    Custom Utility Classes
@@ -39,50 +34,49 @@ body {
 
 /* Wrapper for select with custom dropdown arrow */
 .custom-select-wrapper {
-    position: relative;
+  position: relative;
 }
 
 /* Dropdown arrow styling */
 .custom-select-wrapper::after {
-    content: '▼';
-    position: absolute;
-    top: 50%;
-    right: 1rem;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: white;
+  content: "▼";
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: white;
 }
 
 /* Styling for select options */
 .custom-select option {
-    background-color: #f0f0f0; /* Light gray background */
-    color: black;              /* Black text */
+  background-color: #f0f0f0; /* Light gray background */
+  color: black; /* Black text */
 }
 
 /* Truncate message after 3 lines */
 .truncate-message {
-    display: -webkit-box;
-    -webkit-line-clamp: 3; /* Limit to 3 lines */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limit to 3 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-
-input[type='range']::-webkit-slider-thumb {
-    appearance: none;
-    background: #6E4AED;
-    cursor: pointer;
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  background: #6e4aed;
+  cursor: pointer;
 }
 
-input[type='range']::-moz-range-thumb {
-    appearance: none;
-    background: #6E4AED;
-    cursor: pointer;
+input[type="range"]::-moz-range-thumb {
+  appearance: none;
+  background: #6e4aed;
+  cursor: pointer;
 }
 
-input[type='range']::-ms-thumb {
-    appearance: none;
-    background: #6E4AED;
-    cursor: pointer;
+input[type="range"]::-ms-thumb {
+  appearance: none;
+  background: #6e4aed;
+  cursor: pointer;
 }

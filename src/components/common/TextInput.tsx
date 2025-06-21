@@ -1,23 +1,20 @@
-import {TextInputProps} from "../../utils/types";
-import {FC} from "react";
+import { TextInputProps } from "../../utils/types";
+import { FC } from "react";
 
 const TextInput: FC<TextInputProps> = ({
   label,
   value,
   placeholder,
   name,
-  type = 'text',
+  type = "text",
   onChange,
   disabled = false,
-  className = '',
+  className = "",
 }) => {
   return (
     <div className="mb-4">
       {label && (
-        <label
-          htmlFor={name}
-          className="block mb-1 font-medium text-gray-700"
-        >
+        <label htmlFor={name} className="mb-1 block font-medium text-gray-700">
           {label}
         </label>
       )}
@@ -29,7 +26,7 @@ const TextInput: FC<TextInputProps> = ({
         placeholder={placeholder}
         onChange={onChange}
         disabled={disabled}
-        className={`border border-gray-300 rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        className={`w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
       />
     </div>
   );

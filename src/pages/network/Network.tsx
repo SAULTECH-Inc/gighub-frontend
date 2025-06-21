@@ -1,51 +1,72 @@
 import React from "react";
-import {USER_TYPE} from "../../utils/helpers.ts";
-import {UserType} from "../../utils/enums.ts";
+import { USER_TYPE } from "../../utils/helpers.ts";
+import { UserType } from "../../utils/enums.ts";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import {
-    applicantNavBarItemMap,
-    applicantNavItems,
-    applicantNavItemsMobile, employerNavBarItemMap,
-    employerNavItems, employerNavItemsMobile
+  applicantNavBarItemMap,
+  applicantNavItems,
+  applicantNavItemsMobile,
+  employerNavBarItemMap,
+  employerNavItems,
+  employerNavItemsMobile,
 } from "../../utils/constants.ts";
-import {NetworkHeader} from "./NetworkHeader.tsx";
-import NetworkCard from "./NetworkCard.tsx";
-import NetworkConnectionsCard from "./NetworkConnectionsCard.tsx";
+import { useNetworkTab } from "../../store/useNetworkTab.ts";
+import { FindConnections } from "./FindConnections.tsx";
+import MyNetwork from "./MyNetwork.tsx";
 
-const Network: React.FC = ()=>{
-    return <>
-        <div className="w-full flex flex-col mx-auto border-2 border-black">
-            {
-                USER_TYPE === UserType.APPLICANT ?
-                    (<TopNavBar navItems={applicantNavItems} navItemsMobile={applicantNavItemsMobile}
-                                navbarItemsMap={applicantNavBarItemMap}/>)
-                    : <TopNavBar navItems={employerNavItems} navItemsMobile={employerNavItemsMobile}
-                                 navbarItemsMap={employerNavBarItemMap}/>
-            }
-            <NetworkHeader/>
-            <div
-                className="w-full mx-auto flex flex-col md:flex-row gap-6 justify-center p-4 border-2 border-black">
-                {/* Main Content Area */}
-                <div className="w-full grid sm:grid-cols-1 lg:grid-cols-4 gap-6 border-2">
-                    <NetworkCard/>
-                    <NetworkCard/>
-                    <NetworkCard/>
-                    <NetworkCard/>
-                    <NetworkCard/>
-                    <NetworkCard/>
-                </div>
-
-                {/* Sidebar */}
-                <div className="flex flex-col gap-6">
-                    <h2 className="font-semibold text-lg">Find New Connections</h2>
-                    <NetworkConnectionsCard/>
-                    <NetworkConnectionsCard/>
-                    <NetworkConnectionsCard/>
-                </div>
-            </div>
-
+const Network: React.FC = () => {
+  /* active tab */
+  const { activeTab, setActiveTab } = useNetworkTab();
+  return (
+    <>
+      <div className="mx-auto flex w-full flex-col bg-[#F7F8FA]">
+        {USER_TYPE === UserType.APPLICANT ? (
+          <TopNavBar
+            navItems={applicantNavItems}
+            navItemsMobile={applicantNavItemsMobile}
+            navbarItemsMap={applicantNavBarItemMap}
+          />
+        ) : (
+          <TopNavBar
+            navItems={employerNavItems}
+            navItemsMobile={employerNavItemsMobile}
+            navbarItemsMap={employerNavBarItemMap}
+          />
+        )}
+        <div className="mt-12 flex w-full items-center justify-center border-b border-[#E6E6E6] bg-white px-4 py-6">
+          <div className="flex gap-6">
+            <button
+              onClick={() => setActiveTab("find-new-connections")}
+              className={`border-b-4 pb-2 transition-colors ${
+                activeTab === "find-new-connections"
+                  ? "border-purple-600 font-medium text-purple-600"
+                  : "border-transparent text-gray-600 hover:border-purple-600 hover:text-purple-600"
+              }`}
+            >
+              Find New Connections
+            </button>
+            <button
+              onClick={() => setActiveTab("my-connections")}
+              className={`border-b-4 pb-2 transition-colors ${
+                activeTab === "my-connections"
+                  ? "border-purple-600 font-medium text-purple-600"
+                  : "border-transparent text-gray-600 hover:border-purple-600 hover:text-purple-600"
+              }`}
+            >
+              My Connections
+            </button>
+          </div>
         </div>
+
+        {/* Main Content Area */}
+        {activeTab === "find-new-connections" ? (
+          <FindConnections />
+        ) : (
+          <MyNetwork />
+        )}
+      </div>
     </>
-}
+  );
+};
 
 export default Network;

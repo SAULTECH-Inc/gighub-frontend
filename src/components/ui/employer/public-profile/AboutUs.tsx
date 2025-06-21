@@ -1,48 +1,62 @@
-const AboutUs = () => {
-    return (
-        <section className="bg-white p-6 rounded-lg shadow mt-20 relative">
-            <h2 className="text-xl font-semibold mb-4">About Us</h2>
-            <div className="flex justify-between items-start">
-                {/* Left Section */}
-                <div className="flex-1 mr-6 bg-[#F7F7F7] p-4">
-                    <p className="text-[#7F7F7F]  text-decoration-skip-ink font-lato w-[488px] h-[208px] text-[16px] font-[700] leading-[19.2px] text-left underline-offset-4 text-decoration-skip-ink">
-                        Paystack is a leading Nigerian payment processing platform that enables
-                        businesses to accept online payments securely and efficiently. It offers
-                        a wide range of payment solutions, including card payments, bank transfers,
-                        and mobile money, to businesses across Africa.
-                    </p>
-                    <div className="flex space-x-4">
-                        <a href="#" className="text-purple-600">LinkedIn</a>
-                        <a href="#" className="text-purple-600">Facebook</a>
-                        <a href="#" className="text-purple-600">Twitter</a>
-                        <a href="#" className="text-purple-600">Instagram</a>
-                    </div>
-                </div>
+import { EmployerData } from "../../../../utils/types";
+import React from "react";
 
-                {/* Right Section */}
-                <div className="flex-1 flex flex-col justify-between bg-[#F7F7F7] w-[482px] h-[208px] p-4 space-y-4 text-[#7F7F7F] font-lato text-[16px] font-[700] leading-[19.2px] text-left underline-offset-4 text-decoration-skip-ink">
-                    <div className="flex items-center space-x-2">
-                        <div className="w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center">
-                            <span className="text-xs">💼</span>
-                        </div>
-                        <p className="font-semibold text-sm">Financial Technology (Fintech)</p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <div className="w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center">
-                            <span className="text-xs">🏢</span>
-                        </div>
-                        <p className="font-semibold text-sm">2000+ Employees</p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <div className="w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center">
-                            <span className="text-xs">🌍</span>
-                        </div>
-                        <p className="font-semibold text-sm">Lekki, Lagos State, Nigeria</p>
-                    </div>
-                </div>
+interface AboutUsProp {
+  user: EmployerData;
+}
+const AboutUs: React.FC<AboutUsProp> = ({ user }) => {
+  return (
+    <section className="md:20 mt-32 w-full rounded-lg bg-white p-6 shadow">
+      <h2 className="mb-4 text-xl font-semibold">About Us</h2>
+      <div className="flex flex-col items-start justify-between gap-y-4 md:flex-row">
+        {/* Left Section */}
+        <div className="mr-6 h-[208px] w-full bg-[#F7F7F7] p-4 md:w-[482px] md:flex-1">
+          <div
+            dangerouslySetInnerHTML={{ __html: user?.companyDescription || "" }}
+            className="text-decoration-skip-ink text-decoration-skip-ink h-[150px] text-left font-lato text-[16px] font-[700] leading-[19.2px] text-[#7F7F7F] underline-offset-4"
+          ></div>
+          <div className="flex space-x-4">
+            <a href={user?.linkedInProfile || "#"} className="text-purple-600">
+              LinkedIn
+            </a>
+            <a href={user?.facebookProfile || "#"} className="text-purple-600">
+              Facebook
+            </a>
+            <a href={user?.twitterProfile || "#"} className="text-purple-600">
+              Twitter
+            </a>
+            <a href={user?.instagramProfile || "#"} className="text-purple-600">
+              Instagram
+            </a>
+          </div>
+        </div>
+
+        {/* Right Section */}
+        <div className="text-decoration-skip-ink flex h-[208px] w-full flex-1 flex-col justify-between space-y-4 bg-[#F7F7F7] p-4 text-left font-lato text-[16px] font-[700] leading-[19.2px] text-[#7F7F7F] underline-offset-4 md:w-[482px]">
+          <div className="flex items-center space-x-2">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-purple-600 text-white">
+              <span className="text-xs">💼</span>
             </div>
-        </section>
-    );
+            <p className="text-sm font-semibold">{user?.industry || ""}</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-purple-600 text-white">
+              <span className="text-xs">🏢</span>
+            </div>
+            {user?.companySize && (
+              <p className="text-sm font-semibold">{user?.companySize}</p>
+            )}
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-purple-600 text-white">
+              <span className="text-xs">🌍</span>
+            </div>
+            <p className="text-sm font-semibold">{user?.companyAddress}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default AboutUs;

@@ -13,14 +13,22 @@ const TestimonialCarousel = () => {
 
   // Navigate to the previous testimonial
   const prevTestimonial = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1));
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1,
+    );
   };
 
   // Scroll the selected image into view
   useEffect(() => {
     if (imageContainerRef.current) {
-      const selectedImage = imageContainerRef.current.children[currentIndex] as HTMLImageElement;
-      selectedImage?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+      const selectedImage = imageContainerRef.current.children[
+        currentIndex
+      ] as HTMLImageElement;
+      selectedImage?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
     }
   }, [currentIndex]);
 
@@ -34,7 +42,7 @@ const TestimonialCarousel = () => {
   return (
     <>
       <div className="mx-auto">
-        <div className="flex items-center justify-between gap-3 mt-14 mb-5">
+        <div className="mb-5 mt-14 flex items-center justify-between gap-3">
           <img
             src={Arrowleft}
             alt="back"
@@ -69,8 +77,8 @@ const TestimonialCarousel = () => {
             onClick={nextTestimonial}
           />
         </div>
-        <div className="bg-testimonial bg-contain bg-no-repeat bg-center p-10 md:p-28 flex justify-center items-center">
-          <p className="w-[500px] text-white text-center font-lato text-[13px] leading-[19px] font-black m-auto">
+        <div className="flex items-center justify-center bg-testimonial bg-contain bg-center bg-no-repeat p-10 md:p-28">
+          <p className="m-auto w-[500px] text-center font-lato text-[13px] font-black leading-[19px] text-white">
             {currentTestimonial.testimonial}
           </p>
         </div>

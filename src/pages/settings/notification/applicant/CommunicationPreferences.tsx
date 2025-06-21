@@ -1,147 +1,170 @@
-import {useCallback, useEffect} from "react";
+import { useCallback, useEffect } from "react";
 import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
-    CommunicationNotification, CommunicationNotificationOption,
-    NotificationType,
-    useSettingsStore
+  CommunicationNotification,
+  CommunicationNotificationOption,
+  NotificationType,
+  useSettingsStore,
 } from "../../../../store/useSettingsStore.ts";
-import {debounce} from "lodash";
-import {toast} from "react-toastify";
+import { debounce } from "lodash";
+import { toast } from "react-toastify";
 
 const CommunicationPreferences = () => {
-    const {applicantSettings, communication, setCommunication, updateCommunication} = useSettingsStore();
-    const notificationTypes = ["all", "emailNotification", "pushNotification"];
-    const communicationNotificationState = [
-        "promotionalOffers",
-    "fromPlatform"
-    ];
+  const {
+    applicantSettings,
+    communication,
+    setCommunication,
+    updateCommunication,
+  } = useSettingsStore();
+  const notificationTypes = ["all", "emailNotification", "pushNotification"];
+  const communicationNotificationState = ["promotionalOffers", "fromPlatform"];
 
-
-    useEffect(() => {
-        if (applicantSettings) {
-            setCommunication(applicantSettings.notifications.options.communication);
-        }
-    }, [applicantSettings]);
-
-
-    const debouncedUpdate = useCallback(
-        debounce(async (settings: CommunicationNotification) => {
-            const response = await updateCommunication(settings);
-            if (response) {
-                setCommunication(response);
-            } else {
-                toast.error("Failed to update application status notification settings");
-            }
-        }, 500),
-        [communication]
-    );
-
-    useEffect(() => {
-        return () => {
-            debouncedUpdate.cancel(); // prevent memory leak
-        };
-    }, [debouncedUpdate]);
-
-    const getCommunicationStateField = (item: string) => {
-        switch (item) {
-            case "promotionalOffers":
-                return "From employers";
-            default:
-                return "From platform";
-        }
+  useEffect(() => {
+    if (applicantSettings) {
+      setCommunication(applicantSettings.notifications.options.communication);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applicantSettings]);
 
-    const getNotificationTypeStateField = (item: string) => {
-        switch (item) {
-            case "emailNotification":
-                return "Email Notification";
-            case "pushNotification":
-                return "Push Notification";
-            default:
-                return "All";
-        }
-    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedUpdate = useCallback(
+    debounce(async (settings: CommunicationNotification) => {
+      const response = await updateCommunication(settings);
+      if (response) {
+        setCommunication(response);
+      } else {
+        toast.error(
+          "Failed to update application status notification settings",
+        );
+      }
+    }, 500),
+    [communication],
+  );
 
-
-    const handleNotificationTypeToggle = (item: string) => {
-        const updatedSettings = {
-            ...communication,
-            notificationType: {
-                ...communication.notificationType,
-                [item]: !communication.notificationType[item as keyof NotificationType]
-            }
-        };
-        setCommunication(updatedSettings);
-        debouncedUpdate(updatedSettings);
+  useEffect(() => {
+    return () => {
+      debouncedUpdate.cancel(); // prevent memory leak
     };
+  }, [debouncedUpdate]);
 
-    const handleCommunicationSettingsToggle = (item: string) => {
-        const updatedSettings = {
-            ...communication,
-            option: {
-                ...communication.option,
-                [item]: !communication.option[item as keyof CommunicationNotificationOption]
-            }
-        };
-        setCommunication(updatedSettings);
-        debouncedUpdate(updatedSettings);
+  const getCommunicationStateField = (item: string) => {
+    switch (item) {
+      case "promotionalOffers":
+        return "From employers";
+      default:
+        return "From platform";
     }
+  };
 
-    return (
-        <div className="w-[95%] md:w-[90%] flex flex-col self-center py-10 font-lato">
-            <hr className="w-full border-t border-[#E6E6E6] mb-4" />
+  const getNotificationTypeStateField = (item: string) => {
+    switch (item) {
+      case "emailNotification":
+        return "Email Notification";
+      case "pushNotification":
+        return "Push Notification";
+      default:
+        return "All";
+    }
+  };
 
-            {/* Page Title */}
-            <h2 className="text-black font-bold text-[24px] text-left text-xl">
-                Communication Preferences
-            </h2>
+  const handleNotificationTypeToggle = (item: string) => {
+    const updatedSettings = {
+      ...communication,
+      notificationType: {
+        ...communication.notificationType,
+        [item]: !communication.notificationType[item as keyof NotificationType],
+      },
+    };
+    setCommunication(updatedSettings);
+    debouncedUpdate(updatedSettings);
+  };
 
-            {/* White Box Container */}
-            <div className="bg-white border border-[#E6E6E6] rounded-[16px] w-full min-h-[200px] flex flex-col items-start py-6 px-4 md:px-8 mt-4">
-                {/* Header Titles */}
-                <div className="grid grid-cols-2 w-full font-bold text-md text-black">
-                    <h3>Receive Promotional Offers</h3>
-                    <h3>Notification Type</h3>
-                </div>
+  const handleCommunicationSettingsToggle = (item: string) => {
+    const updatedSettings = {
+      ...communication,
+      option: {
+        ...communication.option,
+        [item]:
+          !communication.option[item as keyof CommunicationNotificationOption],
+      },
+    };
+    setCommunication(updatedSettings);
+    debouncedUpdate(updatedSettings);
+  };
 
-                {/* Horizontal Rule */}
-                <hr className="w-full border-t border-[#E6E6E6] my-3" />
+  return (
+    <div className="flex w-[95%] flex-col self-center py-10 font-lato md:w-[90%]">
+      <hr className="mb-4 w-full border-t border-[#E6E6E6]" />
 
-                {/* Two-Column Layout */}
-                <div className="grid grid-cols-2 w-full gap-x-8 px-2 py-8">
-                    {/* Left Column - Promotional Offers */}
-                    <div className="w-full">
-                        <div className="space-y-4 mt-2">
-                            {communicationNotificationState.map((item, index) => (
-                                <label key={index} className="flex items-center justify-between">
-                                    <span className="text-[16px] text-[#8E8E8E]">{getCommunicationStateField(item)}</span>
-                                    <ToggleSwitch
-                                        isOn={communication.option[item as keyof CommunicationNotificationOption]}
-                                        onToggle={() => handleCommunicationSettingsToggle(item)}
-                                    />
-                                </label>
-                            ))}
-                        </div>
-                    </div>
+      {/* Page Title */}
+      <h2 className="text-left text-[24px] text-xl font-bold text-black">
+        Communication Preferences
+      </h2>
 
-                    {/* Right Column - Notification Type */}
-                    <div className="w-full">
-                        <div className="space-y-4 mt-2">
-                            {notificationTypes.map((item, index) => (
-                                <label key={index} className="flex items-center justify-between">
-                                    <span className="text-[16px] text-[#8E8E8E]">{getNotificationTypeStateField(item)}</span>
-                                    <ToggleSwitch
-                                        isOn={communication.notificationType[item as keyof NotificationType]}
-                                        onToggle={() => handleNotificationTypeToggle(item)}
-                                    />
-                                </label>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </div>
+      {/* White Box Container */}
+      <div className="mt-4 flex min-h-[200px] w-full flex-col items-start rounded-[16px] border border-[#E6E6E6] bg-white px-4 py-6 md:px-8">
+        {/* Header Titles */}
+        <div className="text-md grid w-full grid-cols-2 font-bold text-black">
+          <h3>Receive Promotional Offers</h3>
+          <h3>Notification Type</h3>
         </div>
-    );
+
+        {/* Horizontal Rule */}
+        <hr className="my-3 w-full border-t border-[#E6E6E6]" />
+
+        {/* Two-Column Layout */}
+        <div className="grid w-full grid-cols-2 gap-x-8 px-2 py-8">
+          {/* Left Column - Promotional Offers */}
+          <div className="w-full">
+            <div className="mt-2 space-y-4">
+              {communicationNotificationState.map((item, index) => (
+                <label
+                  key={index}
+                  className="flex items-center justify-between"
+                >
+                  <span className="text-[16px] text-[#8E8E8E]">
+                    {getCommunicationStateField(item)}
+                  </span>
+                  <ToggleSwitch
+                    isOn={
+                      communication.option[
+                        item as keyof CommunicationNotificationOption
+                      ]
+                    }
+                    onToggle={() => handleCommunicationSettingsToggle(item)}
+                  />
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Column - Notification Type */}
+          <div className="w-full">
+            <div className="mt-2 space-y-4">
+              {notificationTypes.map((item, index) => (
+                <label
+                  key={index}
+                  className="flex items-center justify-between"
+                >
+                  <span className="text-[16px] text-[#8E8E8E]">
+                    {getNotificationTypeStateField(item)}
+                  </span>
+                  <ToggleSwitch
+                    isOn={
+                      communication.notificationType[
+                        item as keyof NotificationType
+                      ]
+                    }
+                    onToggle={() => handleNotificationTypeToggle(item)}
+                  />
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default CommunicationPreferences;

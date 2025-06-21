@@ -1,124 +1,173 @@
-import { FC } from "react";
+import { FC, memo, useEffect, useState } from "react";
 import { AiOutlineSetting } from "react-icons/ai";
-import {Link} from "react-router-dom"; // Settings icon (top-right)
+import { Link } from "react-router-dom";
+import NotificationSettingsDropdown from "./NotificationSettingsDropdown.tsx";
+import useModalStore from "../../store/modalStateStores.ts";
+import { useNotificationStore } from "../../store/useNotificationStore.ts";
+import moment from "moment";
+import {
+  eventTypeColorMap,
+  notificationIconMap,
+} from "../../utils/constants.ts";
+import { getFirstNWords } from "../../utils/helpers.ts";
+import { FaBell } from "react-icons/fa";
+import { markAsViewed } from "../../services/api";
 
-interface NotificationItem {
-    id: number;
-    icon: JSX.Element; // Icon component
+const NotificationDropdown: FC = () => {
+  const { isModalOpen, openModal } = useModalStore();
+  const dividerStyle = { borderColor: "#E6E6E6" };
+  const { notifications, setNotifications } = useNotificationStore();
+  const [notificationMessages, setNotificationMessages] =
+    useState(notifications);
+  const [viewedMessageDetails, setViewedMessageDetails] = useState<{
     title: string;
-    description: string;
-    time: string;
-    actionLabel: string;
-}
+    content: string;
+  } | null>(null);
 
-const notifications: NotificationItem[] = [
-    {
-        id: 1,
-        icon: <div className="w-10 h-10 bg-purple-200 rounded-full flex items-center justify-center text-purple-600 text-lg">📅</div>,
-        title: "Your interview with Fundy Inc",
-        description: "is scheduled for Dec 22, 2025",
-        time: "2 hours ago",
-        actionLabel: "View details",
-    },
-    {
-        id: 2,
-        icon: <div className="w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center text-orange-600 text-lg">📄</div>,
-        title: "Fundy Inc shortlisted your application",
-        description: "for Uiux designer",
-        time: "2 hours ago",
-        actionLabel: "View details",
-    },
-    {
-        id: 3,
-        icon: <div className="w-10 h-10 bg-blue-200 rounded-full flex items-center justify-center text-blue-600 text-lg">💬</div>,
-        title: "You have a new message",
-        description: "Fundy Inc",
-        time: "2 hours ago",
-        actionLabel: "Read message",
-    },
-    {
-        id: 4,
-        icon: <div className="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center text-green-600 text-lg">✅</div>,
-        title: "We successfully auto-applied you",
-        description: 'to a job "product design" at "Fundy Inc"',
-        time: "2 hours ago",
-        actionLabel: "View Job",
-    },
-    {
-        id: 5,
-        icon: <div className="w-10 h-10 bg-yellow-200 rounded-full flex items-center justify-center text-yellow-600 text-lg">👁️</div>,
-        title: "An employer has viewed your profile",
-        description: "",
-        time: "2 days ago",
-        actionLabel: "View employer",
-    },
-];
+  useEffect(() => {
+    //load notifications when the component mounts
+    if (notifications.length) {
+      setNotificationMessages(notifications);
+    }
+  }, [notifications]);
+  const handleViewDetails = async (
+    title: string,
+    content: string,
+    notificationId: string,
+  ) => {
+    setViewedMessageDetails({ title, content });
+    console.log(`Viewing notification post with ID: ${notificationId}`);
+    const response = await markAsViewed(notificationId);
+    if (response.statusCode === 200) {
+      const updatedNotifications = notifications.map((notification) =>
+        notification.id === notificationId
+          ? { ...notification, viewed: true }
+          : notification,
+      );
+      setNotifications(updatedNotifications);
+      console.log(`Marked notification with ID: ${notificationId} as viewed`);
+    } else {
+      console.error(
+        `Failed to mark notification with ID: ${notificationId} as viewed`,
+      );
+    }
+  };
 
-interface NotificationDropdownProps {
-    onClose: () => void; // A callback to close the dropdown
-}
+  const handleCloseDetails = () => {
+    setViewedMessageDetails(null);
+  };
 
-const NotificationDropdown: FC<NotificationDropdownProps> = ({ onClose }) => {
-    const dividerStyle = { borderColor: "#E6E6E6" }; // Using the exact hex color
-
-    return (
-        <div className="absolute -right-10 md:right-0 top-14 w-[352px] bg-white shadow-lg rounded-[16px] z-50 font-lato p-6">
-            {/* Header */}
-            <div>
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-800">Notification</h3>
-                    <AiOutlineSetting className="text-gray-500 text-xl cursor-pointer" />
-                </div>
-                {/* Divider Below Header */}
-                <hr style={dividerStyle} className="-mx-6" />
-            </div>
-
-            {/* Notification Items */}
-            <ul>
-                {notifications.map((notification, index) => (
-                    <li key={notification.id}>
-                        {/* Notification Content */}
-                        <div
-                            className="flex items-center gap-4 p-3 hover:bg-gray-100 cursor-pointer"
-                            onClick={onClose}
-                        >
-                            {/* Icon */}
-                            {notification.icon}
-
-                            {/* Details */}
-                            <div className="flex-1">
-                                <p className="font-semibold text-sm text-gray-800">
-                                    {notification.title}
-                                </p>
-                                <p className="text-xs text-gray-600">{notification.description}</p>
-                                <div className="flex items-center justify-between mt-1">
-                                    <p className="text-xs text-gray-400">{notification.time}</p>
-                                    <button className="text-xs text-purple-600 hover:underline">
-                                        {notification.actionLabel}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Divider (except after the last item) */}
-                        {index < notifications.length - 1 && (
-                            <hr style={dividerStyle} className="-mx-6" />
-                        )}
-                    </li>
-                ))}
-            </ul>
-
-            {/* Divider Above "View All Notifications" */}
-            <div className="mt-4">
-                <hr style={dividerStyle} className="-mx-6 mb-4" />
-                <div className="text-center">
-                    <Link to="/notification" className="text-sm font-medium text-white bg-purple-600 px-4 py-2 rounded-lg hover:bg-purple-700">
-                        View all notifications
-                    </Link>
-                </div>
-            </div>
+  return (
+    <div className="relative">
+      {/*absolute right-0 top-14 w-[352px] bg-white shadow-lg rounded-[16px] z-50 font-lato p-6*/}
+      <div className="absolute -right-10 top-8 z-50 w-[352px] rounded-[16px] bg-white p-4 font-lato shadow-lg md:right-0">
+        <div>
+          <div className="relative mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-bold text-gray-800">Notification</h3>
+            <button
+              onClick={() => {
+                openModal("notification-settings-dropdown");
+              }}
+            >
+              <AiOutlineSetting className="cursor-pointer text-xl text-gray-500" />
+            </button>
+            {isModalOpen("notification-settings-dropdown") && (
+              <NotificationSettingsDropdown modalId="notification-settings-dropdown" />
+            )}
+          </div>
+          <hr style={dividerStyle} className="-mx-4" />
         </div>
-    );
+
+        <ul className="mt-4 flex flex-col gap-y-3">
+          {notificationMessages
+            .filter((n) => !n.viewed)
+            .slice(0, 3)
+            .map((notification, index) => {
+              const Icon = notificationIconMap[notification.type] ?? FaBell;
+              return (
+                <li key={index} className="relative">
+                  <div className="flex cursor-pointer items-center justify-between gap-4 p-2 hover:bg-gray-100">
+                    <div
+                      style={{
+                        backgroundColor: eventTypeColorMap[notification.type],
+                      }}
+                      className="flex h-[45px] w-[45px] flex-shrink-0 items-center justify-center rounded-full"
+                    >
+                      {Icon ? (
+                        <Icon className="h-[24px] w-[24px] rounded-full text-white" />
+                      ) : (
+                        <FaBell className="h-[24px] w-[24px] rounded-full text-white" />
+                      )}
+                    </div>
+
+                    <div className="flex-1">
+                      <p className="text-[16px] font-semibold text-gray-800">
+                        {notification.title}
+                      </p>
+                      <p className="text-[16px] text-gray-600">
+                        {getFirstNWords(notification.content, 5).concat("...")}
+                      </p>
+                      <div className="mt-1 flex items-center justify-between">
+                        <p className="text-[13px] text-[#8E8E8E]">
+                          {moment(notification?.createdAt).fromNow()}
+                        </p>
+                        <button
+                          className="text-xs text-purple-600 hover:underline"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await handleViewDetails(
+                              notification.title,
+                              notification.content,
+                              notification.id as string,
+                            );
+                          }}
+                        >
+                          View details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+        </ul>
+
+        {notifications.length > 3 && (
+          <div className="mt-4">
+            <hr style={dividerStyle} className="-mx-6 mb-4" />
+            <div className="text-center">
+              <Link
+                to="/notifications"
+                className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700"
+              >
+                View all notifications
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {viewedMessageDetails && (
+        <div className="absolute right-[calc(340px+1rem)] top-14 z-50 mr-4 w-[400px] rounded-[16px] bg-white p-4 font-lato shadow-lg">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-bold text-gray-800">
+              {viewedMessageDetails.title} Details
+            </h3>
+            <button
+              onClick={handleCloseDetails}
+              className="cursor-pointer text-xl text-gray-500"
+            >
+              &times;
+            </button>
+          </div>
+          <hr style={dividerStyle} className="-mx-4 mb-4" />
+          <p className="whitespace-pre-wrap text-[16px] text-gray-800">
+            {viewedMessageDetails.content}
+          </p>
+        </div>
+      )}
+    </div>
+  );
 };
 
-export default NotificationDropdown;
+export default memo(NotificationDropdown);

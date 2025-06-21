@@ -1,13 +1,13 @@
-import {Link, useLocation, useNavigate} from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Gighub } from "../../assets/icons";
 import Button from "../common/Button";
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const proceed = ()=>{
-    navigate("/user-type-selection")
-  }
+  const proceed = () => {
+    navigate("/user-type-selection");
+  };
 
   //   Get Header content based on current page route
   const getHeaderContent = () => {
@@ -15,7 +15,7 @@ const Header = () => {
       return (
         <>
           <div className="flex items-center max-md:hidden">
-            <ul className="font-lato font-bold flex gap-5 lg:gap-8 max-lg:text-[13px]">
+            <ul className="flex gap-5 font-lato font-bold max-lg:text-[13px] lg:gap-8">
               <li>
                 <Link to="">Home</Link>
               </li>
@@ -38,17 +38,27 @@ const Header = () => {
   return (
     <>
       <header>
-        <div className="px-3 md:px-10 lg:px-[90px] py-5 flex items-center justify-between">
+        <div className="flex items-center justify-between px-3 py-5 md:px-10 lg:px-[90px]">
           <div className="flex items-center gap-[10px]">
             <img src={Gighub} alt="Gighub" width={41} height={41} />
-            <h1 className="text-xl font-black font-lato text-orange">Gighub</h1>
+            <h1 className="font-lato text-xl font-black text-orange">Gighub</h1>
           </div>
 
           {getHeaderContent()}
 
           <div className="flex items-center gap-4 lg:gap-9">
-            <Link className="font-lato font-bold max-lg:text-[13px] cursor-pointer" to="login">Login</Link>
-            <Button onClick={()=>proceed()} className="max-lg:py-2 max-lg:px-5 lg:py-[10px] lg:px-10">Try it now</Button>
+            <Link
+              className="cursor-pointer font-lato font-bold max-lg:text-[13px]"
+              to="login"
+            >
+              Login
+            </Link>
+            <Button
+              onClick={() => proceed()}
+              className="max-lg:px-5 max-lg:py-2 lg:px-10 lg:py-[10px]"
+            >
+              Try it now
+            </Button>
           </div>
         </div>
       </header>
