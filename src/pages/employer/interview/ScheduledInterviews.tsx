@@ -23,7 +23,6 @@ import {
 import { capitalizeEachCase, formatTime } from "../../../utils/helpers.ts";
 import { Link, useParams } from "react-router-dom";
 import { getInterviewDetails } from "../../../services/api";
-import { interviewMockData } from "../../../utils/dumm.ts";
 import { useChatStore } from "../../../store/useChatStore.ts";
 
 interface InfoProps {
@@ -34,7 +33,7 @@ interface InfoProps {
 const ScheduledInterviews: React.FC = () => {
   const { setRecipient, setRecipientDetails, setIsClosed } = useChatStore();
   const [interview, setInterview] =
-    useState<InterviewScheduleDetailsResponse>(interviewMockData);
+    useState<InterviewScheduleDetailsResponse>({} as InterviewScheduleDetailsResponse);
   const [showAll, setShowAll] = useState(false);
   const maxToShow = 1;
 
