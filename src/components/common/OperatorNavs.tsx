@@ -10,7 +10,7 @@ const OperatorNavs: FC = () => {
     <div className="flex gap-4">
       <SearchIcon />
       <NotificationIcon count={2} />
-      <MessageNotificationIcon count={8} />
+      <MessageNotificationIcon />
       <Avatar isMobile={true} />
     </div>
   );
