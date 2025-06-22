@@ -27,8 +27,8 @@ const EmployerMultistepForm: React.FC = () => {
   };
   const handlePrev = () => setStep(step - 1);
   return (
-    <motion.div
-      className="relative mx-auto my-auto flex h-screen w-full flex-col items-center justify-center border-2 py-2 md:flex-row lg:gap-x-[10%] xl:gap-x-[1%]"
+    <motion.form
+      className="relative mx-auto my-auto flex h-screen w-full flex-col items-center justify-center py-2 md:flex-row lg:gap-x-[10%] xl:gap-x-[1%]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -46,7 +46,7 @@ const EmployerMultistepForm: React.FC = () => {
 
       {/* Step Indicator */}
       <div className="absolute left-1/2 top-10 flex -translate-x-1/2 transform flex-col gap-y-2 md:left-1/2 md:top-5 md:transform">
-        <span className="mt-2 block text-left md:mt-0">{step} of 4</span>
+        <span className="mt-2 block text-center md:text-left md:mt-0">{step} of 4</span>
         <div className="flex justify-evenly gap-x-2">
           {[1, 2, 3, 4].map((stepNumber) => (
             <div
@@ -139,7 +139,7 @@ const EmployerMultistepForm: React.FC = () => {
         />
       )}
       {/*</div>*/}
-    </motion.div>
+    </motion.form>
   );
 };
 

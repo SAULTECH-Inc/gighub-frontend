@@ -23,7 +23,7 @@ const EmployeesTestimonial = () => {
         {testimonials.map((testimonial, index) => (
           <div
             key={index}
-            className="relative flex h-[198px] w-full flex-col rounded-bl-none rounded-br-[10px] rounded-tl-none rounded-tr-[10px] bg-[#F7F7F7] p-4 shadow md:w-[409px] md:flex-wrap"
+            className="relative flex md:h-[198px] w-full flex-col rounded-bl-none rounded-br-[10px] rounded-tl-none rounded-tr-[10px] bg-[#F7F7F7] p-4 shadow md:w-[409px] md:flex-wrap"
           >
             {/* Purple side feature joined with the box */}
             <div className="absolute left-0 top-0 h-full w-[10px] bg-[#6B5AED]"></div>

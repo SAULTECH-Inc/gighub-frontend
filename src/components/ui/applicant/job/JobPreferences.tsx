@@ -4,7 +4,6 @@ import { JobPreference, Location, SalaryRange } from "../../../../utils/types";
 import { useAuth } from "../../../../store/useAuth.ts";
 import { useApplicantJobProfile } from "../../../../store/useApplicantJobProfile.ts";
 import { useSectionEditable } from "../../../../store/useEditable.ts";
-import { countries } from "../../../../utils/Countries.ts";
 import { PreferredJobRole } from "./PreferredJobRole.tsx";
 import { PreferredJobType } from "./PreferredJobType.tsx";
 
@@ -13,7 +12,6 @@ const JobPreferencesForm: React.FC = () => {
   const { preferences, fetchPreferences, setPreference, updatePreference } =
     useApplicantJobProfile();
   const { isEditable, toggleEdit } = useSectionEditable("job-preference");
-  const cityOptions = ["Apapa", "Ikeja", "Victoria Island", "Abuja"];
 
   const [salary, setSalary] = useState<SalaryRange>({
     currency: "NGN",
@@ -44,7 +42,7 @@ const JobPreferencesForm: React.FC = () => {
     };
 
     if (applicant?.id) {
-      fetchData();
+      fetchData().then(r=>r);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicant?.id]);
@@ -154,10 +152,8 @@ const JobPreferencesForm: React.FC = () => {
           <PreferredLocationSelector
             isEditable={isEditable}
             preferences={preferences as JobPreference}
-            cityOptions={cityOptions}
             handleLocationSelect={handleLocationSelect}
             removeLocation={removeLocation}
-            countryOptions={countries.map((country) => country.value)}
           />
 
           {/* Preferred Job Type */}
@@ -170,7 +166,7 @@ const JobPreferencesForm: React.FC = () => {
             </label>
             <div className="flex h-[55px] w-full flex-row justify-evenly rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#F7F8FA] p-0">
               <select
-                className="h-full w-[20%] rounded-l-[10px] pl-3 text-xs md:w-[20%] md:text-sm"
+                className="h-full w-[20%] rounded-l-[10px] text-xs md:w-[20%] md:text-sm"
                 value={salary.currency}
                 onChange={(e) => handleSalaryChange("currency", e.target.value)}
               >
@@ -202,7 +198,7 @@ const JobPreferencesForm: React.FC = () => {
               <button
                 type="button"
                 disabled={!isEditable}
-                className="w-[20%] bg-[#E6E6E6] px-4 text-center text-xs font-bold text-purple-950 md:text-sm"
+                className="w-[20%] bg-[#E6E6E6] rounded-tr-[10px] rounded-br-[10px] px-4 text-center text-xs font-bold text-purple-950 md:text-sm"
                 onClick={handleAddSalary}
               >
                 ADD

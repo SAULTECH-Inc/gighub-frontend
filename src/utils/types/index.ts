@@ -6,7 +6,7 @@ import {
   InterviewStatus,
   InterviewType,
   RateeType,
-  UserType,
+  UserType
 } from "../enums.ts";
 import { EmploymentType } from "../employmentTypes.ts";
 import { ApplicationStatus } from "../dummyApplications.ts";
@@ -387,21 +387,18 @@ export const countries: Option[] = [
   { label: "United Kingdom", value: "United Kingdom" },
   { label: "Canada", value: "Canada" },
 ];
-export const cities: Option[] = [
-  { label: "New York City", value: "NYC" },
-  { label: "Los Angeles", value: "LA" },
-  { label: "Chicago", value: "Chicago" },
-  { label: "Houston", value: "Houston" },
-  { label: "Philadelphia", value: "Philadelphia" },
-  { label: "San Francisco", value: "SF" },
-  { label: "Seattle", value: "Seattle" },
-  { label: "Boston", value: "Boston" },
-  { label: "Washington D.C.", value: "Washington" },
-  { label: "Atlanta", value: "Atlanta" },
-  { label: "Dallas", value: "Dallas" },
-  { label: "San Diego", value: "San Diego" },
-  { label: "San Jose", value: "San Jose" },
-];
+export const cities: Option[] = await fetch("https://countriesnow.space/api/v0.1/countries/population/cities")
+  .then(res => res.json())
+  .then(res => res["data"])
+  .then(data => {
+    return data.map((c: any) => {
+      return {
+        label: c["city"],
+        value: c["city"]
+      }
+    });
+  });
+
 export const fieldsOfStudies: Option[] = [
   { label: "Computer Science", value: "Computer Science" },
   { label: "Business Administration", value: "Business Administration" },

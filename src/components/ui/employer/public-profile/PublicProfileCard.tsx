@@ -29,7 +29,7 @@ const PublicProfileCard: React.FC<PublicProfileCardProp> = ({ user }) => {
           </div>
         </div>
         <div className="flex w-full gap-x-4 gap-y-3">
-          <button className="h-[45px] w-[150px] rounded-[10px] bg-[#F7F7F7] px-6 py-2 text-black transition duration-200">
+          <button className="text-sm w-[150px] rounded-[10px] bg-[#F7F7F7] px-6 py-2 text-black transition duration-200">
             Follow us
           </button>
           <button
@@ -37,7 +37,7 @@ const PublicProfileCard: React.FC<PublicProfileCardProp> = ({ user }) => {
               setRecipient(user?.email);
               setIsClosed(false);
             }}
-            className="w-[200px] rounded-lg bg-[#6438C2] px-6 py-2 text-white transition duration-200 hover:bg-purple-700"
+            className="w-[200px] text-sm rounded-lg bg-[#6438C2] px-6 py-2 text-white transition duration-200 hover:bg-purple-700"
           >
             Send Message
           </button>

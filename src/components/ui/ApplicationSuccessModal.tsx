@@ -23,7 +23,7 @@ const ApplicationSuccessModal: React.FC<SuccessModalProps> = ({ modalId }) => {
       onClick={handleCloseApplicationSuccessModal}
     >
       <div
-        className="relative flex h-[664px] w-[455px] flex-col items-center justify-center rounded-[12px] bg-white p-5 shadow-lg"
+        className="relative flex h-[500px] md:h-[664px] w-[95%] md:w-[455px] flex-col items-center justify-center rounded-[12px] bg-white p-5 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -65,7 +65,7 @@ const ApplicationSuccessModal: React.FC<SuccessModalProps> = ({ modalId }) => {
           Congratulations!
         </h2>
 
-        <p className="text-gray-600 mb-6 w-[360px] text-center text-[13px]">
+        <p className="text-gray-600 mb-6 w-[320px] md:w-[360px] text-left md:text-center text-[13px]">
           Your application has been successfully submitted, and all your details
           have been received by the recruiter. You can monitor your application
           status by visiting your Job Application Dashboard. Thank you for

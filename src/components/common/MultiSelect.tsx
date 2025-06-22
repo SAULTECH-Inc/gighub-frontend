@@ -14,16 +14,18 @@ interface MultiSelectProps {
   selectedItems: Option[];
   setSelectedItems: (items: Option[]) => void;
   requiredAsterisk?: boolean;
+  disabled?: boolean; // ✅ Optional disabled prop
 }
 
 const MultiSelect: React.FC<MultiSelectProps> = ({
-  label,
-  placeholder,
-  options,
-  selectedItems,
-  setSelectedItems,
-  requiredAsterisk = false,
-}) => {
+                                                   label,
+                                                   placeholder,
+                                                   options,
+                                                   selectedItems,
+                                                   setSelectedItems,
+                                                   requiredAsterisk = false,
+                                                   disabled = false,
+                                                 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
@@ -32,8 +34,8 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   useEffect(() => {
     setFilteredOptions(
       options.filter((option) =>
-        option.label.toLowerCase().includes(search.toLowerCase()),
-      ),
+        option.label.toLowerCase().includes(search.toLowerCase())
+      )
     );
   }, [search, options]);
 
@@ -53,6 +55,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   }, []);
 
   const handleSelect = (option: Option) => {
+    if (disabled) return;
     if (!selectedItems.some((item) => item.value === option.value)) {
       setSelectedItems([...selectedItems, option]);
     }
@@ -60,7 +63,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   };
 
   const handleAddOption = () => {
-    if (search.trim() === "") return;
+    if (disabled || search.trim() === "") return;
 
     const newOption: Option = {
       label: search,
@@ -74,32 +77,44 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     setIsOpen(false);
     setSearch("");
   };
+
   const handleRemove = (value: string) => {
+    if (disabled) return;
     const updatedItems = selectedItems.filter((item) => item.value !== value);
     setSelectedItems(updatedItems);
   };
 
   return (
     <div className="relative w-full" ref={dropdownRef}>
-      <div className="flex w-full flex-wrap rounded-[16px] border border-[#E6E6E6] bg-[#F7F8FA] p-2 md:p-4">
+      <div
+        className={`flex w-full flex-wrap rounded-[16px] border ${
+          disabled ? "bg-gray-200 cursor-not-allowed" : "bg-[#F7F8FA]"
+        } border-[#E6E6E6] p-2 md:p-4`}
+      >
         <div className="flex items-center gap-1 text-[12px] sm:text-base">
           {label}
           {requiredAsterisk && <FaAsterisk className="w-2 fill-[#FA4E09]" />}
         </div>
+
         <button
           type="button"
-          className={`mt-2 flex w-full items-center justify-between rounded-lg border border-[#E6E6E6] bg-white p-2 text-[12px] text-[#8E8E8E] sm:text-base`}
-          onClick={() => setIsOpen(!isOpen)}
+          className={`mt-2 flex w-full items-center justify-between rounded-lg border border-[#E6E6E6] ${
+            disabled
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-white text-[#8E8E8E]"
+          } p-2 text-[12px] sm:text-base`}
+          onClick={() => !disabled && setIsOpen(!isOpen)}
+          disabled={disabled}
         >
           {placeholder}
           {isOpen ? (
-            <MdKeyboardArrowUp className="cursor-pointer text-[24px]" />
+            <MdKeyboardArrowUp className="text-[24px]" />
           ) : (
-            <MdKeyboardArrowDown className="cursor-pointer text-[24px]" />
+            <MdKeyboardArrowDown className="text-[24px]" />
           )}
         </button>
 
-        {isOpen && (
+        {isOpen && !disabled && (
           <div className="border-gray-300 absolute z-10 mt-2 w-full rounded-lg border bg-white p-3 shadow-lg">
             <input
               type="text"
@@ -107,6 +122,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
               placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              disabled={disabled}
             />
 
             <ul className="mt-2 max-h-48 overflow-y-auto">
@@ -129,7 +145,8 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 
             {search.trim() !== "" &&
               !options.some(
-                (option) => option.label.toLowerCase() === search.toLowerCase(),
+                (option) =>
+                  option.label.toLowerCase() === search.toLowerCase()
               ) && (
                 <button
                   className="mt-2 w-full rounded bg-[#6438C2] px-4 py-2 text-sm text-white hover:bg-[#6438C2]"
@@ -140,7 +157,8 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
               )}
           </div>
         )}
-        <div className="mt-2 flex max-h-[100px] flex-wrap gap-2 overflow-y-auto">
+
+        <div className="mt-2 flex h-auto max-h-max flex-wrap gap-2 overflow-y-auto">
           {selectedItems.map((item) => (
             <div
               key={item.value}
@@ -151,6 +169,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                 type="button"
                 onClick={() => handleRemove(item.value)}
                 className="cursor-pointer font-semibold text-white"
+                disabled={disabled}
               >
                 &times;
               </button>
