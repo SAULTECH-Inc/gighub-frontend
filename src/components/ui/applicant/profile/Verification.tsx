@@ -39,7 +39,7 @@ const ComplianceAndVerification: React.FC = () => {
   return (
     <section
       id="company-socials"
-      className="relative mt-4 border-t-[2px] border-t-[#E6E6E6] pt-5"
+      className="w-full relative mt-4 border-t-[2px] border-t-[#E6E6E6] pt-5"
     >
       <div className="absolute right-1 top-2 z-10 flex items-center justify-evenly gap-x-2 text-xs">
         <button
@@ -58,8 +58,8 @@ const ComplianceAndVerification: React.FC = () => {
         </button>
       </div>
       <h3 className="mb-4 font-lato text-[20px]">Verification</h3>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-col space-y-2">
+      <div className="w-full gap-4">
+        <div className="w-full flex flex-col space-y-2">
           <label className="text-gray-600 mb-1 text-sm">Government ID</label>
           <input
             type="url"
@@ -67,7 +67,7 @@ const ComplianceAndVerification: React.FC = () => {
             value={applicant?.governmentIdentificationNumber || ""}
             disabled={!isEditable}
             onChange={handleChange}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="w-[100%] rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
           />
         </div>
       </div>

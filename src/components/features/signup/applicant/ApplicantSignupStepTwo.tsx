@@ -142,7 +142,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
 
   return (
     <motion.div
-      className="mt-5 w-[85%] px-[10px] md:mr-28 md:mt-32 md:w-[680px] lg:w-[500px] lg:px-0 mx-auto"
+      className="mt-5 w-[100%] px-[10px] md:mr-28 md:mt-32 md:w-[680px] lg:w-[500px] lg:px-0 mx-auto"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -202,6 +202,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
               disabled={!documentType} // Disable the file input if no document type is selected
             />
             <button
+              type="button"
               className="mx-auto flex h-[44px] w-[162px] items-center justify-center rounded-[16px] border border-[#E6E6E6] bg-[#6438C2] font-[13px] text-white hover:bg-[#5931A9] focus:border-none focus:outline-none focus:ring-0"
               onClick={handleBrowseClick}
               disabled={!documentType} // Disable the button if no document type is selected
@@ -237,24 +238,30 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
             {uploadedFiles.map((file, index) => (
               <motion.div
                 key={index}
-                className="flex h-[89px] w-full items-center justify-between rounded-[16px] border-[1px] border-[#E6E6E6] p-3"
+                className="flex flex-col h-[89px] w-full gap-y-2 md:gap-y-0 items-center rounded-[16px] border-[1px] border-[#E6E6E6] p-3"
                 initial={{ x: -50 }}
                 animate={{ x: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="flex items-center gap-x-2">
-                  <img src={file.icon} alt="file icon" />
-                  <div className="text-gray-400 text-sm">{file.name}</div>
+                <div className="w-full flex justify-between items-center gap-x-3 md:mt-2 md:px-3">
+                  <div className="flex items-center gap-x-2">
+                    <img src={file.icon} alt="file icon" />
+                    <div className="text-gray-400 text-sm">{(file.name).slice(0,10).concat("...")}</div>
+                  </div>
+                  <div className="hidden md:flex text-gray-600 text-sm">
+                    {file.progress}% Uploaded
+                  </div>
+                  <button
+                    type="button"
+                    className="text-sm text-red-600"
+                    onClick={() => handleRemoveFile(file.name)} // Remove file on click
+                  >
+                    &#10005; {/* Unicode for 'X' symbol */}
+                  </button>
                 </div>
-                <div className="text-gray-600 text-sm">
+                <div className="md:hidden self-start text-gray-600 text-sm ml-2">
                   {file.progress}% Uploaded
                 </div>
-                <button
-                  className="text-sm text-red-600"
-                  onClick={() => handleRemoveFile(file.name)} // Remove file on click
-                >
-                  &#10005; {/* Unicode for 'X' symbol */}
-                </button>
               </motion.div>
             ))}
           </motion.div>
@@ -268,12 +275,14 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
         transition={{ duration: 0.5 }}
       >
         <button
+          type="button"
           onClick={handlePrev}
           className="text-gray-600 h-[44px] w-[162px] rounded-[16px] border border-[#E6E6E6] bg-white font-[13px] hover:bg-[#F7F8FA] focus:border-none focus:outline-none focus:ring-0"
         >
           Back
         </button>
         <button
+          type="button"
           onClick={handleProceed}
           className="h-[44px] w-[162px] rounded-[16px] bg-[#6438C2] font-[13px] text-white hover:bg-[#5931A9] focus:border-none focus:outline-none focus:ring-0"
         >

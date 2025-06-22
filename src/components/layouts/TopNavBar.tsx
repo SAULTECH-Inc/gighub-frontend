@@ -297,7 +297,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
 
         {/* Navigation Items */}
         <div className="p-4">
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col gap-y-2">
             {navItemsMobile.map((item) => (
               <div
                 key={item}
@@ -334,7 +334,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
           {/* Logout */}
           <div
             onClick={handleLogout}
-            className="mt-10 flex cursor-pointer items-center gap-3 pl-4 text-red-500 hover:text-red-700"
+            className="mt-5 md:mt-10 flex cursor-pointer items-center gap-3 pl-4 text-red-500 hover:text-red-700"
           >
             <FaPowerOff className="text-lg" /> Logout
           </div>

@@ -131,7 +131,7 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
 
   return (
     <motion.div
-      className="mt-5 w-[310px] px-[10px] md:mr-28 md:mt-32 md:w-[680px] lg:w-[500px] lg:px-0"
+      className="w-[95%] px-[10px] md:mr-28 md:mt-32 md:w-[680px] lg:w-[500px] lg:px-0 mx-auto"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -215,6 +215,7 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
               disabled={!documentType}
             />
             <button
+              type="button"
               className="mx-auto flex h-[44px] w-[162px] items-center justify-center rounded-[16px] border border-[#E6E6E6] bg-[#6438C2] font-[13px] text-white hover:bg-[#5931A9] focus:border-none focus:outline-none focus:ring-0"
               onClick={handleBrowseClick}
               disabled={!documentType}
@@ -265,6 +266,7 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
                   {file.progress}% Uploaded
                 </div>
                 <button
+                  type="button"
                   className="text-sm text-red-600"
                   onClick={() => handleRemoveFile(file.name)}
                 >
@@ -283,12 +285,14 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
         transition={{ duration: 0.5 }}
       >
         <button
+          type="button"
           onClick={handlePrev}
           className="text-gray-600 h-[44px] w-[162px] rounded-[16px] border border-[#E6E6E6] bg-white font-[13px] hover:bg-[#F7F8FA] focus:border-none focus:outline-none focus:ring-0"
         >
           Back
         </button>
         <button
+          type="button"
           onClick={handleSendOtp}
           className="h-[44px] w-[162px] rounded-[16px] bg-[#6438C2] font-[13px] text-white hover:bg-[#5931A9] focus:border-none focus:outline-none focus:ring-0"
         >

@@ -58,7 +58,7 @@ const EmployerPublicProfile: FC = () => {
         />
       )}
       {/* Main Content */}
-      <div className="mx-auto h-auto w-full rounded-[16px] border-[2px] border-[#E6E6E6] bg-white p-8 md:w-[90%] lg:w-[70%]">
+      <div className="mx-auto h-auto w-full space-y-8 rounded-[16px] border-[2px] border-[#E6E6E6] bg-white p-8 md:w-[90%] lg:w-[70%]">
         <PublicProfileCard user={employer as EmployerData} />
 
         {/* Form */}

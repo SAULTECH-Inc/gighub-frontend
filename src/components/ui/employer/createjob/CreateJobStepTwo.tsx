@@ -325,6 +325,10 @@ const CreateJobStepTwo: React.FC = () => {
                     className="w-full border-none text-sm outline-none focus:border-none focus:outline-none focus:ring-0 sm:text-base"
                     onChange={(e) => {
                       setTitle(e.target.value);
+                      setJobData({
+                        ...job,
+                        title: e.target.value
+                      });
                       setErrors({
                         ...errors,
                         title: e.target.value.trim()

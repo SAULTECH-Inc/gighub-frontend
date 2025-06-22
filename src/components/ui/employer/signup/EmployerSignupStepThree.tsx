@@ -166,12 +166,14 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
         transition={{ duration: 0.5 }}
       >
         <button
+          type="button"
           className="mx-auto block h-[50px] w-full rounded-[10px] bg-[#6438C2] text-[16px] font-semibold text-[#FFFFFF] transition hover:bg-[#5931A9]"
           onClick={handleContinue}
         >
           {loading ? "Verifying..." : "Continue"}
         </button>
         <button
+          type="button"
           className="mx-auto flex h-[50px] w-full items-center justify-center gap-x-2 rounded-[10px] border-[1px] border-[#CCC] bg-white text-[16px] font-semibold text-[#000000] transition hover:bg-[#ccc]"
           onClick={handlePrev}
         >

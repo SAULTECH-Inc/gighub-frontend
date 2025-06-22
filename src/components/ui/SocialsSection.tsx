@@ -105,7 +105,7 @@ const SocialsSection: React.FC = () => {
           Save
         </button>
       </div>
-      <h3 className="text-gray-700 mb-4 font-lato text-[20px]">
+      <h3 className="text-gray-700 mb-4 mt-4 font-lato text-[20px]">
         Social and Professional Links
       </h3>
       <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-10">

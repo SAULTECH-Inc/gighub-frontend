@@ -15,7 +15,9 @@ const ApplicationCard: React.FC<{
   console.log("STATUS COLOR ::: " + statusColor);
 
   return (
-    <div className="grid w-full grid-cols-[calc(63%+10%)_calc(40%-10%)] items-center justify-between rounded-[16px] bg-[#F5F5F5] p-2 md:grid-cols-[20%_24%_12%_14%_12%] mdl:grid-cols-[20%_14%_24%_12%_14%_12%]">
+    <div
+      onTouchStart={onView}
+      className="grid w-full grid-cols-[calc(63%+10%)_calc(40%-10%)] items-center justify-between rounded-[16px] bg-[#F5F5F5] p-2 md:grid-cols-[20%_24%_12%_14%_12%] mdl:grid-cols-[20%_14%_24%_12%_14%_12%]">
       {/*Profile*/}
       <div className="flex w-full items-center gap-2">
         <div className="h-[46px] w-[51px] rounded-[10px] bg-[#D9D9D9]">

@@ -58,9 +58,10 @@ const NotificationDropdown: FC = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       {/*absolute right-0 top-14 w-[352px] bg-white shadow-lg rounded-[16px] z-50 font-lato p-6*/}
-      <div className="absolute -right-10 top-8 z-50 w-[352px] rounded-[16px] bg-white p-4 font-lato shadow-lg md:right-0">
+      <div
+        className="fixed inset-x-0 top-2 z-50 mx-auto w-[95%] md:w-[352px] rounded-[16px] bg-white p-4 font-lato shadow-lg md:absolute md:right-0 md:top-8 md:left-auto md:mx-0 md:translate-x-0">
         <div>
           <div className="relative mb-4 flex items-center justify-between">
             <h3 className="text-gray-800 text-lg font-bold">Notification</h3>
@@ -148,7 +149,9 @@ const NotificationDropdown: FC = () => {
       </div>
 
       {viewedMessageDetails && (
-        <div className="absolute right-[calc(340px+1rem)] top-14 z-50 mr-4 w-[400px] rounded-[16px] bg-white p-4 font-lato shadow-lg">
+        <div
+          className="fixed inset-x-0 top-[calc(100px)] z-50 mx-auto w-[90%] max-w-[400px] rounded-[16px] bg-white p-4 font-lato shadow-lg md:absolute md:right-[calc(352px+1rem)] md:top-14 md:mx-0">
+
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-gray-800 text-lg font-bold">
               {viewedMessageDetails.title} Details

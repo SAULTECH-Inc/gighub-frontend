@@ -66,7 +66,7 @@ const CustomDropdown: React.FC<DropdownProps> = ({
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative w-full" ref={dropdownRef}>
       {/* Dropdown button */}
       <button
         type="button"
