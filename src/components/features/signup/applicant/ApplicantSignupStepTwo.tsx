@@ -19,6 +19,9 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
     setApplicantSignupRequest,
     sendVerificationOtp,
   } = useAuth();
+  const [triggerError, setTriggerError] = useState({
+    documentType: false
+  });
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const [documentType, setDocumentType] = useState<string | undefined>(
     applicantSignupRequest?.documentType,
@@ -27,7 +30,10 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
 
   const handleBrowseClick = () => {
     if (documentType) {
+      setTriggerError({...triggerError, documentType: false});
       fileInputRef.current?.click();
+    }else{
+      setTriggerError({...triggerError, documentType: true});
     }
   };
 
@@ -203,7 +209,7 @@ const ApplicantSignupStepTwo: React.FC<StepTwoProp> = ({
               Browse Files
             </button>
           </motion.div>
-          {!documentType && (
+          {(!documentType && triggerError.documentType) && (
             <motion.p
               className="mt-2 text-sm text-red-600"
               initial={{ opacity: 0 }}
