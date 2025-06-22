@@ -11,7 +11,7 @@ interface MessageDropdownProps {
 }
 
 const MessageDropdown: React.FC<MessageDropdownProps> = ({ onClose }) => {
-  const dividerStyle = { borderColor: "#E6E6E6" }; // Faint divider color
+  const dividerStyle = { borderColor: "#E6E6E6" };
   const {
     setIsClosed,
     setIsMinimized,
@@ -21,10 +21,6 @@ const MessageDropdown: React.FC<MessageDropdownProps> = ({ onClose }) => {
     decrementUnread,
   } = useChatStore();
   const { email } = useAuth();
-  console.log(
-    "Messages in dropdown:",
-    messages.filter((c) => c.sender !== email && !c.viewed).length,
-  );
 
   const handleOpenMessage = async (message: ChatMessage) => {
     setRecipient(message.sender);
@@ -32,26 +28,21 @@ const MessageDropdown: React.FC<MessageDropdownProps> = ({ onClose }) => {
     setIsMinimized(false);
     const response = await markMessageAsRead(message._id as string, email);
     if (response.statusCode === 200) {
-      console.log("Message marked as read");
-      const updatedMessages = messages.map((msg) => {
-        if (msg._id === message._id) {
-          return { ...msg, viewed: true };
-        }
-        return msg;
-      });
+      const updatedMessages = messages.map((msg) =>
+        msg._id === message._id ? { ...msg, viewed: true } : msg,
+      );
       setMessages(updatedMessages);
       decrementUnread();
     }
   };
 
   return (
-    <div className="absolute right-0 top-14 z-50 w-[352px] rounded-[16px] bg-white p-6 font-lato shadow-lg">
+    <div className="fixed inset-x-0 top-2 z-50 mx-auto w-[352px] rounded-[16px] bg-white p-6 font-lato shadow-lg md:absolute md:right-0 md:top-14 md:left-auto md:mx-0">
       {/* Header */}
       <div>
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-gray-800 text-lg font-bold">Messages</h3>
         </div>
-        {/* Divider Below Header */}
         <hr style={dividerStyle} className="-mx-6" />
       </div>
 
@@ -67,19 +58,15 @@ const MessageDropdown: React.FC<MessageDropdownProps> = ({ onClose }) => {
           .slice(0, 10)
           .map((message: ChatMessage, index) => (
             <li key={index}>
-              {/* Message Content */}
               <div
                 className="hover:bg-gray-100 flex cursor-pointer items-center gap-4 p-3"
                 onClick={onClose}
               >
-                {/* Avatar */}
                 <img
                   src={`${message.senderAvatar || AVATAR_API_URL.concat(message.senderName)}`}
                   alt={message.sender}
                   className="h-10 w-10 rounded-full"
                 />
-
-                {/* Details */}
                 <div className="flex-1">
                   <p className="text-gray-800 text-sm font-semibold">
                     {message.senderName}
@@ -100,8 +87,6 @@ const MessageDropdown: React.FC<MessageDropdownProps> = ({ onClose }) => {
                   </div>
                 </div>
               </div>
-
-              {/* Divider (except after the last item) */}
               {index < messages.length - 1 && (
                 <hr style={dividerStyle} className="-mx-6" />
               )}
@@ -109,7 +94,6 @@ const MessageDropdown: React.FC<MessageDropdownProps> = ({ onClose }) => {
           ))}
       </ul>
 
-      {/* Divider Above "View All Messages" */}
       <div className="mt-4">
         <hr style={dividerStyle} className="-mx-6 mb-4" />
         <div className="text-center">

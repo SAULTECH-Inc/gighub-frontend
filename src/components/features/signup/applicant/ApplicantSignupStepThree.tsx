@@ -109,7 +109,7 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({ handlePrev }) => {
 
   return (
     <motion.div
-      className="mt-5 w-[85%] px-[10px] md:mr-28 md:mt-32 md:w-[680px] lg:w-[500px] lg:px-0 mx-auto"
+      className="mt-5 w-[100%] px-[10px] md:mr-28 md:mt-32 md:w-[680px] lg:w-[500px] lg:px-0 mx-auto"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -189,12 +189,14 @@ const ApplicantSignupStepThree: React.FC<StepTwoProp> = ({ handlePrev }) => {
         transition={{ duration: 0.5 }}
       >
         <button
+          type="button"
           className="mx-auto block h-[50px] w-full rounded-[10px] bg-[#6438C2] text-[16px] font-semibold text-[#FFFFFF] transition hover:bg-[#5931A9]"
           onClick={handleContinue}
         >
           Continue
         </button>
         <button
+          type="button"
           className="mx-auto flex h-[50px] w-full items-center justify-center gap-x-2 rounded-[10px] border-[1px] border-[#CCC] bg-white text-[16px] font-semibold text-[#000000] transition hover:bg-[#ccc]"
           onClick={handlePrev}
         >

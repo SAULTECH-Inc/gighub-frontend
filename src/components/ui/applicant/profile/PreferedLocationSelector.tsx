@@ -1,78 +1,53 @@
-import React, { useState } from "react";
-import { JobPreference } from "../../../../utils/types";
+import React, { useEffect, useState } from "react";
+import { cities, countries, JobPreference } from "../../../../utils/types";
+import CustomDropdown from "../../../common/CustomDropdown.tsx";
 interface LocationSelectorProp {
-  countryOptions: string[];
-  cityOptions: string[];
   preferences: JobPreference;
   handleLocationSelect: (country: string, city: string) => void;
   removeLocation: (index: number) => void;
   isEditable: boolean;
 }
 const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
-  countryOptions,
-  cityOptions,
   preferences,
-  handleLocationSelect,
+                                                                     handleLocationSelect,
   removeLocation,
   isEditable,
 }: LocationSelectorProp) => {
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [selectedCity, setSelectedCity] = useState<string>("");
 
-  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedCountry(e.target.value);
-    setSelectedCity(""); // Clear city if country is changed
-  };
+  useEffect(() => {
+    handleLocationSelect(selectedCountry, selectedCity);
+  }, [selectedCountry, selectedCity, handleLocationSelect]);
 
-  const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedCityValue = e.target.value;
-    setSelectedCity(selectedCityValue);
 
-    // Add location only when both country and city are selected
-    if (selectedCountry && selectedCityValue) {
-      handleLocationSelect(selectedCountry, selectedCityValue);
-      setSelectedCountry(""); // Clear the country after adding
-      setSelectedCity(""); // Clear the city after adding
-    }
-  };
 
   return (
-    <div>
+    <div className="w-full">
       <label className="text-gray-700 mb-2 block font-lato text-lg">
         Preferred Job Location
       </label>
-      <div className="border-gray-300 w-full rounded-[16px] border border-[#E6E6E6] bg-white p-4">
-        <div className="mb-4 flex space-x-4">
-          <select
-            className="w-1/2 rounded-[10px] border border-[#E6E6E6] bg-[#F7F8FA] p-2"
-            value={selectedCountry}
+      <div className="w-full rounded-[16px] border border-[#E6E6E6] bg-white p-4">
+        <div className="w-full mb-4 flex flex-col gap-x-4 gap-y-3">
+          <CustomDropdown
+            className="w-full rounded-[10px] text-left border border-[#E6E6E6] bg-[#F7F8FA] p-2"
             disabled={!isEditable}
-            onChange={handleCountryChange}
-          >
-            <option value="" disabled>
-              Country
-            </option>
-            {countryOptions.map((country) => (
-              <option key={country} value={country}>
-                {country}
-              </option>
-            ))}
-          </select>
-          <select
-            className="w-1/2 rounded-[10px] border-[#E6E6E6] bg-[#F7F8FA] p-2"
-            value={selectedCity}
-            onChange={handleCityChange}
-            disabled={!selectedCountry} // Disable city until a country is selected
-          >
-            <option value="" disabled>
-              City
-            </option>
-            {cityOptions.map((city) => (
-              <option key={city} value={city}>
-                {city}
-              </option>
-            ))}
-          </select>
+            placeholder="Country"
+            options={countries}
+            handleSelect={(c)=>{
+              setSelectedCountry(c.value)
+            }}
+          />
+
+          <CustomDropdown
+            className="w-full rounded-[10px] text-left border border-[#E6E6E6] bg-[#F7F8FA] p-2"
+            disabled={!isEditable}
+            placeholder="City"
+            options={cities}
+            handleSelect={(c)=>{
+              setSelectedCity(c.value);
+            }}
+          />
         </div>
 
         <div className="flex flex-wrap gap-2">

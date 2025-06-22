@@ -111,7 +111,7 @@ const ChatWindow: React.FC = () => {
   return (
     <Draggable handle=".drag-handle">
       <div
-        className={`fixed bottom-5 right-5 z-[999999] w-[396px] ${
+        className={`fixed bottom-8 md:bottom-5 right-5 z-[999999] w-[90%] md:w-[396px] ${
           isMinimized ? "h-16" : "h-[634px]"
         } flex flex-col rounded-t-[16px] bg-white shadow-lg`}
       >
@@ -120,10 +120,12 @@ const ChatWindow: React.FC = () => {
           <div className="absolute right-2 top-2 flex gap-x-1">
             <FaWindowMinimize
               onClick={() => setIsMinimized(!isMinimized)}
+              onTouchStart={() => setIsMinimized(!isMinimized)}
               className="mb-1 cursor-pointer px-2 text-[30px] text-white"
             />
             <button
               onClick={() => setIsClosed(true)}
+              onTouchStart={() => setIsClosed(true)}
               className="px-2 py-1 text-[30px] text-white"
             >
               &times;

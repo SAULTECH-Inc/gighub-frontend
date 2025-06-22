@@ -71,6 +71,7 @@ const CreateJobStepThree: React.FC = () => {
             label="Preferred Candidate Country"
             placeholder="Select or add a country"
             options={countries}
+            disabled={!isSubscribed}
             selectedItems={(job.preferredCandidateCountry || []).map(
               (country) => ({ label: country, value: country }),
             )}
@@ -95,6 +96,7 @@ const CreateJobStepThree: React.FC = () => {
               <CustomCheckbox
                 checked={job?.applicationMethod?.byCv ?? false}
                 size={20}
+                disabled={!isSubscribed}
                 checkColor="#6438C2"
                 label="Apply With CV"
                 onChange={(e) => {
@@ -110,6 +112,7 @@ const CreateJobStepThree: React.FC = () => {
               <CustomCheckbox
                 checked={job?.applicationMethod?.byProfile ?? false}
                 size={20}
+                disabled={!isSubscribed}
                 checkColor="#6438C2"
                 label="Apply With Profile"
                 onChange={(e) => {
@@ -126,6 +129,7 @@ const CreateJobStepThree: React.FC = () => {
                 checked={job?.applicationMethod?.byPortfolio ?? false}
                 size={20}
                 checkColor="#6438C2"
+                disabled={!isSubscribed}
                 label="Apply With Portfolio"
                 onChange={(e) => {
                   setJobData({
@@ -142,6 +146,7 @@ const CreateJobStepThree: React.FC = () => {
                 size={20}
                 checkColor="#6438C2"
                 label="Apply With Cover Letter"
+                disabled={!isSubscribed}
                 onChange={(e) => {
                   setJobData({
                     ...job,
@@ -157,6 +162,7 @@ const CreateJobStepThree: React.FC = () => {
                 size={20}
                 checkColor="#6438C2"
                 label="Apply With Video"
+                disabled={!isSubscribed}
                 onChange={(e) => {
                   setJobData({
                     ...job,

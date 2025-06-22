@@ -39,17 +39,17 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
-      <div className="flex h-[720px] w-[calc(90%-10px)] flex-col justify-evenly overflow-hidden rounded-[16px] bg-white shadow-xl md:h-[830px] md:w-[568px]">
+      <div className="flex h-[700px] w-[calc(97%-10px)] flex-col justify-evenly overflow-hidden rounded-[16px] bg-white shadow-xl md:h-[830px] md:w-[568px]">
         {/* Header */}
         <div className="relative -mt-8 flex h-[113px] items-center rounded-t-[16px] bg-gradient-to-r from-[#6438C2] to-[#FFFFFF] md:-mt-9">
           {/* Close Button */}
           <div
             onClick={() => closeModal(modalId)}
-            className="absolute right-4 top-12 flex h-[34px] w-[36px] cursor-pointer items-center justify-center rounded-full bg-white p-2 text-black focus:outline-none"
+            className="absolute right-4 top-9 md:top-12 flex h-[34px] w-[36px] cursor-pointer items-center justify-center rounded-full bg-white p-2 text-black focus:outline-none"
           >
             <img className="cursor-pointer" src={cancel} alt="cancel" />
           </div>
-          <div className="absolute top-[70px] flex w-[530px] items-end justify-between px-3">
+          <div className="absolute top-[50px] md:top-[70px] flex w-[530px] items-end justify-between px-3">
             {/* Profile Image */}
             <img
               src={
