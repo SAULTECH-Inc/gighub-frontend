@@ -7,6 +7,7 @@ import { z } from "zod";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../../store/useAuth.ts";
 import { EmployerSignupRequest } from "../../../../utils/types";
+import { Eye, EyeOff } from "lucide-react";
 
 // Define the Zod schema
 const schema = z
@@ -92,7 +93,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
 
   return (
     <motion.div
-      className="relative w-full px-[10px] md:w-[500px] md:px-0 lg:w-[500px]"
+      className="relative w-[80%] px-[10px] md:w-[500px] md:px-0 lg:w-[500px] mx-auto mt-10 md:mt-0"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -100,7 +101,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
     >
       {/* Form Fields */}
       <motion.div
-        className="mx-auto mb-[30px] flex flex-col text-center"
+        className="mx-auto mb-[10px] md:mb-[30px] flex flex-col text-center"
         initial={{ y: -50 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
@@ -202,7 +203,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
             onClick={togglePasswordVisibility}
             className="absolute right-[10px] top-[12px] text-[#6E4AED] focus:outline-none"
           >
-            {passwordVisible ? "Hide" : "Show"}
+            {passwordVisible ? <EyeOff /> : <Eye />}
           </button>
         </div>
       </motion.div>

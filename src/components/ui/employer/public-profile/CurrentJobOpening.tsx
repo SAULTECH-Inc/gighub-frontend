@@ -51,20 +51,20 @@ const JobOpening: React.FC<JobOpeningProp> = ({ employerId }) => {
               <h3 className="font-lato font-semibold">{job.title}</h3>
               <p className="font-lato text-sm text-[#7F7F7F]">{job.location}</p>
             </div>
-            <div className="mt-4 flex space-x-8">
+            <div className="w-full mt-4 flex gap-x-3 md:gap-x-8">
               <button
                 type="button"
                 onClick={() => {
                   setJobToApply(job);
                   openModal("application-modal");
                 }}
-                className="h-[41px] w-[100px] rounded-[10px] bg-[#6B5AED] px-6 py-2 text-white transition duration-200 hover:bg-purple-700"
+                className="md:h-[41px] text-sm md:w-[100px] rounded-[10px] bg-[#6B5AED] px-6 py-2 text-white transition duration-200 hover:bg-purple-700"
               >
                 Apply
               </button>
               <Link
                 to={`/jobs/${job?.id}/details`}
-                className="h-[41px] w-[140px] rounded-[10px] bg-white px-6 py-2 text-[#000000] transition duration-200"
+                className="md:h-[41px] text-sm w-[200px] md:w-[140px] rounded-[10px] bg-white px-6 py-2 text-[#000000] transition duration-200"
               >
                 View Detail
               </Link>

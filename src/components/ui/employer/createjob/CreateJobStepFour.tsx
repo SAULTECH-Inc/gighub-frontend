@@ -39,6 +39,7 @@ const CreateJobStepFour: React.FC = () => {
               label="Preferred Candidate Previous Company"
               placeholder="Search or add a company"
               options={PreferredCompanies}
+              disabled={!isSubscribed}
               selectedItems={(job?.preferredCandidatePreviousCompany || []).map(
                 (company) => ({
                   label: company,
@@ -65,6 +66,7 @@ const CreateJobStepFour: React.FC = () => {
             label="Preferred Candidate University"
             placeholder="Search or add university"
             options={universities}
+            disabled={!isSubscribed}
             selectedItems={(job?.preferredCandidateUniversity || []).map(
               (university) => ({
                 label: university,

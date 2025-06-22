@@ -14,8 +14,8 @@ const ApplicantMultistepForm: React.FC = () => {
   const handlePrev = () => setStep(step - 1);
 
   return (
-    <motion.div
-      className="relative flex min-h-screen flex-col items-center justify-center py-2 md:flex-row"
+    <motion.form
+      className="w-full relative flex min-h-screen flex-col items-center justify-center py-2 md:flex-row"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -106,7 +106,7 @@ const ApplicantMultistepForm: React.FC = () => {
           />
         )}
       </div>
-    </motion.div>
+    </motion.form>
   );
 };
 
