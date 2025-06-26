@@ -40,7 +40,7 @@ const CompanyInfo: React.FC = () => {
   };
   return (
     <section className="relative mt-4 border-t-[2px] border-t-[#E6E6E6] pt-5">
-      <div className="absolute right-1 top-2 flex items-center justify-evenly gap-x-2 text-xs">
+      <div className="absolute top-2 right-1 flex items-center justify-evenly gap-x-2 text-xs">
         <button
           onClick={toggleEdit}
           type="button"
@@ -57,21 +57,21 @@ const CompanyInfo: React.FC = () => {
           Save
         </button>
       </div>
-      <h3 className="mb-4 font-lato text-[20px]">Company Information</h3>
+      <h3 className="font-lato mb-4 text-[20px]">Company Information</h3>
       <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-10">
         <div className="flex flex-col">
-          <label className="text-gray-600 mb-1 text-[16px]">Company Name</label>
+          <label className="mb-1 text-[16px] text-gray-600">Company Name</label>
           <input
             type="text"
             value={companyInfo?.companyName as string}
             name="companyName"
             onChange={handleChange}
             disabled={!isEditable}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
           />
         </div>
         <div className="flex w-full flex-col">
-          <label className="text-gray-600 mb-1 text-[16px]">Industry</label>
+          <label className="mb-1 text-[16px] text-gray-600">Industry</label>
           <CustomDropdown
             placeholder={companyInfo?.industry as string}
             handleSelect={(option: Option) => {
@@ -86,11 +86,11 @@ const CompanyInfo: React.FC = () => {
             }}
             options={Industries}
             disabled={!isEditable}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-left focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-left focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
           />
         </div>
         <div className="flex w-full flex-col">
-          <label className="text-gray-600 mb-1 text-[16px]">Company Size</label>
+          <label className="mb-1 text-[16px] text-gray-600">Company Size</label>
           <CustomSelect
             options={CompanySizes}
             placeholder={companyInfo?.companySize}
@@ -105,11 +105,11 @@ const CompanyInfo: React.FC = () => {
               } as EmployerData);
             }}
             disabled={!isEditable}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-left focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-left focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
           />
         </div>
         <div className="flex w-full flex-col">
-          <label className="text-gray-600 mb-1 text-[16px]">Country</label>
+          <label className="mb-1 text-[16px] text-gray-600">Country</label>
           <CustomSelect
             options={countries}
             placeholder={companyInfo?.country}
@@ -124,30 +124,30 @@ const CompanyInfo: React.FC = () => {
               } as EmployerData);
             }}
             disabled={!isEditable}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-left focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-left focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
           />
         </div>
 
         <div className="flex flex-col">
-          <label className="text-gray-600 mb-1 text-[16px]">City</label>
+          <label className="mb-1 text-[16px] text-gray-600">City</label>
           <input
             type="text"
             value={companyInfo?.city}
             name="city"
             onChange={handleChange}
             disabled={!isEditable}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
           />
         </div>
 
         <div className="flex w-full flex-col">
-          <label className="text-gray-600 mb-1 text-[16px]">Address</label>
+          <label className="mb-1 text-[16px] text-gray-600">Address</label>
           <input
             value={companyInfo?.companyAddress}
             name="companyAddress"
             onChange={handleChange}
             type="text"
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
           />
         </div>
       </div>

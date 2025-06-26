@@ -137,7 +137,7 @@ const LoginPage = () => {
                     email: e.target.value,
                   }))
                 }
-                className="w-full rounded-[16px] border-none bg-[#F4F7FA] p-3 focus:border-none focus:outline-none focus:ring-0 md:p-4"
+                className="w-full rounded-[16px] border-none bg-[#F4F7FA] p-3 focus:border-none focus:ring-0 focus:outline-none md:p-4"
                 type="email"
                 placeholder="Email"
                 autoComplete="username"
@@ -152,7 +152,7 @@ const LoginPage = () => {
                     password: e.target.value,
                   }))
                 }
-                className="w-full rounded-[16px] border-none bg-[#F4F7FA] p-3 focus:border-none focus:outline-none focus:ring-0 md:p-4"
+                className="w-full rounded-[16px] border-none bg-[#F4F7FA] p-3 focus:border-none focus:ring-0 focus:outline-none md:p-4"
                 type="password"
                 placeholder="Password"
                 autoComplete="current-password"

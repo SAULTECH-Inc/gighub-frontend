@@ -45,15 +45,15 @@ const UserTypeSelection: React.FC = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
       >
-        <div className="flex w-full justify-start xs:ml-5 xs:mt-5 sm:ml-5 sm:mt-5 md:ml-5 md:mt-5">
+        <div className="xs:ml-5 xs:mt-5 flex w-full justify-start sm:mt-5 sm:ml-5 md:mt-5 md:ml-5">
           <img src={gighubLogo} alt="logo" />
         </div>
         <div className="mx-auto flex h-[824px] w-full flex-col justify-evenly">
           <div className="w-full text-center">
-            <h1 className="text-gray-600 text-[18px] font-bold lg:text-[24px]">
+            <h1 className="text-[18px] font-bold text-gray-600 lg:text-[24px]">
               How are You Planning To Use Gighub
             </h1>
-            <p className="text-gray-600 text-[13px]">
+            <p className="text-[13px] text-gray-600">
               We will streamline your setup experience accordingly
             </p>
           </div>

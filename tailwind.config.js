@@ -6,18 +6,25 @@ import tailwindScrollbarHide from "tailwind-scrollbar-hide";
 import defaultTheme from 'tailwindcss/defaultTheme';
 import colors from "tailwindcss/colors";
 /** @type {import('tailwindcss').Config} */
+
+const {
+  lightBlue,
+  warmGray,
+  trueGray,
+  coolGray,
+  blueGray,
+  ...safeColors
+} = colors;
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-    './node_modules/flowbite/**/*.js',
-    './node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}',
+    "./src/**/*.{js,ts,jsx,tsx,css}",
   ],
   darkMode: "class", // Enable dark mode with class toggle
   theme: {
     extend: {
       colors: {
-        ...colors,
+        ...safeColors,
         primary: "#6A0DAD",
         secondary: "#FFFFFF",
         tertiary: "#6438c2",

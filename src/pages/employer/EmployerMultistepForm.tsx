@@ -36,7 +36,7 @@ const EmployerMultistepForm: React.FC = () => {
     >
       {/* Logo */}
       <motion.img
-        className="absolute left-[3%] top-5"
+        className="absolute top-5 left-[3%]"
         src={gighubLogo}
         alt="logo"
         initial={{ x: -50 }}
@@ -45,8 +45,10 @@ const EmployerMultistepForm: React.FC = () => {
       />
 
       {/* Step Indicator */}
-      <div className="absolute left-1/2 top-10 flex -translate-x-1/2 transform flex-col gap-y-2 md:left-1/2 md:top-5 md:transform">
-        <span className="mt-2 block text-center md:text-left md:mt-0">{step} of 4</span>
+      <div className="absolute top-10 left-1/2 flex -translate-x-1/2 transform flex-col gap-y-2 md:top-5 md:left-1/2 md:transform">
+        <span className="mt-2 block text-center md:mt-0 md:text-left">
+          {step} of 4
+        </span>
         <div className="flex justify-evenly gap-x-2">
           {[1, 2, 3, 4].map((stepNumber) => (
             <div
@@ -60,7 +62,7 @@ const EmployerMultistepForm: React.FC = () => {
       </div>
 
       {/* Left Section - Form */}
-      <div className="flex w-full items-center justify-center px-5 pt-[100px] md:w-1/2 md:pl-32 md:pt-0">
+      <div className="flex w-full items-center justify-center px-5 pt-[100px] md:w-1/2 md:pt-0 md:pl-32">
         {/* Step 1: Personal Information */}
         {step === 1 && (
           <motion.div

@@ -9,11 +9,11 @@ const Footer = () => {
           <div className="col-span-2 md:col-span-3 lg:col-span-4">
             <div className="flex items-center gap-[10px]">
               <img src={Gighub} alt="Gighub" width={41} height={41} />
-              <h1 className="font-lato text-xl font-black text-orange">
+              <h1 className="font-lato text-orange text-xl font-black">
                 Gighub
               </h1>
             </div>
-            <p className="mt-9 font-lato">
+            <p className="font-lato mt-9">
               GigHub connects professionals with flexible job opportunities.
               Discover gigs that match your skills, work on your terms, and grow
               your career with ease and flexibility.
@@ -22,7 +22,7 @@ const Footer = () => {
 
           <div className="col-span-1 md:col-span-3 lg:col-span-2">
             <h1 className="font-lato font-bold">Quick Link</h1>
-            <ul className="mt-7 font-lato text-xs">
+            <ul className="font-lato mt-7 text-xs">
               <li className="mb-2">
                 <Link to="">Home</Link>
               </li>
@@ -43,7 +43,7 @@ const Footer = () => {
 
           <div className="col-span-1 md:col-span-2">
             <h1 className="font-lato font-bold">Legal</h1>
-            <ul className="mt-7 font-lato text-xs">
+            <ul className="font-lato mt-7 text-xs">
               <li className="mb-2">
                 <Link to="">Terms of use</Link>
               </li>
@@ -61,7 +61,7 @@ const Footer = () => {
 
           <div className="col-span-1 md:col-span-2">
             <h1 className="font-lato font-bold">Follow Us</h1>
-            <ul className="mt-7 font-lato text-xs">
+            <ul className="font-lato mt-7 text-xs">
               <li className="mb-2">
                 <Link to="">Facebook</Link>
               </li>

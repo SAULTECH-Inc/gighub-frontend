@@ -110,9 +110,9 @@ const ManageJobNotification = () => {
   };
 
   return (
-    <div className="flex w-[90%] flex-col self-center py-10 font-lato">
+    <div className="font-lato flex w-[90%] flex-col self-center py-10">
       {/* Title */}
-      <h2 className="text-left text-[24px] text-xl font-bold text-black">
+      <h2 className="text-left text-xl text-[24px] font-bold text-black">
         Manage Job Application
       </h2>
 

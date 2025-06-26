@@ -27,11 +27,5 @@
 }
 
 .ql-editor {
-  min-height: 200px;
-  @apply leading-relaxed;
-}
-
-.ql-editor p {
-  @apply mb-4;
-  @apply mt-0;
+  min-height: 100px;
 }

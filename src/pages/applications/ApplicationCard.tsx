@@ -17,7 +17,8 @@ const ApplicationCard: React.FC<{
   return (
     <div
       onTouchStart={onView}
-      className="grid w-full grid-cols-[calc(63%+10%)_calc(40%-10%)] items-center justify-between rounded-[16px] bg-[#F5F5F5] p-2 md:grid-cols-[20%_24%_12%_14%_12%] mdl:grid-cols-[20%_14%_24%_12%_14%_12%]">
+      className="mdl:grid-cols-[20%_14%_24%_12%_14%_12%] grid w-full grid-cols-[calc(63%+10%)_calc(40%-10%)] items-center justify-between rounded-[16px] bg-[#F5F5F5] p-2 md:grid-cols-[20%_24%_12%_14%_12%]"
+    >
       {/*Profile*/}
       <div className="flex w-full items-center gap-2">
         <div className="h-[46px] w-[51px] rounded-[10px] bg-[#D9D9D9]">
@@ -39,7 +40,7 @@ const ApplicationCard: React.FC<{
         </div>
       </div>
       {/*Date*/}
-      <div className="hidden w-full items-center justify-start text-[13px] mdl:flex">
+      <div className="mdl:flex hidden w-full items-center justify-start text-[13px]">
         <p>{moment(application.createdAt).format("DD MMM, YYYY")}</p>
       </div>
       {/*Role name*/}

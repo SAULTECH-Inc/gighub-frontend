@@ -89,7 +89,7 @@ const SocialsSection: React.FC = () => {
       id="work-sample"
       className="relative mt-4 border-t-[2px] border-t-[#E6E6E6] pt-5"
     >
-      <div className="absolute right-1 top-2 z-10 flex items-center justify-evenly gap-x-2 text-xs">
+      <div className="absolute top-2 right-1 z-10 flex items-center justify-evenly gap-x-2 text-xs">
         <button
           type="button"
           onClick={handleToggleEdit}
@@ -105,12 +105,12 @@ const SocialsSection: React.FC = () => {
           Save
         </button>
       </div>
-      <h3 className="text-gray-700 mb-4 mt-4 font-lato text-[20px]">
+      <h3 className="font-lato mt-4 mb-4 text-[20px] text-gray-700">
         Social and Professional Links
       </h3>
       <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-10">
         <div className="flex flex-col">
-          <label className="text-gray-600 mb-1 text-[16px]">
+          <label className="mb-1 text-[16px] text-gray-600">
             LinkedIn Profile
           </label>
           <input
@@ -119,54 +119,54 @@ const SocialsSection: React.FC = () => {
             disabled={!isEditable}
             onChange={handleChange}
             type="url"
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
           />
         </div>
         {USER_TYPE === UserType.EMPLOYER && (
           <div className="flex flex-col">
-            <label className="text-gray-600 mb-1 text-[16px]">Facebook</label>
+            <label className="mb-1 text-[16px] text-gray-600">Facebook</label>
             <input
               type="url"
               name="facebookProfile"
               value={socialData?.facebookProfile || ""}
               disabled={!isEditable}
               onChange={handleChange}
-              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
             />
           </div>
         )}
         <div className="flex flex-col">
-          <label className="text-gray-600 mb-1 text-[16px]">Twitter</label>
+          <label className="mb-1 text-[16px] text-gray-600">Twitter</label>
           <input
             type="url"
             name="twitterProfile"
             value={socialData?.twitterProfile || ""}
             disabled={!isEditable}
             onChange={handleChange}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
           />
         </div>
         <div className="flex flex-col">
-          <label className="text-gray-600 mb-1 text-[16px]">Instagram</label>
+          <label className="mb-1 text-[16px] text-gray-600">Instagram</label>
           <input
             type="url"
             name="instagramProfile"
             value={socialData?.instagramProfile || ""}
             disabled={!isEditable}
             onChange={handleChange}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
           />
         </div>
         {USER_TYPE === UserType.APPLICANT && (
           <div className="flex flex-col">
-            <label className="text-gray-600 mb-1 text-[16px]">Github</label>
+            <label className="mb-1 text-[16px] text-gray-600">Github</label>
             <input
               type="url"
               name="githubProfile"
               value={socialData?.githubProfile || ""}
               disabled={!isEditable}
               onChange={handleChange}
-              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
             />
           </div>
         )}

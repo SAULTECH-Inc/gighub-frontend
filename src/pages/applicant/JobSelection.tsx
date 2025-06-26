@@ -88,7 +88,7 @@ const JobSelection: React.FC = () => {
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
               placeholder="Search Job"
-              className="h-full w-3/4 rounded-[10px] border border-[#E6E6E6] bg-transparent bg-white px-4 py-3 text-sm outline-none placeholder:text-[#000000] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:w-[381px] md:bg-[#F7F7F7]"
+              className="h-full w-3/4 rounded-[10px] border border-[#E6E6E6] bg-transparent bg-white px-4 py-3 text-sm outline-none placeholder:text-[#000000] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:w-[381px] md:bg-[#F7F7F7]"
             />
             <div>
               {/*Filter button for mobile*/}
@@ -100,7 +100,7 @@ const JobSelection: React.FC = () => {
                   <img src={FilterIcon} alt="filter icon" />
                 </button>
                 {isFilterOpen && (
-                  <div className="absolute right-0 top-12 flex flex-col gap-y-4 rounded-lg bg-white p-4 shadow-lg">
+                  <div className="absolute top-12 right-0 flex flex-col gap-y-4 rounded-lg bg-white p-4 shadow-lg">
                     <button
                       className={`rounded-[10px] px-12 py-3 ${
                         activeSection === "open"
@@ -161,7 +161,7 @@ const JobSelection: React.FC = () => {
           </div>
           <div className="w-[100%] self-center sm:w-[100%]">
             {activeSection === "open" && (
-              <div className="flex flex-wrap justify-center gap-3 rounded-[10px] bg-white px-4 pb-[100px] pt-4">
+              <div className="flex flex-wrap justify-center gap-3 rounded-[10px] bg-white px-4 pt-4 pb-[100px]">
                 <div className="hidden w-full justify-between rounded-[10px] bg-[#6438C2] p-2 px-4 text-white md:flex">
                   <div className="flex w-[75%] justify-between text-white">
                     <p className="sm:text-[12px] lg:w-[150px]">Job Title</p>
@@ -181,7 +181,7 @@ const JobSelection: React.FC = () => {
               </div>
             )}
             {activeSection === "draft" && (
-              <div className="flex flex-wrap justify-center gap-3 rounded-[10px] bg-white px-4 pb-[100px] pt-4">
+              <div className="flex flex-wrap justify-center gap-3 rounded-[10px] bg-white px-4 pt-4 pb-[100px]">
                 <div className="hidden w-full justify-between rounded-[10px] bg-[#6438C2] p-2 px-4 text-white md:flex">
                   <div className="flex w-[75%] justify-between text-white">
                     <p className="sm:text-[12px] lg:w-[150px]">Job Title</p>
@@ -228,7 +228,7 @@ const JobSelection: React.FC = () => {
                   }}
                   type="number"
                   placeholder="1"
-                  className="h-full w-12 rounded-[10px] border border-[#E6E6E6] bg-transparent bg-white px-4 py-3 text-sm outline-none placeholder:text-[#000000] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                  className="h-full w-12 rounded-[10px] border border-[#E6E6E6] bg-transparent bg-white px-4 py-3 text-sm outline-none placeholder:text-[#000000] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                 />
               </div>
               <button

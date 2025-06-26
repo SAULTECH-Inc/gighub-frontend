@@ -56,7 +56,7 @@ export const ApplicantDashboard = () => {
           navItemsMobile={applicantNavItemsMobile}
           navbarItemsMap={applicantNavBarItemMap}
         />
-        <div className="bg-gray-100 grid min-h-screen grid-cols-1 items-start justify-center gap-x-4 gap-y-14 px-3 py-6 md:mb-10 md:gap-y-0 xl:grid-cols-[65%_30%]">
+        <div className="grid min-h-screen grid-cols-1 items-start justify-center gap-x-4 gap-y-14 bg-gray-100 px-3 py-6 md:mb-10 md:gap-y-0 xl:grid-cols-[65%_30%]">
           {/* First Column */}
           <div className="flex w-full flex-col items-center gap-y-6">
             <ApplicationStats />

@@ -9,7 +9,7 @@ interface MediaAndGalleryProps {
 const MediaAndGallery: React.FC<MediaAndGalleryProps> = ({ user }) => {
   return (
     <section className="w-full rounded-lg bg-white p-6 shadow">
-      <h2 className="mb-4 font-lato text-xl">Media and Gallery</h2>
+      <h2 className="font-lato mb-4 text-xl">Media and Gallery</h2>
       <div className="flex grid-cols-3 flex-wrap gap-4">
         {user?.brandAndVisuals &&
           user.brandAndVisuals.map((url, index) => (

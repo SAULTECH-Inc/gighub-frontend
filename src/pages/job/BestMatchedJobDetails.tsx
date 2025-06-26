@@ -101,7 +101,7 @@ export const BestMatchedJobDetails: React.FC<JobMatchCardProps> = ({
               <h3 className="text-left text-[15px] font-bold text-black md:text-[20px]">
                 {title}
               </h3>
-              <p className="text-gray-700 text-left text-[10px] font-semibold md:text-[13px]">
+              <p className="text-left text-[10px] font-semibold text-gray-700 md:text-[13px]">
                 {company}
               </p>
             </div>
@@ -122,7 +122,7 @@ export const BestMatchedJobDetails: React.FC<JobMatchCardProps> = ({
                 // On dashboard or on mobile (viewingJob ignored on small screens)
                 dashboard || window.innerWidth < 1024 ? (
                   <div
-                    className="cursor-pointer text-gray transition-opacity group-hover:text-black"
+                    className="text-gray cursor-pointer transition-opacity group-hover:text-black"
                     onClick={() => {
                       setCurrentlyViewed(job);
                       setJobToApply(job);
@@ -134,7 +134,7 @@ export const BestMatchedJobDetails: React.FC<JobMatchCardProps> = ({
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
-                      className="text-gray-500 hover:text-gray-700 h-5 w-5"
+                      className="h-5 w-5 text-gray-500 hover:text-gray-700"
                     >
                       <path
                         strokeLinecap="round"
@@ -154,7 +154,7 @@ export const BestMatchedJobDetails: React.FC<JobMatchCardProps> = ({
                   <div className="hidden lg:block">
                     {viewingJob ? (
                       <div
-                        className="cursor-pointer text-gray transition-opacity group-hover:text-black"
+                        className="text-gray cursor-pointer transition-opacity group-hover:text-black"
                         onClick={() => {
                           setCurrentlyViewed(job);
                           setJobToApply(job);
@@ -167,7 +167,7 @@ export const BestMatchedJobDetails: React.FC<JobMatchCardProps> = ({
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
-                          className="text-gray-500 hover:text-gray-700 h-5 w-5"
+                          className="h-5 w-5 text-gray-500 hover:text-gray-700"
                         >
                           <path
                             strokeLinecap="round"
@@ -185,7 +185,7 @@ export const BestMatchedJobDetails: React.FC<JobMatchCardProps> = ({
                       </div>
                     ) : (
                       <div
-                        className="cursor-pointer text-gray transition-opacity group-hover:text-black"
+                        className="text-gray cursor-pointer transition-opacity group-hover:text-black"
                         onClick={() => {
                           setCurrentlyViewed(job);
                           setJobToApply(job);
@@ -198,7 +198,7 @@ export const BestMatchedJobDetails: React.FC<JobMatchCardProps> = ({
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
-                          className="text-gray-500 hover:text-gray-700 h-5 w-5"
+                          className="h-5 w-5 text-gray-500 hover:text-gray-700"
                         >
                           <path
                             strokeLinecap="round"
@@ -221,7 +221,7 @@ export const BestMatchedJobDetails: React.FC<JobMatchCardProps> = ({
             </div>
           </div>
         </div>
-        <div className="absolute -right-2 -top-1 flex items-center space-x-3">
+        <div className="absolute -top-1 -right-2 flex items-center space-x-3">
           <Rating rate={handleRating} value={rating} />
           <img
             onClick={() => openModal("share")}
@@ -242,7 +242,7 @@ export const BestMatchedJobDetails: React.FC<JobMatchCardProps> = ({
       <div className="group relative flex flex-col flex-wrap">
         {/* Description */}
         <p
-          className={`text-gray-700 line-clamp-6 w-full max-w-none cursor-pointer whitespace-pre-wrap font-lato text-[12px] leading-5 md:text-[13px]`}
+          className={`font-lato line-clamp-6 w-full max-w-none cursor-pointer text-[12px] leading-5 whitespace-pre-wrap text-gray-700 md:text-[13px]`}
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(description?.trim()),
           }}
@@ -253,11 +253,11 @@ export const BestMatchedJobDetails: React.FC<JobMatchCardProps> = ({
       <div className="flex w-full flex-wrap items-center gap-x-8 gap-y-3 px-4 md:gap-x-7">
         <div className="flex items-center gap-x-2">
           <img src={jobTypeIcon} alt="Job Type Icon" className="h-4 w-4" />
-          <p className="text-gray-600 text-[11px] md:text-[13px]">{type}</p>
+          <p className="text-[11px] text-gray-600 md:text-[13px]">{type}</p>
         </div>
         <div className="flex items-center gap-x-2">
           <img src={locationIcon} alt="Location Icon" className="h-4 w-4" />
-          <p className="text-gray-600 text-[11px] md:text-[13px]">{location}</p>
+          <p className="text-[11px] text-gray-600 md:text-[13px]">{location}</p>
         </div>
         <div className="flex items-center gap-x-2">
           <img
@@ -265,7 +265,7 @@ export const BestMatchedJobDetails: React.FC<JobMatchCardProps> = ({
             alt="People Applied Icon"
             className="h-4 w-4"
           />
-          <p className="text-gray-600 text-[11px] md:text-[13px]">
+          <p className="text-[11px] text-gray-600 md:text-[13px]">
             {applicants} Applied
           </p>
         </div>
@@ -275,7 +275,7 @@ export const BestMatchedJobDetails: React.FC<JobMatchCardProps> = ({
             alt="Days Remaining Icon"
             className="h-4 w-4"
           />
-          <p className="text-gray-600 text-[11px] md:text-[13px]">
+          <p className="text-[11px] text-gray-600 md:text-[13px]">
             {daysLeft} days left
           </p>
         </div>

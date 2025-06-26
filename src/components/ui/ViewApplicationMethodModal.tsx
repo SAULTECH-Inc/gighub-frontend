@@ -45,11 +45,11 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = ({
           {/* Close Button */}
           <div
             onClick={() => closeModal(modalId)}
-            className="absolute right-4 top-9 md:top-12 flex h-[34px] w-[36px] cursor-pointer items-center justify-center rounded-full bg-white p-2 text-black focus:outline-none"
+            className="absolute top-9 right-4 flex h-[34px] w-[36px] cursor-pointer items-center justify-center rounded-full bg-white p-2 text-black focus:outline-none md:top-12"
           >
             <img className="cursor-pointer" src={cancel} alt="cancel" />
           </div>
-          <div className="absolute top-[50px] md:top-[70px] flex w-[530px] items-end justify-between px-3">
+          <div className="absolute top-[50px] flex w-[530px] items-end justify-between px-3 md:top-[70px]">
             {/* Profile Image */}
             <img
               src={
@@ -60,7 +60,7 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = ({
               className="ml-3 h-[70px] w-[70px] flex-shrink-0 rounded-full md:h-[100px] md:w-[100px]"
               alt="profile pics"
             />
-            <div className="mb-0 ml-4 flex flex-1 items-end justify-between pb-0 pt-5">
+            <div className="mb-0 ml-4 flex flex-1 items-end justify-between pt-5 pb-0">
               {/* Company Info */}
               <div className="flex flex-col">
                 <h2 className="text-[20px] font-bold text-black">
@@ -93,7 +93,7 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = ({
 
         {/* Application Details */}
         <div className="mx-auto mt-6 flex h-[318px] w-[90%] flex-col items-baseline justify-evenly rounded-[16px] border-[1px] border-[#E6E6E6] px-6 py-4 md:w-[512px]">
-          <h3 className="text-gray-600 mb-4 text-sm font-medium">
+          <h3 className="mb-4 text-sm font-medium text-gray-600">
             You Applied with
           </h3>
           <div className="flex h-[223px] w-full flex-col items-center justify-center gap-y-4 rounded-[16px] bg-[#F7F7F7] md:w-[461px]">
@@ -103,7 +103,7 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = ({
                 <div className="flex h-[33px] w-[35px] items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1">
                   <img src={documentAttachement} alt="work icon" />
                 </div>
-                <span className="text-gray-600 ml-3 text-sm">Aliyu_CV.pdf</span>
+                <span className="ml-3 text-sm text-gray-600">Aliyu_CV.pdf</span>
               </div>
             )}
 
@@ -113,7 +113,7 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = ({
                 <div className="flex h-[33px] w-[35px] items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1">
                   <img src={video} alt="video icon" />
                 </div>
-                <span className="text-gray-600 ml-3 text-sm">Video</span>
+                <span className="ml-3 text-sm text-gray-600">Video</span>
               </div>
             )}
 
@@ -123,7 +123,7 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = ({
                 <div className="flex h-[33px] w-[35px] items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1">
                   <img src={userProfile} alt="profile icon" />
                 </div>
-                <span className="text-gray-600 ml-3 text-sm">Profile</span>
+                <span className="ml-3 text-sm text-gray-600">Profile</span>
               </div>
             )}
             {/* Document Item */}
@@ -132,7 +132,7 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = ({
                 <div className="flex h-[33px] w-full items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1 md:w-[392px]">
                   <img src={documentAttachement} alt="document icon" />
                 </div>
-                <span className="text-gray-600 ml-3 text-sm">Document</span>
+                <span className="ml-3 text-sm text-gray-600">Document</span>
               </div>
             )}
 
@@ -142,7 +142,7 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = ({
                 <div className="flex h-[33px] w-[35px] items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1">
                   <img src={video} alt="video icon" />
                 </div>
-                <span className="text-gray-600 ml-3 text-sm">Video</span>
+                <span className="ml-3 text-sm text-gray-600">Video</span>
               </div>
             )}
           </div>
@@ -163,7 +163,7 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = ({
             <>
               <button
                 onClick={() => closeModal(modalId)}
-                className="bg-gray-100 text-gray-700 hover:bg-gray-200 w-full rounded-[10px] border-[1px] border-[#E6E6E6] px-6 py-2 text-[16px] md:w-[181px]"
+                className="w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-gray-100 px-6 py-2 text-[16px] text-gray-700 hover:bg-gray-200 md:w-[181px]"
               >
                 Cancel
               </button>

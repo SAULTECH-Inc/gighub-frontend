@@ -50,7 +50,7 @@ const JobSearchSidebarMobile = forwardRef<HTMLDivElement, Props>(
     return (
       <div
         ref={ref}
-        className={`fixed inset-0 z-50 items-start justify-start overflow-y-auto bg-black bg-opacity-50 ${isOpened ? "flex" : "hidden"}`}
+        className={`bg-opacity-50 fixed inset-0 z-50 items-start justify-start overflow-y-auto bg-black ${isOpened ? "flex" : "hidden"}`}
       >
         <div className="relative grid min-h-screen w-[300px] grid-cols-1 overflow-y-auto border-2 border-[#F5F5F5] bg-white px-4 py-4">
           {/* Filter Header */}
@@ -225,7 +225,7 @@ const JobSearchSidebarMobile = forwardRef<HTMLDivElement, Props>(
                 } as UseJobSearchSettings);
               }}
               placeholder="Enter location"
-              className="rounded-lg border border-[#E6E6E6] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
+              className="rounded-lg border border-[#E6E6E6] px-3 py-2 focus:ring-2 focus:ring-purple-300 focus:outline-none"
             />
           </div>
         </div>

@@ -75,7 +75,7 @@ const CompanyBrandingVisualIdentity: React.FC = () => {
   };
   return (
     <section className="mt-4 space-y-5 border-t-[2px] border-t-[#E6E6E6] pt-5">
-      <h3 className="mb-4 font-lato text-[20px]">
+      <h3 className="font-lato mb-4 text-[20px]">
         Branding and Visual Identity
       </h3>
       <CustomSelect
@@ -90,12 +90,12 @@ const CompanyBrandingVisualIdentity: React.FC = () => {
         onChange={(option: { label: string; value: string }) => {
           setSelectedFile(option.value);
         }}
-        className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-left focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+        className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-left focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
       />
       <div className="mx-auto h-[376px] w-full border border-[#E6E6E6] bg-[#FFFFFF] p-4">
         {/* Header */}
         <div className="mb-4 flex h-[42px] w-full cursor-pointer items-center justify-between rounded-[16px] border-[1px] border-[#E6E6E6] p-6">
-          <span className="text-gray-700 font-lato text-sm">Upload Files</span>
+          <span className="font-lato text-sm text-gray-700">Upload Files</span>
           <div className="relative inline-block">
             {/* Hidden native file input */}
             <input
@@ -110,7 +110,7 @@ const CompanyBrandingVisualIdentity: React.FC = () => {
               type="button"
               onClick={handleTriggerFileUpload}
               disabled={selectedFile === null || selectedFile === ""}
-              className="cursor-pointer rounded-lg px-4 py-2 font-lato text-sm text-[#6438C2] transition duration-300"
+              className="font-lato cursor-pointer rounded-lg px-4 py-2 text-sm text-[#6438C2] transition duration-300"
             >
               Browse File
             </button>

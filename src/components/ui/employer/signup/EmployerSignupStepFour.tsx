@@ -55,7 +55,7 @@ const EmployerSignupStepFour: React.FC<StepTwoProp> = ({ handlePrev }) => {
 
   return (
     <motion.div
-      className="mt-5 w-[310px] space-y-5 px-[10px] md:mr-28 md:mt-32 md:w-[680px] lg:w-[500px] lg:px-0"
+      className="mt-5 w-[310px] space-y-5 px-[10px] md:mt-32 md:mr-28 md:w-[680px] lg:w-[500px] lg:px-0"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -77,7 +77,7 @@ const EmployerSignupStepFour: React.FC<StepTwoProp> = ({ handlePrev }) => {
         transition={{ duration: 0.5 }}
       >
         <motion.label
-          className="text-gray-100 text-[13px]"
+          className="text-[13px] text-gray-100"
           initial={{ y: 50 }}
           animate={{ y: 0 }}
           transition={{ duration: 0.5 }}
@@ -86,7 +86,7 @@ const EmployerSignupStepFour: React.FC<StepTwoProp> = ({ handlePrev }) => {
           Company Description
         </motion.label>
         <textarea
-          className="placeholder-gray-500 h-[182px] w-full resize-none rounded-[16px] border-[1px] border-[#ccc] p-5 text-[16px] focus:border-[1px] focus:border-[#ccc] focus:outline-none focus:ring-0"
+          className="h-[182px] w-full resize-none rounded-[16px] border-[1px] border-[#ccc] p-5 text-[16px] placeholder-gray-500 focus:border-[1px] focus:border-[#ccc] focus:ring-0 focus:outline-none"
           placeholder="Write here..."
           id="company-description"
           value={employerSignupRequest?.companyDescription} // ✅ Updated to `employer`

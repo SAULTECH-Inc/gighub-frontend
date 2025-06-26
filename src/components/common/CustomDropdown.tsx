@@ -79,11 +79,11 @@ const CustomDropdown: React.FC<DropdownProps> = ({
 
       {/* Dropdown menu */}
       {isOpen && (
-        <div className="absolute z-10 mt-2 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-white p-3 shadow-lg">
+        <div className="absolute z-[999999] mt-2 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-white p-3 shadow-lg">
           {/* Search input */}
           <input
             type="text"
-            className="w-full border-b border-[#E3E6F3] px-3 py-2 focus:border-inherit focus:outline-none focus:ring-0"
+            className="w-full border-b border-[#E3E6F3] px-3 py-2 focus:border-inherit focus:ring-0 focus:outline-none"
             placeholder="Search..."
             value={search}
             disabled={disabled ?? false}

@@ -124,7 +124,7 @@ export const EmployerNetwork: FC = () => {
                   className={`absolute left-0 rounded-full py-2 ${
                     canScrollLeft
                       ? "fill-blue bg-blue-500"
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "cursor-not-allowed bg-gray-300 text-gray-500"
                   }`}
                 >
                   <FaAngleLeft size={40} className="fill-white" />
@@ -139,7 +139,7 @@ export const EmployerNetwork: FC = () => {
             >
               <div
                 ref={scrollRef}
-                className="flex w-full gap-5 overflow-x-auto scroll-smooth scrollbar-hide xl:flex-col"
+                className="scrollbar-hide flex w-full gap-5 overflow-x-auto scroll-smooth xl:flex-col"
               >
                 <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
                 <NetworkConnectionsCard userDetails={{} as NetworkDetails} />

@@ -27,7 +27,7 @@ const CompanyOverview: React.FC = () => {
   };
   return (
     <section className="relative mt-4 border-t-[2px] border-t-[#E6E6E6] pt-5">
-      <div className="absolute right-1 top-2 flex items-center justify-evenly gap-x-2 text-xs">
+      <div className="absolute top-2 right-1 flex items-center justify-evenly gap-x-2 text-xs">
         <button
           onClick={toggleEdit}
           type="button"
@@ -44,9 +44,9 @@ const CompanyOverview: React.FC = () => {
           Save
         </button>
       </div>
-      <h5 className="mb-4 font-lato text-[20px]">Company Overview</h5>
+      <h5 className="font-lato mb-4 text-[20px]">Company Overview</h5>
       <div className="flex flex-col">
-        <label className="text-gray-600 mb-5 text-[16px]">
+        <label className="mb-5 text-[16px] text-gray-600">
           About the company
         </label>
 

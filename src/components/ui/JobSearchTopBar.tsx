@@ -77,7 +77,7 @@ const JobSearchTopBar: React.FC<JobSearchTopBarProps> = ({
                 title: e.target.value,
               });
             }}
-            className="h-full w-full border-none bg-transparent px-4 py-2 focus:outline-none focus:ring-0"
+            className="h-full w-full border-none bg-transparent px-4 py-2 focus:ring-0 focus:outline-none"
           />
         </div>
         <div className="flex h-[43px] w-full items-center rounded-[16px] border-[#F9F9F9] bg-[#F9F9F9]">
@@ -91,7 +91,7 @@ const JobSearchTopBar: React.FC<JobSearchTopBarProps> = ({
                 companyName: e.target.value,
               });
             }}
-            className="h-full w-full border-none bg-transparent px-4 py-2 focus:outline-none focus:ring-0"
+            className="h-full w-full border-none bg-transparent px-4 py-2 focus:ring-0 focus:outline-none"
           />
         </div>
         <div className="flex h-[43px] w-full items-center rounded-[16px] border-[#F9F9F9] bg-[#F9F9F9]">
@@ -105,7 +105,7 @@ const JobSearchTopBar: React.FC<JobSearchTopBarProps> = ({
                 location: e.target.value,
               });
             }}
-            className="h-full w-full border-none bg-transparent px-4 py-2 focus:outline-none focus:ring-0"
+            className="h-full w-full border-none bg-transparent px-4 py-2 focus:ring-0 focus:outline-none"
           />
         </div>
         <div className="flex items-center gap-4">

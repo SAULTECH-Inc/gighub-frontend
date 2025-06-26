@@ -42,7 +42,7 @@ const TestimonialCarousel = () => {
   return (
     <>
       <div className="mx-auto">
-        <div className="mb-5 mt-14 flex items-center justify-between gap-3">
+        <div className="mt-14 mb-5 flex items-center justify-between gap-3">
           <img
             src={Arrowleft}
             alt="back"
@@ -77,8 +77,8 @@ const TestimonialCarousel = () => {
             onClick={nextTestimonial}
           />
         </div>
-        <div className="flex items-center justify-center bg-testimonial bg-contain bg-center bg-no-repeat p-10 md:p-28">
-          <p className="m-auto w-[500px] text-center font-lato text-[13px] font-black leading-[19px] text-white">
+        <div className="bg-testimonial flex items-center justify-center bg-contain bg-center bg-no-repeat p-10 md:p-28">
+          <p className="font-lato m-auto w-[500px] text-center text-[13px] leading-[19px] font-black text-white">
             {currentTestimonial.testimonial}
           </p>
         </div>

@@ -58,19 +58,18 @@ const NotificationDropdown: FC = () => {
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative">
       {/*absolute right-0 top-14 w-[352px] bg-white shadow-lg rounded-[16px] z-50 font-lato p-6*/}
-      <div
-        className="fixed inset-x-0 top-2 z-50 mx-auto w-[95%] md:w-[352px] rounded-[16px] bg-white p-4 font-lato shadow-lg md:absolute md:right-0 md:top-8 md:left-auto md:mx-0 md:translate-x-0">
+      <div className="font-lato fixed inset-x-0 top-2 z-50 mx-auto w-[95%] rounded-[16px] bg-white p-4 shadow-lg md:absolute md:top-4 md:right-0 md:left-auto md:mx-0 md:w-[352px] md:translate-x-0">
         <div>
           <div className="relative mb-4 flex items-center justify-between">
-            <h3 className="text-gray-800 text-lg font-bold">Notification</h3>
+            <h3 className="text-lg font-bold text-gray-800">Notification</h3>
             <button
               onClick={() => {
                 openModal("notification-settings-dropdown");
               }}
             >
-              <AiOutlineSetting className="text-gray-500 cursor-pointer text-xl" />
+              <AiOutlineSetting className="cursor-pointer text-xl text-gray-500" />
             </button>
             {isModalOpen("notification-settings-dropdown") && (
               <NotificationSettingsDropdown modalId="notification-settings-dropdown" />
@@ -87,7 +86,7 @@ const NotificationDropdown: FC = () => {
               const Icon = notificationIconMap[notification.type] ?? FaBell;
               return (
                 <li key={index} className="relative">
-                  <div className="hover:bg-gray-100 flex cursor-pointer items-center justify-between gap-4 p-2">
+                  <div className="flex cursor-pointer items-center justify-between gap-4 p-2 hover:bg-gray-100">
                     <div
                       style={{
                         backgroundColor: eventTypeColorMap[notification.type],
@@ -102,10 +101,10 @@ const NotificationDropdown: FC = () => {
                     </div>
 
                     <div className="flex-1">
-                      <p className="text-gray-800 text-[16px] font-semibold">
+                      <p className="text-[16px] font-semibold text-gray-800">
                         {notification.title}
                       </p>
-                      <p className="text-gray-600 text-[16px]">
+                      <p className="text-[16px] text-gray-600">
                         {getFirstNWords(notification.content, 5).concat("...")}
                       </p>
                       <div className="mt-1 flex items-center justify-between">
@@ -149,22 +148,20 @@ const NotificationDropdown: FC = () => {
       </div>
 
       {viewedMessageDetails && (
-        <div
-          className="fixed inset-x-0 top-[calc(100px)] z-50 mx-auto w-[90%] max-w-[400px] rounded-[16px] bg-white p-4 font-lato shadow-lg md:absolute md:right-[calc(352px+1rem)] md:top-14 md:mx-0">
-
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-gray-800 text-lg font-bold">
+        <div className="font-lato fixed inset-x-0 top-[calc(100px)] z-50 mx-auto w-[90%] max-w-[400px] rounded-[16px] bg-white p-4 shadow-lg md:absolute md:top-14 md:right-[1000px] md:mx-0 md:w-[400px]">
+          <div className="mb-4 flex w-full items-center justify-between">
+            <h3 className="text-lg font-bold text-gray-800">
               {viewedMessageDetails.title} Details
             </h3>
             <button
               onClick={handleCloseDetails}
-              className="text-gray-500 cursor-pointer text-xl"
+              className="cursor-pointer text-xl text-gray-500"
             >
               &times;
             </button>
           </div>
           <hr style={dividerStyle} className="-mx-4 mb-4" />
-          <p className="text-gray-800 whitespace-pre-wrap text-[16px]">
+          <p className="text-[16px] whitespace-pre-wrap text-gray-800">
             {viewedMessageDetails.content}
           </p>
         </div>

@@ -86,9 +86,9 @@ export default function SalaryRangeSelector({
       </div>
 
       <div className="mb-4">
-        <label className="text-gray-600 mb-2 block text-sm font-medium">
+        <label className="mb-2 block text-sm font-medium text-gray-600">
           <span className="mr-2">Range:</span>
-          <span className="text-gray-800 font-bold">
+          <span className="font-bold text-gray-800">
             {selectedCurrencySymbol} {Math.round(minValue).toLocaleString()} -{" "}
             {selectedCurrencySymbol} {Math.round(maxValue).toLocaleString()}{" "}
             {frequencyLabels[selectedFrequency]}
@@ -97,9 +97,9 @@ export default function SalaryRangeSelector({
 
         <div className="mt-2 flex gap-4">
           <div className="flex-1">
-            <label className="text-gray-600 mb-1 block text-sm">Minimum</label>
+            <label className="mb-1 block text-sm text-gray-600">Minimum</label>
             <div className="relative">
-              <span className="text-gray-500 absolute left-3 top-1/2 -translate-y-1/2">
+              <span className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-500">
                 {selectedCurrencySymbol}
               </span>
               <input
@@ -111,16 +111,16 @@ export default function SalaryRangeSelector({
                   const clamped = Math.max(0, Math.min(value, maxValue));
                   setMinValue(clamped);
                 }}
-                className="w-full rounded-lg border border-[#E6E6E6] py-2 pl-8 pr-3 focus:border-transparent focus:ring-2 focus:ring-purple-300"
+                className="w-full rounded-lg border border-[#E6E6E6] py-2 pr-3 pl-8 focus:border-transparent focus:ring-2 focus:ring-purple-300"
                 step="100"
               />
             </div>
           </div>
 
           <div className="flex-1">
-            <label className="text-gray-600 mb-1 block text-sm">Maximum</label>
+            <label className="mb-1 block text-sm text-gray-600">Maximum</label>
             <div className="relative">
-              <span className="text-gray-500 absolute left-3 top-1/2 -translate-y-1/2">
+              <span className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-500">
                 {selectedCurrencySymbol}
               </span>
               <input
@@ -132,7 +132,7 @@ export default function SalaryRangeSelector({
                   const clamped = Math.max(minValue, value);
                   setMaxValue(clamped);
                 }}
-                className="w-full rounded-lg border border-[#E6E6E6] py-2 pl-8 pr-3 focus:border-transparent focus:ring-2 focus:ring-purple-300"
+                className="w-full rounded-lg border border-[#E6E6E6] py-2 pr-3 pl-8 focus:border-transparent focus:ring-2 focus:ring-purple-300"
                 step="100"
               />
             </div>

@@ -89,7 +89,7 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
 
   return (
     <motion.div
-      className="mt-5 w-[310px] space-y-5 px-[10px] md:mr-28 md:mt-32 md:w-[680px] lg:w-[500px] lg:px-0"
+      className="mt-5 w-[310px] space-y-5 px-[10px] md:mt-32 md:mr-28 md:w-[680px] lg:w-[500px] lg:px-0"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -128,7 +128,7 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
               maxLength={1}
               name={`otp[${index}]`}
               value={otp[index] || ""}
-              className="h-[40px] w-[40px] rounded-[10px] border-[1px] border-[#5E5E5E] text-center focus:border-[1px] focus:border-[#5E5E5E] focus:outline-none focus:ring-0 lg:h-[42px] lg:w-[47px]"
+              className="h-[40px] w-[40px] rounded-[10px] border-[1px] border-[#5E5E5E] text-center focus:border-[1px] focus:border-[#5E5E5E] focus:ring-0 focus:outline-none lg:h-[42px] lg:w-[47px]"
               onChange={(e) => handleOTPChange(e, index)}
               onKeyDown={(e) => handleBackspace(e, index)}
               onPaste={(e) => handlePaste(e, index)}

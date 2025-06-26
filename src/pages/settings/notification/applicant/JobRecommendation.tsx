@@ -130,11 +130,11 @@ const JobRecommendation = () => {
   };
 
   return (
-    <div className="flex w-[95%] flex-col self-center font-lato md:w-[90%]">
+    <div className="font-lato flex w-[95%] flex-col self-center md:w-[90%]">
       <hr className="mb-4 w-full border-t border-[#E6E6E6]" />
 
       {/* Page Title */}
-      <h2 className="text-left text-[24px] text-xl font-bold text-black">
+      <h2 className="text-left text-xl text-[24px] font-bold text-black">
         Job Recommendation
       </h2>
 
@@ -204,7 +204,7 @@ const JobRecommendation = () => {
         <hr className="my-5 w-full border-t border-[#E6E6E6]" />
         <h3 className="text-md font-bold text-black">Notification Type</h3>
 
-        <div className="mt-4 w-full gap-x-8 space-y-4 p-8">
+        <div className="mt-4 w-full space-y-4 gap-x-8 p-8">
           {notificationTypes.map((item, index) => (
             <label key={index} className="flex items-center justify-between">
               <span className="text-[16px] text-[#8E8E8E]">

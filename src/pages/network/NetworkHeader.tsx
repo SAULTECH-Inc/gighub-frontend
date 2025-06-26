@@ -16,7 +16,7 @@ export const NetworkHeader: React.FC<NetworkHeaderProps> = ({
   const { activeTab } = useNetworkTab();
   return (
     <div className="flex w-[94%] flex-col items-center justify-center self-center py-6">
-      <div className="flex w-full flex-col items-center gap-2 rounded-2xl bg-[#FFFFFF] py-[10px] pl-[30px] pr-[12px] sm:flex-row">
+      <div className="flex w-full flex-col items-center gap-2 rounded-2xl bg-[#FFFFFF] py-[10px] pr-[12px] pl-[30px] sm:flex-row">
         <div className="text-center text-2xl font-bold text-[#000000] sm:text-start xl:w-[24%]">
           <p>
             {activeTab === "find-new-connections"
@@ -31,7 +31,7 @@ export const NetworkHeader: React.FC<NetworkHeaderProps> = ({
               type="text"
               placeholder="Search by name"
               onKeyUp={(e) => handleSearchByName(e.currentTarget.value)}
-              className="placeholder-text-[13px] placeholder-text-[#A1A1A1] border-none bg-transparent focus:outline-none focus:ring-transparent"
+              className="placeholder-text-[13px] placeholder-text-[#A1A1A1] border-none bg-transparent focus:ring-transparent focus:outline-none"
             />
           </div>
           <div className="flex w-full flex-wrap gap-2 sm:flex-nowrap lg:w-[65%]">
@@ -43,7 +43,7 @@ export const NetworkHeader: React.FC<NetworkHeaderProps> = ({
                 onChange={(e) =>
                   handleSearchByProfession(e.currentTarget.value)
                 }
-                className="placeholder-text-[13px] placeholder-text-[#A1A1A1] border-none bg-transparent focus:outline-none focus:ring-transparent"
+                className="placeholder-text-[13px] placeholder-text-[#A1A1A1] border-none bg-transparent focus:ring-transparent focus:outline-none"
               />
             </div>
             <div className="flex w-full items-center gap-1 rounded-[16px] bg-[#F9F9F9] px-4 py-[6px] sm:w-[50%]">
@@ -52,7 +52,7 @@ export const NetworkHeader: React.FC<NetworkHeaderProps> = ({
                 type="text"
                 placeholder="Select location"
                 onChange={(e) => handleSearchByLocation(e.currentTarget.value)}
-                className="placeholder-text-[13px] placeholder-text-[#A1A1A1] border-none bg-transparent focus:outline-none focus:ring-transparent"
+                className="placeholder-text-[13px] placeholder-text-[#A1A1A1] border-none bg-transparent focus:ring-transparent focus:outline-none"
               />
             </div>
           </div>

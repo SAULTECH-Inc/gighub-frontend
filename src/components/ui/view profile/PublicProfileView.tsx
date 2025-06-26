@@ -93,7 +93,7 @@ const PublicProfileView: React.FC = () => {
             <img
               src={ASAbubakar}
               alt="ASAbubakar"
-              className="absolute left-5 top-12 h-[60px] w-[60px] sm:left-11"
+              className="absolute top-12 left-5 h-[60px] w-[60px] sm:left-11"
             />
 
             <div className="mt-12 flex w-[90%] justify-between gap-2">
@@ -223,7 +223,7 @@ const PublicProfileView: React.FC = () => {
                     </div>
                   </div>
                   <div
-                    className="my-4 w-full text-[13px] font-bold leading-[100%] text-[#8E8E8E]"
+                    className="my-4 w-full text-[13px] leading-[100%] font-bold text-[#8E8E8E]"
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(experience?.description || ""),
                     }}
@@ -271,7 +271,7 @@ const PublicProfileView: React.FC = () => {
                     </div>
                   </div>
                   <div
-                    className="my-4 w-full text-[13px] font-bold leading-[100%] text-[#8E8E8E]"
+                    className="my-4 w-full text-[13px] leading-[100%] font-bold text-[#8E8E8E]"
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(education?.description || ""),
                     }}

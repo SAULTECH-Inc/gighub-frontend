@@ -15,7 +15,7 @@ const NotificationSidebarAsMenu: React.FC<MenuStateProp> = ({
   const { settings, toggleSetting } = useNavMenuStore();
   return (
     <div
-      className={` ${open ? "flex" : "hidden"} h-[737px] w-full flex-col rounded-[16px] bg-white p-6 font-lato shadow`}
+      className={` ${open ? "flex" : "hidden"} font-lato h-[737px] w-full flex-col rounded-[16px] bg-white p-6 shadow`}
     >
       {/* Back Button */}
 

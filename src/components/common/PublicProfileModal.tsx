@@ -77,9 +77,9 @@ const PublicProfileModal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 lg:hidden">
+    <div className="bg-opacity-50 fixed inset-0 flex items-center justify-center bg-black lg:hidden">
       <div
-        className="relative max-h-[80vh] w-[80%] max-w-[600px] overflow-y-auto rounded-[16px] bg-white shadow-lg scrollbar-hide"
+        className="scrollbar-hide relative max-h-[80vh] w-[80%] max-w-[600px] overflow-y-auto rounded-[16px] bg-white shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div
@@ -94,7 +94,7 @@ const PublicProfileModal: React.FC<ModalProps> = ({
               <img
                 src={ASAbubakar}
                 alt="ASAbubakar"
-                className="absolute left-5 top-10 h-[60px] w-[60px]"
+                className="absolute top-10 left-5 h-[60px] w-[60px]"
               />
               <div className="flex justify-between">
                 <p className="pl-[90px] text-[20px] font-bold">
@@ -234,7 +234,7 @@ const PublicProfileModal: React.FC<ModalProps> = ({
                         </div>
                       </div>
                       <div
-                        className="my-4 w-full text-[13px] font-bold leading-[100%] text-[#8E8E8E]"
+                        className="my-4 w-full text-[13px] leading-[100%] font-bold text-[#8E8E8E]"
                         dangerouslySetInnerHTML={{
                           __html: experience?.description || "",
                         }}

@@ -144,7 +144,7 @@ const Account = () => {
     applicant?.cv?.professionalTitle || applicant?.professionalTitle || "";
 
   return (
-    <div className="bg-gray-100 flex min-h-screen w-full items-start justify-center pt-12 shadow-md">
+    <div className="flex min-h-screen w-full items-start justify-center bg-gray-100 pt-12 shadow-md">
       <div className="flex h-auto min-h-[680px] w-[90%] flex-col rounded-[16px] bg-white md:min-h-[590px]">
         {/* Profile Section */}
         <div className="flex items-center gap-4 p-10">
@@ -154,7 +154,7 @@ const Account = () => {
               alt="Profile"
               className="h-full w-full rounded-full border-[4px] border-white bg-white"
             />
-            <div className="absolute bottom-[-8px] right-[-8px] flex h-[28px] w-[28px] translate-x-[-30%] translate-y-[-30%] transform cursor-pointer items-center justify-center rounded-full bg-[#6B5AED] shadow-md">
+            <div className="absolute right-[-8px] bottom-[-8px] flex h-[28px] w-[28px] translate-x-[-30%] translate-y-[-30%] transform cursor-pointer items-center justify-center rounded-full bg-[#6B5AED] shadow-md">
               <input
                 type="file"
                 id="profilePic"
@@ -190,7 +190,7 @@ const Account = () => {
             <div className="flex w-full flex-col gap-y-8 md:flex-row md:gap-x-6">
               {/* Current Password */}
               <div className="flex w-full flex-col">
-                <label className="text-gray-700 font-medium">
+                <label className="font-medium text-gray-700">
                   Current Password
                 </label>
                 <input
@@ -198,13 +198,13 @@ const Account = () => {
                   name="oldPassword"
                   value={passwordChangeRequest.oldPassword}
                   onChange={handlePasswordChange}
-                  className="h-[38px] w-full rounded-md border-[#E6E6E6] bg-[#F7F7F7] px-3 outline-none focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                  className="h-[38px] w-full rounded-md border-[#E6E6E6] bg-[#F7F7F7] px-3 outline-none focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                 />
               </div>
 
               {/* New Password */}
               <div className="flex w-full flex-col">
-                <label className="text-gray-700 font-medium">
+                <label className="font-medium text-gray-700">
                   New Password
                 </label>
                 <input
@@ -212,7 +212,7 @@ const Account = () => {
                   name="newPassword"
                   value={passwordChangeRequest.newPassword}
                   onChange={handlePasswordChange}
-                  className="h-[38px] border-[#E6E6E6] bg-[#F7F7F7] px-3 outline-none focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                  className="h-[38px] border-[#E6E6E6] bg-[#F7F7F7] px-3 outline-none focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                 />
 
                 {/* Password Strength Indicator */}
@@ -230,7 +230,7 @@ const Account = () => {
                       >
                         {strengthInfo[passwordStrength]?.label}
                       </span>
-                      <div className="bg-gray-200 mt-1 h-1 w-full rounded">
+                      <div className="mt-1 h-1 w-full rounded bg-gray-200">
                         <div
                           className="h-full rounded transition-all duration-300"
                           style={{
@@ -248,7 +248,7 @@ const Account = () => {
 
             {/* Confirm Password */}
             <div className="flex w-full flex-col">
-              <label className="text-gray-700 font-medium">
+              <label className="font-medium text-gray-700">
                 Confirm Password
               </label>
               <input
@@ -256,7 +256,7 @@ const Account = () => {
                 name="confirmPassword"
                 value={passwordChangeRequest.confirmPassword}
                 onChange={handlePasswordChange}
-                className="h-[38px] w-full border-[#E6E6E6] bg-[#F7F7F7] px-3 outline-none focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                className="h-[38px] w-full border-[#E6E6E6] bg-[#F7F7F7] px-3 outline-none focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
               />
               <AnimatePresence>
                 {passwordChangeRequest.confirmPassword &&
@@ -282,7 +282,7 @@ const Account = () => {
                 className={`mt-4 h-[47px] rounded-[10px] px-5 py-2 font-medium text-white md:w-[164px] ${
                   isFormValid
                     ? "bg-[#6438C2] hover:bg-[#5730af]"
-                    : "bg-gray-400 cursor-not-allowed"
+                    : "cursor-not-allowed bg-gray-400"
                 }`}
               >
                 Save Changes

@@ -11,7 +11,7 @@ const JobStat: React.FC = () => {
       <Stats />
       <div className="flex flex-col gap-y-5">
         <div className="flex items-center justify-start gap-x-2 md:gap-x-24 lg:gap-x-12">
-          <div className="min-w-26 flex w-fit items-center justify-evenly gap-x-1 md:min-w-28 md:gap-x-2">
+          <div className="flex w-fit min-w-26 items-center justify-evenly gap-x-1 md:min-w-28 md:gap-x-2">
             <div className="flex h-[35px] w-[35px] items-center justify-center rounded-[10px] bg-[#6438C2] md:h-[40px] md:w-[40px]">
               <img src={people} alt="people" />
             </div>
@@ -20,7 +20,7 @@ const JobStat: React.FC = () => {
             </p>
           </div>
 
-          <div className="min-w-26 flex w-fit items-center justify-evenly gap-x-1 md:min-w-28 md:gap-x-2">
+          <div className="flex w-fit min-w-26 items-center justify-evenly gap-x-1 md:min-w-28 md:gap-x-2">
             <div className="flex h-[35px] w-[35px] items-center justify-center rounded-[10px] bg-[#6438C2] md:h-[40px] md:w-[40px]">
               <img src={clicks} alt="people" />
             </div>
@@ -29,7 +29,7 @@ const JobStat: React.FC = () => {
             </p>
           </div>
 
-          <div className="min-w-26 flex w-fit items-center justify-evenly gap-x-1 md:min-w-28 md:gap-x-2">
+          <div className="flex w-fit min-w-26 items-center justify-evenly gap-x-1 md:min-w-28 md:gap-x-2">
             <div className="flex h-[35px] w-[35px] items-center justify-center rounded-[10px] bg-[#6438C2] md:h-[40px] md:w-[40px]">
               <img src={applied} alt="people" />
             </div>

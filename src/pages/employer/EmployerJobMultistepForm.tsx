@@ -25,7 +25,7 @@ const EmployerJobMultistepForm: React.FC<EmployerJobMultistepFormProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50 p-2">
+    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black p-2">
       <div className="flex max-h-[95vh] w-full max-w-[900px] flex-col items-center overflow-y-auto rounded-lg bg-[#F7F7F7] shadow-xl">
         <div className="flex w-[92%] max-w-[900px] flex-col gap-4 py-2">
           <div className="flex justify-between">
@@ -47,11 +47,11 @@ const EmployerJobMultistepForm: React.FC<EmployerJobMultistepFormProps> = ({
             <div className="flex flex-wrap gap-4 font-bold sm:items-center">
               <div className="relative flex h-[10px] w-[100px] self-center overflow-hidden rounded-[10px] sm:w-[247px]">
                 <div
-                  className="absolute left-0 top-0 h-full bg-[#6438C2]"
+                  className="absolute top-0 left-0 h-full bg-[#6438C2]"
                   style={{ width: `${(step / 4) * 100}%` }}
                 ></div>
                 <div
-                  className="absolute right-0 top-0 h-full bg-white"
+                  className="absolute top-0 right-0 h-full bg-white"
                   style={{
                     width: `${(1 - step / 4) * 100}%`,
                     left: `${(step / 4) * 100}%`,

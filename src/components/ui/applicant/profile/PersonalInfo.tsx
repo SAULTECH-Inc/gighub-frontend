@@ -62,7 +62,7 @@ const PersonalInfo: React.FC = () => {
       id="personal-info"
       className="relative mt-4 border-t-[2px] border-t-[#E6E6E6] pt-5"
     >
-      <div className="absolute right-1 top-2 flex items-center justify-evenly gap-x-2 text-xs">
+      <div className="absolute top-2 right-1 flex items-center justify-evenly gap-x-2 text-xs">
         <button
           onClick={toggleEdit}
           type="button"
@@ -79,68 +79,68 @@ const PersonalInfo: React.FC = () => {
           Save
         </button>
       </div>
-      <h3 className="mb-4 font-lato text-[20px]">Personal Information</h3>
+      <h3 className="font-lato mb-4 text-[20px]">Personal Information</h3>
       <div className="flex w-full flex-col gap-y-5">
         <div className="grid w-full grid-cols-1 items-center gap-x-8 lg:flex">
           <div className="flex w-full flex-col">
-            <label className="text-gray-600 mb-1 text-sm">First Name</label>
+            <label className="mb-1 text-sm text-gray-600">First Name</label>
             <input
               type="text"
               onChange={handleChange}
               disabled={!isEditable}
               name="firstName"
               value={applicantPersonalInfo?.firstName || ""}
-              className="flex h-12 w-full items-start rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-left focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+              className="flex h-12 w-full items-start rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-left focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
             />
           </div>
           <div className="flex w-full flex-col">
-            <label className="text-gray-600 mb-1 text-sm">Middle Name</label>
+            <label className="mb-1 text-sm text-gray-600">Middle Name</label>
             <input
               type="text"
               onChange={handleChange}
               name="middleName"
               disabled={!isEditable}
               value={applicantPersonalInfo?.middleName || ""}
-              className="flex h-12 w-full items-start rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-left focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+              className="flex h-12 w-full items-start rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-left focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
             />
           </div>
           <div className="flex w-full flex-col">
-            <label className="text-gray-600 mb-1 text-sm">Last Name</label>
+            <label className="mb-1 text-sm text-gray-600">Last Name</label>
             <input
               type="text"
               onChange={handleChange}
               name="lastName"
               disabled={!isEditable}
               value={applicantPersonalInfo?.lastName || ""}
-              className="flex h-12 w-full items-start rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-left focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+              className="flex h-12 w-full items-start rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-left focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
             />
           </div>
           <div className="flex w-full flex-col">
-            <label className="text-gray-600 mb-1 text-sm">Email address</label>
+            <label className="mb-1 text-sm text-gray-600">Email address</label>
             <input
               type="text"
               onChange={handleChange}
               name="email"
               disabled={!isEditable}
               value={applicantPersonalInfo?.email || ""}
-              className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+              className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
             />
           </div>
         </div>
         <div className="grid w-full grid-cols-1 items-center gap-x-8 lg:flex">
           <div className="flex w-full flex-col">
-            <label className="text-gray-600 mb-1 text-sm">Phone number</label>
+            <label className="mb-1 text-sm text-gray-600">Phone number</label>
             <input
               type="text"
               name="phoneNumber"
               onChange={handleChange}
               disabled={!isEditable}
               value={applicantPersonalInfo?.phoneNumber || ""}
-              className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+              className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
             />
           </div>
           <div className="flex w-full flex-col">
-            <label className="text-gray-600 mb-1 text-sm">Date of birth</label>
+            <label className="mb-1 text-sm text-gray-600">Date of birth</label>
             <DatePicker
               selectedDate={
                 new Date(applicantPersonalInfo?.dateOfBirth || "2025-01-10")
@@ -153,13 +153,13 @@ const PersonalInfo: React.FC = () => {
                 } as ApplicantPersonalInfo;
                 setApplicantPersonalInfo(data);
               }}
-              className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+              className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
             />
           </div>
         </div>
         <div className="grid w-full grid-cols-1 items-center gap-x-8 lg:flex">
           <div className="flex w-full flex-col">
-            <label className="text-gray-600 mb-1 text-sm">Country</label>
+            <label className="mb-1 text-sm text-gray-600">Country</label>
             <CustomDropdown
               options={countries}
               handleSelect={(country) => {
@@ -171,12 +171,12 @@ const PersonalInfo: React.FC = () => {
               }}
               placeholder={applicantPersonalInfo?.country || ""}
               disabled={!isEditable}
-              className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+              className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
             />
           </div>
 
           <div className="flex w-full flex-col gap-x-8">
-            <label className="text-gray-600 mb-1 text-sm">City</label>
+            <label className="mb-1 text-sm text-gray-600">City</label>
             <CustomDropdown
               options={cities}
               handleSelect={(city) => {
@@ -188,20 +188,20 @@ const PersonalInfo: React.FC = () => {
               }}
               placeholder={applicantPersonalInfo?.city || ""}
               disabled={!isEditable}
-              className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+              className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
             />
           </div>
         </div>
 
         <div className="flex w-full flex-col">
-          <label className="text-gray-600 mb-1 text-sm">Address</label>
+          <label className="mb-1 text-sm text-gray-600">Address</label>
           <input
             type="text"
             onChange={handleChange}
             name="address"
             value={applicantPersonalInfo?.address || ""}
             disabled={!isEditable}
-            className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
           />
         </div>
       </div>

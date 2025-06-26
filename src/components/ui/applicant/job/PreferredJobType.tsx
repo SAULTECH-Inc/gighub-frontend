@@ -30,10 +30,10 @@ export const PreferredJobType: React.FC = () => {
   };
   return (
     <div>
-      <label className="text-gray-700 block font-lato text-lg">
+      <label className="font-lato block text-lg text-gray-700">
         Preferred Job Type
       </label>
-      <div className="border-gray-300 w-full rounded-[16px] border border-[#E6E6E6] bg-white p-4">
+      <div className="w-full rounded-[16px] border border-[#E6E6E6] border-gray-300 bg-white p-4">
         <CustomSelect
           options={JobTypes}
           className="w-full rounded-[10px] border-[#E6E6E6] bg-[#F7F8FA] p-2 text-left"

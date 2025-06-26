@@ -99,7 +99,7 @@ const ApplicantProfileCard: React.FC = () => {
             onChange={handleFileChange}
           />
           <div
-            className="absolute bottom-0 right-0 h-[20px] w-[20px] cursor-pointer rounded-full border-2 border-white bg-white p-1 lg:h-[26px] lg:w-[26px]"
+            className="absolute right-0 bottom-0 h-[20px] w-[20px] cursor-pointer rounded-full border-2 border-white bg-white p-1 lg:h-[26px] lg:w-[26px]"
             onClick={handleFileUpload}
           >
             <img src={Camera} alt="file dialog button icon" />
@@ -111,7 +111,7 @@ const ApplicantProfileCard: React.FC = () => {
           <h2 className="text-[16px] font-semibold md:text-[20px] lg:text-lg">
             {applicant?.firstName + " " + applicant?.lastName}
           </h2>
-          <p className="text-gray-200 text-[14px] md:text-[15px] lg:text-sm">
+          <p className="text-[14px] text-gray-200 md:text-[15px] lg:text-sm">
             Lagos Nigeria
           </p>
         </div>

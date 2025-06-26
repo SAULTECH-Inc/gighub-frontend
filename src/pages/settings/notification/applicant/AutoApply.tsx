@@ -94,11 +94,11 @@ const AutoApply = () => {
     debouncedUpdate(updatedSettings);
   };
   return (
-    <div className="flex w-[95%] flex-col self-center font-lato md:w-[90%]">
+    <div className="font-lato flex w-[95%] flex-col self-center md:w-[90%]">
       <hr className="mb-4 w-full border-t border-[#E6E6E6]" />
 
       {/* Page Title */}
-      <h2 className="text-left text-[24px] text-xl font-bold text-black">
+      <h2 className="text-left text-xl text-[24px] font-bold text-black">
         Auto Apply Notification
       </h2>
 

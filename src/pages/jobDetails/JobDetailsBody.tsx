@@ -19,7 +19,7 @@ const JobDetailsBody: React.FC<JobDetailsBodyProp> = ({
   const { openModal } = useModalStore();
   const { setJobToApply } = useJobSearchSettings();
   return (
-    <div className="bg-gray-100 flex h-full w-full flex-col items-center justify-center">
+    <div className="flex h-full w-full flex-col items-center justify-center bg-gray-100">
       {/* Top Section */}
       <div className="flex h-fit w-full flex-col items-start justify-center rounded-[16px] bg-white px-6 py-4 shadow-sm md:h-[84px] md:flex-row md:items-center md:justify-between">
         <h2 className="font-lato text-lg font-bold text-black">{job.title}</h2>
@@ -42,7 +42,7 @@ const JobDetailsBody: React.FC<JobDetailsBodyProp> = ({
             </span>
           </div>
           <div
-            className="prose mt-4 w-full max-w-none whitespace-pre-wrap p-1 font-lato text-[16px] leading-[19.2px] tracking-[0%] text-[#8E8E8E] md:p-4"
+            className="prose font-lato mt-4 w-full max-w-none p-1 text-[16px] leading-[19.2px] tracking-[0%] whitespace-pre-wrap text-[#8E8E8E] md:p-4"
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(job.description),
             }}
@@ -57,7 +57,7 @@ const JobDetailsBody: React.FC<JobDetailsBodyProp> = ({
             </span>
           </div>
           <div
-            className="prose mt-4 w-full max-w-none list-inside list-disc space-y-3 whitespace-pre-wrap p-1 font-lato text-[16px] leading-[19.2px] text-[#8E8E8E] marker:text-purple-600 md:p-4"
+            className="prose font-lato mt-4 w-full max-w-none list-inside list-disc space-y-3 p-1 text-[16px] leading-[19.2px] whitespace-pre-wrap text-[#8E8E8E] marker:text-purple-600 md:p-4"
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(job.responsibility),
             }}
@@ -73,7 +73,7 @@ const JobDetailsBody: React.FC<JobDetailsBodyProp> = ({
               </span>
             </div>
             <div
-              className="prose mt-4 w-full max-w-none list-inside list-disc space-y-3 whitespace-pre-wrap p-1 font-lato text-[16px] leading-[19.2px] text-[#8E8E8E] marker:text-purple-600 md:p-4"
+              className="prose font-lato mt-4 w-full max-w-none list-inside list-disc space-y-3 p-1 text-[16px] leading-[19.2px] whitespace-pre-wrap text-[#8E8E8E] marker:text-purple-600 md:p-4"
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(job.requirements),
               }}
@@ -93,7 +93,7 @@ const JobDetailsBody: React.FC<JobDetailsBodyProp> = ({
             {job?.skillSet?.map((skill, idx) => (
               <span
                 key={idx}
-                className="rounded-full bg-[#E9D8FD] px-3 py-1 font-lato text-sm font-medium text-[#4B0082]"
+                className="font-lato rounded-full bg-[#E9D8FD] px-3 py-1 text-sm font-medium text-[#4B0082]"
               >
                 {skill}
               </span>
@@ -115,7 +115,7 @@ const JobDetailsBody: React.FC<JobDetailsBodyProp> = ({
                 <button
                   onClick={() => handleBookmark && handleBookmark()}
                   type="button"
-                  className="text-md block w-full rounded-[15px] bg-[#E9D8FD] px-10 py-3 font-lato font-bold text-[#4B0082] transition hover:bg-[#D8B4FE] md:w-[225px]"
+                  className="text-md font-lato block w-full rounded-[15px] bg-[#E9D8FD] px-10 py-3 font-bold text-[#4B0082] transition hover:bg-[#D8B4FE] md:w-[225px]"
                 >
                   Bookmark
                 </button>
@@ -124,7 +124,7 @@ const JobDetailsBody: React.FC<JobDetailsBodyProp> = ({
                   onClick={() => {
                     openModal("refer-modal");
                   }}
-                  className="text-md block w-full rounded-[15px] bg-[#C026D3] px-10 py-3 font-lato font-bold text-white transition hover:bg-[#A21CAF] md:w-[225px]"
+                  className="text-md font-lato block w-full rounded-[15px] bg-[#C026D3] px-10 py-3 font-bold text-white transition hover:bg-[#A21CAF] md:w-[225px]"
                 >
                   Refer
                 </button>
@@ -134,7 +134,7 @@ const JobDetailsBody: React.FC<JobDetailsBodyProp> = ({
                     setJobToApply(job);
                     openModal("application-modal");
                   }}
-                  className="text-md block w-full rounded-[15px] bg-[#6438C2] px-10 py-3 font-lato font-bold text-white transition hover:bg-[#5126a9] md:w-[225px]"
+                  className="text-md font-lato block w-full rounded-[15px] bg-[#6438C2] px-10 py-3 font-bold text-white transition hover:bg-[#5126a9] md:w-[225px]"
                 >
                   Apply
                 </button>
@@ -143,7 +143,7 @@ const JobDetailsBody: React.FC<JobDetailsBodyProp> = ({
               <button
                 type="button"
                 onClick={() => handleEditJob && handleEditJob()}
-                className="text-md block w-full rounded-[15px] bg-[#6438C2] px-10 py-3 font-lato font-bold text-white transition hover:bg-[#5126a9] md:w-[225px]"
+                className="text-md font-lato block w-full rounded-[15px] bg-[#6438C2] px-10 py-3 font-bold text-white transition hover:bg-[#5126a9] md:w-[225px]"
               >
                 Edit
               </button>

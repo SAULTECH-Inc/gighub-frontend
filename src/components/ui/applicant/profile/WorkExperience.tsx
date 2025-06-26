@@ -20,7 +20,7 @@ const WorkExperience: React.FC = () => {
       id="work-experience"
       className="relative mt-4 space-y-3 border-t-[2px] border-t-[#E6E6E6] pt-5"
     >
-      <h3 className="mb-4 font-lato text-[20px]">Work Experience</h3>
+      <h3 className="font-lato mb-4 text-[20px]">Work Experience</h3>
       <div className="flex flex-col gap-y-4">
         {Array.isArray(experiences) &&
           experiences.map((experience, index) => (
