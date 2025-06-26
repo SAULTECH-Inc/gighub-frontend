@@ -3,28 +3,14 @@ import CustomDropdown from "../../../common/CustomDropdown.tsx";
 import { useAuth } from "../../../../store/useAuth.ts";
 import {
   ApplicantPersonalInfo,
-  countries,
-  Option,
 } from "../../../../utils/types";
 import { useSectionEditable } from "../../../../store/useEditable.ts";
 import DatePicker from "../../../common/DatePicker.tsx";
-
-const cities: Option[] = [
-  { label: "New York", value: "NY" },
-  { label: "Los Angeles", value: "LA" },
-  { label: "Chicago", value: "CHI" },
-  { label: "Houston", value: "HOU" },
-  { label: "Philadelphia", value: "PHL" },
-  { label: "San Francisco", value: "SF" },
-  { label: "Seattle", value: "SEA" },
-  { label: "Boston", value: "BOS" },
-  { label: "Washington D.C.", value: "WASH" },
-  { label: "Atlanta", value: "ATL" },
-  { label: "Dallas", value: "DAL" },
-  { label: "San Diego", value: "SAN" },
-  { label: "San Jose", value: "SJC" },
-];
+import { useCities } from "../../../../hooks/useCities.ts";
+import { useCountries } from "../../../../hooks/useCountries.ts";
 const PersonalInfo: React.FC = () => {
+  const {cities} = useCities();
+  const {countries} = useCountries();
   const {
     applicant,
     applicantPersonalInfo,

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import useModalStore from "../../../../store/modalStateStores.ts";
 import { useApplicantJobProfile } from "../../../../store/useApplicantJobProfile.ts";
 import {
-  cities,
   CvResponseDto,
   ExperienceResponseDto,
   Option,
@@ -14,12 +13,14 @@ import { toast } from "react-toastify";
 import CustomCheckbox from "../../../common/CustomCheckbox.tsx";
 import { jobLocation } from "../../../../utils/constants.ts";
 import { JobRoles } from "../../../../utils/dumm.ts";
+import { useCities } from "../../../../hooks/useCities.ts";
 
 interface AddExperienceModalProp {
   modalId: string;
 }
 
 const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
+  const {cities} = useCities();
   const {
     experience,
     setCvDetails,

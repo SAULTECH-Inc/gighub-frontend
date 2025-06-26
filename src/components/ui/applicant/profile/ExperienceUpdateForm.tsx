@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import RichTextEditor from "../../../common/RichTextEditor.tsx";
 import CustomDropdown from "../../../common/CustomDropdown.tsx";
-import { cities, ExperienceResponseDto, Option } from "../../../../utils/types";
+import { ExperienceResponseDto, Option } from "../../../../utils/types";
 import { useApplicantJobProfile } from "../../../../store/useApplicantJobProfile.ts";
 import CustomSelect from "../../../common/CustomSelect.tsx";
 import { jobLocation } from "../../../../utils/constants.ts";
 import { JobRoles } from "../../../../utils/dumm.ts";
+import { useCities } from "../../../../hooks/useCities.ts";
 
 interface ExperienceUpdateFormProps {
   experienceData: ExperienceResponseDto;
@@ -16,6 +17,7 @@ const ExperienceUpdateForm: React.FC<ExperienceUpdateFormProps> = ({
   experienceData,
   isEditable,
 }) => {
+  const {cities} = useCities();
   const { experience, setExperience } = useApplicantJobProfile();
   const [description, setDescription] = useState(
     experienceData?.description ?? "",
