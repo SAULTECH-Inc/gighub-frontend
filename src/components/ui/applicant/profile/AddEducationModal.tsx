@@ -3,9 +3,7 @@ import RichTextEditor from "../../../common/RichTextEditor.tsx";
 import React, { useEffect, useState } from "react";
 import useModalStore from "../../../../store/modalStateStores.ts";
 import {
-  cities,
   classOfDegrees,
-  countries,
   CvResponseDto,
   EducationResponseDto,
   fieldsOfStudies,
@@ -15,12 +13,16 @@ import {
 import { toast } from "react-toastify";
 import { useApplicantJobProfile } from "../../../../store/useApplicantJobProfile.ts";
 import CustomCheckbox from "../../../common/CustomCheckbox.tsx";
+import { useCities } from "../../../../hooks/useCities.ts";
+import { useCountries } from "../../../../hooks/useCountries.ts";
 
 interface AddEducationModalProp {
   modalId: string;
 }
 
 const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
+  const {cities} = useCities();
+  const {countries} = useCountries();
   const { modals, closeModal } = useModalStore();
   const isOpen = modals[modalId];
   const {

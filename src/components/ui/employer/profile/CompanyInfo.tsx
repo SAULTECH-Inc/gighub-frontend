@@ -4,7 +4,6 @@ import { useSectionEditable } from "../../../../store/useEditable.ts";
 import CustomDropdown from "../../../common/CustomDropdown.tsx";
 import {
   CompanyInfos,
-  countries,
   EmployerData,
   Option,
 } from "../../../../utils/types";
@@ -12,9 +11,11 @@ import CustomSelect from "../../../common/CustomSelect.tsx";
 import { Industries } from "../../../../utils/industries.ts";
 import { CompanySizes } from "../../../../utils/constants.ts";
 import { useAuth } from "../../../../store/useAuth.ts";
+import { useCountries } from "../../../../hooks/useCountries.ts";
 
 const CompanyInfo: React.FC = () => {
   const { employer, setEmployerData } = useAuth();
+  const {countries} = useCountries();
   const { companyInfo, setCompanyInfo, updateCompanyInfo } =
     useEmployerProfile();
   const { isEditable, toggleEdit } = useSectionEditable("companyInfo");
