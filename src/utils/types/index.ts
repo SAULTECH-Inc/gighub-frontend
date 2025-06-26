@@ -379,27 +379,6 @@ export const institutions: Option[] = [
   { label: "Cornell University", value: "Cornell" },
   { label: "Oxford University", value: "Oxford" },
 ];
-export const countries: Option[] = [
-  { label: "Australia", value: "Australia" },
-  { label: "Nigeria", value: "Nigeria" },
-  { label: "India", value: "India" },
-  { label: "United States", value: "United States" },
-  { label: "United Kingdom", value: "United Kingdom" },
-  { label: "Canada", value: "Canada" },
-];
-export const cities: Option[] = await fetch(
-  "https://countriesnow.space/api/v0.1/countries/population/cities",
-)
-  .then((res) => res.json())
-  .then((res) => res["data"])
-  .then((data) => {
-    return data.map((c: any) => {
-      return {
-        label: c["city"],
-        value: c["city"],
-      };
-    });
-  });
 
 export const fieldsOfStudies: Option[] = [
   { label: "Computer Science", value: "Computer Science" },

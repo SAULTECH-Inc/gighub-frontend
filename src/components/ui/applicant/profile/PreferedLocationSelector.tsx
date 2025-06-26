@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { cities, countries, JobPreference } from "../../../../utils/types";
+import { JobPreference } from "../../../../utils/types";
 import CustomDropdown from "../../../common/CustomDropdown.tsx";
+import { useCities } from "../../../../hooks/useCities.ts";
+import { useCountries } from "../../../../hooks/useCountries.ts";
 interface LocationSelectorProp {
   preferences: JobPreference;
   handleLocationSelect: (country: string, city: string) => void;
@@ -13,6 +15,8 @@ const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
   removeLocation,
   isEditable,
 }: LocationSelectorProp) => {
+  const {cities} = useCities();
+  const {countries} = useCountries();
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [selectedCity, setSelectedCity] = useState<string>("");
 

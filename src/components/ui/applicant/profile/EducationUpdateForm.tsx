@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import RichTextEditor from "../../../common/RichTextEditor.tsx";
 import CustomDropdown from "../../../common/CustomDropdown.tsx";
 import {
-  cities,
   classOfDegrees,
-  countries,
   EducationResponseDto,
   fieldsOfStudies,
   institutions,
   Option,
 } from "../../../../utils/types";
 import { useApplicantJobProfile } from "../../../../store/useApplicantJobProfile.ts";
+import { useCities } from "../../../../hooks/useCities.ts";
+import { useCountries } from "../../../../hooks/useCountries.ts";
 
 interface EductionUpdateFormProps {
   educationData: EducationResponseDto;
@@ -21,6 +21,8 @@ const EducationUpdateForm: React.FC<EductionUpdateFormProps> = ({
   educationData,
   isEditable,
 }) => {
+  const {cities} = useCities();
+  const {countries} = useCountries();
   const { applicantEducation, setApplicantEducation } =
     useApplicantJobProfile();
   const [description, setDescription] = useState<string>(

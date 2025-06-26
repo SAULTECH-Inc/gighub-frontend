@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { useJobFormStore } from "../../../../store/useJobFormStore";
 import { skills as skillsOptions } from "../../../../utils/dumm.ts";
-import { countries } from "../../../../utils/Countries.ts";
 import MultiSelect from "../../../common/MultiSelect.tsx";
 import { Crown } from "../../../../assets/images.ts";
 import CustomCheckbox from "../../../common/CustomCheckbox.tsx";
 import { useSubscriptionStore } from "../../../../store/useSubscriptionStore.ts";
+import { useCountries } from "../../../../hooks/useCountries.ts";
 
 const CreateJobStepThree: React.FC = () => {
   const { isSubscribed } = useSubscriptionStore();
+  const {countries} = useCountries();
   const { nextStep, prevStep, job, setJobData } = useJobFormStore();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
