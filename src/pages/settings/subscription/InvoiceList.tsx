@@ -10,7 +10,7 @@ const InvoicesList = () => {
   ];
 
   return (
-    <div className="h-[481px] w-[95%] rounded-lg bg-white p-6 font-lato shadow-md md:w-[88%]">
+    <div className="font-lato h-[481px] w-[95%] rounded-lg bg-white p-6 shadow-md md:w-[88%]">
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-black">Invoices 200</h2>
@@ -26,11 +26,11 @@ const InvoicesList = () => {
             {/* Left - File Icon & File Name */}
             <div className="flex items-center gap-4">
               <img src={FileIcon} alt="File" className="h-6 w-6" />
-              <span className="text-gray-700 text-sm">{invoice.fileName}</span>
+              <span className="text-sm text-gray-700">{invoice.fileName}</span>
             </div>
 
             {/* Right - Invoice Date */}
-            <div className="text-gray-600 text-sm">
+            <div className="text-sm text-gray-600">
               <span className="font-bold">Date of invoice</span> {invoice.date}
             </div>
           </div>

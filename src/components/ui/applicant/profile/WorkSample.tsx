@@ -61,7 +61,7 @@ const FileUploadForm: React.FC = () => {
 
   return (
     <section className="relative mt-4 space-y-8 border-t-[2px] border-t-[#E6E6E6] pt-5">
-      <div className="absolute right-1 top-2 z-10 flex items-center justify-evenly gap-x-2 text-xs">
+      <div className="absolute top-2 right-1 z-10 flex items-center justify-evenly gap-x-2 text-xs">
         <button
           type="button"
           onClick={handleToggleEdit}
@@ -82,10 +82,10 @@ const FileUploadForm: React.FC = () => {
       {/* Upload method selector */}
 
       {/* File & Link Upload Sections Side by Side */}
-      <div className="flex flex-col space-x-0 space-y-6 md:flex-row md:items-start md:space-x-6 md:space-y-0">
+      <div className="flex flex-col space-y-6 space-x-0 md:flex-row md:items-start md:space-y-0 md:space-x-6">
         {/* LINKS INPUT BOX */}
         <div className="min-h-[250px] w-full rounded-[16px] border border-[#E6E6E6] bg-white p-6 md:h-[250px]">
-          <span className="text-gray-700 font-lato text-sm">Provide Links</span>
+          <span className="font-lato text-sm text-gray-700">Provide Links</span>
 
           {cvDetails?.portfolioLink?.map((link, index) => (
             <div
@@ -99,13 +99,13 @@ const FileUploadForm: React.FC = () => {
                 disabled={!isEditable}
                 onChange={(e) => handleLinkChange(index, e.target.value)}
                 placeholder="Enter a link"
-                className="ml-2 flex-1 border border-[#E6E6E6] bg-[#F9FAFB] p-2 text-sm focus:border-[1px] focus:border-gray focus:outline-none focus:ring-0"
+                className="focus:border-gray ml-2 flex-1 border border-[#E6E6E6] bg-[#F9FAFB] p-2 text-sm focus:border-[1px] focus:ring-0 focus:outline-none"
               />
               <button
                 type="button"
                 disabled={!isEditable}
                 onClick={() => removeLink(index)}
-                className="text-gray-600 hover:text-gray-800 ml-2 text-sm"
+                className="ml-2 text-sm text-gray-600 hover:text-gray-800"
               >
                 <IoMdClose />
               </button>

@@ -90,19 +90,19 @@ const SearchableSelectWithAdd: React.FC<SearchableSelectWithAddProps> = ({
       >
         {selectedOption ? selectedOption.label : placeholder}
         {isOpen ? (
-          <MdKeyboardArrowUp className="absolute right-3 top-3 cursor-pointer text-[30px]" />
+          <MdKeyboardArrowUp className="absolute top-3 right-3 cursor-pointer text-[30px]" />
         ) : (
-          <MdKeyboardArrowDown className="absolute right-3 top-2 cursor-pointer text-[30px]" />
+          <MdKeyboardArrowDown className="absolute top-2 right-3 cursor-pointer text-[30px]" />
         )}
       </button>
 
       {/* Dropdown menu */}
       {isOpen && (
-        <div className="border-gray-300 absolute z-10 mt-2 w-full rounded-[10px] border bg-white p-3 shadow-lg">
+        <div className="absolute z-10 mt-2 w-full rounded-[10px] border border-gray-300 bg-white p-3 shadow-lg">
           {/* Search input */}
           <input
             type="text"
-            className="border-gray-300 w-full border-b px-3 py-2 text-sm focus:outline-none"
+            className="w-full border-b border-gray-300 px-3 py-2 text-sm focus:outline-none"
             placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -121,7 +121,7 @@ const SearchableSelectWithAdd: React.FC<SearchableSelectWithAddProps> = ({
                 </li>
               ))
             ) : (
-              <li className="text-gray-500 px-4 py-2 text-sm">
+              <li className="px-4 py-2 text-sm text-gray-500">
                 No results found
               </li>
             )}

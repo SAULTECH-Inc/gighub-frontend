@@ -150,7 +150,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
         </div>
 
         {/* Center: Navigation Links (Desktop) */}
-        <ul className="text-gray-700 hidden flex-wrap justify-center gap-6 font-lato text-[16px] lg:flex">
+        <ul className="font-lato hidden flex-wrap justify-center gap-6 text-[16px] text-gray-700 lg:flex">
           {navItems.map((item) => (
             <li
               key={item}
@@ -179,7 +179,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
               <SearchIcon />
             </div>
             <div
-              className={`absolute right-[-1px] top-[-6px] transform transition-all duration-300 ${
+              className={`absolute top-[-6px] right-[-1px] transform transition-all duration-300 ${
                 isSearchOpen
                   ? "translate-x-0 opacity-100"
                   : "pointer-events-none translate-x-[200px] opacity-0"
@@ -188,7 +188,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
               <input
                 ref={searchInputRef}
                 type="text"
-                className="hidden w-[calc(220px+5px)] rounded-full border-[0.5px] border-[#ccc] px-4 py-2 text-sm shadow-sm focus:border-[#ccc] focus:outline-none focus:ring-0 active:border-[#ccc] md:flex"
+                className="hidden w-[calc(220px+5px)] rounded-full border-[0.5px] border-[#ccc] px-4 py-2 text-sm shadow-sm focus:border-[#ccc] focus:ring-0 focus:outline-none active:border-[#ccc] md:flex"
                 placeholder="Search..."
               />
             </div>
@@ -228,7 +228,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
 
       {/*Mobile Drawer Sidebar */}
       <img
-        className={`absolute left-4 top-2 z-40 lg:hidden ${
+        className={`absolute top-2 left-4 z-40 lg:hidden ${
           isMobileNavOpen ? "hidden" : "block"
         }`}
         onClick={() => setMobileNavOpen(true)}
@@ -237,12 +237,12 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
       />
 
       <div
-        className={`fixed left-0 top-0 z-50 h-full w-64 transform border-r-[1px] border-r-[#ccc] bg-white transition-transform duration-300 ${
+        className={`fixed top-0 left-0 z-50 h-full w-64 transform border-r-[1px] border-r-[#ccc] bg-white transition-transform duration-300 ${
           isMobileNavOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <RiCloseLargeFill
-          className="absolute right-5 top-6 cursor-pointer font-bold"
+          className="absolute top-6 right-5 cursor-pointer font-bold"
           onClick={() => setMobileNavOpen(false)}
         />
         {/* Logo Section */}
@@ -267,15 +267,15 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                   : employer?.companyLogo) || avatarIcon
               }
               alt="Avatar"
-              className="flex h-[50px] w-[50px] items-center justify-center rounded-full bg-gray"
+              className="bg-gray flex h-[50px] w-[50px] items-center justify-center rounded-full"
             />
             <div>
-              <h3 className="text-gray-800 text-lg font-bold">
+              <h3 className="text-lg font-bold text-gray-800">
                 {USER_TYPE === UserType.APPLICANT
                   ? applicant.firstName + " " + applicant.lastName
                   : employer?.companyName}
               </h3>
-              <p className="text-gray-500 text-sm">
+              <p className="text-sm text-gray-500">
                 {USER_TYPE === UserType.APPLICANT
                   ? applicant?.cv?.professionalTitle
                   : "Company"}
@@ -305,7 +305,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                   handleSetItems(item);
                   setMobileNavOpen(false);
                 }}
-                className={`text-gray-600 flex cursor-pointer items-center gap-3 rounded-lg px-4 py-2 font-lato text-[16px] transition-colors duration-200 hover:bg-[#6438C2]/10 hover:text-[#6438C2]`}
+                className={`font-lato flex cursor-pointer items-center gap-3 rounded-lg px-4 py-2 text-[16px] text-gray-600 transition-colors duration-200 hover:bg-[#6438C2]/10 hover:text-[#6438C2]`}
               >
                 {item === "Dashboard" && (
                   <AiOutlineDashboard className="text-lg" />
@@ -334,7 +334,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
           {/* Logout */}
           <div
             onClick={handleLogout}
-            className="mt-5 md:mt-10 flex cursor-pointer items-center gap-3 pl-4 text-red-500 hover:text-red-700"
+            className="mt-5 flex cursor-pointer items-center gap-3 pl-4 text-red-500 hover:text-red-700 md:mt-10"
           >
             <FaPowerOff className="text-lg" /> Logout
           </div>

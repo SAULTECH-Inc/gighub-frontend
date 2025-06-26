@@ -64,7 +64,7 @@ const EducationUpdateForm: React.FC<EductionUpdateFormProps> = ({
                 institution: selected.value,
               });
             }}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
           />
         </div>
         <div className="flex w-full flex-col gap-y-2">
@@ -81,7 +81,7 @@ const EducationUpdateForm: React.FC<EductionUpdateFormProps> = ({
                 fieldOfStudy: selected.value,
               });
             }}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
           />
         </div>
       </div>
@@ -100,7 +100,7 @@ const EducationUpdateForm: React.FC<EductionUpdateFormProps> = ({
                 institution: selected.value,
               });
             }}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
           />
         </div>
 
@@ -118,7 +118,7 @@ const EducationUpdateForm: React.FC<EductionUpdateFormProps> = ({
                 institution: selected.value,
               });
             }}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
           />
         </div>
       </div>
@@ -135,7 +135,7 @@ const EducationUpdateForm: React.FC<EductionUpdateFormProps> = ({
                 country: selected.value,
               });
             }}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
           />
         </div>
         <div className="flex w-full flex-col gap-y-2">
@@ -150,7 +150,7 @@ const EducationUpdateForm: React.FC<EductionUpdateFormProps> = ({
                 city: selected.value,
               });
             }}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
           />
         </div>
       </div>
@@ -170,7 +170,7 @@ const EducationUpdateForm: React.FC<EductionUpdateFormProps> = ({
                   : ""
               }
               onChange={handleChangeDate}
-              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
             />
           </div>
           <div className="flex w-1/2 flex-col gap-y-2">
@@ -187,7 +187,7 @@ const EducationUpdateForm: React.FC<EductionUpdateFormProps> = ({
                   : ""
               }
               onChange={handleChangeDate}
-              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
             />
           </div>
         </div>

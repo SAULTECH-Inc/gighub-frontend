@@ -18,13 +18,13 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ modalId }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50 p-4">
+    <div className="bg-opacity-10 fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black p-4">
       {/* Modal Container */}
       <div className="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-lg bg-[#F7F7F7] p-4 shadow-lg md:p-6">
         {/* Close Button */}
         <button
           onClick={() => closeModal(modalId)}
-          className="text-gray-500 hover:text-gray-700 absolute right-2 top-2 text-2xl focus:outline-none md:right-4 md:top-4 md:text-[32px]"
+          className="absolute top-2 right-2 text-2xl text-gray-500 hover:text-gray-700 focus:outline-none md:top-4 md:right-4 md:text-[32px]"
           aria-label="Close Modal"
         >
           &times;
@@ -45,7 +45,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ modalId }) => {
               className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-gradient-to-r from-[#6438C2] to-[#FA4E09] p-3 text-white transition-transform duration-300 ease-in-out hover:scale-[1.02] md:p-4"
             >
               <div className="flex items-center">
-                <div className="text-yellow-300 mr-2 text-xl md:mr-4 md:text-2xl">
+                <div className="mr-2 text-xl text-yellow-300 md:mr-4 md:text-2xl">
                   ⭐
                 </div>
                 <div>
@@ -65,7 +65,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ modalId }) => {
               onClick={handleSubscription}
               className="relative flex w-full cursor-pointer items-center justify-between rounded-xl bg-gradient-to-r from-[#6438C2] to-[#65FF81] p-3 text-white transition-transform duration-300 ease-in-out hover:scale-[1.02] md:p-4"
             >
-              <div className="absolute -right-2 -top-2 rounded-full bg-[#FACC15] px-2 py-1 text-xs font-bold text-black">
+              <div className="absolute -top-2 -right-2 rounded-full bg-[#FACC15] px-2 py-1 text-xs font-bold text-black">
                 POPULAR
               </div>
               <div className="flex items-center">
@@ -92,11 +92,11 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ modalId }) => {
               onClick={handleSubscription}
               className="relative flex w-full cursor-pointer items-center justify-between rounded-xl bg-gradient-to-r from-[#6438C2] to-[#FA4E09] p-3 text-white transition-transform duration-300 ease-in-out hover:scale-[1.02] md:p-4"
             >
-              <div className="absolute -right-2 -top-2 rounded-full bg-green-400 px-2 py-1 text-xs font-bold text-black">
+              <div className="absolute -top-2 -right-2 rounded-full bg-green-400 px-2 py-1 text-xs font-bold text-black">
                 BEST VALUE
               </div>
               <div className="flex items-center">
-                <div className="text-yellow-300 mr-2 text-xl md:mr-4 md:text-2xl">
+                <div className="mr-2 text-xl text-yellow-300 md:mr-4 md:text-2xl">
                   🏆
                 </div>
                 <div>
@@ -138,12 +138,12 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ modalId }) => {
               What's Included
             </h4>
             <ul className="space-y-3 md:space-y-4">
-              <li className="border-gray-300 border-b pb-3">
+              <li className="border-b border-gray-300 pb-3">
                 <span className="mb-1 block text-sm font-bold text-[#6438C2] md:text-base">
                   Monthly
                 </span>
                 <div className="flex">
-                  <span className="mr-2 mt-0.5 text-xl text-red-500">🎯</span>
+                  <span className="mt-0.5 mr-2 text-xl text-red-500">🎯</span>
                   <p className="text-xs text-[#8E8E8E] md:text-sm">
                     Up to 6,000 automated applications per month with
                     intelligent job matching and personalized cover letters.
@@ -151,12 +151,12 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ modalId }) => {
                 </div>
               </li>
 
-              <li className="border-gray-300 border-b pb-3">
+              <li className="border-b border-gray-300 pb-3">
                 <span className="mb-1 block text-sm font-bold text-[#6438C2] md:text-base">
                   Quarterly
                 </span>
                 <div className="flex">
-                  <span className="mr-2 mt-0.5 text-xl text-red-500">💎</span>
+                  <span className="mt-0.5 mr-2 text-xl text-red-500">💎</span>
                   <p className="text-xs text-[#8E8E8E] md:text-sm">
                     Up to 18,000 automated applications over 3 months with
                     priority matching and advanced filtering options.
@@ -169,7 +169,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ modalId }) => {
                   Annual
                 </span>
                 <div className="flex">
-                  <span className="mr-2 mt-0.5 text-xl text-red-500">🏆</span>
+                  <span className="mt-0.5 mr-2 text-xl text-red-500">🏆</span>
                   <p className="text-xs text-[#8E8E8E] md:text-sm">
                     Up to 73,000 automated applications per year with premium
                     support, advanced analytics, and exclusive job

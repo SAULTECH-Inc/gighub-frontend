@@ -14,37 +14,37 @@ const NetworkCard: React.FC<NetworkCardProps> = ({
   userDetails,
   setChatWindowOpened,
 }) => {
-  const { setRecipient, setRecipientDetails, setIsClosed, setIsMinimized } =
-    useChatStore();
+  const { setRecipient, setIsClosed, setIsMinimized } = useChatStore();
   const location =
-    userDetails?.city && userDetails?.country
-      ? `${userDetails?.city}, ${userDetails?.country}`
+    userDetails?.applicant?.city && userDetails?.applicant?.country
+      ? `${userDetails?.applicant?.city}, ${userDetails?.applicant?.country}`
       : null;
   return (
     <>
-      <div className="h-[380px] w-full space-y-4 rounded-[16px] border-[1px] border-[#E6E6E6] p-[18px] sm:w-[45%] md:w-full mdl:w-[45%] lg:w-[298px]">
+      <div className="mdl:w-[45%] h-[380px] w-full space-y-4 rounded-[16px] border-[1px] border-[#E6E6E6] p-[18px] sm:w-[45%] md:w-full lg:w-[298px]">
         <div className="h-[60px] w-[60px] rounded-full bg-[#D9D9D9]">
           <img
-            src={userDetails?.profilePicture || avatarIcon}
+            src={userDetails?.applicant?.profilePicture || avatarIcon}
             alt="Profile"
             className="h-full w-full rounded-full"
           />
         </div>
         <div className="flex flex-col">
           <h3 className="text-[20px] font-semibold text-[#000000]">
-            {userDetails?.firstName} {userDetails?.lastName}
+            {userDetails?.applicant?.firstName}{" "}
+            {userDetails?.applicant?.lastName}
           </h3>
           {location && <p>{location}</p>}
         </div>
         <div className="flex items-center justify-between">
           <div className="flex gap-x-2">
             <div className="flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded-full border-[1px] border-[#E6E6E6]">
-              <Link to={userDetails?.linkedInProfile || "#"}>
+              <Link to={userDetails?.applicant?.linkedInProfile || "#"}>
                 <img src={linkedin} alt="linkedin-icon" />
               </Link>
             </div>
             <div className="flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded-full border-[1px] border-[#E6E6E6]">
-              <Link to={userDetails?.twitterProfile || "#"}>
+              <Link to={userDetails?.applicant?.twitterProfile || "#"}>
                 <img src={twitter} alt="twitter-icon" />
               </Link>
             </div>
@@ -54,8 +54,7 @@ const NetworkCard: React.FC<NetworkCardProps> = ({
               onClick={() => {
                 setIsClosed(false);
                 setIsMinimized(false);
-                setRecipient(userDetails.email);
-                setRecipientDetails(userDetails);
+                setRecipient(userDetails.applicant?.email as string);
                 setChatWindowOpened((prev) => !prev);
               }}
               className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full border-[1px] border-[#E6E6E6] bg-[#6438C2]"
@@ -67,8 +66,8 @@ const NetworkCard: React.FC<NetworkCardProps> = ({
         <hr className="w-full border-[1px] border-[#AFAFAF]" />
         <div className="flex items-center justify-between text-[16px] font-bold text-[#6438C2]">
           <p>
-            {userDetails?.professionalTitle ||
-              userDetails?.cv?.professionalTitle ||
+            {userDetails?.applicant?.professionalTitle ||
+              userDetails?.applicant?.cv?.professionalTitle ||
               "Applicant"}
           </p>
           <p>Level</p>
@@ -84,7 +83,7 @@ const NetworkCard: React.FC<NetworkCardProps> = ({
           )}
           <div className="rounded-[10px] border border-[#E6E6E6] px-[16px] py-[6px] md:px-[10px] md:py-[4px] lg:px-[16px] lg:py-[6px]">
             <Link
-              to={`/applicant/public-profile-view/${userDetails?.userId}`}
+              to={`/applicant/public-profile-view/${userDetails?.applicant?.id}`}
               className="text-[16px] font-medium text-[#000000] md:text-[14px] lg:text-[16px]"
             >
               View Profile

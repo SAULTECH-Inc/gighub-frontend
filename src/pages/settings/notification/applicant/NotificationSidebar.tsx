@@ -10,7 +10,7 @@ const NotificationSidebar = () => {
   const { settings, toggleSetting } = useNavMenuStore();
   const navigate = useNavigate();
   return (
-    <div className="hidden h-[737px] w-full flex-col rounded-[16px] bg-white p-6 font-lato shadow lg:flex">
+    <div className="font-lato hidden h-[737px] w-full flex-col rounded-[16px] bg-white p-6 shadow lg:flex">
       {/* Back Button */}
       <div
         onClick={() => {

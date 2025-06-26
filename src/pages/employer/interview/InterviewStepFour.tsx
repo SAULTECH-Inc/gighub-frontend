@@ -114,7 +114,7 @@ const InterviewStepFour: React.FC = () => {
                   notes: e.target.value,
                 } as InterviewScheduleDetails);
               }}
-              className="h-[121px] w-full resize-none rounded-[15px] border border-[#E6E6E6] px-4 py-2 focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+              className="h-[121px] w-full resize-none rounded-[15px] border border-[#E6E6E6] px-4 py-2 focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
             />
           </div>
           <div className="flex w-full flex-col gap-2">
@@ -180,7 +180,7 @@ const InterviewStepFour: React.FC = () => {
                   e.target.value = "";
                 }
               }}
-              className="w-full rounded-[15px] border border-[#E6E6E6] px-4 py-2 focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+              className="w-full rounded-[15px] border border-[#E6E6E6] px-4 py-2 focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
             />
             {/* Display entered tags as chips */}
             <div className="flex w-full flex-wrap gap-2">
@@ -239,7 +239,7 @@ const InterviewStepFour: React.FC = () => {
                   <button
                     onClick={handleFileUploadDialog}
                     name="browse-button"
-                    className="border-none px-4 py-2 text-[13px] font-bold text-[#6438C2] focus:border-none focus:outline-none focus:ring-0"
+                    className="border-none px-4 py-2 text-[13px] font-bold text-[#6438C2] focus:border-none focus:ring-0 focus:outline-none"
                   >
                     Browse
                   </button>

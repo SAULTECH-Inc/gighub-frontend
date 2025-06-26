@@ -115,7 +115,7 @@ const ViewProfile: React.FC = () => {
                 <div className="flex h-[64px] w-full items-center justify-end bg-gradient-to-r from-[#6438C2] via-[#6438C2] via-50% to-white pr-2">
                   <div className="my-5 flex w-[94%] max-w-[675px] justify-end gap-2 lg:max-w-[1360px]">
                     <button
-                      className="absolute left-0 top-5 px-1 text-white"
+                      className="absolute top-5 left-0 px-1 text-white"
                       onClick={() => window.history.back()}
                     >
                       <img src={Arrowleft} alt="Arrowleft" />
@@ -133,7 +133,7 @@ const ViewProfile: React.FC = () => {
                 <img
                   src={ASAbubakar}
                   alt="ASAbubakar"
-                  className="absolute left-5 top-12 h-[60px] w-[60px] sm:left-11"
+                  className="absolute top-12 left-5 h-[60px] w-[60px] sm:left-11"
                 />
               </div>
               <div className="mt-4 flex w-[90%] justify-between gap-2">
@@ -257,7 +257,7 @@ const ViewProfile: React.FC = () => {
                           </div>
                         </div>
                         <div
-                          className="my-4 w-full text-[13px] font-bold leading-[100%] text-[#8E8E8E]"
+                          className="my-4 w-full text-[13px] leading-[100%] font-bold text-[#8E8E8E]"
                           dangerouslySetInnerHTML={{
                             __html: experience?.description || "",
                           }}

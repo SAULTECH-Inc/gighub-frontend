@@ -116,20 +116,20 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
 
   return (
     <div
-      className="fixed inset-0 -top-4 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      className="bg-opacity-50 fixed inset-0 -top-4 z-50 flex items-center justify-center bg-black"
       onClick={() => closeModal(modalId)}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[95vh] w-[80%] flex-col gap-y-5 overflow-y-auto rounded-[16px] bg-white p-8 shadow-sm md:w-[690px] md:p-8 lg:w-[820px] lg:p-10"
+        className="mt-10 flex max-h-[95vh] w-[100%] flex-col gap-y-5 overflow-y-auto rounded-[16px] bg-white p-4 shadow-sm md:mt-0 md:w-[690px] md:p-8 lg:w-[820px] lg:p-10"
       >
         <h3>Not Specified</h3>
 
-        <div className="flex w-full flex-col gap-x-6 md:flex-row">
+        <div className="flex w-full flex-row gap-x-6">
           <div className="flex w-full flex-col gap-y-2">
             <label>Degree</label>
             <CustomDropdown
-              placeholder="Enter class of degree"
+              placeholder="Class of degree"
               options={classOfDegrees}
               handleSelect={(selected: Option) => {
                 setApplicantEducation({
@@ -137,13 +137,13 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
                   degree: selected.value,
                 });
               }}
-              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 lg:p-3"
+              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-1 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none lg:p-3"
             />
           </div>
           <div className="flex w-full flex-col gap-y-2">
             <label>Field of Study</label>
             <CustomDropdown
-              placeholder="Enter field of study"
+              placeholder="Field of study"
               options={fieldsOfStudies}
               handleSelect={(selected: Option) => {
                 setApplicantEducation({
@@ -151,12 +151,12 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
                   fieldOfStudy: selected.value,
                 });
               }}
-              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 lg:p-3"
+              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-1 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none lg:p-3"
             />
           </div>
         </div>
 
-        <div className="flex w-full flex-col gap-x-6 md:flex-row">
+        <div className="flex w-full flex-row gap-x-6">
           <div className="flex w-full flex-col gap-y-2">
             <label>Institution</label>
             <CustomDropdown
@@ -168,7 +168,7 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
                   institution: selected.value,
                 });
               }}
-              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 lg:p-3"
+              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none lg:p-3"
             />
           </div>
           <div className="flex w-full flex-col gap-y-2">
@@ -182,7 +182,7 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
                   country: selected.value,
                 });
               }}
-              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 lg:p-3"
+              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none lg:p-3"
             />
           </div>
         </div>
@@ -199,7 +199,7 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
                   city: selected.value,
                 });
               }}
-              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 lg:p-3"
+              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none lg:p-3"
             />
           </div>
           <div className="flex w-full flex-col gap-x-2 md:flex-row lg:w-1/2 lg:gap-x-6">
@@ -216,7 +216,7 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
                         .split("T")[0]
                     : ""
                 }
-                className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 focus:border-[#E6E6E6] focus:outline-none focus:ring-0 lg:p-3"
+                className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 focus:border-[#E6E6E6] focus:ring-0 focus:outline-none lg:p-3"
               />
             </div>
             {!currentlyEnrolled && (
@@ -234,7 +234,7 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
                           .split("T")[0]
                       : ""
                   }
-                  className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 focus:border-[#E6E6E6] focus:outline-none focus:ring-0 lg:p-3"
+                  className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 focus:border-[#E6E6E6] focus:ring-0 focus:outline-none lg:p-3"
                 />
               </div>
             )}
@@ -266,7 +266,7 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
           </button>
           <button
             onClick={() => closeModal(modalId)}
-            className="text-gray-500 ml-4 w-[197px] rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#FFFFFF] px-4 py-2 font-medium"
+            className="ml-4 w-[197px] rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#FFFFFF] px-4 py-2 font-medium text-gray-500"
           >
             Cancel
           </button>

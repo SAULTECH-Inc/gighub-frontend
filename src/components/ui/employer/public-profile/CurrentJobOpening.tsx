@@ -13,7 +13,7 @@ interface JobOpeningProp {
 const JobOpening: React.FC<JobOpeningProp> = ({ employerId }) => {
   const [jobs, setJobs] = useState<JobPostResponse[]>();
   const { jobToApply, setJobToApply } = useJobSearchSettings();
-  const { openModal } = useModalStore();
+  const { openModal, isModalOpen } = useModalStore();
   const [pagination] = useState({
     page: 1,
     limit: 5,
@@ -45,26 +45,26 @@ const JobOpening: React.FC<JobOpeningProp> = ({ employerId }) => {
         {jobs?.map((job, index) => (
           <div
             key={index}
-            className="h-[178px] w-full bg-[#F7F7F7] p-6 shadow-sm md:w-[363px] md:flex-1"
+            className="h-[178px] w-full bg-[#F7F7F7] p-6 shadow-sm md:w-[363px]"
           >
             <div>
               <h3 className="font-lato font-semibold">{job.title}</h3>
               <p className="font-lato text-sm text-[#7F7F7F]">{job.location}</p>
             </div>
-            <div className="w-full mt-4 flex gap-x-3 md:gap-x-8">
+            <div className="mt-4 flex w-full gap-x-3 md:gap-x-8">
               <button
                 type="button"
                 onClick={() => {
                   setJobToApply(job);
                   openModal("application-modal");
                 }}
-                className="md:h-[41px] text-sm md:w-[100px] rounded-[10px] bg-[#6B5AED] px-6 py-2 text-white transition duration-200 hover:bg-purple-700"
+                className="rounded-[10px] bg-[#6B5AED] px-6 py-2 text-sm text-white transition duration-200 hover:bg-purple-700 md:h-[41px] md:w-[100px]"
               >
                 Apply
               </button>
               <Link
                 to={`/jobs/${job?.id}/details`}
-                className="md:h-[41px] text-sm w-[200px] md:w-[140px] rounded-[10px] bg-white px-6 py-2 text-[#000000] transition duration-200"
+                className="w-[200px] rounded-[10px] bg-white px-6 py-2 text-sm text-[#000000] transition duration-200 md:h-[41px] md:w-[140px]"
               >
                 View Detail
               </Link>
@@ -72,10 +72,12 @@ const JobOpening: React.FC<JobOpeningProp> = ({ employerId }) => {
           </div>
         ))}
       </div>
-      <ApplicationModal
-        modalId="application-modal"
-        applicationMethod={jobToApply?.applicationMethod as ApplicationMethod}
-      />
+      {isModalOpen("application-modal") && (
+        <ApplicationModal
+          modalId="application-modal"
+          applicationMethod={jobToApply?.applicationMethod as ApplicationMethod}
+        />
+      )}
     </section>
   );
 };

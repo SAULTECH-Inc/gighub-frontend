@@ -38,7 +38,7 @@ const MonthlyPlan = () => {
 
           {/* Pricing */}
           <div className="flex items-start">
-            <p className="text-[16px] font-bold leading-none text-black md:text-[28px]">
+            <p className="text-[16px] leading-none font-bold text-black md:text-[28px]">
               {
                 currencyAbbreviationToSymbol[
                   subscription?.subscription?.currency || "$"
@@ -56,7 +56,7 @@ const MonthlyPlan = () => {
         <div className="mt-3 flex items-center justify-between">
           {/* Application Usage */}
           {subscription?.isActive && (
-            <div className="flex h-[42px] w-[137px] items-center justify-center rounded-[10px] bg-[#F7F6F7] text-orange shadow-sm">
+            <div className="text-orange flex h-[42px] w-[137px] items-center justify-center rounded-[10px] bg-[#F7F6F7] shadow-sm">
               <p className="text-center">Active</p>
             </div>
           )}
@@ -79,7 +79,7 @@ const MonthlyPlan = () => {
         <p className="text-md font-bold text-black">Next Payment</p>
 
         {/* Payment Date */}
-        <p className="font-lato text-[20px] font-bold leading-[24px] tracking-[0%]">
+        <p className="font-lato text-[20px] leading-[24px] font-bold tracking-[0%]">
           {subscription && calculateNextSubscriptionDate(subscription)}
         </p>
 

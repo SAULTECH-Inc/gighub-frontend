@@ -93,13 +93,13 @@ const Certifications: React.FC<CertificationProps> = ({
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20">
-          <div className="w-90 relative rounded-lg bg-white p-6 md:w-96">
+        <div className="bg-opacity-20 fixed inset-0 z-50 flex items-center justify-center bg-black">
+          <div className="relative w-90 rounded-lg bg-white p-6 md:w-96">
             {/* Close Button */}
             <button
               type="button"
               disabled={!isEditable}
-              className="text-gray-600 hover:text-gray-900 absolute right-3 top-2 text-2xl font-bold"
+              className="absolute top-2 right-3 text-2xl font-bold text-gray-600 hover:text-gray-900"
               onClick={() => setIsModalOpen(false)}
             >
               &times;
@@ -120,7 +120,7 @@ const Certifications: React.FC<CertificationProps> = ({
                     certification: e.target.value,
                   })
                 }
-                className="mb-2 w-full rounded border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+                className="mb-2 w-full rounded border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
               />
 
               {/* Institution */}
@@ -134,7 +134,7 @@ const Certifications: React.FC<CertificationProps> = ({
                     institution: e.target.value,
                   })
                 }
-                className="mb-2 w-full rounded border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+                className="mb-2 w-full rounded border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
               />
 
               {/* Year Obtained */}
@@ -148,14 +148,14 @@ const Certifications: React.FC<CertificationProps> = ({
                     yearObtained: e.target.value,
                   })
                 }
-                className="mb-2 w-full rounded border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+                className="mb-2 w-full rounded border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
               />
 
               {/* Action Buttons */}
               <div className="mt-4 flex justify-end space-x-2">
                 <button
                   type="button"
-                  className="bg-gray-400 rounded px-4 py-2 text-white"
+                  className="rounded bg-gray-400 px-4 py-2 text-white"
                   onClick={() => setIsModalOpen(false)}
                 >
                   Cancel

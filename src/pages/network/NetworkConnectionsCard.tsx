@@ -22,7 +22,7 @@ const NetworkConnectionsCard: React.FC<NetworkConnectionsCardProps> = ({
     }
   };
   const handleRejectRequest = async () => {
-    console.log("Rejected request from", userDetails.firstName);
+    console.log("Rejected request from", userDetails?.applicant?.firstName);
     const response = await rejectConnectionRequest(userDetails.id);
     if (response?.statusCode === 200) {
       console.log("Request rejected successfully");
@@ -37,9 +37,9 @@ const NetworkConnectionsCard: React.FC<NetworkConnectionsCardProps> = ({
           <button className="font-bold text-[#000000]">Send message</button>
         </div>
         <hr />
-        <div className="absolute left-4 top-3 h-[60px] w-[60px] rounded-full bg-[#D9D9D9]">
+        <div className="absolute top-3 left-4 h-[60px] w-[60px] rounded-full bg-[#D9D9D9]">
           <img
-            src={userDetails?.profilePicture as string}
+            src={userDetails?.applicant?.profilePicture as string}
             alt="Profile"
             className="h-full w-full rounded-full"
           />
@@ -48,11 +48,12 @@ const NetworkConnectionsCard: React.FC<NetworkConnectionsCardProps> = ({
       <div className="flex items-center justify-between">
         <div>
           <p className="text-[20px] font-bold text-[#000000]">
-            {userDetails?.firstName} {userDetails?.lastName}
+            {userDetails?.applicant?.firstName}{" "}
+            {userDetails?.applicant?.lastName}
           </p>
-          {userDetails?.city && userDetails?.city && (
+          {userDetails?.applicant?.city && userDetails?.applicant?.city && (
             <p className="font-bold text-[#8E8E8E]">
-              {userDetails?.city} {userDetails?.country}
+              {userDetails?.applicant?.city} {userDetails?.applicant?.country}
             </p>
           )}
         </div>
@@ -60,7 +61,7 @@ const NetworkConnectionsCard: React.FC<NetworkConnectionsCardProps> = ({
           <img
             src={pro}
             alt="Profile"
-            className="w-[24[x] h-[24px] rounded-full"
+            className="h-[24px] w-[24[x] rounded-full"
           />
         </div>
       </div>

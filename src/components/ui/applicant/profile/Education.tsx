@@ -19,7 +19,7 @@ const Education: React.FC = () => {
       id="education"
       className="mt-4 space-y-3 border-t-[2px] border-t-[#E6E6E6] pt-5"
     >
-      <h3 className="mb-4 font-lato text-[20px]">Education</h3>
+      <h3 className="font-lato mb-4 text-[20px]">Education</h3>
       <div className="flex flex-col gap-y-4">
         {Array.isArray(educations) &&
           educations.map((education, index) => (

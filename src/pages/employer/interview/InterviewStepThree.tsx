@@ -70,7 +70,7 @@ const InterviewStepThree: React.FC = () => {
                   date: date?.toISOString(),
                 } as InterviewScheduleDetails);
               }}
-              className="w-full rounded-[10px] border border-[#ccc] px-4 py-2 text-[14px] focus:border-[#e6e6e6] focus:outline-none focus:ring-0"
+              className="w-full rounded-[10px] border border-[#ccc] px-4 py-2 text-[14px] focus:border-[#e6e6e6] focus:ring-0 focus:outline-none"
             />
             {errors.date && (
               <p className="text-sm text-red-500">{errors.date}</p>
@@ -87,7 +87,7 @@ const InterviewStepThree: React.FC = () => {
               <input
                 type="time"
                 name="time"
-                className="w-full rounded-md border border-[#CCCCCC] px-4 py-2 focus:border-[#CCCCCC] focus:outline-none focus:ring-0"
+                className="w-full rounded-md border border-[#CCCCCC] px-4 py-2 focus:border-[#CCCCCC] focus:ring-0 focus:outline-none"
                 value={interviewDetails?.startTime || ""}
                 onChange={(e) => {
                   setInterviewDetails({
@@ -110,7 +110,7 @@ const InterviewStepThree: React.FC = () => {
               <input
                 type="time"
                 name="time"
-                className="w-full rounded-md border border-[#CCCCCC] px-4 py-2 focus:border-[#CCCCCC] focus:outline-none focus:ring-0"
+                className="w-full rounded-md border border-[#CCCCCC] px-4 py-2 focus:border-[#CCCCCC] focus:ring-0 focus:outline-none"
                 value={interviewDetails?.endTime || ""}
                 onChange={(e) => {
                   setInterviewDetails({
@@ -131,7 +131,7 @@ const InterviewStepThree: React.FC = () => {
               >
                 Duration
               </label>
-              <p className="w-full rounded-md border border-[#CCCCCC] px-4 py-2 focus:border-[#CCCCCC] focus:outline-none focus:ring-0">
+              <p className="w-full rounded-md border border-[#CCCCCC] px-4 py-2 focus:border-[#CCCCCC] focus:ring-0 focus:outline-none">
                 {processDurationIntoHoursMinutes(
                   interviewDetails?.duration as number,
                 )}
@@ -155,7 +155,7 @@ const InterviewStepThree: React.FC = () => {
                 { value: "EST", label: "EST" },
               ]}
               placeholder={interviewDetails?.timeZone || "Select Time Zone"}
-              className="w-full rounded-md border border-[#CCCCCC] px-4 py-2 focus:border-[#CCCCCC] focus:outline-none focus:ring-0"
+              className="w-full rounded-md border border-[#CCCCCC] px-4 py-2 focus:border-[#CCCCCC] focus:ring-0 focus:outline-none"
               onChange={(option) => {
                 setInterviewDetails({
                   ...interviewDetails,

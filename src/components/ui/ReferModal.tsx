@@ -59,7 +59,7 @@ const ReferModal: React.FC<ReferModalProp> = ({ modalId, handleRefer }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20 p-4">
+    <div className="bg-opacity-20 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
       <div className="relative flex h-[90vh] w-full max-w-[98%] flex-col overflow-hidden rounded-lg bg-white pt-8 md:h-[650px] md:max-w-[720px]">
         <div className="w-full flex-1 space-y-4 overflow-y-auto px-4">
           {/* Header */}
@@ -151,7 +151,7 @@ const ReferModal: React.FC<ReferModalProp> = ({ modalId, handleRefer }) => {
                         ...(prev || []),
                       ]);
                     }}
-                    className="hover:text-gray-300 ml-1 font-bold text-white"
+                    className="ml-1 font-bold text-white hover:text-gray-300"
                   >
                     &times;
                   </button>
@@ -183,7 +183,7 @@ const ReferModal: React.FC<ReferModalProp> = ({ modalId, handleRefer }) => {
 
                 {/* Title & Rating */}
                 <div className="flex w-full items-center gap-x-2">
-                  <p className="text-gray-700 text-sm">
+                  <p className="text-sm text-gray-700">
                     {referee.user.professionalTitle}
                   </p>
                   <Rating value={2} readOnly={true} />

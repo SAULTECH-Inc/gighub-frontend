@@ -34,7 +34,7 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
                   sortBy: { ...pagination.sortBy, companyName: e.target.value },
                 })
               }
-              className="h-full w-full border-none bg-transparent px-4 py-2 focus:border-none focus:outline-none focus:ring-0"
+              className="h-full w-full border-none bg-transparent px-4 py-2 focus:border-none focus:ring-0 focus:outline-none"
             />
           </div>
           <div className="flex w-full items-center rounded-[16px] border-2 border-[#F9F9F9] bg-[#F9F9F9] focus:border-[#ccc]">
@@ -48,7 +48,7 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
                   sortBy: { ...pagination.sortBy, industry: e.target.value },
                 })
               }
-              className="h-full w-full border-none bg-transparent px-4 py-2 focus:border-none focus:outline-none focus:ring-0"
+              className="h-full w-full border-none bg-transparent px-4 py-2 focus:border-none focus:ring-0 focus:outline-none"
             />
           </div>
           <div className="flex w-full items-center rounded-[16px] border-2 border-[#F9F9F9] bg-[#F9F9F9] focus:border-[#ccc]">
@@ -62,7 +62,7 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
                   sortBy: { ...pagination.sortBy, location: e.target.value },
                 })
               }
-              className="h-full w-full border-none bg-transparent px-4 py-2 focus:border-none focus:outline-none focus:ring-0"
+              className="h-full w-full border-none bg-transparent px-4 py-2 focus:border-none focus:ring-0 focus:outline-none"
             />
           </div>
         </div>

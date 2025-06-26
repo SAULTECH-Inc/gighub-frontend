@@ -35,7 +35,7 @@ const ActionPrompter: React.FC<ActionPrompterProps> = ({
           </div>
 
           {/* Message Text */}
-          <p className="text-base font-medium leading-relaxed text-[#000000]">
+          <p className="text-base leading-relaxed font-medium text-[#000000]">
             {message}
           </p>
 
@@ -43,7 +43,7 @@ const ActionPrompter: React.FC<ActionPrompterProps> = ({
           <div className="mt-4 flex justify-center gap-3">
             <button
               onClick={() => onAnswer(false)}
-              className="hover:border-gray-200 hover:bg-gray-100 rounded-lg border border-transparent px-4 py-2.5 font-medium text-[#8E8E8E] transition-all duration-200"
+              className="rounded-lg border border-transparent px-4 py-2.5 font-medium text-[#8E8E8E] transition-all duration-200 hover:border-gray-200 hover:bg-gray-100"
             >
               Cancel
             </button>

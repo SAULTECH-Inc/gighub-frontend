@@ -76,11 +76,11 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
   return (
     <>
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20"
+        className="bg-opacity-20 fixed inset-0 z-50 flex items-center justify-center bg-black"
         onClick={handleCloseApplicationModal}
       >
         <div
-          className="flex h-[664px] w-[95%] md:w-[455px] flex-col justify-evenly rounded-[14px] bg-white py-[4px] shadow-lg"
+          className="flex h-[664px] w-[95%] flex-col justify-evenly rounded-[14px] bg-white py-[4px] shadow-lg md:w-[455px]"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="mb-0 flex flex-col justify-between px-6">
@@ -91,12 +91,12 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
               <button
                 type="button"
                 onClick={handleCloseApplicationModal}
-                className="text-gray-500 cursor-pointer text-xl"
+                className="cursor-pointer text-xl text-gray-500"
               >
                 ×
               </button>
             </div>
-            <p className="text-gray-600 mb-5 w-[214px] text-justify text-[13px]">
+            <p className="mb-5 w-[214px] text-justify text-[13px] text-gray-600">
               We will automatically help you figure out the raised
             </p>
           </div>
@@ -140,7 +140,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
             send your application to the recruiter.
           </p>
 
-          <div className="mx-auto grid grid-cols-2 gap-x-5 md:gap-x-10 gap-y-3">
+          <div className="mx-auto grid grid-cols-2 gap-x-5 gap-y-3 md:gap-x-10">
             {Object.entries(methodMap).map(([label, key]) => {
               const isEnabled = applicationMethod[key];
               const isSelected = selectedOptions.includes(label);
@@ -148,7 +148,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
               return (
                 <div
                   key={label}
-                  className={`relative flex h-[123px] w-[145px] md:w-[170px] flex-col items-center justify-center rounded-[12px] border-[2px] p-3 ${isEnabled ? "cursor-pointer hover:outline-[2px] hover:outline-[#6438C2]" : "cursor-not-allowed opacity-50"} ${isSelected ? "border-[#6438C2]" : "border-[#E6E6E6]"} transition-all duration-300 ease-in-out`}
+                  className={`relative flex h-[123px] w-[145px] flex-col items-center justify-center rounded-[12px] border-[2px] p-3 md:w-[170px] ${isEnabled ? "cursor-pointer hover:outline-[2px] hover:outline-[#6438C2]" : "cursor-not-allowed opacity-50"} ${isSelected ? "border-[#6438C2]" : "border-[#E6E6E6]"} transition-all duration-300 ease-in-out`}
                   onClick={() => isEnabled && handleSelection(label)}
                 >
                   <div className="mb-2 flex h-[40px] w-[40px] items-center justify-center rounded-[8px] border-[1px] border-[#E6E6E6]">
@@ -163,7 +163,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                   </span>
 
                   <div
-                    className={`absolute right-1 top-1 flex h-[24px] w-[24px] items-center justify-center rounded-full ${
+                    className={`absolute top-1 right-1 flex h-[24px] w-[24px] items-center justify-center rounded-full ${
                       isSelected
                         ? "border-none bg-[#6438C2]"
                         : "border-[1px] border-[#E6E6E6] bg-white"
@@ -193,7 +193,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
             <Link
               to={`/employers/${jobToApply?.employer?.id}/${jobToApply?.employer?.companyName}/profile`}
               type="button"
-              className="text-gray-700 h-[34px] w-full flex-1 flex items-center md:w-[169px] rounded-[8px] border-[1px] border-[#ccc] px-5 py-1 text-xs md:text-[13px]"
+              className="flex h-[34px] w-full flex-1 items-center rounded-[8px] border-[1px] border-[#ccc] px-5 py-1 text-xs text-gray-700 md:w-[169px] md:text-[13px]"
             >
               Go to recruiter profile
             </Link>

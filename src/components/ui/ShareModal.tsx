@@ -23,7 +23,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ modalId, url }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20"
+      className="bg-opacity-20 fixed inset-0 z-50 flex items-center justify-center bg-black"
       onClick={() => closeModal(modalId)}
     >
       <div
@@ -33,14 +33,14 @@ const ShareModal: React.FC<ShareModalProps> = ({ modalId, url }) => {
         {/* Close Button */}
         <button
           onClick={() => closeModal(modalId)}
-          className="text-gray-500 hover:text-gray-700 absolute right-2 top-2 p-2 text-[24px]"
+          className="absolute top-2 right-2 p-2 text-[24px] text-gray-500 hover:text-gray-700"
         >
           ✕
         </button>
 
         {/* Copy Link Section */}
         <div className="mb-4">
-          <label className="text-gray-600 mb-2 block text-left text-sm">
+          <label className="mb-2 block text-left text-sm text-gray-600">
             Copy link
           </label>
           <div className="flex items-center rounded-[10px] border border-[#E6E6E6] p-2">
@@ -48,7 +48,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ modalId, url }) => {
               type="text"
               value={url}
               readOnly
-              className="text-gray-800 flex-grow border-0 text-sm outline-none"
+              className="flex-grow border-0 text-sm text-gray-800 outline-none"
             />
             <button
               onClick={handleCopy}
@@ -61,14 +61,14 @@ const ShareModal: React.FC<ShareModalProps> = ({ modalId, url }) => {
 
         {/* Share Options */}
         <div>
-          <p className="text-gray-600 mb-2 text-left text-sm">Share Link</p>
+          <p className="mb-2 text-left text-sm text-gray-600">Share Link</p>
           <div className="flex justify-between gap-3">
             {/* WhatsApp */}
             <a
               href={`https://wa.me/?text=${encodedUrl}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-600 flex flex-col items-center text-sm hover:text-purple-600"
+              className="flex flex-col items-center text-sm text-gray-600 hover:text-purple-600"
             >
               <img
                 src="https://img.icons8.com/color/48/whatsapp.png"
@@ -82,7 +82,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ modalId, url }) => {
               href={`https://www.linkedin.com/shareArticle?url=${encodedUrl}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-600 flex flex-col items-center text-sm hover:text-purple-600"
+              className="flex flex-col items-center text-sm text-gray-600 hover:text-purple-600"
             >
               <img
                 src="https://img.icons8.com/color/48/linkedin.png"
@@ -96,7 +96,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ modalId, url }) => {
               href={`https://twitter.com/intent/tweet?url=${encodedUrl}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-600 flex flex-col items-center text-sm hover:text-purple-600"
+              className="flex flex-col items-center text-sm text-gray-600 hover:text-purple-600"
             >
               <img
                 src="https://img.icons8.com/ios-glyphs/48/000000/twitter.png"
