@@ -39,9 +39,9 @@ const ComplianceAndVerification: React.FC = () => {
   return (
     <section
       id="company-socials"
-      className="w-full relative mt-4 border-t-[2px] border-t-[#E6E6E6] pt-5"
+      className="relative mt-4 w-full border-t-[2px] border-t-[#E6E6E6] pt-5"
     >
-      <div className="absolute right-1 top-2 z-10 flex items-center justify-evenly gap-x-2 text-xs">
+      <div className="absolute top-2 right-1 z-10 flex items-center justify-evenly gap-x-2 text-xs">
         <button
           type="button"
           onClick={handleToggleEdit}
@@ -57,17 +57,17 @@ const ComplianceAndVerification: React.FC = () => {
           Save
         </button>
       </div>
-      <h3 className="mb-4 font-lato text-[20px]">Verification</h3>
+      <h3 className="font-lato mb-4 text-[20px]">Verification</h3>
       <div className="w-full gap-4">
-        <div className="w-full flex flex-col space-y-2">
-          <label className="text-gray-600 mb-1 text-sm">Government ID</label>
+        <div className="flex w-full flex-col space-y-2">
+          <label className="mb-1 text-sm text-gray-600">Government ID</label>
           <input
             type="url"
             name="governmentIdentificationNumber"
             value={applicant?.governmentIdentificationNumber || ""}
             disabled={!isEditable}
             onChange={handleChange}
-            className="w-[100%] rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="w-[100%] rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
           />
         </div>
       </div>

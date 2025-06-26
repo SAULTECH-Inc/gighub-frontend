@@ -37,11 +37,11 @@ const MessageDropdown: React.FC<MessageDropdownProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-x-0 top-2 z-50 mx-auto w-[352px] rounded-[16px] bg-white p-6 font-lato shadow-lg md:absolute md:right-0 md:top-14 md:left-auto md:mx-0">
+    <div className="font-lato fixed inset-x-0 top-2 z-50 mx-auto w-[352px] rounded-[16px] bg-white p-6 shadow-lg md:absolute md:top-14 md:right-0 md:left-auto md:mx-0">
       {/* Header */}
       <div>
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-gray-800 text-lg font-bold">Messages</h3>
+          <h3 className="text-lg font-bold text-gray-800">Messages</h3>
         </div>
         <hr style={dividerStyle} className="-mx-6" />
       </div>
@@ -59,7 +59,7 @@ const MessageDropdown: React.FC<MessageDropdownProps> = ({ onClose }) => {
           .map((message: ChatMessage, index) => (
             <li key={index}>
               <div
-                className="hover:bg-gray-100 flex cursor-pointer items-center gap-4 p-3"
+                className="flex cursor-pointer items-center gap-4 p-3 hover:bg-gray-100"
                 onClick={onClose}
               >
                 <img
@@ -68,12 +68,12 @@ const MessageDropdown: React.FC<MessageDropdownProps> = ({ onClose }) => {
                   className="h-10 w-10 rounded-full"
                 />
                 <div className="flex-1">
-                  <p className="text-gray-800 text-sm font-semibold">
+                  <p className="text-sm font-semibold text-gray-800">
                     {message.senderName}
                   </p>
-                  <p className="text-gray-600 text-xs">{message.content}</p>
+                  <p className="text-xs text-gray-600">{message.content}</p>
                   <div className="mt-1 flex items-center justify-between">
-                    <p className="text-gray-400 text-xs">
+                    <p className="text-xs text-gray-400">
                       {formatChatTimestamp(
                         new Date(message?.createdAt as string),
                       )}

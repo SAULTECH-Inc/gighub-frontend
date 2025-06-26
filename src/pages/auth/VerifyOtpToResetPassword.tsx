@@ -73,14 +73,14 @@ const VerifyOtpToResetPassword: React.FC = () => {
     <>
       <form className="relative mx-auto my-auto flex h-screen flex-row items-center justify-evenly space-x-0">
         <img
-          className="h-30 w-30 absolute left-5 top-5 mx-auto"
+          className="absolute top-5 left-5 mx-auto h-30 w-30"
           src={gighubLogo}
           alt="right"
         />
         <div className="relative flex h-[890px] w-full flex-col items-center justify-center gap-y-6 px-5 md:px-10 lg:w-1/2 xl:w-1/3">
           <Link
             to="/user-type-selection"
-            className="absolute right-5 top-2 text-[#6438C2]"
+            className="absolute top-2 right-5 text-[#6438C2]"
           >
             Create an Account
           </Link>
@@ -109,7 +109,7 @@ const VerifyOtpToResetPassword: React.FC = () => {
                     maxLength={1}
                     name={`otp[${index}]`}
                     value={otpArr[index] || ""}
-                    className={`my-10 h-[40px] w-[40px] rounded-[10px] border-[1px] text-center transition-all focus:outline-none focus:ring-0 lg:h-[42px] lg:w-[47px] ${
+                    className={`my-10 h-[40px] w-[40px] rounded-[10px] border-[1px] text-center transition-all focus:ring-0 focus:outline-none lg:h-[42px] lg:w-[47px] ${
                       otpArr[index]
                         ? "border-[2px] border-[#6438C2] focus:border-[2px] focus:border-[#6438C2]" // Keep purple if filled
                         : "border-[#5E5E5E] focus:border-[#6438C2]" // Default gray, turns purple on focus

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import NetworkCard from "./NetworkCard.tsx";
 import { NetworkHeader } from "./NetworkHeader.tsx";
 import { useAuth } from "../../store/useAuth.ts";
-import { useConnections } from "../../hooks/useConnections.tsx";
 import { ClockSpinner } from "../../components/common/ClockSpinner.tsx";
 import ChatWindow from "../../chat-module/component/ChatWindow.tsx";
 import { NetworkDetails } from "../../utils/types";
 import { searchMyConnection } from "../../services/api";
+import useConnections from "../../hooks/useConnections.tsx";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -100,7 +100,7 @@ const MyNetwork: React.FC = () => {
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className="bg-gray-300 rounded-md px-4 py-2"
+          className="rounded-md bg-gray-300 px-4 py-2"
         >
           Previous
         </button>
@@ -108,7 +108,7 @@ const MyNetwork: React.FC = () => {
         <button
           onClick={() => setCurrentPage((prev) => prev + 1)}
           disabled={connections.length < ITEMS_PER_PAGE}
-          className="bg-gray-300 rounded-md px-4 py-2"
+          className="rounded-md bg-gray-300 px-4 py-2"
         >
           Next
         </button>

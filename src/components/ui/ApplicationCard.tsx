@@ -39,7 +39,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
           <h3 className="text-[11px] font-semibold text-black md:text-base">
             {jobTitle}
           </h3>
-          <p className="text-gray-500 text-[9px] md:text-sm">
+          <p className="text-[9px] text-gray-500 md:text-sm">
             {location} - <span className="text-purple-600">{companyName}</span>
           </p>
         </div>
@@ -60,7 +60,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
       <div className="flex justify-end">
         <button
           onClick={() => openModal("view-application-method-modal")}
-          className="flex items-center justify-center rounded-[10px] bg-[#6438C2] p-2 font-lato text-[11px] font-medium text-white md:h-[35px] md:w-[127px] md:px-4 md:py-2 md:text-[16px]"
+          className="font-lato flex items-center justify-center rounded-[10px] bg-[#6438C2] p-2 text-[11px] font-medium text-white md:h-[35px] md:w-[127px] md:px-4 md:py-2 md:text-[16px]"
         >
           {buttonText}
         </button>

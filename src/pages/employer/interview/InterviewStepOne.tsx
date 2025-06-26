@@ -138,7 +138,7 @@ const InterviewStepOne: React.FC = () => {
                     onFocus={() => setShowCandidateDropdown(true)}
                     onChange={(e) => setCandidateSearchQuery(e.target.value)}
                     placeholder="Search by name, email, phone number"
-                    className="w-full rounded-[10px] border-none px-4 py-2 text-[14px] focus:border-none focus:outline-none focus:ring-0"
+                    className="w-full rounded-[10px] border-none px-4 py-2 text-[14px] focus:border-none focus:ring-0 focus:outline-none"
                   />
                   <img src={searchIcon} alt="search icon" />
                 </div>
@@ -146,7 +146,7 @@ const InterviewStepOne: React.FC = () => {
                 {showCandidateDropdown && (
                   <div
                     ref={dropdownRef}
-                    className="absolute left-0 top-[50px] z-10 w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-white shadow-lg"
+                    className="absolute top-[50px] left-0 z-10 w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-white shadow-lg"
                   >
                     {applicants?.map((candidate, index) => {
                       const isSelected = selectedCandidates.some(
@@ -236,7 +236,7 @@ const InterviewStepOne: React.FC = () => {
                   onFocus={() => setShowJobDropdown(true)}
                   onChange={(e) => setJobSearchQuery(e.target.value)}
                   placeholder="Search job by title, department, or company"
-                  className="w-full rounded-[10px] border-none px-4 py-2 text-[14px] focus:border-none focus:outline-none focus:ring-0"
+                  className="w-full rounded-[10px] border-none px-4 py-2 text-[14px] focus:border-none focus:ring-0 focus:outline-none"
                 />
                 <img src={searchIcon} alt="search icon" />
               </div>
@@ -244,7 +244,7 @@ const InterviewStepOne: React.FC = () => {
               {showJobDropdown && (
                 <div
                   ref={dropdownRef}
-                  className="absolute left-0 top-[50px] z-10 max-h-[300px] w-full overflow-y-auto rounded-[10px] border-[1px] border-[#E6E6E6] bg-white shadow-lg"
+                  className="absolute top-[50px] left-0 z-10 max-h-[300px] w-full overflow-y-auto rounded-[10px] border-[1px] border-[#E6E6E6] bg-white shadow-lg"
                 >
                   {jobs?.map((job, index) => (
                     <div
@@ -278,7 +278,7 @@ const InterviewStepOne: React.FC = () => {
             )}
           </div>
 
-          <div className="mb-20 mt-4 flex w-full flex-col gap-2">
+          <div className="mt-4 mb-20 flex w-full flex-col gap-2">
             <h4 className="text-[13px] font-bold text-[#000000] sm:text-lg">
               Interview Title
             </h4>

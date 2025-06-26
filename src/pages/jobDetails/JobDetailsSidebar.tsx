@@ -53,14 +53,14 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
       {/* Sidebar Items */}
       <div className="flex items-center gap-x-3">
         <img src={RemoteIcon} alt="Remote work" className="h-6 w-6" />
-        <span className="text-gray-700 font-lato text-[16px] font-medium leading-[20px]">
+        <span className="font-lato text-[16px] leading-[20px] font-medium text-gray-700">
           {job.jobType}
         </span>
       </div>
 
       <div className="flex items-center gap-x-3">
         <img src={FullTimeIcon} alt="Full Time" className="h-6 w-6" />
-        <span className="text-gray-700 font-lato text-[16px] font-medium leading-[20px]">
+        <span className="font-lato text-[16px] leading-[20px] font-medium text-gray-700">
           {job.employmentType}
         </span>
       </div>
@@ -68,7 +68,7 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
       {job?.salaryRange?.maximumAmount > 0 && (
         <div className="flex items-center gap-x-3">
           <img src={SalaryIcon} alt="Salary" className="h-6 w-6" />
-          <span className="text-gray-700 font-lato text-[16px] font-medium leading-[20px]">
+          <span className="font-lato text-[16px] leading-[20px] font-medium text-gray-700">
             {job.salaryRange.currency}
             {numeral(job.salaryRange.minimumAmount).format("0,0a")} -{" "}
             {job.salaryRange.currency}
@@ -80,7 +80,7 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
 
       <div className="flex items-center gap-x-3">
         <img src={LevelIcon} alt="Mid Level" className="h-6 w-6" />
-        <span className="text-gray-700 font-lato text-[16px] font-medium leading-[20px]">
+        <span className="font-lato text-[16px] leading-[20px] font-medium text-gray-700">
           {job.level}
         </span>
       </div>
@@ -88,7 +88,7 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
       {/* Experience */}
       <div className="flex items-center gap-x-3">
         <MdOutlineMoreTime className="h-6 w-6" />
-        <span className="text-gray-700 text-[16px] font-medium leading-[20px]">
+        <span className="text-[16px] leading-[20px] font-medium text-gray-700">
           {job.experienceYears + "+ years experience" || "2+ yrs experience"}
         </span>
       </div>
@@ -114,14 +114,14 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
           />
         </svg>
 
-        <span className="text-gray-700 text-[16px] font-medium leading-[20px]">
+        <span className="text-[16px] leading-[20px] font-medium text-gray-700">
           {job.location}
         </span>
       </div>
 
       <div className="flex items-center gap-x-3">
         <img src={CalendarIcon} alt="Date" className="h-6 w-6" />
-        <span className="text-gray-700 font-lato text-[16px] font-medium leading-[20px]">
+        <span className="font-lato text-[16px] leading-[20px] font-medium text-gray-700">
           Closing {moment(job.startDate).format("D MMM YYYY - HH:mm")}
         </span>
       </div>
@@ -148,7 +148,7 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
             strokeLinejoin="round"
           />
         </svg>
-        <span className={`${textColor} text-[16px] font-medium leading-[20px]`}>
+        <span className={`${textColor} text-[16px] leading-[20px] font-medium`}>
           {capitalizeEachCase(moment(job.startDate).fromNow(true))} left to
           apply
         </span>
@@ -157,7 +157,7 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
       {/* Total Applicants */}
       <div className="flex items-center gap-x-3">
         <PiUsers className="h-5 w-5" />
-        <span className="text-gray-700 text-[16px] font-medium leading-[20px]">
+        <span className="text-[16px] leading-[20px] font-medium text-gray-700">
           {job.applicantsCount || 0} applied
         </span>
       </div>
@@ -165,7 +165,7 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
       {USER_TYPE === UserType.EMPLOYER ? (
         <button
           onClick={handleEditJob}
-          className="text-md w-full place-self-end rounded-[15px] bg-[#6438C2] px-10 py-3 font-lato font-bold text-white transition hover:bg-[#5126a9] md:w-[225px]"
+          className="text-md font-lato w-full place-self-end rounded-[15px] bg-[#6438C2] px-10 py-3 font-bold text-white transition hover:bg-[#5126a9] md:w-[225px]"
         >
           Edit Job
         </button>
@@ -178,7 +178,7 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
               openModal("application-modal");
             }}
             type="button"
-            className="text-md w-full place-self-end rounded-[15px] bg-[#6438C2] px-10 py-3 font-lato font-bold text-white transition hover:bg-[#5126a9] md:w-[225px]"
+            className="text-md font-lato w-full place-self-end rounded-[15px] bg-[#6438C2] px-10 py-3 font-bold text-white transition hover:bg-[#5126a9] md:w-[225px]"
           >
             Apply
           </button>
@@ -187,7 +187,7 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
           <button
             onClick={handleBookmark}
             type="button"
-            className="text-md w-full place-self-end rounded-[15px] bg-[#E9D8FD] px-10 py-3 font-lato font-bold text-[#4B0082] transition hover:bg-[#D8B4FE] md:w-[225px]"
+            className="text-md font-lato w-full place-self-end rounded-[15px] bg-[#E9D8FD] px-10 py-3 font-bold text-[#4B0082] transition hover:bg-[#D8B4FE] md:w-[225px]"
           >
             Bookmark
           </button>
@@ -198,7 +198,7 @@ const JobDetailsSidebar: React.FC<SidebarProp> = ({
               openModal("refer-modal");
             }}
             type="button"
-            className="text-md w-full place-self-end rounded-[15px] bg-[#C026D3] px-10 py-3 font-lato font-bold text-white transition hover:bg-[#A21CAF] md:w-[225px]"
+            className="text-md font-lato w-full place-self-end rounded-[15px] bg-[#C026D3] px-10 py-3 font-bold text-white transition hover:bg-[#A21CAF] md:w-[225px]"
           >
             Refer
           </button>

@@ -31,7 +31,7 @@ const ComplianceAndVerification: React.FC = () => {
   };
   return (
     <section className="relative mt-4 border-t-[2px] border-t-[#E6E6E6] pt-5">
-      <div className="absolute right-1 top-2 z-10 flex items-center justify-evenly gap-x-2 text-xs">
+      <div className="absolute top-2 right-1 z-10 flex items-center justify-evenly gap-x-2 text-xs">
         <button
           type="button"
           onClick={handleToggleEdit}
@@ -47,12 +47,12 @@ const ComplianceAndVerification: React.FC = () => {
           Save
         </button>
       </div>
-      <h3 className="mb-4 font-lato text-[20px]">
+      <h3 className="font-lato mb-4 text-[20px]">
         Compliance and Verifications
       </h3>
       <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-10">
         <div className="flex flex-col">
-          <label className="text-gray-600 mb-1 text-[16px]">
+          <label className="mb-1 text-[16px] text-gray-600">
             Business Registration Number
           </label>
           <input
@@ -69,11 +69,11 @@ const ComplianceAndVerification: React.FC = () => {
                 registrationNumber: event.target.value,
               } as EmployerData);
             }}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
           />
         </div>
         <div className="flex flex-col">
-          <label className="text-gray-600 mb-1 text-[16px]">
+          <label className="mb-1 text-[16px] text-gray-600">
             Tax Identification number
           </label>
           <input
@@ -90,7 +90,7 @@ const ComplianceAndVerification: React.FC = () => {
                 taxIdentificationNumber: event.target.value,
               } as EmployerData);
             }}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
           />
         </div>
       </div>

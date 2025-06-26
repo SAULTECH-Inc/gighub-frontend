@@ -41,7 +41,7 @@ const HomeComponent = () => {
           alt="linkedin"
           width={70}
           height={70}
-          className="absolute left-[170px] top-[150px] max-lg:hidden"
+          className="absolute top-[150px] left-[170px] max-lg:hidden"
         />
 
         <img
@@ -49,7 +49,7 @@ const HomeComponent = () => {
           alt="facebook"
           width={70}
           height={70}
-          className="absolute left-[350px] top-[112px] max-lg:hidden"
+          className="absolute top-[112px] left-[350px] max-lg:hidden"
         />
 
         <img
@@ -57,13 +57,13 @@ const HomeComponent = () => {
           alt="google"
           width={70}
           height={70}
-          className="absolute left-[270px] top-[300px] max-lg:hidden"
+          className="absolute top-[300px] left-[270px] max-lg:hidden"
         />
 
         <div className="flex flex-col items-center">
-          <div className="flex gap-4 rounded-2xl bg-orange bg-opacity-5 px-5 py-3">
+          <div className="bg-orange bg-opacity-5 flex gap-4 rounded-2xl px-5 py-3">
             <img src={Smilling} alt="Eden" width={17} height={17} />
-            <h1 className="font-lato text-[13px] text-orange">
+            <h1 className="font-lato text-orange text-[13px]">
               GigHub is with you every step of the way
             </h1>
           </div>
@@ -73,7 +73,7 @@ const HomeComponent = () => {
             alt="eden"
             width={70}
             height={70}
-            className="absolute left-[843px] top-[112px] max-lg:hidden"
+            className="absolute top-[112px] left-[843px] max-lg:hidden"
           />
 
           <img
@@ -81,7 +81,7 @@ const HomeComponent = () => {
             alt="dangote"
             width={70}
             height={70}
-            className="absolute left-[1050px] top-[150px] max-lg:hidden"
+            className="absolute top-[150px] left-[1050px] max-lg:hidden"
           />
 
           <div className="mt-5 text-center">
@@ -98,7 +98,7 @@ const HomeComponent = () => {
             alt="paystack"
             width={70}
             height={70}
-            className="absolute left-[950px] top-[300px] max-lg:hidden"
+            className="absolute top-[300px] left-[950px] max-lg:hidden"
           />
 
           <div className="mt-5 text-center">
@@ -122,27 +122,27 @@ const HomeComponent = () => {
         </div>
       </div>
 
-      <div className="mt-12 bg-tertiary py-3 pl-3 max-lg:overflow-scroll md:py-5 md:pl-10 lg:pl-[90px]">
+      <div className="bg-tertiary mt-12 py-3 pl-3 max-lg:overflow-scroll md:py-5 md:pl-10 lg:pl-[90px]">
         <div className="flex items-center justify-between max-lg:gap-2">
-          <p className="whitespace-nowrap rounded-2xl bg-white px-5 py-[15px] text-center font-lato text-[10px] text-tertiary md:text-[13px]">
+          <p className="font-lato text-tertiary rounded-2xl bg-white px-5 py-[15px] text-center text-[10px] whitespace-nowrap md:text-[13px]">
             Full stcak developer
           </p>
-          <p className="whitespace-nowrap rounded-2xl bg-white px-5 py-[15px] text-center font-lato text-[10px] text-orange md:text-[13px]">
+          <p className="font-lato text-orange rounded-2xl bg-white px-5 py-[15px] text-center text-[10px] whitespace-nowrap md:text-[13px]">
             Back-End developer
           </p>
-          <p className="whitespace-nowrap rounded-2xl bg-white px-5 py-[15px] text-center font-lato text-[10px] text-tertiary md:text-[13px]">
+          <p className="font-lato text-tertiary rounded-2xl bg-white px-5 py-[15px] text-center text-[10px] whitespace-nowrap md:text-[13px]">
             Graphic Designer
           </p>
-          <p className="text-green whitespace-nowrap rounded-2xl bg-white px-5 py-[15px] text-center font-lato text-[10px] md:text-[13px]">
+          <p className="text-green font-lato rounded-2xl bg-white px-5 py-[15px] text-center text-[10px] whitespace-nowrap md:text-[13px]">
             UIUX Designer
           </p>
-          <p className="text-yellow whitespace-nowrap rounded-2xl bg-white px-5 py-[15px] text-center font-lato text-[10px] md:text-[13px]">
+          <p className="text-yellow font-lato rounded-2xl bg-white px-5 py-[15px] text-center text-[10px] whitespace-nowrap md:text-[13px]">
             Employer branding asspciate
           </p>
-          <p className="whitespace-nowrap rounded-2xl bg-white px-5 py-[15px] text-center font-lato text-[10px] text-orange md:text-[13px]">
+          <p className="font-lato text-orange rounded-2xl bg-white px-5 py-[15px] text-center text-[10px] whitespace-nowrap md:text-[13px]">
             Load dev engineer
           </p>
-          <p className="whitespace-nowrap rounded-l-2xl bg-white px-5 py-[15px] text-center font-lato text-[10px] text-tertiary md:text-[13px]">
+          <p className="font-lato text-tertiary rounded-l-2xl bg-white px-5 py-[15px] text-center text-[10px] whitespace-nowrap md:text-[13px]">
             Load dev engineer
           </p>
         </div>
@@ -151,13 +151,13 @@ const HomeComponent = () => {
 
       {/* Get Hired Section */}
       <div className="mt-[78px]">
-        <h1 className="text-center font-lato text-[40px] font-black">
+        <h1 className="font-lato text-center text-[40px] font-black">
           Get Hired In <span className="text-tertiary">4 Quick Easy Steps</span>
         </h1>
-        <p className="text-center font-lato font-black text-[#d9d9d9] max-md:text-sm">
+        <p className="font-lato text-center font-black text-[#d9d9d9] max-md:text-sm">
           The quickest and most effective way to get hired by top firms working
         </p>
-        <p className="text-center font-lato font-black text-[#d9d9d9] max-md:text-sm">
+        <p className="font-lato text-center font-black text-[#d9d9d9] max-md:text-sm">
           in your career interest area
         </p>
 
@@ -165,7 +165,7 @@ const HomeComponent = () => {
           <div className="flex items-center gap-5 max-md:flex-col">
             {/* Card 1 - Fade in from left */}
             <motion.div
-              className="rounded-[10px] p-5 shadow-card"
+              className="shadow-card rounded-[10px] p-5"
               initial={{ opacity: 0, x: -100 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1 }}
@@ -173,10 +173,10 @@ const HomeComponent = () => {
               <img
                 src={Person}
                 alt="person"
-                className="rounded-full bg-orange bg-opacity-15 p-2"
+                className="bg-orange bg-opacity-15 rounded-full p-2"
               />
-              <h1 className="mt-3 font-lato font-black">Create An Account</h1>
-              <p className="mt-7 font-lato text-[13px] font-light">
+              <h1 className="font-lato mt-3 font-black">Create An Account</h1>
+              <p className="font-lato mt-7 text-[13px] font-light">
                 Sign up in minutes to access thousands of job opportunities
                 tailored to your skills and preferences. Start your journey
                 today!
@@ -185,7 +185,7 @@ const HomeComponent = () => {
 
             {/* Card 2 - Fade in from bottom */}
             <motion.div
-              className="rounded-[10px] p-5 shadow-card md:mt-[37px]"
+              className="shadow-card rounded-[10px] p-5 md:mt-[37px]"
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1 }}
@@ -193,10 +193,10 @@ const HomeComponent = () => {
               <img
                 src={Search}
                 alt="search"
-                className="rounded-full bg-tertiary bg-opacity-15 p-2"
+                className="bg-tertiary bg-opacity-15 rounded-full p-2"
               />
-              <h1 className="mt-3 font-lato font-black">Search Job</h1>
-              <p className="mt-7 font-lato text-[13px] font-light">
+              <h1 className="font-lato mt-3 font-black">Search Job</h1>
+              <p className="font-lato mt-7 text-[13px] font-light">
                 Browse a variety of roles across industries. Filter by location,
                 skills, and interests to find your ideal match effortlessly.
               </p>
@@ -204,7 +204,7 @@ const HomeComponent = () => {
 
             {/* Card 3 - Fade in from top */}
             <motion.div
-              className="rounded-[10px] p-5 shadow-card"
+              className="shadow-card rounded-[10px] p-5"
               initial={{ opacity: 0, y: -100 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1 }}
@@ -212,10 +212,10 @@ const HomeComponent = () => {
               <img
                 src={Cloudupload}
                 alt="upload resume"
-                className="bg-green rounded-full bg-opacity-15 p-2"
+                className="bg-green bg-opacity-15 rounded-full p-2"
               />
-              <h1 className="mt-3 font-lato font-black">Upload Cv/Resume</h1>
-              <p className="mt-7 font-lato text-[13px] font-light">
+              <h1 className="font-lato mt-3 font-black">Upload Cv/Resume</h1>
+              <p className="font-lato mt-7 text-[13px] font-light">
                 Showcase your expertise by uploading your resume. Let employers
                 recognize your potential and reach out with the perfect
                 opportunities.
@@ -224,7 +224,7 @@ const HomeComponent = () => {
 
             {/* Card 4 - Fade in from right */}
             <motion.div
-              className="rounded-[10px] p-5 shadow-card md:mt-[37px]"
+              className="shadow-card rounded-[10px] p-5 md:mt-[37px]"
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1 }}
@@ -232,10 +232,10 @@ const HomeComponent = () => {
               <img
                 src={Assignment}
                 alt="assignment"
-                className="bg-yellow rounded-full bg-opacity-15 p-2"
+                className="bg-yellow bg-opacity-15 rounded-full p-2"
               />
-              <h1 className="mt-3 font-lato font-black">Create An Account</h1>
-              <p className="mt-7 font-lato text-[13px] font-light">
+              <h1 className="font-lato mt-3 font-black">Create An Account</h1>
+              <p className="font-lato mt-7 text-[13px] font-light">
                 Apply confidently and land your dream job. Watch your career
                 take off with just a few simple steps.
               </p>
@@ -248,7 +248,7 @@ const HomeComponent = () => {
       {/* Countless Career Section */}
 
       <div className="mt-24 px-3 md:px-10 lg:px-[90px]">
-        <h1 className="text-center font-lato text-[40px] font-black">
+        <h1 className="font-lato text-center text-[40px] font-black">
           <span className="text-tertiary">Countless Career Options</span> Are
           Waiting <br />
           For You to Explore
@@ -257,7 +257,7 @@ const HomeComponent = () => {
         <div className="mt-7 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
           {/* Card 1 - Fade in from left */}
           <motion.div
-            className="rounded-2xl p-5 shadow-card"
+            className="shadow-card rounded-2xl p-5"
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1 }}
@@ -265,17 +265,17 @@ const HomeComponent = () => {
             <img
               src={Design}
               alt="person"
-              className="rounded-[10px] bg-orange bg-opacity-20 p-2"
+              className="bg-orange bg-opacity-20 rounded-[10px] p-2"
             />
-            <h1 className="mt-5 font-lato font-bold">Design</h1>
-            <p className="mt-2 font-lato text-[13px] font-black text-[#d9d9d9]">
+            <h1 className="font-lato mt-5 font-bold">Design</h1>
+            <p className="font-lato mt-2 text-[13px] font-black text-[#d9d9d9]">
               200+ Daily Job Posting
             </p>
           </motion.div>
 
           {/* Card 2 - Fade in from left */}
           <motion.div
-            className="rounded-2xl p-5 shadow-card"
+            className="shadow-card rounded-2xl p-5"
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
@@ -283,17 +283,17 @@ const HomeComponent = () => {
             <img
               src={Design}
               alt="person"
-              className="rounded-[10px] bg-tertiary bg-opacity-20 p-2"
+              className="bg-tertiary bg-opacity-20 rounded-[10px] p-2"
             />
-            <h1 className="mt-5 font-lato font-bold">Software Development</h1>
-            <p className="mt-2 font-lato text-[13px] font-black text-[#d9d9d9]">
+            <h1 className="font-lato mt-5 font-bold">Software Development</h1>
+            <p className="font-lato mt-2 text-[13px] font-black text-[#d9d9d9]">
               200+ Daily Job Posting
             </p>
           </motion.div>
 
           {/* Card 3 - Fade in from left */}
           <motion.div
-            className="rounded-2xl p-5 shadow-card"
+            className="shadow-card rounded-2xl p-5"
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 0.4 }}
@@ -301,17 +301,17 @@ const HomeComponent = () => {
             <img
               src={Bell}
               alt="person"
-              className="rounded-[10px] bg-orange bg-opacity-20 p-2"
+              className="bg-orange bg-opacity-20 rounded-[10px] p-2"
             />
-            <h1 className="mt-5 font-lato font-bold">Marketing</h1>
-            <p className="mt-2 font-lato text-[13px] font-black text-[#d9d9d9]">
+            <h1 className="font-lato mt-5 font-bold">Marketing</h1>
+            <p className="font-lato mt-2 text-[13px] font-black text-[#d9d9d9]">
               200+ Daily Job Posting
             </p>
           </motion.div>
 
           {/* Card 4 - Fade in from right */}
           <motion.div
-            className="rounded-2xl p-5 shadow-card"
+            className="shadow-card rounded-2xl p-5"
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 0.6 }}
@@ -319,17 +319,17 @@ const HomeComponent = () => {
             <img
               src={Finance}
               alt="person"
-              className="bg-yellow rounded-[10px] bg-opacity-20 p-2"
+              className="bg-yellow bg-opacity-20 rounded-[10px] p-2"
             />
-            <h1 className="mt-5 font-lato font-bold">Finance</h1>
-            <p className="mt-2 font-lato text-[13px] font-black text-[#d9d9d9]">
+            <h1 className="font-lato mt-5 font-bold">Finance</h1>
+            <p className="font-lato mt-2 text-[13px] font-black text-[#d9d9d9]">
               200+ Daily Job Posting
             </p>
           </motion.div>
 
           {/* Card 5 - Fade in from right */}
           <motion.div
-            className="rounded-2xl p-5 shadow-card"
+            className="shadow-card rounded-2xl p-5"
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 0.8 }}
@@ -337,17 +337,17 @@ const HomeComponent = () => {
             <img
               src={Ad}
               alt="person"
-              className="bg-green rounded-[10px] bg-opacity-20 p-2"
+              className="bg-green bg-opacity-20 rounded-[10px] p-2"
             />
-            <h1 className="mt-5 font-lato font-bold">Ad Manager</h1>
-            <p className="mt-2 font-lato text-[13px] font-black text-[#d9d9d9]">
+            <h1 className="font-lato mt-5 font-bold">Ad Manager</h1>
+            <p className="font-lato mt-2 text-[13px] font-black text-[#d9d9d9]">
               200+ Daily Job Posting
             </p>
           </motion.div>
 
           {/* Card 6 - Fade in from left */}
           <motion.div
-            className="rounded-2xl p-5 shadow-card"
+            className="shadow-card rounded-2xl p-5"
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 1 }}
@@ -355,17 +355,17 @@ const HomeComponent = () => {
             <img
               src={Product}
               alt="person"
-              className="rounded-[10px] bg-orange bg-opacity-20 p-2"
+              className="bg-orange bg-opacity-20 rounded-[10px] p-2"
             />
-            <h1 className="mt-5 font-lato font-bold">Product Management</h1>
-            <p className="mt-2 font-lato text-[13px] font-black text-[#d9d9d9]">
+            <h1 className="font-lato mt-5 font-bold">Product Management</h1>
+            <p className="font-lato mt-2 text-[13px] font-black text-[#d9d9d9]">
               200+ Daily Job Posting
             </p>
           </motion.div>
 
           {/* Card 7 - Fade in from right */}
           <motion.div
-            className="rounded-2xl p-5 shadow-card"
+            className="shadow-card rounded-2xl p-5"
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 1.2 }}
@@ -373,17 +373,17 @@ const HomeComponent = () => {
             <img
               src={Management}
               alt="person"
-              className="bg-yellow rounded-[10px] bg-opacity-20 p-2"
+              className="bg-yellow bg-opacity-20 rounded-[10px] p-2"
             />
-            <h1 className="mt-5 font-lato font-bold">Product Management</h1>
-            <p className="mt-2 font-lato text-[13px] font-black text-[#d9d9d9]">
+            <h1 className="font-lato mt-5 font-bold">Product Management</h1>
+            <p className="font-lato mt-2 text-[13px] font-black text-[#d9d9d9]">
               200+ Daily Job Posting
             </p>
           </motion.div>
 
           {/* Card 8 - Fade in from left */}
           <motion.div
-            className="rounded-2xl p-5 shadow-card"
+            className="shadow-card rounded-2xl p-5"
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 1.4 }}
@@ -391,10 +391,10 @@ const HomeComponent = () => {
             <img
               src={Content}
               alt="person"
-              className="bg-green rounded-[10px] bg-opacity-20 p-2"
+              className="bg-green bg-opacity-20 rounded-[10px] p-2"
             />
-            <h1 className="mt-5 font-lato font-bold">Content Creation</h1>
-            <p className="mt-2 font-lato text-[13px] font-black text-[#d9d9d9]">
+            <h1 className="font-lato mt-5 font-bold">Content Creation</h1>
+            <p className="font-lato mt-2 text-[13px] font-black text-[#d9d9d9]">
               200+ Daily Job Posting
             </p>
           </motion.div>
@@ -410,7 +410,7 @@ const HomeComponent = () => {
         <h1 className="font-lato text-[40px] font-black">
           <span className="text-tertiary">Latest and Top</span> Jobs Openings
         </h1>
-        <p className="mt-3 font-lato text-xs font-black text-[#d9d9d9]">
+        <p className="font-lato mt-3 text-xs font-black text-[#d9d9d9]">
           Explore the latest and top job openings in your area. Discover
           exciting opportunities
           <br />
@@ -420,7 +420,7 @@ const HomeComponent = () => {
         <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {/* Card 1 - Fade in from left */}
           <motion.div
-            className="rounded-2xl p-5 shadow-card"
+            className="shadow-card rounded-2xl p-5"
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1 }}
@@ -432,21 +432,21 @@ const HomeComponent = () => {
                 <p className="text-xs text-[#d9d9d9]">Nigeria</p>
               </div>
             </div>
-            <h1 className="mt-8 font-lato font-black">
+            <h1 className="font-lato mt-8 font-black">
               Senior Product Designer
             </h1>
-            <p className="mt-4 font-lato text-xs font-light">
+            <p className="font-lato mt-4 text-xs font-light">
               Join our creative team as a Product Designer. Shape user
               experiences with innovative designs and impactful solutions.
             </p>
             <div className="mt-8 flex items-center gap-3">
-              <p className="rounded-[10px] bg-orange bg-opacity-15 px-3 py-1 font-lato text-xs">
+              <p className="bg-orange bg-opacity-15 font-lato rounded-[10px] px-3 py-1 text-xs">
                 UI/UX
               </p>
-              <p className="rounded-[10px] bg-orange bg-opacity-15 px-3 py-1 font-lato text-xs">
+              <p className="bg-orange bg-opacity-15 font-lato rounded-[10px] px-3 py-1 text-xs">
                 Visual design
               </p>
-              <p className="rounded-[10px] bg-orange bg-opacity-15 px-3 py-1 font-lato text-xs">
+              <p className="bg-orange bg-opacity-15 font-lato rounded-[10px] px-3 py-1 text-xs">
                 Wireframing
               </p>
             </div>
@@ -454,7 +454,7 @@ const HomeComponent = () => {
 
           {/* Card 2 - Fade in from bottom */}
           <motion.div
-            className="rounded-2xl p-5 shadow-card"
+            className="shadow-card rounded-2xl p-5"
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
@@ -466,19 +466,19 @@ const HomeComponent = () => {
                 <p className="text-xs text-[#d9d9d9]">Nigeria</p>
               </div>
             </div>
-            <h1 className="mt-8 font-lato font-black">Front End Developer</h1>
-            <p className="mt-4 font-lato text-xs font-light">
+            <h1 className="font-lato mt-8 font-black">Front End Developer</h1>
+            <p className="font-lato mt-4 text-xs font-light">
               Seeking a skilled Frontend Developer to craft responsive, dynamic
               web interfaces using cutting-edge technologies.
             </p>
             <div className="mt-8 flex items-center gap-3">
-              <p className="rounded-[10px] bg-orange bg-opacity-15 px-3 py-1 font-lato text-xs">
+              <p className="bg-orange bg-opacity-15 font-lato rounded-[10px] px-3 py-1 text-xs">
                 HTML
               </p>
-              <p className="rounded-[10px] bg-orange bg-opacity-15 px-3 py-1 font-lato text-xs">
+              <p className="bg-orange bg-opacity-15 font-lato rounded-[10px] px-3 py-1 text-xs">
                 CSS
               </p>
-              <p className="rounded-[10px] bg-orange bg-opacity-15 px-3 py-1 font-lato text-xs">
+              <p className="bg-orange bg-opacity-15 font-lato rounded-[10px] px-3 py-1 text-xs">
                 Javascript
               </p>
             </div>
@@ -486,7 +486,7 @@ const HomeComponent = () => {
 
           {/* Card 3 - Fade in from top */}
           <motion.div
-            className="rounded-2xl p-5 shadow-card"
+            className="shadow-card rounded-2xl p-5"
             initial={{ opacity: 0, y: -100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.4 }}
@@ -498,16 +498,16 @@ const HomeComponent = () => {
                 <p className="text-xs text-[#d9d9d9]">Nigeria</p>
               </div>
             </div>
-            <h1 className="mt-8 font-lato font-black">Data Analyst</h1>
-            <p className="mt-4 font-lato text-xs font-light">
+            <h1 className="font-lato mt-8 font-black">Data Analyst</h1>
+            <p className="font-lato mt-4 text-xs font-light">
               We’re hiring a Data Analyst to uncover insights, analyze trends,
               and empower decision-making through data-driven strategies.
             </p>
             <div className="mt-8 flex items-center gap-3">
-              <p className="rounded-[10px] bg-orange bg-opacity-15 px-3 py-1 font-lato text-xs">
+              <p className="bg-orange bg-opacity-15 font-lato rounded-[10px] px-3 py-1 text-xs">
                 Critical Thinking
               </p>
-              <p className="rounded-[10px] bg-orange bg-opacity-15 px-3 py-1 font-lato text-xs">
+              <p className="bg-orange bg-opacity-15 font-lato rounded-[10px] px-3 py-1 text-xs">
                 Data Storytelling
               </p>
             </div>
@@ -515,7 +515,7 @@ const HomeComponent = () => {
 
           {/* Card 4 - Fade in from left */}
           <motion.div
-            className="rounded-2xl p-5 shadow-card"
+            className="shadow-card rounded-2xl p-5"
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 0.6 }}
@@ -527,13 +527,13 @@ const HomeComponent = () => {
                 <p className="text-xs text-[#d9d9d9]">Nigeria</p>
               </div>
             </div>
-            <h1 className="mt-8 font-lato font-black">Content Creation</h1>
-            <p className="mt-4 font-lato text-xs font-light">
+            <h1 className="font-lato mt-8 font-black">Content Creation</h1>
+            <p className="font-lato mt-4 text-xs font-light">
               We’re hiring a Content Creator to craft compelling articles,
               videos, and campaigns that engage audiences and amplify ...
             </p>
             <div className="mt-8 flex items-center gap-3">
-              <p className="rounded-[10px] bg-orange bg-opacity-15 px-3 py-1 font-lato text-xs">
+              <p className="bg-orange bg-opacity-15 font-lato rounded-[10px] px-3 py-1 text-xs">
                 SEO Optimization
               </p>
             </div>
@@ -541,7 +541,7 @@ const HomeComponent = () => {
 
           {/* Card 5 - Fade in from bottom */}
           <motion.div
-            className="rounded-2xl p-5 shadow-card"
+            className="shadow-card rounded-2xl p-5"
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.8 }}
@@ -553,13 +553,13 @@ const HomeComponent = () => {
                 <p className="text-xs text-[#d9d9d9]">Nigeria</p>
               </div>
             </div>
-            <h1 className="mt-8 font-lato font-black">Business Analyst</h1>
-            <p className="mt-4 font-lato text-xs font-light">
+            <h1 className="font-lato mt-8 font-black">Business Analyst</h1>
+            <p className="font-lato mt-4 text-xs font-light">
               We’re hiring a Content Creator to craft compelling articles,
               videos, and campaigns that engage audiences and amplify ...
             </p>
             <div className="mt-8 flex items-center gap-3">
-              <p className="rounded-[10px] bg-orange bg-opacity-15 px-3 py-1 font-lato text-xs">
+              <p className="bg-orange bg-opacity-15 font-lato rounded-[10px] px-3 py-1 text-xs">
                 SEO Optimization
               </p>
             </div>
@@ -567,7 +567,7 @@ const HomeComponent = () => {
 
           {/* Card 6 - Fade in from right */}
           <motion.div
-            className="rounded-2xl p-5 shadow-card"
+            className="shadow-card rounded-2xl p-5"
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 1 }}
@@ -579,13 +579,13 @@ const HomeComponent = () => {
                 <p className="text-xs text-[#d9d9d9]">Nigeria</p>
               </div>
             </div>
-            <h1 className="mt-8 font-lato font-black">Digital Marketer</h1>
-            <p className="mt-4 font-lato text-xs font-light">
+            <h1 className="font-lato mt-8 font-black">Digital Marketer</h1>
+            <p className="font-lato mt-4 text-xs font-light">
               Seeking a Digital Marketer to lead innovative campaigns, enhance
               online presence, and drive measurable growth for our brand.
             </p>
             <div className="mt-8 flex items-center gap-3">
-              <p className="rounded-[10px] bg-orange bg-opacity-15 px-3 py-1 font-lato text-xs">
+              <p className="bg-orange bg-opacity-15 font-lato rounded-[10px] px-3 py-1 text-xs">
                 SEO Optimization
               </p>
             </div>
@@ -597,7 +597,7 @@ const HomeComponent = () => {
       {/* What we offer section */}
       <div className="mt-10 px-3 md:mt-20 md:px-10 lg:px-[90px]">
         <h1 className="font-lato text-[40px] font-black">What We Offer</h1>
-        <p className="mt-2 font-lato font-black text-[#d9d9d9]">
+        <p className="font-lato mt-2 font-black text-[#d9d9d9]">
           Check out our services to discover how we help you hunt, search, and{" "}
           <br />
           secure a job aligned with your interests.
@@ -605,9 +605,9 @@ const HomeComponent = () => {
         <div className="mt-[53px] grid grid-cols-1 place-items-center gap-5 md:grid-cols-2 lg:grid-cols-3">
           <div>
             <img src={Person1} alt="person" width={407} height={275} />
-            <div className="flex items-center gap-4 font-lato">
-              <h1 className="text-[64px] text-tertiary">1</h1>
-              <div className="border-l-8 border-tertiary border-opacity-50 pl-4">
+            <div className="font-lato flex items-center gap-4">
+              <h1 className="text-tertiary text-[64px]">1</h1>
+              <div className="border-tertiary border-opacity-50 border-l-8 pl-4">
                 <h1>Job Recommendation</h1>
                 <p className="mt-3 text-xs text-[#d9d9d9]">
                   Set your job preferences, post your portfolio
@@ -619,9 +619,9 @@ const HomeComponent = () => {
 
           <div>
             <img src={Person2} alt="person" width={407} height={275} />
-            <div className="flex items-center gap-4 font-lato">
-              <h1 className="text-[64px] text-orange">2</h1>
-              <div className="border-l-8 border-tertiary border-opacity-50 pl-4">
+            <div className="font-lato flex items-center gap-4">
+              <h1 className="text-orange text-[64px]">2</h1>
+              <div className="border-tertiary border-opacity-50 border-l-8 pl-4">
                 <h1>Create and build profile</h1>
               </div>
             </div>
@@ -629,9 +629,9 @@ const HomeComponent = () => {
 
           <div>
             <img src={Person3} alt="person" width={407} height={275} />
-            <div className="flex items-center gap-4 font-lato">
+            <div className="font-lato flex items-center gap-4">
               <h1 className="text-yellow text-[64px]">3</h1>
-              <div className="border-l-8 border-tertiary border-opacity-50 pl-4">
+              <div className="border-tertiary border-opacity-50 border-l-8 pl-4">
                 <h1>Career</h1>
               </div>
             </div>
@@ -642,7 +642,7 @@ const HomeComponent = () => {
 
       {/* Testimonials */}
       <div className="mt-14 px-3 md:px-10 lg:px-[90px]">
-        <h1 className="text-center font-lato text-[40px] font-black text-tertiary">
+        <h1 className="font-lato text-tertiary text-center text-[40px] font-black">
           Testimonial
         </h1>
         <p className="mt-2 text-center font-black text-[#d9d9d9]">
@@ -655,7 +655,7 @@ const HomeComponent = () => {
       {/* Testimonials End */}
 
       <div className="mx-auto mt-20 max-md:px-3 md:mt-[152px] md:w-[800px] lg:w-[874px]">
-        <div className="bg-charcoal relative flex items-center rounded-2xl p-9 font-lato font-black text-white">
+        <div className="bg-charcoal font-lato relative flex items-center rounded-2xl p-9 font-black text-white">
           <div>
             <h1 className="text-[40px]">
               Get Latest Job

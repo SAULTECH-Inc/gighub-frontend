@@ -225,7 +225,7 @@ const HelpAndSupportPage: React.FC = () => {
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white">
         <div className="absolute inset-0 bg-black opacity-10"></div>
-        <div className="container relative mx-auto px-4 py-16">
+        <div className="relative container mx-auto px-4 py-16">
           <div className="mx-auto max-w-4xl text-center">
             <h1 className="mb-6 text-4xl font-bold md:text-6xl">
               GigHub Help Center
@@ -241,9 +241,9 @@ const HelpAndSupportPage: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search for help articles, tutorials, or FAQs..."
-                className="text-gray-800 w-full rounded-full px-6 py-4 text-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-white/30"
+                className="w-full rounded-full px-6 py-4 text-lg text-gray-800 shadow-lg focus:ring-4 focus:ring-white/30 focus:outline-none"
               />
-              <div className="text-gray-400 absolute right-4 top-1/2 -translate-y-1/2 transform text-xl">
+              <div className="absolute top-1/2 right-4 -translate-y-1/2 transform text-xl text-gray-400">
                 🔍
               </div>
             </div>
@@ -270,7 +270,7 @@ const HelpAndSupportPage: React.FC = () => {
       <div className="container mx-auto px-4 py-16">
         {/* Quick Actions */}
         <div className="mb-16">
-          <h2 className="text-gray-800 mb-12 text-center text-3xl font-bold">
+          <h2 className="mb-12 text-center text-3xl font-bold text-gray-800">
             Quick Actions
           </h2>
           <div className="grid gap-6 md:grid-cols-4">
@@ -294,7 +294,7 @@ const HelpAndSupportPage: React.FC = () => {
           <div className="lg:col-span-2">
             {/* Categories */}
             <div className="mb-8">
-              <h3 className="text-gray-800 mb-6 text-2xl font-bold">
+              <h3 className="mb-6 text-2xl font-bold text-gray-800">
                 Browse by Topic
               </h3>
               <div className="grid gap-4 md:grid-cols-2">
@@ -305,7 +305,7 @@ const HelpAndSupportPage: React.FC = () => {
                     className={`cursor-pointer rounded-lg p-4 transition-all duration-300 ${
                       selectedCategory === category.id
                         ? "bg-[#6438C2] text-white shadow-lg"
-                        : "hover:bg-gray-50 bg-white shadow-md hover:shadow-lg"
+                        : "bg-white shadow-md hover:bg-gray-50 hover:shadow-lg"
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -330,10 +330,10 @@ const HelpAndSupportPage: React.FC = () => {
 
             {/* FAQs */}
             <div className="mb-8">
-              <h3 className="text-gray-800 mb-6 text-2xl font-bold">
+              <h3 className="mb-6 text-2xl font-bold text-gray-800">
                 Frequently Asked Questions
                 {selectedCategory !== "all" && (
-                  <span className="text-gray-600 ml-2 text-lg font-normal">
+                  <span className="ml-2 text-lg font-normal text-gray-600">
                     - {categories.find((c) => c.id === selectedCategory)?.name}
                   </span>
                 )}
@@ -349,14 +349,14 @@ const HelpAndSupportPage: React.FC = () => {
                       onClick={() =>
                         setExpandedFaq(expandedFaq === faq.id ? null : faq.id)
                       }
-                      className="hover:bg-gray-50 cursor-pointer p-6 transition-colors duration-200"
+                      className="cursor-pointer p-6 transition-colors duration-200 hover:bg-gray-50"
                     >
                       <div className="flex items-center justify-between">
-                        <h4 className="text-gray-800 pr-4 text-lg font-semibold">
+                        <h4 className="pr-4 text-lg font-semibold text-gray-800">
                           {faq.question}
                         </h4>
                         <div className="flex items-center gap-2">
-                          <div className="text-gray-500 flex items-center gap-1 text-sm">
+                          <div className="flex items-center gap-1 text-sm text-gray-500">
                             <span>👍</span>
                             <span>{faq.popularity}%</span>
                           </div>
@@ -372,15 +372,15 @@ const HelpAndSupportPage: React.FC = () => {
                     </div>
 
                     {expandedFaq === faq.id && (
-                      <div className="border-gray-100 border-t px-6 pb-6">
-                        <div className="text-gray-700 pt-4 leading-relaxed">
+                      <div className="border-t border-gray-100 px-6 pb-6">
+                        <div className="pt-4 leading-relaxed text-gray-700">
                           {faq.answer}
                         </div>
                         <div className="mt-4 flex gap-4">
                           <button className="text-sm text-[#6438C2] hover:underline">
                             Was this helpful? 👍
                           </button>
-                          <button className="text-gray-500 text-sm hover:underline">
+                          <button className="text-sm text-gray-500 hover:underline">
                             👎 Not helpful
                           </button>
                         </div>
@@ -391,7 +391,7 @@ const HelpAndSupportPage: React.FC = () => {
               </div>
 
               {filteredFaqs.length === 0 && (
-                <div className="text-gray-500 py-12 text-center">
+                <div className="py-12 text-center text-gray-500">
                   <div className="mb-4 text-4xl">🔍</div>
                   <h4 className="mb-2 text-xl font-semibold">
                     No results found
@@ -408,7 +408,7 @@ const HelpAndSupportPage: React.FC = () => {
           <div className="space-y-8">
             {/* Contact Form */}
             <div className="rounded-xl bg-white p-6 shadow-lg">
-              <h3 className="text-gray-800 mb-6 text-xl font-bold">
+              <h3 className="mb-6 text-xl font-bold text-gray-800">
                 Contact Support
               </h3>
 
@@ -426,7 +426,7 @@ const HelpAndSupportPage: React.FC = () => {
 
               <div className="space-y-4">
                 <div>
-                  <div className="text-gray-700 mb-2 block text-sm font-medium">
+                  <div className="mb-2 block text-sm font-medium text-gray-700">
                     Name
                   </div>
                   <input
@@ -435,12 +435,12 @@ const HelpAndSupportPage: React.FC = () => {
                     onChange={(e) =>
                       setContactForm({ ...contactForm, name: e.target.value })
                     }
-                    className="border-gray-300 w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#6438C2]"
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#6438C2]"
                   />
                 </div>
 
                 <div>
-                  <div className="text-gray-700 mb-2 block text-sm font-medium">
+                  <div className="mb-2 block text-sm font-medium text-gray-700">
                     Email
                   </div>
                   <input
@@ -449,12 +449,12 @@ const HelpAndSupportPage: React.FC = () => {
                     onChange={(e) =>
                       setContactForm({ ...contactForm, email: e.target.value })
                     }
-                    className="border-gray-300 w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#6438C2]"
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#6438C2]"
                   />
                 </div>
 
                 <div>
-                  <div className="text-gray-700 mb-2 block text-sm font-medium">
+                  <div className="mb-2 block text-sm font-medium text-gray-700">
                     Priority
                   </div>
                   <select
@@ -465,7 +465,7 @@ const HelpAndSupportPage: React.FC = () => {
                         priority: e.target.value,
                       })
                     }
-                    className="border-gray-300 w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#6438C2]"
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#6438C2]"
                   >
                     <option value="low">Low - General inquiry</option>
                     <option value="medium">Medium - Account issue</option>
@@ -477,7 +477,7 @@ const HelpAndSupportPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <div className="text-gray-700 mb-2 block text-sm font-medium">
+                  <div className="mb-2 block text-sm font-medium text-gray-700">
                     Subject
                   </div>
                   <input
@@ -489,12 +489,12 @@ const HelpAndSupportPage: React.FC = () => {
                         subject: e.target.value,
                       })
                     }
-                    className="border-gray-300 w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#6438C2]"
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#6438C2]"
                   />
                 </div>
 
                 <div>
-                  <div className="text-gray-700 mb-2 block text-sm font-medium">
+                  <div className="mb-2 block text-sm font-medium text-gray-700">
                     Message
                   </div>
                   <textarea
@@ -506,7 +506,7 @@ const HelpAndSupportPage: React.FC = () => {
                       })
                     }
                     rows={4}
-                    className="border-gray-300 w-full resize-none rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#6438C2]"
+                    className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#6438C2]"
                   />
                 </div>
 
@@ -521,21 +521,21 @@ const HelpAndSupportPage: React.FC = () => {
             </div>
 
             <div className="rounded-xl bg-white p-6 shadow-lg">
-              <h3 className="text-gray-800 mb-6 text-xl font-bold">
+              <h3 className="mb-6 text-xl font-bold text-gray-800">
                 Popular Tutorials
               </h3>
               <div className="space-y-4">
                 {tutorials.map((tutorial, index) => (
                   <div
                     key={index}
-                    className="hover:bg-gray-50 flex cursor-pointer items-center gap-4 rounded-lg p-3 transition-colors duration-200"
+                    className="flex cursor-pointer items-center gap-4 rounded-lg p-3 transition-colors duration-200 hover:bg-gray-50"
                   >
                     <div className="text-2xl">{tutorial.thumbnail}</div>
                     <div className="flex-1">
-                      <h4 className="text-gray-800 font-semibold">
+                      <h4 className="font-semibold text-gray-800">
                         {tutorial.title}
                       </h4>
-                      <div className="text-gray-500 flex gap-4 text-sm">
+                      <div className="flex gap-4 text-sm text-gray-500">
                         <span>⏱️ {tutorial.duration}</span>
                         <span>👁️ {tutorial.views} views</span>
                       </div>
@@ -551,7 +551,7 @@ const HelpAndSupportPage: React.FC = () => {
 
             {/* Status Page */}
             <div className="rounded-xl bg-white p-6 shadow-lg">
-              <h3 className="text-gray-800 mb-4 text-xl font-bold">
+              <h3 className="mb-4 text-xl font-bold text-gray-800">
                 System Status
               </h3>
               <div className="space-y-3">
@@ -576,8 +576,8 @@ const HelpAndSupportPage: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-gray-700">Networking Features</span>
                   <div className="flex items-center gap-2">
-                    <div className="bg-yellow-500 h-3 w-3 rounded-full"></div>
-                    <span className="text-yellow-600 text-sm font-medium">
+                    <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
+                    <span className="text-sm font-medium text-yellow-600">
                       Minor Issues
                     </span>
                   </div>

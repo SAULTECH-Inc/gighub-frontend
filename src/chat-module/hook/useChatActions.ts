@@ -1,6 +1,6 @@
 import { useChatStore } from "../../store/useChatStore.ts";
 import { useAuth } from "../../store/useAuth.ts";
-import { ChatMessage } from "../types";
+import { ExtendedChatMessage } from "../types";
 import { USER_TYPE } from "../../utils/helpers.ts";
 import { UserType } from "../../utils/enums.ts";
 import useSocket from "../../hooks/useSocket.ts";
@@ -13,6 +13,8 @@ export const useChatActions = () => {
     message,
     setMessage,
     addMessage,
+    replyingTo,
+    setReplyingTo,
   } = useChatStore();
 
   const { applicant, employer } = useAuth();
@@ -26,8 +28,8 @@ export const useChatActions = () => {
 
     const normalizedRecipient = recipient.trim().toLowerCase();
 
-    const newMessage: ChatMessage = {
-      sender: sender,
+    const newMessage: ExtendedChatMessage = {
+      sender,
       senderName:
         USER_TYPE === UserType.APPLICANT
           ? `${applicant?.firstName} ${applicant?.lastName}`
@@ -37,16 +39,31 @@ export const useChatActions = () => {
           ? applicant?.profilePicture || ""
           : employer?.companyLogo || "",
       recipient: normalizedRecipient,
-      recipientName: `${recipientDetails?.firstName} ${recipientDetails?.lastName}`,
-      recipientAvatar: recipientDetails?.profilePicture || "",
+      recipientName:
+        USER_TYPE === UserType.APPLICANT
+          ? `${recipientDetails?.applicant?.firstName} ${recipientDetails?.applicant?.lastName}`
+          : recipientDetails?.employer?.companyName,
+      recipientAvatar:
+        USER_TYPE === UserType.APPLICANT
+          ? recipientDetails?.applicant?.profilePicture || ""
+          : recipientDetails?.employer?.companyLogo || "",
       content: message,
       createdAt: new Date().toISOString(),
+
+      // ✅ Add reply context here
+      ...(replyingTo && {
+        replyTo: {
+          _id: replyingTo._id,
+          sender: replyingTo.sender,
+          content: replyingTo.content,
+        },
+      }),
     };
 
-    console.log("Sending message:", newMessage);
     socket.emit("privateMessage", newMessage);
     addMessage(newMessage);
     setMessage("");
+    setReplyingTo(null); // Clear reply state after sending
   };
 
   return { sendMessage };

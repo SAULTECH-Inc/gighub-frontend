@@ -195,7 +195,7 @@ export const useAuth = create<AuthData>()(
             state.isAuthenticated = true;
             state.role = userData.role as Role;
             state.userType = userData.userType;
-            state.authToken = token; // Set token first
+            storage.setItem("authToken", token || "");
 
             if (userData.userType === UserType.EMPLOYER) {
               const employer = userData as EmployerData;
@@ -228,9 +228,6 @@ export const useAuth = create<AuthData>()(
 
             state.loading = false;
           });
-
-          // Also store token in separate storage for immediate access
-          storage.setItem("authToken", token || "");
 
           return userData;
         } catch (err: any) {

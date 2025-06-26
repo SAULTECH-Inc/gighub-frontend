@@ -70,7 +70,7 @@ const ApplicantScheduleModal: React.FC<ModalProps> = ({
           {/* Close Button */}
           <div
             onClick={() => closeModal(modalId)}
-            className="absolute right-6 top-10 flex h-[34px] w-[36px] cursor-pointer items-center justify-center rounded-full bg-white p-2 text-black focus:outline-none"
+            className="absolute top-10 right-6 flex h-[34px] w-[36px] cursor-pointer items-center justify-center rounded-full bg-white p-2 text-black focus:outline-none"
           >
             <img className="cursor-pointer" src={cancel} alt="cancel" />
           </div>
@@ -81,7 +81,7 @@ const ApplicantScheduleModal: React.FC<ModalProps> = ({
               className="ml-3 h-[100px] w-[100px] flex-shrink-0 rounded-full"
               alt="profile pics"
             />
-            <div className="mb-0 ml-4 flex flex-1 items-end justify-between pb-0 pt-5">
+            <div className="mb-0 ml-4 flex flex-1 items-end justify-between pt-5 pb-0">
               {/* Company Info */}
               <div className="flex flex-col">
                 <h2 className="text-[20px] font-bold text-black">
@@ -179,7 +179,7 @@ const ApplicantScheduleModal: React.FC<ModalProps> = ({
         <div className="mt-6 flex items-center justify-between gap-x-4 px-6 py-4">
           <button
             onClick={() => closeModal(modalId)}
-            className="text-gray-700 hover:bg-gray-100 w-[181px] rounded-[10px] border-[1px] border-[#E6E6E6] bg-white px-6 py-2 text-[16px]"
+            className="w-[181px] rounded-[10px] border-[1px] border-[#E6E6E6] bg-white px-6 py-2 text-[16px] text-gray-700 hover:bg-gray-100"
           >
             Close
           </button>

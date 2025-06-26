@@ -29,10 +29,10 @@ const ApplicantSignupSuccessModal: React.FC<
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
       <div className="relative mx-4 flex h-[500px] max-w-lg flex-col items-center justify-center gap-y-4 rounded-[16px] bg-white md:h-[630px] md:w-[709px]">
         <img
-          className="absolute right-5 top-5 cursor-pointer"
+          className="absolute top-5 right-5 cursor-pointer"
           onClick={() => closeModal(modelId)}
           src={cancel}
           alt="close"

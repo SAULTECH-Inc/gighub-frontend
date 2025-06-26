@@ -15,7 +15,7 @@ const Header = () => {
       return (
         <>
           <div className="flex items-center max-md:hidden">
-            <ul className="flex gap-5 font-lato font-bold max-lg:text-[13px] lg:gap-8">
+            <ul className="font-lato flex gap-5 font-bold max-lg:text-[13px] lg:gap-8">
               <li>
                 <Link to="">Home</Link>
               </li>
@@ -41,14 +41,14 @@ const Header = () => {
         <div className="flex items-center justify-between px-3 py-5 md:px-10 lg:px-[90px]">
           <div className="flex items-center gap-[10px]">
             <img src={Gighub} alt="Gighub" width={41} height={41} />
-            <h1 className="font-lato text-xl font-black text-orange">Gighub</h1>
+            <h1 className="font-lato text-orange text-xl font-black">Gighub</h1>
           </div>
 
           {getHeaderContent()}
 
           <div className="flex items-center gap-4 lg:gap-9">
             <Link
-              className="cursor-pointer font-lato font-bold max-lg:text-[13px]"
+              className="font-lato cursor-pointer font-bold max-lg:text-[13px]"
               to="login"
             >
               Login

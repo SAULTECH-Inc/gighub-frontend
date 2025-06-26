@@ -67,7 +67,7 @@ const ProfileDetailsExtension: React.FC<{ person: ApplicantData }> = ({
                   </div>
                 </div>
                 <div
-                  className="my-4 w-full text-[13px] font-bold leading-[100%] text-[#8E8E8E]"
+                  className="my-4 w-full text-[13px] leading-[100%] font-bold text-[#8E8E8E]"
                   dangerouslySetInnerHTML={{
                     __html: experience?.description || "",
                   }}

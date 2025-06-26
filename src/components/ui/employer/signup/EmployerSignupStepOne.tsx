@@ -93,7 +93,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
 
   return (
     <motion.div
-      className="relative w-[80%] px-[10px] md:w-[500px] md:px-0 lg:w-[500px] mx-auto mt-10 md:mt-0"
+      className="relative mx-auto mt-10 w-[80%] px-[10px] md:mt-0 md:w-[500px] md:px-0 lg:w-[500px]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -101,7 +101,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
     >
       {/* Form Fields */}
       <motion.div
-        className="mx-auto mb-[10px] md:mb-[30px] flex flex-col text-center"
+        className="mx-auto mb-[10px] flex flex-col text-center md:mb-[30px]"
         initial={{ y: -50 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
@@ -125,7 +125,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
           <input
             type="text"
             {...register("companyName")}
-            className={`h-[45px] w-full rounded-[16px] border-[1px] px-5 py-2 focus:border-[1px] focus:outline-none focus:ring-0 ${
+            className={`h-[45px] w-full rounded-[16px] border-[1px] px-5 py-2 focus:border-[1px] focus:ring-0 focus:outline-none ${
               errors.companyName ? "border-red-500" : "border-[#E6E6E6]"
             }`}
           />
@@ -146,7 +146,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
           <input
             type="email"
             {...register("email")}
-            className={`h-[45px] w-full rounded-[16px] border-[1px] px-5 py-2 focus:border-[1px] focus:outline-none focus:ring-0 ${
+            className={`h-[45px] w-full rounded-[16px] border-[1px] px-5 py-2 focus:border-[1px] focus:ring-0 focus:outline-none ${
               errors.email ? "border-red-500" : "border-[#E6E6E6]"
             }`}
           />
@@ -172,7 +172,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
           <input
             type="text"
             {...register("companyPhone")}
-            className={`h-[45px] w-full rounded-[16px] border-[1px] px-5 py-2 focus:border-[1px] focus:outline-none focus:ring-0 ${
+            className={`h-[45px] w-full rounded-[16px] border-[1px] px-5 py-2 focus:border-[1px] focus:ring-0 focus:outline-none ${
               errors.companyPhone ? "border-red-500" : "border-[#E6E6E6]"
             }`}
           />
@@ -194,14 +194,14 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
             type={passwordVisible ? "text" : "password"}
             {...register("password")}
             onChange={handlePasswordChange}
-            className={`h-[45px] w-full rounded-[16px] border-[1px] px-5 py-2 focus:border-[1px] focus:outline-none focus:ring-0 ${
+            className={`h-[45px] w-full rounded-[16px] border-[1px] px-5 py-2 focus:border-[1px] focus:ring-0 focus:outline-none ${
               errors.password ? "border-red-500" : "border-[#E6E6E6]"
             }`}
           />
           <button
             type="button"
             onClick={togglePasswordVisibility}
-            className="absolute right-[10px] top-[12px] text-[#6E4AED] focus:outline-none"
+            className="absolute top-[12px] right-[10px] text-[#6E4AED] focus:outline-none"
           >
             {passwordVisible ? <EyeOff /> : <Eye />}
           </button>
@@ -222,7 +222,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
           <input
             type={passwordVisible ? "text" : "password"}
             {...register("confirmPassword")}
-            className={`h-[45px] w-full rounded-[16px] border-[1px] px-5 py-2 focus:border-[1px] focus:outline-none focus:ring-0 ${
+            className={`h-[45px] w-full rounded-[16px] border-[1px] px-5 py-2 focus:border-[1px] focus:ring-0 focus:outline-none ${
               errors.confirmPassword ? "border-red-500" : "border-[#E6E6E6]"
             }`}
             disabled={!password}
@@ -233,7 +233,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
 
       {/* Password Strength Indicator */}
       <motion.div
-        className="mb-[30px] mt-[2px]"
+        className="mt-[2px] mb-[30px]"
         initial={{ y: 50 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
@@ -266,7 +266,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
         <button
           type="button"
           onClick={handleSubmit(onSubmit)}
-          className="w-full rounded-[16px] bg-[#6E4AED] py-3 font-[13px] text-white hover:bg-[#5931A9] focus:border-none focus:outline-none focus:ring-0"
+          className="w-full rounded-[16px] bg-[#6E4AED] py-3 font-[13px] text-white hover:bg-[#5931A9] focus:border-none focus:ring-0 focus:outline-none"
         >
           Proceed
         </button>

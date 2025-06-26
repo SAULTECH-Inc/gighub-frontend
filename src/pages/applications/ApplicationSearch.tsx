@@ -50,7 +50,7 @@ const ApplicationSearch: React.FC<ApplicationSearchProps> = ({
                   className={`rounded-md border px-3 py-1 text-sm ${
                     isActive
                       ? "border-[#A78BFA] bg-[#EDE9FE] text-[#5B21B6]"
-                      : "border-gray-300 text-gray-600 bg-white"
+                      : "border-gray-300 bg-white text-gray-600"
                   } hover:bg-gray-100`}
                 >
                   {status}
@@ -71,7 +71,7 @@ const ApplicationSearch: React.FC<ApplicationSearchProps> = ({
                   className={`rounded-md border px-3 py-1 text-sm ${
                     isActive
                       ? "border-[#A78BFA] bg-[#EDE9FE] text-[#5B21B6]"
-                      : "border-gray-300 text-gray-600 bg-white"
+                      : "border-gray-300 bg-white text-gray-600"
                   } hover:bg-gray-100`}
                 >
                   {opt.label}
@@ -90,10 +90,10 @@ const ApplicationSearch: React.FC<ApplicationSearchProps> = ({
                 setFilterOpen(!filterOpen);
                 setSortOpen(false);
               }}
-              className="border-gray-300 flex items-center gap-2 rounded-md border bg-white px-4 py-2"
+              className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2"
             >
               <img src={FilterIcon} alt="filter" className="h-4 w-4" />
-              <span className="text-gray-600 text-sm font-bold">Filter</span>
+              <span className="text-sm font-bold text-gray-600">Filter</span>
               <FiChevronDown />
             </button>
             {filterOpen && (
@@ -132,10 +132,10 @@ const ApplicationSearch: React.FC<ApplicationSearchProps> = ({
                 setSortOpen(!sortOpen);
                 setFilterOpen(false);
               }}
-              className="border-gray-300 flex items-center gap-2 rounded-md border bg-white px-4 py-2"
+              className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2"
             >
               <BiSortAlt2 className="text-gray-600" />
-              <span className="text-gray-600 text-sm font-bold">Sort</span>
+              <span className="text-sm font-bold text-gray-600">Sort</span>
               <FiChevronDown />
             </button>
             {sortOpen && (

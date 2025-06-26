@@ -46,7 +46,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
   return (
     <div className="mb-4" ref={ref}>
       {label && (
-        <label className="text-gray-700 mb-1 block font-medium">
+        <label className="mb-1 block font-medium text-gray-700">
           {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
@@ -59,10 +59,10 @@ const TimePicker: React.FC<TimePickerProps> = ({
           onClick={() => setShowOptions(!showOptions)}
           placeholder={placeholder}
           disabled={disabled}
-          className={`disabled:bg-gray-100 block w-full cursor-pointer rounded-md bg-white py-3 pl-3 pr-10 text-sm disabled:cursor-not-allowed ${className}`}
+          className={`block w-full cursor-pointer rounded-md bg-white py-3 pr-10 pl-3 text-sm disabled:cursor-not-allowed disabled:bg-gray-100 ${className}`}
         />
         <FaRegClock
-          className="text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+          className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer text-gray-400"
           onClick={() => setShowOptions(!showOptions)}
         />
 

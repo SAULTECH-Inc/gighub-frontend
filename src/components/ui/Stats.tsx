@@ -7,7 +7,7 @@ const Stats: React.FC = () => {
       <div className="flex h-[183px] w-full flex-row gap-x-8 rounded-[16px] bg-[#6438C2] lg:w-[556px]">
         <div
           title="y-axis-days"
-          className="flex h-[100%] w-[10%] flex-col items-end justify-center gap-y-[4px] pl-5 font-lato text-[13px] text-white md:gap-y-3"
+          className="font-lato flex h-[100%] w-[10%] flex-col items-end justify-center gap-y-[4px] pl-5 text-[13px] text-white md:gap-y-3"
         >
           <p className="w-full">Sat</p>
           <p className="w-full">Thu</p>

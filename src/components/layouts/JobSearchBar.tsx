@@ -13,12 +13,12 @@ const JobSearchBar = () => {
             ref={jobInputRef}
             type="text"
             placeholder="Job title"
-            className="w-full border-none px-2 text-sm outline-none placeholder:text-sm placeholder:font-bold placeholder:text-black focus:border-[#ccc] focus:outline-none focus:ring-0 active:border-[#ccc]"
+            className="w-full border-none px-2 text-sm outline-none placeholder:text-sm placeholder:font-bold placeholder:text-black focus:border-[#ccc] focus:ring-0 focus:outline-none active:border-[#ccc]"
           />
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#F7F7F7]">
             <IoClose className="text-2xl font-normal" />
           </div>
-          <div className="ml-5 h-[29px] w-[0.5px] bg-gray" />
+          <div className="bg-gray ml-5 h-[29px] w-[0.5px]" />
         </div>
 
         <div className="flex items-center justify-between bg-white p-2">
@@ -27,7 +27,7 @@ const JobSearchBar = () => {
             ref={companyInputRef}
             type="text"
             placeholder="Company Name"
-            className="w-full border-none px-2 text-sm outline-none placeholder:text-sm placeholder:font-bold placeholder:text-black focus:border-[#ccc] focus:outline-none focus:ring-0 active:border-[#ccc]"
+            className="w-full border-none px-2 text-sm outline-none placeholder:text-sm placeholder:font-bold placeholder:text-black focus:border-[#ccc] focus:ring-0 focus:outline-none active:border-[#ccc]"
           />
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#F7F7F7]">
             <IoClose className="text-2xl font-normal" />
@@ -44,7 +44,7 @@ const JobSearchBar = () => {
             ref={jobInputRef}
             type="text"
             placeholder="Search Here"
-            className="w-full border-none px-2 text-sm outline-none placeholder:text-sm placeholder:font-bold placeholder:text-black focus:border-[#ccc] focus:outline-none focus:ring-0 active:border-[#ccc]"
+            className="w-full border-none px-2 text-sm outline-none placeholder:text-sm placeholder:font-bold placeholder:text-black focus:border-[#ccc] focus:ring-0 focus:outline-none active:border-[#ccc]"
           />
           <button className="h-[3rem] w-[8rem] rounded-[10px] bg-[#6B5AED] font-bold text-white">
             Search

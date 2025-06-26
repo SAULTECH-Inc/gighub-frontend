@@ -13,7 +13,7 @@ const DropDown: FC<SelectProps> = ({
   return (
     <div className="mb-4">
       {label && (
-        <label htmlFor={name} className="text-gray-700 mb-1 block font-medium">
+        <label htmlFor={name} className="mb-1 block font-medium text-gray-700">
           {label}
         </label>
       )}
@@ -23,7 +23,7 @@ const DropDown: FC<SelectProps> = ({
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className={`border-gray-300 w-full rounded border p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        className={`w-full rounded border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none ${className}`}
       >
         <option value="">-- Select an option --</option>
         {options.map((option) => (

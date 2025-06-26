@@ -17,6 +17,15 @@ export interface ChatMessage {
   deliveredDate?: Date;
 }
 
+export interface ExtendedChatMessage extends ChatMessage {
+  isFile?: boolean;
+  fileUrl?: string;
+  fileName?: string;
+  fileType?: string;
+  fileSize?: number;
+  replyTo?: ChatMessage;
+}
+
 export interface Group {
   name: string;
   admin: string;

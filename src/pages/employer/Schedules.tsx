@@ -305,11 +305,11 @@ const Schedules: React.FC = () => {
             </div>
             <div className="text-sm text-red-800">Cancelled</div>
           </div>
-          <div className="bg-yellow-50 rounded-lg p-4">
-            <div className="text-yellow-600 text-2xl font-bold">
+          <div className="rounded-lg bg-yellow-50 p-4">
+            <div className="text-2xl font-bold text-yellow-600">
               {stats.upcomingToday}
             </div>
-            <div className="text-yellow-800 text-sm">Today</div>
+            <div className="text-sm text-yellow-800">Today</div>
           </div>
         </div>
       </div>
@@ -320,13 +320,13 @@ const Schedules: React.FC = () => {
           <div className="flex flex-col gap-4 lg:flex-row">
             {/* Search */}
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-3.5 h-5 w-5 text-slate-400" />
+              <Search className="absolute top-3.5 left-3 h-5 w-5 text-slate-400" />
               <input
                 type="text"
                 placeholder="Search interviews, applicants, or jobs..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pr-4 pl-10 transition-all focus:border-transparent focus:ring-2 focus:ring-purple-500 focus:outline-none"
               />
             </div>
 
@@ -366,7 +366,7 @@ const Schedules: React.FC = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="rounded-xl border border-slate-200 bg-slate-100 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="rounded-xl border border-slate-200 bg-slate-100 px-3 py-3 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none"
               >
                 <option value="date">Sort by Date</option>
                 <option value="status">Sort by Status</option>
@@ -399,7 +399,7 @@ const Schedules: React.FC = () => {
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as any)}
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none"
                   >
                     <option value="All">All Statuses</option>
                     <option value="SCHEDULED">Scheduled</option>
@@ -416,7 +416,7 @@ const Schedules: React.FC = () => {
                   <select
                     value={typeFilter}
                     onChange={(e) => setTypeFilter(e.target.value as any)}
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none"
                   >
                     <option value="All">All Types</option>
                     <option value="VIRTUAL_MEETING">Virtual Meeting</option>
@@ -434,7 +434,7 @@ const Schedules: React.FC = () => {
                   <select
                     value={priorityFilter}
                     onChange={(e) => setPriorityFilter(e.target.value as any)}
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none"
                   >
                     <option value="All">All Priorities</option>
                     <option value="HIGH">High</option>
@@ -449,7 +449,7 @@ const Schedules: React.FC = () => {
                   <select
                     value={dateFilter}
                     onChange={(e) => setDateFilter(e.target.value as any)}
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none"
                   >
                     <option value="all">All Dates</option>
                     <option value="today">Today</option>
@@ -480,7 +480,7 @@ const Schedules: React.FC = () => {
                 </button>
                 <button
                   onClick={() => handleBulkAction("reschedule")}
-                  className="bg-yellow-600 hover:bg-yellow-700 flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-white transition"
+                  className="flex items-center gap-2 rounded-lg bg-yellow-600 px-3 py-1.5 text-sm text-white transition hover:bg-yellow-700"
                 >
                   <RefreshCw className="h-3 w-3" />
                   Reschedule
@@ -523,12 +523,12 @@ const Schedules: React.FC = () => {
 
             <div className="scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent max-h-[70vh] space-y-3 overflow-y-auto">
               {loading ? (
-                <div className="flex flex-col items-center justify-center pb-10 pt-20">
+                <div className="flex flex-col items-center justify-center pt-20 pb-10">
                   <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-purple-600"></div>
                   <p className="mt-4 text-slate-500">Loading interviews...</p>
                 </div>
               ) : filteredAndSortedInterviews?.length === 0 ? (
-                <div className="flex flex-col items-center justify-center pb-10 pt-20">
+                <div className="flex flex-col items-center justify-center pt-20 pb-10">
                   <CalendarIcon className="mb-4 h-12 w-12 text-slate-400" />
                   <p className="text-sm text-slate-500">No interviews found</p>
                   <p className="mt-1 text-xs text-slate-400">
@@ -547,12 +547,12 @@ const Schedules: React.FC = () => {
                       }`}
                     >
                       {showBulkActions && (
-                        <div className="absolute left-3 top-3 z-10">
+                        <div className="absolute top-3 left-3 z-10">
                           <input
                             type="checkbox"
                             checked={bulkSelected.includes(interview.id)}
                             onChange={() => handleBulkSelect(interview.id)}
-                            className="border-gray-300 bg-gray-100 h-4 w-4 rounded text-purple-600 focus:ring-purple-500"
+                            className="h-4 w-4 rounded border-gray-300 bg-gray-100 text-purple-600 focus:ring-purple-500"
                             onClick={(e) => e.stopPropagation()}
                           />
                         </div>
@@ -642,7 +642,7 @@ const Schedules: React.FC = () => {
                           },
                           7,
                         ) && (
-                          <div className="absolute right-3 top-3">
+                          <div className="absolute top-3 right-3">
                             <Bell className="h-3 w-3 text-blue-500" />
                           </div>
                         )}
@@ -692,7 +692,7 @@ const Schedules: React.FC = () => {
         {/* Mobile Detail Modal */}
         {selected && (
           <div
-            className="fixed inset-0 z-50 flex items-end bg-black bg-opacity-50 lg:hidden"
+            className="bg-opacity-50 fixed inset-0 z-50 flex items-end bg-black lg:hidden"
             onClick={() => setSelected(null)}
           >
             <div
@@ -714,7 +714,7 @@ const Schedules: React.FC = () => {
 
         {/* Import Modal */}
         {importModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
             <div className="w-full max-w-md rounded-2xl bg-white">
               <div className="border-b border-slate-200 p-6">
                 <div className="flex items-center justify-between">
@@ -759,7 +759,7 @@ const Schedules: React.FC = () => {
 
         {/* Delete Confirmation Modal */}
         {deleteConfirmOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
             <div className="w-full max-w-md rounded-2xl bg-white">
               <div className="p-6">
                 <div className="mb-4 flex items-center gap-3">

@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import RichTextEditor from "../../../common/RichTextEditor.tsx";
 import CustomDropdown from "../../../common/CustomDropdown.tsx";
-import {
-  ExperienceResponseDto,
-  institutions,
-  Option,
-} from "../../../../utils/types";
+import { cities, ExperienceResponseDto, Option } from "../../../../utils/types";
 import { useApplicantJobProfile } from "../../../../store/useApplicantJobProfile.ts";
 import CustomSelect from "../../../common/CustomSelect.tsx";
 import { jobLocation } from "../../../../utils/constants.ts";
+import { JobRoles } from "../../../../utils/dumm.ts";
 
 interface ExperienceUpdateFormProps {
   experienceData: ExperienceResponseDto;
@@ -61,14 +58,14 @@ const ExperienceUpdateForm: React.FC<ExperienceUpdateFormProps> = ({
             value={experienceData.company}
             disabled={!isEditable}
             onChange={handleChange}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
           />
         </div>
         <div className="flex w-full flex-col gap-y-2">
           <label>Your Role</label>
           <CustomDropdown
             placeholder={experienceData.position}
-            options={institutions}
+            options={JobRoles}
             disabled={!isEditable}
             handleSelect={(option: Option) => {
               setExperience({
@@ -76,13 +73,13 @@ const ExperienceUpdateForm: React.FC<ExperienceUpdateFormProps> = ({
                 position: option.value,
               });
             }}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
           />
         </div>
       </div>
       <div className="flex w-full flex-col gap-x-2 gap-y-3 md:flex-row md:gap-x-6">
         <div className="flex w-full flex-col gap-y-2">
-          <label>Location</label>
+          <label>Employment Type</label>
           <CustomSelect
             placeholder={experienceData.location}
             options={jobLocation}
@@ -93,14 +90,14 @@ const ExperienceUpdateForm: React.FC<ExperienceUpdateFormProps> = ({
                 location: option.value,
               });
             }}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] bg-transparent p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
           />
         </div>
         <div className="flex w-full flex-col gap-y-2">
           <label>City</label>
           <CustomDropdown
             placeholder={experienceData.city}
-            options={institutions}
+            options={cities}
             disabled={!isEditable}
             handleSelect={(option: Option) => {
               setExperience({
@@ -108,7 +105,7 @@ const ExperienceUpdateForm: React.FC<ExperienceUpdateFormProps> = ({
                 city: option.value,
               });
             }}
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
           />
         </div>
       </div>
@@ -125,7 +122,7 @@ const ExperienceUpdateForm: React.FC<ExperienceUpdateFormProps> = ({
                 ? new Date(experienceData.startDate).toISOString().split("T")[0]
                 : ""
             }
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
           />
         </div>
         <div className="flex w-full flex-col gap-y-2">
@@ -140,7 +137,7 @@ const ExperienceUpdateForm: React.FC<ExperienceUpdateFormProps> = ({
                 ? new Date(experienceData.endDate).toISOString().split("T")[0]
                 : ""
             }
-            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+            className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
           />
         </div>
       </div>

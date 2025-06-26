@@ -45,12 +45,12 @@ const Section: React.FC<SectionProps> = ({
   return (
     <div
       id={id}
-      className="border-gray-200 mb-8 overflow-hidden rounded-lg border bg-white shadow-lg"
+      className="mb-8 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg"
     >
       <div
-        className={`to-orange-50 border-gray-200 border-b bg-gradient-to-r from-purple-100 px-6 py-4 ${
+        className={`border-b border-gray-200 bg-gradient-to-r from-purple-100 to-orange-50 px-6 py-4 ${
           isCollapsible
-            ? "hover:to-orange-100 cursor-pointer transition-colors hover:from-purple-200"
+            ? "cursor-pointer transition-colors hover:from-purple-200 hover:to-orange-100"
             : ""
         }`}
         onClick={() => isCollapsible && setIsExpanded(!isExpanded)}
@@ -58,7 +58,7 @@ const Section: React.FC<SectionProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             {icon && <div className="text-purple-600">{icon}</div>}
-            <h2 className="text-gray-800 text-xl font-semibold">{title}</h2>
+            <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
           </div>
           {isCollapsible && (
             <div className="text-gray-500">
@@ -68,7 +68,7 @@ const Section: React.FC<SectionProps> = ({
         </div>
       </div>
       {isExpanded && (
-        <div className="text-gray-700 px-6 py-6 leading-relaxed">
+        <div className="px-6 py-6 leading-relaxed text-gray-700">
           {children}
         </div>
       )}
@@ -126,7 +126,7 @@ const TermsAndConditions: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="min-h-screen bg-gray-50">
       {USER_TYPE === UserType.EMPLOYER ? (
         <TopNavBar
           navItems={employerNavItems}
@@ -141,7 +141,7 @@ const TermsAndConditions: React.FC = () => {
         />
       )}
       {/* Header */}
-      <div className="to-orange-600 bg-gradient-to-r from-purple-600 via-indigo-700 text-white">
+      <div className="bg-gradient-to-r from-purple-600 via-indigo-700 to-orange-600 text-white">
         <div className="mx-auto max-w-4xl px-6 py-12">
           <h1 className="mb-4 text-4xl font-bold">Terms and Conditions</h1>
           <p className="text-xl opacity-90">
@@ -170,12 +170,12 @@ const TermsAndConditions: React.FC = () => {
                 placeholder="Search terms..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="border-gray-300 w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-purple-500 sm:w-64"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-purple-500 sm:w-64"
               />
             </div>
             <button
               onClick={() => setShowTableOfContents(!showTableOfContents)}
-              className="to-orange-500 hover:to-orange-600 rounded-lg bg-gradient-to-r from-purple-600 px-4 py-2 text-white shadow-lg transition-all duration-300 hover:from-purple-700 hover:shadow-xl"
+              className="rounded-lg bg-gradient-to-r from-purple-600 to-orange-500 px-4 py-2 text-white shadow-lg transition-all duration-300 hover:from-purple-700 hover:to-orange-600 hover:shadow-xl"
               style={{ boxShadow: "0 0 20px rgba(100, 56, 194, 0.3)" }}
             >
               Table of Contents
@@ -254,7 +254,7 @@ const TermsAndConditions: React.FC = () => {
             GigHub is a comprehensive professional platform that connects job
             seekers with employers and facilitates career development through:
           </p>
-          <ul className="text-gray-700 mb-4 list-inside list-disc space-y-2">
+          <ul className="mb-4 list-inside list-disc space-y-2 text-gray-700">
             <li>
               <strong className="text-purple-600">
                 Job Search & Discovery:
@@ -341,7 +341,7 @@ const TermsAndConditions: React.FC = () => {
           icon={<Search size={20} />}
           id="job-seeker-responsibilities"
         >
-          <h3 className="text-orange-600 mb-3 font-semibold">
+          <h3 className="mb-3 font-semibold text-orange-600">
             Profile Accuracy
           </h3>
           <p className="mb-4">
@@ -355,7 +355,7 @@ const TermsAndConditions: React.FC = () => {
             <li>Contact information and availability</li>
           </ul>
 
-          <h3 className="text-orange-600 mb-3 font-semibold">
+          <h3 className="mb-3 font-semibold text-orange-600">
             Auto-Apply Settings
           </h3>
           <p className="mb-4">
@@ -546,14 +546,14 @@ const TermsAndConditions: React.FC = () => {
           isCollapsible={true}
           id="dispute-resolution"
         >
-          <h3 className="text-orange-600 mb-3 font-semibold">User Disputes</h3>
+          <h3 className="mb-3 font-semibold text-orange-600">User Disputes</h3>
           <p className="mb-4">
             For disputes between users (job seekers and employers), we provide
             mediation services and reporting tools. We encourage professional
             communication and fair treatment of all platform users.
           </p>
 
-          <h3 className="text-orange-600 mb-3 font-semibold">
+          <h3 className="mb-3 font-semibold text-orange-600">
             Platform Disputes
           </h3>
           <p>
@@ -641,14 +641,14 @@ const TermsAndConditions: React.FC = () => {
         </Section>
 
         {/* Footer */}
-        <div className="border-gray-200 text-gray-500 mt-12 border-t pt-8 text-center">
+        <div className="mt-12 border-t border-gray-200 pt-8 text-center text-gray-500">
           <p className="mb-2">© 2025 GigHub, Inc. All rights reserved.</p>
           <p className="text-sm">
             Empowering careers and connecting talent worldwide
           </p>
           <div className="mt-4 flex justify-center space-x-6 text-sm">
             <span className="font-medium text-purple-600">Job Search</span>
-            <span className="text-orange-500 font-medium">
+            <span className="font-medium text-orange-500">
               Professional Networking
             </span>
             <span className="font-medium text-green-500">Career Growth</span>

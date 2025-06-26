@@ -93,7 +93,7 @@ const EducationDetails: React.FC<EductionDetailsProps> = ({ education }) => {
     <div>
       <div className="relative">
         {educationCollapse && (
-          <div className="absolute right-10 top-16 z-10 flex items-center justify-evenly gap-x-2 text-xs md:right-24 md:top-5">
+          <div className="absolute top-16 right-10 z-10 flex items-center justify-evenly gap-x-2 text-xs md:top-5 md:right-24">
             <button
               type="button"
               onClick={handleToggleEdit}
@@ -111,13 +111,13 @@ const EducationDetails: React.FC<EductionDetailsProps> = ({ education }) => {
           </div>
         )}
 
-        <div className="bg-gray-50 relative flex w-full flex-col items-center justify-between rounded-[16px] border-[1px] border-[#E6E6E6] p-3 md:p-4">
+        <div className="relative flex w-full flex-col items-center justify-between rounded-[16px] border-[1px] border-[#E6E6E6] bg-gray-50 p-3 md:p-4">
           {/* Left Content */}
           <div className="mb-5 w-full">
             <p className="text-sm font-semibold">
               {applicantEducation?.degree}, {applicantEducation?.fieldOfStudy}
             </p>
-            <p className="text-gray-100 text-sm font-light">
+            <p className="text-sm font-light text-gray-100">
               {moment(applicantEducation?.startDate).format("MMM YYYY")} -{" "}
               {moment(applicantEducation?.startDate).format("MMM YYYY")}
             </p>
@@ -126,12 +126,12 @@ const EducationDetails: React.FC<EductionDetailsProps> = ({ education }) => {
           {/* Dropdown Button with Options */}
           {educationCollapse ? (
             <MdKeyboardArrowUp
-              className="absolute right-3 top-5 cursor-pointer text-[30px]"
+              className="absolute top-5 right-3 cursor-pointer text-[30px]"
               onClick={() => setEducationCollapse(false)}
             />
           ) : (
             <MdKeyboardArrowDown
-              className="absolute right-3 top-5 cursor-pointer text-[30px]"
+              className="absolute top-5 right-3 cursor-pointer text-[30px]"
               onClick={() => setEducationCollapse(true)}
             />
           )}
@@ -155,7 +155,7 @@ const EducationDetails: React.FC<EductionDetailsProps> = ({ education }) => {
           </AnimatePresence>
         </div>
         <FaRegTrashAlt
-          className="absolute -right-4 top-8 cursor-pointer text-[11px] font-light lg:-right-6"
+          className="absolute top-8 -right-4 cursor-pointer text-[11px] font-light lg:-right-6"
           onClick={handleDeleteEducation}
         />
       </div>

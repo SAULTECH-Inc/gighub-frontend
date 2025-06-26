@@ -55,7 +55,7 @@ const EmployerDashboard: React.FC = () => {
           navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
         />
-        <div className="bg-gray-100 grid grid-cols-1 items-start justify-center gap-x-6 gap-y-32 overscroll-auto px-3 py-6 xl:grid-cols-[70%_25%]">
+        <div className="grid grid-cols-1 items-start justify-center gap-x-6 gap-y-32 overscroll-auto bg-gray-100 px-3 py-6 xl:grid-cols-[70%_25%]">
           {/* First Column */}
           <div className="flex h-full w-full flex-col items-center gap-y-6">
             <ApplicationStats />

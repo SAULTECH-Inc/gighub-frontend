@@ -104,7 +104,7 @@ const ManageApplicant: FC = () => {
         <div className="mt-5 flex w-[95%] flex-col rounded-[16px] bg-white md:flex-row md:justify-between">
           <div className="flex flex-col px-5 py-3">
             <div className="flex w-full flex-col">
-              <h1 className="text-[32px] font-bold leading-[28.8px] text-[#000000]">
+              <h1 className="text-[32px] leading-[28.8px] font-bold text-[#000000]">
                 {selectedApplication?.job.title || ""}
               </h1>
               <p className="text-[#8E8E8E]">
@@ -166,7 +166,7 @@ const ManageApplicant: FC = () => {
       </div>
       <div className="flex w-full flex-col items-center">
         <div className="my-5 flex w-[95%] flex-col justify-between md:flex-row">
-          <div className="rounded-[16px] bg-white p-4 mdl:w-[25%]">
+          <div className="mdl:w-[25%] rounded-[16px] bg-white p-4">
             <div className="flex w-full flex-col gap-4">
               <p className="text-[20px] font-extrabold text-[#000000]">
                 Application
@@ -178,7 +178,7 @@ const ManageApplicant: FC = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search applicant here"
-                  className="placeholder-text-[11px] placeholder-text-[#8E8E8E] border-none bg-transparent focus:outline-none focus:ring-transparent"
+                  className="placeholder-text-[11px] placeholder-text-[#8E8E8E] border-none bg-transparent focus:ring-transparent focus:outline-none"
                 />
               </div>
               <div className="flex w-full items-center gap-4 md:gap-12">
@@ -277,7 +277,7 @@ const ManageApplicant: FC = () => {
                               message.sender === application.applicant.email &&
                               !message.read,
                           ).length > 0 && (
-                            <span className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full border border-white bg-purple-600"></span>
+                            <span className="absolute top-0 right-0 h-2.5 w-2.5 rounded-full border border-white bg-purple-600"></span>
                           )}
                         </div>
                       </div>
@@ -288,7 +288,7 @@ const ManageApplicant: FC = () => {
           </div>
           <div className="mb-5 ml-[18px] flex flex-col overflow-hidden rounded-[16px] bg-white pb-5 md:w-[75%]">
             <div className="relative h-[108px] w-full bg-gradient-to-r from-[#6438C2] to-[#D9D9D9]">
-              <div className="absolute bottom-[-40%] left-5 h-[100px] w-[100px] bg-opacity-50">
+              <div className="bg-opacity-50 absolute bottom-[-40%] left-5 h-[100px] w-[100px]">
                 <img
                   src={
                     selectedApplication?.applicant?.profilePicture || Person7
@@ -305,7 +305,7 @@ const ManageApplicant: FC = () => {
                     <div className="relative text-2xl font-extrabold text-[#000000]">
                       {selectedApplication?.applicant?.firstName}{" "}
                       {selectedApplication?.applicant?.lastName}
-                      <div className="absolute left-[150px] top-0 h-[10px] w-[10px] rounded-full bg-[#FA4E09]"></div>
+                      <div className="absolute top-0 left-[150px] h-[10px] w-[10px] rounded-full bg-[#FA4E09]"></div>
                     </div>
                     <p
                       className="text-[13px] text-[#8E8E8E]"

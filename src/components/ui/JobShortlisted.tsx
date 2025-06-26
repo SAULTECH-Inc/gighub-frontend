@@ -23,19 +23,19 @@ const JobShortlisted: React.FC<JobDescription> = ({
         <div className="flex w-full flex-col items-center justify-center lg:w-auto">
           <div className="h-24 w-24 rounded-full bg-[#AFAFAF]"></div>
           <p className="my-2 text-lg font-medium">{companyName}</p>
-          <span className="text-gray-500 text-sm">{location}</span>
+          <span className="text-sm text-gray-500">{location}</span>
 
           {/* Connections & Recommendations */}
           <div className="mt-3 flex items-center justify-center gap-6 sm:gap-10">
             <div className="flex flex-col items-center">
-              <span className="text-gray-500 text-lg sm:text-xl">500</span>
-              <span className="text-gray-500 text-sm sm:text-lg">
+              <span className="text-lg text-gray-500 sm:text-xl">500</span>
+              <span className="text-sm text-gray-500 sm:text-lg">
                 Connections
               </span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-gray-500 text-lg sm:text-xl">20</span>
-              <span className="text-gray-500 text-sm sm:text-lg">
+              <span className="text-lg text-gray-500 sm:text-xl">20</span>
+              <span className="text-sm text-gray-500 sm:text-lg">
                 Recommendation
               </span>
             </div>
@@ -90,10 +90,10 @@ const JobShortlisted: React.FC<JobDescription> = ({
 
           {/* Responsive Buttons */}
           <div className="mt-5 flex w-full flex-col items-center gap-4 sm:flex-row">
-            <button className="text-gray-600 w-full rounded-xl border border-[#E6E6E6] px-6 py-3 sm:w-auto">
+            <button className="w-full rounded-xl border border-[#E6E6E6] px-6 py-3 text-gray-600 sm:w-auto">
               View details
             </button>
-            <button className="text-gray-600 w-full rounded-xl border border-[#E6E6E6] px-6 py-3 sm:w-auto">
+            <button className="w-full rounded-xl border border-[#E6E6E6] px-6 py-3 text-gray-600 sm:w-auto">
               Remove From Shortlist
             </button>
             <button className="w-full rounded-xl border border-[#E6E6E6] bg-[#6438C2] px-6 py-3 text-white sm:w-auto">

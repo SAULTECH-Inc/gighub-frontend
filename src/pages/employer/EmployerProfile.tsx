@@ -72,13 +72,13 @@ const EmployerProfile: FC = () => {
         navItemsMobile={employerNavItemsMobile}
         navbarItemsMap={employerNavBarItemMap}
       />
-      <div className="bg-gray-100 mx-auto flex min-h-screen w-full items-start justify-center gap-x-5 pt-6 md:px-5 lg:px-10">
+      <div className="mx-auto flex min-h-screen w-full items-start justify-center gap-x-5 bg-gray-100 pt-6 md:px-5 lg:px-10">
         {/* Sidebar */}
         <EmployerProfileSidebar />
 
         {/* Main Content */}
         <div className="h-fit w-full rounded-[16px] border-[1px] border-[#E6E6E6] bg-white p-4 md:w-[70%] lg:w-[67%] lg:p-8 xl:w-[75%]">
-          <div className="flex items-center justify-between pb-4 font-lato text-sm text-[#6438C2] lg:text-[20px]">
+          <div className="font-lato flex items-center justify-between pb-4 text-sm text-[#6438C2] lg:text-[20px]">
             <p>Your Profile is 80% completed</p>
             <p>Company Account</p>
           </div>

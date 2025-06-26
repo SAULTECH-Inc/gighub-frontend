@@ -157,7 +157,7 @@ const Notification: React.FC = () => {
                 type="text"
                 value={filterKeyword}
                 onChange={(e) => setFilterKeyword(e.target.value)}
-                className="flex w-[400px] rounded-[10px] border border-[#E6E6E6] bg-[#F7F7F7] px-[20px] py-[12px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                className="flex w-[400px] rounded-[10px] border border-[#E6E6E6] bg-[#F7F7F7] px-[20px] py-[12px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                 placeholder="Filter Notification"
               />
               <img
@@ -184,7 +184,7 @@ const Notification: React.FC = () => {
             {/* Shared Dropdown */}
             {showSettingsDropdown && (
               <div
-                className="border-gray-200 absolute right-5 z-30 mt-52 w-56 rounded-lg border bg-white py-2 shadow-lg"
+                className="absolute right-5 z-30 mt-52 w-56 rounded-lg border border-gray-200 bg-white py-2 shadow-lg"
                 onMouseDown={(e) => e.stopPropagation()} // prevent outside click handler
               >
                 <div className="px-4 pb-2">
@@ -196,20 +196,20 @@ const Notification: React.FC = () => {
                     onChange={(e) =>
                       setSortOrder(e.target.value as "newest" | "oldest")
                     }
-                    className="border-gray-300 w-full rounded-md border p-2 text-sm"
+                    className="w-full rounded-md border border-gray-300 p-2 text-sm"
                   >
                     <option value="newest">Newest</option>
                     <option value="oldest">Oldest</option>
                   </select>
                 </div>
                 <button
-                  className="hover:bg-gray-100 w-full px-4 py-2 text-left text-sm"
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
                   onClick={markAllAsRead}
                 >
                   Mark all as read
                 </button>
                 <button
-                  className="hover:bg-gray-100 w-full px-4 py-2 text-left text-sm"
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
                   onClick={() => {
                     console.log("Navigate to Notification Preferences");
                     setShowSettingsDropdown(false);
@@ -218,7 +218,7 @@ const Notification: React.FC = () => {
                   Notification Preferences
                 </button>
                 <button
-                  className="hover:bg-gray-100 w-full px-4 py-2 text-left text-sm"
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
                   onClick={() => setShowSettingsDropdown(false)}
                 >
                   Close

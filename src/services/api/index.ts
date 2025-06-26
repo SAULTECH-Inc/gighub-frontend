@@ -425,6 +425,33 @@ export const uploadFile = async (
   return response?.data;
 };
 
+export const uploadFileGeneral = async (
+  userId: number,
+  file: File,
+  action: Action,
+  userType: UserType,
+  whatIsTheItem: string,
+): Promise<APIResponse<FileUploadResponse>> => {
+  console.log(`Uploading file for user with ID: ${userId}`);
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("userId", userId.toString());
+  formData.append("action", action);
+  formData.append("userType", userType);
+  formData.append("whatIsTheItem", whatIsTheItem);
+
+  const response = await privateApiClient.post<APIResponse<FileUploadResponse>>(
+    `${VITE_API_FILE_SERVICE}/gighub/upload/general`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
+  return response?.data;
+};
+
 export const saveInterviewDetails = async (
   interviewDetails: InterviewScheduleDetails,
 ): Promise<APIResponse<InterviewScheduleDetailsResponse>> => {
@@ -665,6 +692,16 @@ export const markAllNotificationsAsRead = async (
   const response = await privateApiClient.patch<APIResponse<any>>(
     `${NOTIFICATION_API_URL}/notifications/mark-all-notifications-as-viewed/${userId}`,
     { notificationIds },
+  );
+  return response?.data;
+};
+
+export const deleteMessage = async (
+  messageId: string,
+): Promise<APIResponse<string>> => {
+  console.log(`Marking all notifications as read: ${messageId}`);
+  const response = await privateApiClient.delete<APIResponse<any>>(
+    `${NOTIFICATION_API_URL}/notifications/${messageId}/delete`,
   );
   return response?.data;
 };

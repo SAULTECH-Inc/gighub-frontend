@@ -213,7 +213,7 @@ const JobSearchSidebar: React.FC<JobSearchSidebar> = ({
             } as UseJobSearchSettings);
           }}
           placeholder="Enter location"
-          className="rounded-lg border border-[#E6E6E6] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
+          className="rounded-lg border border-[#E6E6E6] px-3 py-2 focus:ring-2 focus:ring-purple-300 focus:outline-none"
         />
       </div>
     </div>

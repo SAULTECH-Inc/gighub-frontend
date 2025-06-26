@@ -108,7 +108,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       aria-label="Toggle Switch"
       tabIndex={0}
       onClick={toggleSwitch}
-      className={`relative flex items-center rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[${primaryColor}] focus:ring-opacity-50 ${enabled && isTailwindClass(primaryColor) ? `bg-${primaryColor}` : ""} ${!enabled && isTailwindClass(trackOffColor) ? `bg-${trackOffColor}` : ""} ${isTailwindClass(borderColor) ? `border border-${borderColor}` : "border"} `}
+      className={`relative flex items-center rounded-full transition-colors duration-300 focus:ring-2 focus:outline-none focus:ring-[${primaryColor}] focus:ring-opacity-50 ${enabled && isTailwindClass(primaryColor) ? `bg-${primaryColor}` : ""} ${!enabled && isTailwindClass(trackOffColor) ? `bg-${trackOffColor}` : ""} ${isTailwindClass(borderColor) ? `border border-${borderColor}` : "border"} `}
       style={{
         width: `${trackWidthRem}rem`,
         height: `${trackHeightRem}rem`,

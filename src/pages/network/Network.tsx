@@ -40,7 +40,7 @@ const Network: React.FC = () => {
               className={`border-b-4 pb-2 transition-colors ${
                 activeTab === "find-new-connections"
                   ? "border-purple-600 font-medium text-purple-600"
-                  : "text-gray-600 border-transparent hover:border-purple-600 hover:text-purple-600"
+                  : "border-transparent text-gray-600 hover:border-purple-600 hover:text-purple-600"
               }`}
             >
               Find New Connections
@@ -50,7 +50,7 @@ const Network: React.FC = () => {
               className={`border-b-4 pb-2 transition-colors ${
                 activeTab === "my-connections"
                   ? "border-purple-600 font-medium text-purple-600"
-                  : "text-gray-600 border-transparent hover:border-purple-600 hover:text-purple-600"
+                  : "border-transparent text-gray-600 hover:border-purple-600 hover:text-purple-600"
               }`}
             >
               My Connections

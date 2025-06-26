@@ -15,7 +15,7 @@ const ApplicantMultistepForm: React.FC = () => {
 
   return (
     <motion.form
-      className="w-full relative flex min-h-screen flex-col items-center justify-center py-2 md:flex-row"
+      className="relative flex min-h-screen w-full flex-col items-center justify-center py-2 md:flex-row"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -23,7 +23,7 @@ const ApplicantMultistepForm: React.FC = () => {
     >
       {/* Logo */}
       <motion.img
-        className="absolute left-[3%] top-5"
+        className="absolute top-5 left-[3%]"
         src={gighubLogo}
         alt="logo"
         initial={{ x: -50 }}
@@ -32,8 +32,8 @@ const ApplicantMultistepForm: React.FC = () => {
       />
 
       {/* Step Indicator */}
-      <div className="absolute left-1/2 top-10 flex -translate-x-1/2 transform flex-col gap-y-2 md:left-1/2 md:top-5 md:transform">
-        <span className="block text-left mt-4">{step} of 3</span>
+      <div className="absolute top-10 left-1/2 flex -translate-x-1/2 transform flex-col gap-y-2 md:top-5 md:left-1/2 md:transform">
+        <span className="mt-4 block text-left">{step} of 3</span>
         <div className="flex justify-evenly gap-x-2">
           {[1, 2, 3].map((stepNumber) => (
             <div
@@ -47,7 +47,7 @@ const ApplicantMultistepForm: React.FC = () => {
       </div>
 
       {/* Left Section - Form */}
-      <div className="flex w-full items-center justify-center px-5 pt-[100px] md:w-1/2 md:pl-32 md:pt-0">
+      <div className="flex w-full items-center justify-center px-5 pt-[100px] md:w-1/2 md:pt-0 md:pl-32">
         {/* Step 1: Personal Information */}
         {step === 1 && (
           <motion.div

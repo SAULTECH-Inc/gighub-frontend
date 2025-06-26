@@ -24,6 +24,7 @@ privateApiClient.interceptors.request.use(
     if (TOKEN) {
       config.headers.Authorization = `Bearer ${TOKEN}`;
     }
+    config.headers.Authorization = `Bearer ${storage.getItem("authToken")}`;
     return config;
   },
   (error) => Promise.reject(error),

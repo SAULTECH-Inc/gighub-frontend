@@ -24,7 +24,7 @@ const InterviewScheduleSuccessModal: React.FC<SuccessModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black"
       onClick={handleCloseApplicationSuccessModal}
     >
       <div
@@ -33,7 +33,7 @@ const InterviewScheduleSuccessModal: React.FC<SuccessModalProps> = ({
       >
         <button
           onClick={handleCloseApplicationSuccessModal}
-          className="text-gray-500 absolute right-6 top-6 cursor-pointer text-xl"
+          className="absolute top-6 right-6 cursor-pointer text-xl text-gray-500"
         >
           <svg
             width="18"
@@ -87,11 +87,11 @@ const InterviewScheduleSuccessModal: React.FC<SuccessModalProps> = ({
           </svg>
         </div>
 
-        <h2 className="mb-6 mt-6 text-[24px] font-semibold text-[#FA4E09]">
+        <h2 className="mt-6 mb-6 text-[24px] font-semibold text-[#FA4E09]">
           Congratulations!
         </h2>
 
-        <p className="text-gray-600 mb-6 w-[360px] text-center text-[13px]">
+        <p className="mb-6 w-[360px] text-center text-[13px] text-gray-600">
           Your interview has been successfully scheduled. Both you and the
           candidate will receive a confirmation email with all the details. Good
           luck with your meeting!

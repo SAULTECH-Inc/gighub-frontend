@@ -9,7 +9,7 @@ interface LocationSelectorProp {
 }
 const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
   preferences,
-                                                                     handleLocationSelect,
+  handleLocationSelect,
   removeLocation,
   isEditable,
 }: LocationSelectorProp) => {
@@ -20,31 +20,29 @@ const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
     handleLocationSelect(selectedCountry, selectedCity);
   }, [selectedCountry, selectedCity, handleLocationSelect]);
 
-
-
   return (
     <div className="w-full">
-      <label className="text-gray-700 mb-2 block font-lato text-lg">
+      <label className="font-lato mb-2 block text-lg text-gray-700">
         Preferred Job Location
       </label>
       <div className="w-full rounded-[16px] border border-[#E6E6E6] bg-white p-4">
-        <div className="w-full mb-4 flex flex-col gap-x-4 gap-y-3">
+        <div className="mb-4 flex w-full flex-col gap-x-4 gap-y-3">
           <CustomDropdown
-            className="w-full rounded-[10px] text-left border border-[#E6E6E6] bg-[#F7F8FA] p-2"
+            className="w-full rounded-[10px] border border-[#E6E6E6] bg-[#F7F8FA] p-2 text-left"
             disabled={!isEditable}
             placeholder="Country"
             options={countries}
-            handleSelect={(c)=>{
-              setSelectedCountry(c.value)
+            handleSelect={(c) => {
+              setSelectedCountry(c.value);
             }}
           />
 
           <CustomDropdown
-            className="w-full rounded-[10px] text-left border border-[#E6E6E6] bg-[#F7F8FA] p-2"
+            className="w-full rounded-[10px] border border-[#E6E6E6] bg-[#F7F8FA] p-2 text-left"
             disabled={!isEditable}
             placeholder="City"
             options={cities}
-            handleSelect={(c)=>{
+            handleSelect={(c) => {
               setSelectedCity(c.value);
             }}
           />

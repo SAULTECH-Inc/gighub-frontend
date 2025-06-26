@@ -28,7 +28,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   return (
     <div
-      className="bg-gray-100 relative mx-auto w-full rounded-[10px] p-0"
+      className="relative mx-auto w-full rounded-[10px] bg-gray-100 p-0"
       onContextMenu={(e) => e.preventDefault()}
     >
       <p className="absolute right-9 mt-4 text-right text-[16px] text-[#6438C2]">
@@ -44,7 +44,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         className={
           className
             ? className
-            : "max-h-[356px] rounded-[10px] bg-[#FFFFFF] font-lato font-light"
+            : "font-lato max-h-[356px] rounded-[10px] bg-[#FFFFFF] font-light"
         }
       />
     </div>
