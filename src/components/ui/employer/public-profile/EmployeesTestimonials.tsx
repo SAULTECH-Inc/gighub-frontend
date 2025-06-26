@@ -17,16 +17,16 @@ const EmployeesTestimonial = () => {
   ];
 
   return (
-    <section className="bg-gray-100 w-full rounded-lg p-6 shadow">
+    <section className="w-full rounded-lg bg-gray-100 p-6 shadow">
       <h2 className="mb-4 text-xl font-semibold">Employees Testimonial</h2>
       <div className="flex flex-col gap-y-4 md:flex-row md:space-x-8">
         {testimonials.map((testimonial, index) => (
           <div
             key={index}
-            className="relative flex md:h-[198px] w-full flex-col rounded-bl-none rounded-br-[10px] rounded-tl-none rounded-tr-[10px] bg-[#F7F7F7] p-4 shadow md:w-[409px] md:flex-wrap"
+            className="relative flex w-full flex-col rounded-tl-none rounded-tr-[10px] rounded-br-[10px] rounded-bl-none bg-[#F7F7F7] p-4 shadow md:h-[198px] md:w-[409px] md:flex-wrap"
           >
             {/* Purple side feature joined with the box */}
-            <div className="absolute left-0 top-0 h-full w-[10px] bg-[#6B5AED]"></div>
+            <div className="absolute top-0 left-0 h-full w-[10px] bg-[#6B5AED]"></div>
 
             <div className="mb-4 flex items-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#6B5AED] text-white">
@@ -37,7 +37,7 @@ const EmployeesTestimonial = () => {
                 <p className="text-sm text-[#6B5AED]">{testimonial.position}</p>
               </div>
             </div>
-            <p className="text-gray-700 text-sm">{testimonial.message}</p>
+            <p className="text-sm text-gray-700">{testimonial.message}</p>
           </div>
         ))}
       </div>

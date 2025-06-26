@@ -28,14 +28,14 @@ const ForgotPassword: React.FC = () => {
     <>
       <form className="relative mx-auto my-auto flex h-screen flex-row items-center justify-evenly space-x-0">
         <img
-          className="h-30 w-30 absolute left-5 top-5 mx-auto"
+          className="absolute top-5 left-5 mx-auto h-30 w-30"
           src={gighubLogo}
           alt="right"
         />
         <div className="relative flex h-[890px] w-full flex-col items-center justify-center gap-y-6 px-5 md:px-10 lg:w-1/2 xl:w-1/3">
           <Link
             to="/user-type-selection"
-            className="absolute right-5 top-2 text-[#6438C2]"
+            className="absolute top-2 right-5 text-[#6438C2]"
           >
             Create an Account
           </Link>
@@ -58,7 +58,7 @@ const ForgotPassword: React.FC = () => {
                   setEmail(e.target.value);
                   inputComplete = !!e.target.value;
                 }}
-                className="w-full rounded-[16px] border border-[#E6E6E6] p-3 focus:border-[#E6E6E6] focus:outline-none focus:ring-0 md:p-3"
+                className="w-full rounded-[16px] border border-[#E6E6E6] p-3 focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"
                 type="email"
                 required
               />

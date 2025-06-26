@@ -76,7 +76,7 @@ const ProfileCard: React.FC = () => {
             onChange={handleFileUpload}
           />
           <button
-            className="absolute bottom-0 right-0 flex h-[22px] w-[22px] cursor-pointer items-center justify-center rounded-full border-2 border-white bg-white md:h-[26px] md:w-[26px]"
+            className="absolute right-0 bottom-0 flex h-[22px] w-[22px] cursor-pointer items-center justify-center rounded-full border-2 border-white bg-white md:h-[26px] md:w-[26px]"
             onClick={handleTriggerFileUploadButton}
             aria-label="Upload company logo"
           >
@@ -90,7 +90,7 @@ const ProfileCard: React.FC = () => {
             {employerProfile?.companyName || "Company"}
           </h2>
           {!employerProfile?.city && employerProfile?.country && (
-            <p className="text-gray-200 text-xs md:text-sm">
+            <p className="text-xs text-gray-200 md:text-sm">
               {employerProfile?.city || "City"},{" "}
               {employerProfile?.country || "Country"}
             </p>

@@ -9,7 +9,7 @@ const JobSearchTop: React.FC = () => {
       <input
         type="text"
         placeholder="Search job"
-        className="text-gray-600 h-[50px] w-[629px] rounded-[10px] border border-[#E6E6E6] bg-[#F7F7F7] px-4 focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+        className="h-[50px] w-[629px] rounded-[10px] border border-[#E6E6E6] bg-[#F7F7F7] px-4 text-gray-600 focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
       />
     </div>
   );

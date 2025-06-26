@@ -65,7 +65,7 @@ const InterviewStepTwo: React.FC = () => {
                     type="text"
                     placeholder="Enter Interview Link"
                     value={interviewDetails?.interviewLink}
-                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                     onChange={(e) => {
                       setInterviewDetails({
                         ...interviewDetails,
@@ -84,7 +84,7 @@ const InterviewStepTwo: React.FC = () => {
                     type="text"
                     placeholder="Phone Number"
                     value={interviewDetails?.interviewerPhoneNumber1}
-                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                     onChange={(e) => {
                       setInterviewDetails({
                         ...interviewDetails,
@@ -96,7 +96,7 @@ const InterviewStepTwo: React.FC = () => {
                     type="text"
                     placeholder="Alternative Phone Number"
                     value={interviewDetails?.interviewerPhoneNumber2}
-                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                     onChange={(e) => {
                       setInterviewDetails({
                         ...interviewDetails,
@@ -130,7 +130,7 @@ const InterviewStepTwo: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Enter Interview Link"
-                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                     value={interviewDetails?.interviewLink}
                     onChange={(e) => {
                       setInterviewDetails({
@@ -144,7 +144,7 @@ const InterviewStepTwo: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Phone Number"
-                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                     value={interviewDetails?.interviewerPhoneNumber1}
                     onChange={(e) => {
                       setInterviewDetails({
@@ -156,7 +156,7 @@ const InterviewStepTwo: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Alternative Phone Number"
-                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                     value={interviewDetails?.interviewerPhoneNumber2}
                     onChange={(e) => {
                       setInterviewDetails({
@@ -170,7 +170,7 @@ const InterviewStepTwo: React.FC = () => {
                   <input
                     type="text"
                     placeholder="State"
-                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                     value={interviewDetails?.interviewState}
                     onChange={(e) => {
                       setInterviewDetails({
@@ -182,7 +182,7 @@ const InterviewStepTwo: React.FC = () => {
                   <input
                     type="text"
                     placeholder="City"
-                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                     value={interviewDetails?.interviewCity}
                     onChange={(e) => {
                       setInterviewDetails({
@@ -196,7 +196,7 @@ const InterviewStepTwo: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Address"
-                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                     value={interviewDetails?.interviewAddress}
                     onChange={(e) => {
                       setInterviewDetails({
@@ -214,7 +214,7 @@ const InterviewStepTwo: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Phone Number"
-                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                     value={interviewDetails?.interviewerPhoneNumber1}
                     onChange={(e) => {
                       setInterviewDetails({
@@ -226,7 +226,7 @@ const InterviewStepTwo: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Alternative Phone Number"
-                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                     value={interviewDetails?.interviewerPhoneNumber2}
                     onChange={(e) => {
                       setInterviewDetails({
@@ -240,7 +240,7 @@ const InterviewStepTwo: React.FC = () => {
                   <input
                     type="text"
                     placeholder="State"
-                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                     value={interviewDetails?.interviewState}
                     onChange={(e) => {
                       setInterviewDetails({
@@ -252,7 +252,7 @@ const InterviewStepTwo: React.FC = () => {
                   <input
                     type="text"
                     placeholder="City"
-                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                     value={interviewDetails?.interviewCity}
                     onChange={(e) => {
                       setInterviewDetails({
@@ -266,7 +266,7 @@ const InterviewStepTwo: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Address"
-                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+                    className="h-[50px] w-full rounded-[10px] border border-[#E6E6E6] px-4 py-2 text-sm focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
                     value={interviewDetails?.interviewAddress}
                     onChange={(e) => {
                       setInterviewDetails({

@@ -38,15 +38,15 @@ const CompanyInfo = () => {
           <h2 className="text-[20px] font-medium text-black">
             {jobCurrentlyViewed?.company}
           </h2>
-          <p className="mt-2 text-[18px] text-gray">
+          <p className="text-gray mt-2 text-[18px]">
             {jobCurrentlyViewed?.employer?.industry}
           </p>
         </div>
       </div>
       <div className="mt-4 flex flex-col gap-y-4">
         <div className="flex items-center gap-x-2">
-          <FaLocationDot className="text-[20px] text-gray" />
-          <span className="text-sm font-normal text-gray">
+          <FaLocationDot className="text-gray text-[20px]" />
+          <span className="text-gray text-sm font-normal">
             {jobCurrentlyViewed?.employer?.city},{" "}
             {jobCurrentlyViewed?.employer?.country}
           </span>
@@ -54,16 +54,16 @@ const CompanyInfo = () => {
         {jobCurrentlyViewed?.employer?.numberOfEmployees &&
           jobCurrentlyViewed?.employer?.numberOfEmployees > 0 && (
             <div className="flex items-center gap-x-2">
-              <FaUser className="text-[20px] text-gray" />
-              <span className="text-sm font-normal text-gray">
+              <FaUser className="text-gray text-[20px]" />
+              <span className="text-gray text-sm font-normal">
                 {jobCurrentlyViewed?.employer?.numberOfEmployees} employees
               </span>
             </div>
           )}
 
         <div className="flex items-center gap-x-2">
-          <IoBagSharp className="text-[20px] text-gray" />
-          <span className="text-sm font-normal text-gray">
+          <IoBagSharp className="text-gray text-[20px]" />
+          <span className="text-gray text-sm font-normal">
             15 connection work here
           </span>
           <a href="" className="ml-16 text-[#6438C2]">
@@ -113,14 +113,14 @@ const CompanyInfo = () => {
               >
                 {job?.title}
               </Link>
-              <span className="text-gray-500 mt-1 text-xs">
+              <span className="mt-1 text-xs text-gray-500">
                 <span className="text-green-600">●</span> Posted{" "}
-                <span className="text-gray-700 font-medium">
+                <span className="font-medium text-gray-700">
                   {moment(job.createdAt).fromNow()}
                 </span>
               </span>
             </div>
-            <div className="text-gray-600 text-right text-xs font-medium md:text-sm">
+            <div className="text-right text-xs font-medium text-gray-600 md:text-sm">
               <span className="text-blue-600">{job?.employmentType}</span>
               <br />
               <span className="text-purple-600">{job?.jobType}</span>

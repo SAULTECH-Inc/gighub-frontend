@@ -1,6 +1,6 @@
 const ApplicationSettings = () => {
   return (
-    <div className="bg-gray-50 rounded-lg p-6 shadow-md">
+    <div className="rounded-lg bg-gray-50 p-6 shadow-md">
       <h2 className="mb-4 text-lg font-semibold">Application Settings</h2>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Upload Resume */}
@@ -10,7 +10,7 @@ const ApplicationSettings = () => {
           </label>
           <input
             type="file"
-            className="w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#F7F8FA] p-2 focus:outline-none focus:ring-2"
+            className="w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#F7F8FA] p-2 focus:ring-2 focus:outline-none"
           />
         </div>
 
@@ -21,7 +21,7 @@ const ApplicationSettings = () => {
           </label>
           <input
             type="file"
-            className="w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#F7F8FA] p-2 focus:outline-none focus:ring-2"
+            className="w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#F7F8FA] p-2 focus:ring-2 focus:outline-none"
           />
         </div>
 
@@ -31,7 +31,7 @@ const ApplicationSettings = () => {
           <input
             type="text"
             placeholder="Enter your portfolio link"
-            className="w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#F7F8FA] p-2 focus:outline-none focus:ring-2"
+            className="w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#F7F8FA] p-2 focus:ring-2 focus:outline-none"
           />
         </div>
       </div>

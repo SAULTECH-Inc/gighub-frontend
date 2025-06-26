@@ -27,11 +27,11 @@ const NotificationSettingsDropdown: React.FC<
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50">
+      <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center">
         <div className="relative flex h-[400px] w-[305px] flex-col gap-y-4 rounded-[16px] bg-white p-4 shadow-lg">
           <button
             onClick={handleCloseApplicationSuccessModal}
-            className="absolute right-4 top-2 text-lg font-bold text-purple-700"
+            className="absolute top-2 right-4 text-lg font-bold text-purple-700"
           >
             &times;
           </button>

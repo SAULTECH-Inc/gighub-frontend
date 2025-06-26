@@ -11,7 +11,7 @@ const ApplicationSummary: FC = () => {
   const hybridPercent = total ? (metric.hybrid / total) * 100 : 0;
   return (
     <div className="flex h-full w-full flex-col justify-between rounded-[16px] bg-white p-4 px-8 pb-20 shadow">
-      <h2 className="font-bold-[700] mb-4 flex justify-center font-lato text-xl font-[20px]">
+      <h2 className="font-bold-[700] font-lato mb-4 flex justify-center text-xl font-[20px]">
         Application Summary
       </h2>
       <hr className="mx-auto mb-4 w-full border-t border-[#E6E6E6]" />
@@ -29,7 +29,7 @@ const ApplicationSummary: FC = () => {
         <li className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="h-4 w-4 rounded-full bg-[#56E5A1]"></div>
-            <span className="text-gray-700 font-[16px]">Onsite</span>
+            <span className="font-[16px] text-gray-700">Onsite</span>
           </div>
           <span className="font-bold text-green-500">{metric.onsite}</span>
         </li>
@@ -38,7 +38,7 @@ const ApplicationSummary: FC = () => {
         <li className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="h-4 w-4 rounded-full bg-[#6438C2]"></div>
-            <span className="text-gray-700 font-[16px]">Remote</span>
+            <span className="font-[16px] text-gray-700">Remote</span>
           </div>
           <span className="font-bold text-blue-500">{metric.remote}</span>
         </li>
@@ -47,9 +47,9 @@ const ApplicationSummary: FC = () => {
         <li className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="h-4 w-4 rounded-full bg-[#FD7E14]"></div>
-            <span className="text-gray-700 font-[16px]">Hybrid</span>
+            <span className="font-[16px] text-gray-700">Hybrid</span>
           </div>
-          <span className="text-orange-500 font-bold">{metric.hybrid}</span>
+          <span className="font-bold text-orange-500">{metric.hybrid}</span>
         </li>
       </ul>
     </div>

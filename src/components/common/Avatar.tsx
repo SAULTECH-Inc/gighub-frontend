@@ -24,7 +24,7 @@ const Avatar: FC<AvatarProp> = ({ isMobile }) => {
         alt="Avatar"
         className="h-8 w-8 rounded-full"
       />
-      <span className="text-gray-900 text-sm font-bold">
+      <span className="text-sm font-bold text-gray-900">
         {USER_TYPE === UserType.APPLICANT
           ? applicant.firstName + " " + applicant.lastName
           : employer?.companyName}

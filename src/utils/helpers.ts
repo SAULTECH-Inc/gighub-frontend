@@ -29,11 +29,9 @@ export const storage =
   NODE_ENV === "development" ? localStorage : secureLocalStorage;
 export const getAuthToken = () => {
   if (NODE_ENV === "development") {
-    const storage = localStorage.getItem("auth-storage");
-    return storage ? JSON.parse(storage).state.authToken : null;
+    return localStorage.getItem("authToken");
   } else {
-    const storage = secureLocalStorage.getItem("auth-storage");
-    return storage ? JSON.parse(<string>storage).state.authToken : null;
+    return secureLocalStorage.getItem("authToken");
   }
 };
 

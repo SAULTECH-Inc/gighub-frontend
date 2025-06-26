@@ -39,13 +39,13 @@ const ApplicantProfile: FC = () => {
         navItemsMobile={applicantNavItemsMobile}
         navbarItemsMap={applicantNavBarItemMap}
       />
-      <div className="bg-gray-100 mx-auto flex min-h-screen justify-center gap-x-10 px-2 pt-6 lg:px-5">
+      <div className="mx-auto flex min-h-screen justify-center gap-x-10 bg-gray-100 px-2 pt-6 lg:px-5">
         {/* Sidebar */}
         <ApplicantProfileSidebar />
 
         {/* Main Content */}
         <div className="mb-6 h-auto w-full rounded-[16px] border-[1px] border-[#E6E6E6] bg-white p-5 lg:w-[70%] lg:px-10 lg:py-8">
-          <div className="flex items-center justify-between pb-4 font-lato text-sm text-[#6438C2] lg:text-[20px]">
+          <div className="font-lato flex items-center justify-between pb-4 text-sm text-[#6438C2] lg:text-[20px]">
             <p>Your Profile is 80% completed</p>
           </div>
           <ApplicantProfileCard />

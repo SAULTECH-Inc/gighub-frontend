@@ -2,9 +2,10 @@ import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import io, { Socket } from "socket.io-client";
-import { ChatMessage } from "../chat-module/types";
+import { ChatMessage, ExtendedChatMessage } from "../chat-module/types";
 import { APIResponse, NetworkDetails } from "../utils/types";
 import { privateApiClient } from "../client/axios.ts";
+import { API_BASE_URL } from "../utils/constants.ts";
 
 const SOCKET_URL = import.meta.env.CHAT_SERVER_URL || "http://localhost:3003";
 
@@ -17,6 +18,9 @@ interface ChatStore {
   connectionStatus: string;
   setUserStatus: (user: string, userStatus: string) => void;
   setConnectionStatus: (connectionStatus: string) => void;
+
+  replyingTo: ExtendedChatMessage | null;
+  setReplyingTo: (msg: any) => void;
 
   messages: ChatMessage[];
   addMessage: (message: ChatMessage) => void;
@@ -33,6 +37,10 @@ interface ChatStore {
 
   message: string;
   setMessage: (message: string) => void;
+  updateMessageStatus: (
+    messageId: string,
+    updates: Partial<ChatMessage>,
+  ) => void;
   file: File | null;
   setFile: (file: File) => void;
 
@@ -108,10 +116,31 @@ export const useChatStore = create(
             state.connectionStatus = userStatus;
           });
         },
+        replyingTo: null,
+        setReplyingTo: (msg) =>
+          set((state) => {
+            state.replyingTo = msg;
+          }),
         messages: [],
         setMessages: (messages: ChatMessage[]) => {
           set((state) => {
             state.messages = messages;
+          });
+        },
+        updateMessageStatus: (
+          messageId: string,
+          updates: Partial<ChatMessage>,
+        ) => {
+          set((state) => {
+            const messageIndex = state.messages.findIndex(
+              (msg) => msg._id === messageId,
+            );
+            if (messageIndex !== -1) {
+              state.messages[messageIndex] = {
+                ...state.messages[messageIndex],
+                ...updates,
+              };
+            }
           });
         },
         addMessage: (message) => {
@@ -163,10 +192,21 @@ export const useChatStore = create(
         },
 
         recipient: null,
-        setRecipient: (recipient) => {
+        setRecipient: async (recipient) => {
           set((state) => {
             state.recipient = recipient;
           });
+          const response = await privateApiClient.get<
+            APIResponse<NetworkDetails>
+          >(`${API_BASE_URL}/users/by-email/connection?email=${recipient}`);
+          if (response.status === 200) {
+            set((state) => {
+              console.log(
+                "NAME FROM ::: " + response?.data?.data?.employer?.companyName,
+              );
+              state.recipientDetails = response?.data?.data;
+            });
+          }
         },
         recipientDetails: {} as NetworkDetails,
         setRecipientDetails: (recipientDetails) => {

@@ -6,7 +6,7 @@ import {
   InterviewStatus,
   InterviewType,
   RateeType,
-  UserType
+  UserType,
 } from "../enums.ts";
 import { EmploymentType } from "../employmentTypes.ts";
 import { ApplicationStatus } from "../dummyApplications.ts";
@@ -387,15 +387,17 @@ export const countries: Option[] = [
   { label: "United Kingdom", value: "United Kingdom" },
   { label: "Canada", value: "Canada" },
 ];
-export const cities: Option[] = await fetch("https://countriesnow.space/api/v0.1/countries/population/cities")
-  .then(res => res.json())
-  .then(res => res["data"])
-  .then(data => {
+export const cities: Option[] = await fetch(
+  "https://countriesnow.space/api/v0.1/countries/population/cities",
+)
+  .then((res) => res.json())
+  .then((res) => res["data"])
+  .then((data) => {
     return data.map((c: any) => {
       return {
         label: c["city"],
-        value: c["city"]
-      }
+        value: c["city"],
+      };
     });
   });
 
@@ -573,23 +575,9 @@ export interface ComplianceAndVerifications {
 
 export interface NetworkDetails {
   id: number;
-  userId?: number;
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  email: string;
-  phoneNumber?: string;
-  city?: string;
-  country?: string;
-  address?: string;
-  professionalTitle?: string;
-  profilePicture: string;
-  linkedInProfile: string;
-  githubProfile: string;
-  twitterProfile: string;
-  instagramProfile: string;
-  youtubeProfile: string;
-  cv: CvResponseDto;
+  userType: UserType;
+  applicant?: ApplicantData;
+  employer?: EmployerData;
   connectionStatus?: ConnectionStatus;
   connectionType?: ConnectionType;
   mutualFriends?: number;

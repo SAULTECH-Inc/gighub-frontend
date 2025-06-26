@@ -29,8 +29,8 @@ const JobApplied: React.FC<JobDescription> = ({
         <p className="hidden font-normal text-black sm:flex">{jobTitle}</p>
         <p className="hidden font-normal text-black sm:flex">{jobType}</p>
         <div className="flex items-center gap-x-3">
-          <div className="mr-5 h-3 w-3 rounded-full bg-orange"></div>
-          <span className="hidden text-orange sm:flex">Summitted</span>
+          <div className="bg-orange mr-5 h-3 w-3 rounded-full"></div>
+          <span className="text-orange hidden sm:flex">Summitted</span>
         </div>
       </div>
       <button className="h-[3rem] w-[8rem] rounded-[10px] bg-[#6438C2] font-bold text-white">

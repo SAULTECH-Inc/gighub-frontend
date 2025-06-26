@@ -18,14 +18,14 @@ interface MultiSelectProps {
 }
 
 const MultiSelect: React.FC<MultiSelectProps> = ({
-                                                   label,
-                                                   placeholder,
-                                                   options,
-                                                   selectedItems,
-                                                   setSelectedItems,
-                                                   requiredAsterisk = false,
-                                                   disabled = false,
-                                                 }) => {
+  label,
+  placeholder,
+  options,
+  selectedItems,
+  setSelectedItems,
+  requiredAsterisk = false,
+  disabled = false,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
@@ -34,8 +34,8 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   useEffect(() => {
     setFilteredOptions(
       options.filter((option) =>
-        option.label.toLowerCase().includes(search.toLowerCase())
-      )
+        option.label.toLowerCase().includes(search.toLowerCase()),
+      ),
     );
   }, [search, options]);
 
@@ -88,7 +88,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     <div className="relative w-full" ref={dropdownRef}>
       <div
         className={`flex w-full flex-wrap rounded-[16px] border ${
-          disabled ? "bg-gray-200 cursor-not-allowed" : "bg-[#F7F8FA]"
+          disabled ? "cursor-not-allowed bg-gray-200" : "bg-[#F7F8FA]"
         } border-[#E6E6E6] p-2 md:p-4`}
       >
         <div className="flex items-center gap-1 text-[12px] sm:text-base">
@@ -100,7 +100,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
           type="button"
           className={`mt-2 flex w-full items-center justify-between rounded-lg border border-[#E6E6E6] ${
             disabled
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              ? "cursor-not-allowed bg-gray-300 text-gray-500"
               : "bg-white text-[#8E8E8E]"
           } p-2 text-[12px] sm:text-base`}
           onClick={() => !disabled && setIsOpen(!isOpen)}
@@ -115,10 +115,10 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
         </button>
 
         {isOpen && !disabled && (
-          <div className="border-gray-300 absolute z-10 mt-2 w-full rounded-lg border bg-white p-3 shadow-lg">
+          <div className="absolute z-10 mt-2 w-full rounded-lg border border-gray-300 bg-white p-3 shadow-lg">
             <input
               type="text"
-              className="border-gray-300 w-full border-b px-3 py-2 text-sm focus:outline-none"
+              className="w-full border-b border-gray-300 px-3 py-2 text-sm focus:outline-none"
               placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -137,7 +137,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                   </li>
                 ))
               ) : (
-                <li className="text-gray-500 px-4 py-2 text-sm">
+                <li className="px-4 py-2 text-sm text-gray-500">
                   No results found
                 </li>
               )}
@@ -145,8 +145,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 
             {search.trim() !== "" &&
               !options.some(
-                (option) =>
-                  option.label.toLowerCase() === search.toLowerCase()
+                (option) => option.label.toLowerCase() === search.toLowerCase(),
               ) && (
                 <button
                   className="mt-2 w-full rounded bg-[#6438C2] px-4 py-2 text-sm text-white hover:bg-[#6438C2]"

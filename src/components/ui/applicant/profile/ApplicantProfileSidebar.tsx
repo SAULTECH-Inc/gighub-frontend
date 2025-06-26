@@ -3,9 +3,9 @@ import { Link } from "react-scroll";
 
 const ApplicantProfileSidebar: FC = () => {
   return (
-    <div className="hidden h-[3920px] w-[20%] flex-col items-center justify-between rounded-[16px] bg-transparent xs:hidden lg:flex">
+    <div className="xs:hidden hidden h-[3920px] w-[20%] flex-col items-center justify-between rounded-[16px] bg-transparent lg:flex">
       <div className="flex h-[664px] w-full flex-col justify-between rounded-[16px] bg-white p-10">
-        <ul className="text-gray-800 space-y-6 font-lato text-[16px]">
+        <ul className="font-lato space-y-6 text-[16px] text-gray-800">
           <li className="cursor-pointer text-[#6438C2] hover:text-purple-700">
             <Link
               to="personal-info"
@@ -105,7 +105,7 @@ const ApplicantProfileSidebar: FC = () => {
         <div className="mt-8 flex flex-col space-y-3">
           <Link
             to="/applicant/find-jobs"
-            className="rounded-[16px] bg-[#6438C2] py-2 text-center font-lato text-[20px] text-white shadow hover:bg-purple-700"
+            className="font-lato rounded-[16px] bg-[#6438C2] py-2 text-center text-[20px] text-white shadow hover:bg-purple-700"
           >
             Find Jobs
           </Link>
@@ -114,7 +114,7 @@ const ApplicantProfileSidebar: FC = () => {
 
       <Link
         to="/applicant/find-jobs"
-        className="w-[182px] rounded-[16px] bg-[#6438C2] py-2 text-center font-lato text-[20px] text-white shadow-sm hover:bg-purple-700"
+        className="font-lato w-[182px] rounded-[16px] bg-[#6438C2] py-2 text-center text-[20px] text-white shadow-sm hover:bg-purple-700"
       >
         Find Jobs
       </Link>

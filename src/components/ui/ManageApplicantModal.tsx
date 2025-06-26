@@ -20,16 +20,16 @@ const ManageApplicantModal: React.FC<ModalProps> = ({ modalId }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-start justify-center overflow-y-auto bg-black bg-opacity-50">
-      <div className="z-100 mb-5 mt-[20%] flex w-[90%] flex-col overflow-hidden rounded-[16px] bg-white pb-5 lg:ml-[18px] lg:w-full">
+    <div className="bg-opacity-50 fixed inset-0 flex items-start justify-center overflow-y-auto bg-black">
+      <div className="z-100 mt-[20%] mb-5 flex w-[90%] flex-col overflow-hidden rounded-[16px] bg-white pb-5 lg:ml-[18px] lg:w-full">
         <div className="relative h-[108px] w-full bg-gradient-to-r from-[#6438C2] to-[#D9D9D9]">
           <img
-            className="absolute right-5 top-5 h-3 w-3 cursor-pointer"
+            className="absolute top-5 right-5 h-3 w-3 cursor-pointer"
             onClick={() => closeModal(modalId)}
             src={cancelMedium}
             alt="cancel"
           />
-          <div className="absolute bottom-[-40%] left-5 h-[100px] w-[100px] bg-opacity-50">
+          <div className="bg-opacity-50 absolute bottom-[-40%] left-5 h-[100px] w-[100px]">
             <img src={Person7} alt="Person7" className="h-full w-full" />
           </div>
         </div>
@@ -39,7 +39,7 @@ const ManageApplicantModal: React.FC<ModalProps> = ({ modalId }) => {
               <div className="flex min-w-[247px] flex-col">
                 <div className="relative text-2xl font-extrabold text-[#000000]">
                   A.S Abubakar
-                  <div className="absolute left-[150px] top-0 h-[10px] w-[10px] rounded-full bg-[#FA4E09]"></div>
+                  <div className="absolute top-0 left-[150px] h-[10px] w-[10px] rounded-full bg-[#FA4E09]"></div>
                 </div>
                 <p className="text-[13px] text-[#8E8E8E]">
                   I am a Product designer based in yobe state

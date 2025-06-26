@@ -19,16 +19,16 @@ const ApplicationSuccessModal: React.FC<SuccessModalProps> = ({ modalId }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black"
       onClick={handleCloseApplicationSuccessModal}
     >
       <div
-        className="relative flex h-[500px] md:h-[664px] w-[95%] md:w-[455px] flex-col items-center justify-center rounded-[12px] bg-white p-5 shadow-lg"
+        className="relative flex h-[500px] w-[95%] flex-col items-center justify-center rounded-[12px] bg-white p-5 shadow-lg md:h-[664px] md:w-[455px]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={handleCloseApplicationSuccessModal}
-          className="text-gray-500 absolute right-3 top-3 cursor-pointer text-xl"
+          className="absolute top-3 right-3 cursor-pointer text-xl text-gray-500"
         >
           ×
         </button>
@@ -61,11 +61,11 @@ const ApplicationSuccessModal: React.FC<SuccessModalProps> = ({ modalId }) => {
           </svg>
         </div>
 
-        <h2 className="mb-6 mt-6 text-[20px] font-semibold text-[#FA4E09]">
+        <h2 className="mt-6 mb-6 text-[20px] font-semibold text-[#FA4E09]">
           Congratulations!
         </h2>
 
-        <p className="text-gray-600 mb-6 w-[320px] md:w-[360px] text-left md:text-center text-[13px]">
+        <p className="mb-6 w-[320px] text-left text-[13px] text-gray-600 md:w-[360px] md:text-center">
           Your application has been successfully submitted, and all your details
           have been received by the recruiter. You can monitor your application
           status by visiting your Job Application Dashboard. Thank you for

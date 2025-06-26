@@ -212,7 +212,7 @@ const CreateJobStepTwo: React.FC = () => {
     <div className="flex w-full flex-col items-center">
       <div className="flex h-full min-h-[500px] w-[96%] max-w-[900px] flex-col items-center rounded-[10px] bg-white px-2 py-2">
         <div className="flex w-full flex-col gap-2 sm:w-[95%]">
-          <div className="text-gray-600 my-3 flex justify-between border-b-[1px]">
+          <div className="my-3 flex justify-between border-b-[1px] text-gray-600">
             <div
               onClick={() => handleSelectedOption("company")}
               className={`flex-1 cursor-pointer text-center text-sm ${
@@ -266,7 +266,7 @@ const CreateJobStepTwo: React.FC = () => {
                         hiringManager: e.target.value,
                       });
                     }}
-                    className="w-full border-none text-sm outline-none focus:border-none focus:outline-none focus:ring-0 sm:text-base"
+                    className="w-full border-none text-sm outline-none focus:border-none focus:ring-0 focus:outline-none sm:text-base"
                   />
                   <img src={Teams} alt="ArrowDown" />
                 </div>
@@ -286,7 +286,7 @@ const CreateJobStepTwo: React.FC = () => {
                       handleDateChange(date as Date);
                     }}
                     disabled={false}
-                    className="h-10 w-full rounded-[10px] border border-[#E6E6E6] px-4 text-sm outline-none focus:border-[#E6E6E6] focus:outline-none focus:ring-0 sm:text-base"
+                    className="h-10 w-full rounded-[10px] border border-[#E6E6E6] px-4 text-sm outline-none focus:border-[#E6E6E6] focus:ring-0 focus:outline-none sm:text-base"
                   />
                   {errors.endDate && (
                     <p className="text-xs text-red-500">{errors.endDate}</p>
@@ -322,12 +322,12 @@ const CreateJobStepTwo: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Graphic Designer"
-                    className="w-full border-none text-sm outline-none focus:border-none focus:outline-none focus:ring-0 sm:text-base"
+                    className="w-full border-none text-sm outline-none focus:border-none focus:ring-0 focus:outline-none sm:text-base"
                     onChange={(e) => {
                       setTitle(e.target.value);
                       setJobData({
                         ...job,
-                        title: e.target.value
+                        title: e.target.value,
                       });
                       setErrors({
                         ...errors,
@@ -353,7 +353,7 @@ const CreateJobStepTwo: React.FC = () => {
                     <input
                       type="number"
                       placeholder="Years"
-                      className="no-arrows w-full border-none text-sm outline-none focus:border-none focus:outline-none focus:ring-0 sm:text-base"
+                      className="no-arrows w-full border-none text-sm outline-none focus:border-none focus:ring-0 focus:outline-none sm:text-base"
                       onChange={(e) => {
                         handleNumberInputChange(e, "experienceYears");
                         setErrors({
@@ -441,7 +441,7 @@ const CreateJobStepTwo: React.FC = () => {
                         </span>
                         <input
                           type="number"
-                          className="sm:border-1 sm:border-x-1 no-arrows w-full border-y-0 border-r-0 border-[#E6E6E6] text-sm outline-none focus:border-none focus:outline-none focus:ring-0 sm:text-base"
+                          className="no-arrows w-full border-y-0 border-r-0 border-[#E6E6E6] text-sm outline-none focus:border-none focus:ring-0 focus:outline-none sm:border-1 sm:border-x-1 sm:text-base"
                           placeholder="Exact Amount"
                           value={job.maximumAmount || ""}
                           onChange={(e) => {
@@ -456,7 +456,7 @@ const CreateJobStepTwo: React.FC = () => {
                           }}
                         />
                         <select
-                          className="border-l-1 hidden h-[full] w-full border-y-0 border-r-0 border-[#E6E6E6] text-sm outline-none focus:border-none focus:ring-0 sm:block"
+                          className="hidden h-[full] w-full border-y-0 border-r-0 border-l-1 border-[#E6E6E6] text-sm outline-none focus:border-none focus:ring-0 sm:block"
                           value={job.frequency || ""}
                           onChange={handleFrequencyChange}
                         >
@@ -474,12 +474,12 @@ const CreateJobStepTwo: React.FC = () => {
                     {selectOption === "option2" && (
                       <div className="flex w-full flex-col justify-between gap-2 sm:flex-row">
                         <div className="flex h-10 w-full items-center overflow-hidden rounded-[10px] border border-[#E6E6E6]">
-                          <span className="text-gray-500 p-1 text-[12px] sm:text-sm">
+                          <span className="p-1 text-[12px] text-gray-500 sm:text-sm">
                             {job.currency}
                           </span>
                           <input
                             type="number"
-                            className="no-arrows w-full border-y-0 border-x-[#E6E6E6] text-sm outline-none focus:border-none focus:outline-none focus:ring-0"
+                            className="no-arrows w-full border-y-0 border-x-[#E6E6E6] text-sm outline-none focus:border-none focus:ring-0 focus:outline-none"
                             placeholder="Minimum"
                             value={job.minimumAmount || ""}
                             onChange={(e) =>
@@ -488,7 +488,7 @@ const CreateJobStepTwo: React.FC = () => {
                           />
                           <input
                             type="number"
-                            className="no-arrows w-full border-y-0 border-l-0 border-r-0 text-sm outline-none focus:border-none focus:outline-none focus:ring-0"
+                            className="no-arrows w-full border-y-0 border-r-0 border-l-0 text-sm outline-none focus:border-none focus:ring-0 focus:outline-none"
                             placeholder="Maximum"
                             value={job.maximumAmount || ""}
                             onChange={(e) =>

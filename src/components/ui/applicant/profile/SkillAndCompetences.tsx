@@ -100,7 +100,7 @@ const SkillsAndCompetences: React.FC = () => {
       id="skills-competences"
       className="relative w-full space-y-3 border-t-[2px] border-t-[#E6E6E6] pt-5"
     >
-      <div className="absolute right-1 top-2 z-10 flex items-center justify-evenly gap-x-2 text-xs">
+      <div className="absolute top-2 right-1 z-10 flex items-center justify-evenly gap-x-2 text-xs">
         <button
           type="button"
           onClick={handleToggleEdit}
@@ -118,7 +118,7 @@ const SkillsAndCompetences: React.FC = () => {
       </div>
       <div className="w-full space-y-6">
         <h3 className="text-xl">Skills and Competences</h3>
-        <div className="flex w-full flex-col space-y-4 md:flex-row md:items-start md:justify-evenly md:gap-x-8 md:space-y-0">
+        <div className="flex w-full flex-col space-y-4 md:flex-row md:items-start md:justify-evenly md:space-y-0 md:gap-x-8">
           {/* Skills Section */}
           <Skills
             isEditable={!isEditable}

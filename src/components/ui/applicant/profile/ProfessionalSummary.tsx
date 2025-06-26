@@ -68,7 +68,7 @@ const ProfessionalSummary: React.FC = () => {
       id="professional-summary"
       className="relative mt-4 space-y-3 border-t-[2px] border-t-[#E6E6E6] pt-5"
     >
-      <div className="absolute right-1 top-2 flex items-center justify-evenly gap-x-2 text-xs">
+      <div className="absolute top-2 right-1 flex items-center justify-evenly gap-x-2 text-xs">
         <button
           onClick={toggleEdit}
           type="button"
@@ -85,11 +85,11 @@ const ProfessionalSummary: React.FC = () => {
           Save
         </button>
       </div>
-      <h3 className="mb-4 font-lato text-[20px]">Professional Summary</h3>
+      <h3 className="font-lato mb-4 text-[20px]">Professional Summary</h3>
       <div className="flex w-full flex-col">
         <label
           htmlFor="professionalTitle"
-          className="text-gray-600 mb-1 text-sm"
+          className="mb-1 text-sm text-gray-600"
         >
           Professional Title
         </label>
@@ -99,11 +99,11 @@ const ProfessionalSummary: React.FC = () => {
           value={professionalSummaryData?.professionalTitle || ""}
           onChange={handleChange}
           disabled={!isEditable}
-          className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:outline-none focus:ring-0"
+          className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
         />
       </div>
       <div className="mt-4 flex flex-col">
-        <label className="text-gray-600 mb-5 text-[16px]">Short bio</label>
+        <label className="mb-5 text-[16px] text-gray-600">Short bio</label>
 
         {/* Textarea */}
         <TextEditor

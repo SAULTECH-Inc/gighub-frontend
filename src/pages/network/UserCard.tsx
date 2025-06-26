@@ -20,10 +20,13 @@ const UserCard: React.FC<NetworkCardProps> = ({
     useChatStore();
 
   const handleConnect = async () => {
-    console.log("Connect clicked for user with ID:", userDetails?.userId);
+    console.log(
+      "Connect clicked for user with ID:",
+      userDetails?.applicant?.id,
+    );
     // Add your connect logic here
     const response = await connectUser(
-      userDetails?.userId ? userDetails?.userId.toString() : "0",
+      userDetails?.applicant?.id ? userDetails?.applicant?.id.toString() : "0",
     );
     console.log("Connect response:", response);
     if (response?.statusCode === 200) {
@@ -35,21 +38,22 @@ const UserCard: React.FC<NetworkCardProps> = ({
 
   return (
     <>
-      <div className="relative h-[440px] w-[calc(100%-1rem)] space-y-4 rounded-[16px] border-[1px] border-[#E6E6E6] p-[18px] sm:w-[calc(45%-1rem)] md:w-full mdl:w-[55%] lg:w-[380px]">
+      <div className="mdl:w-[55%] relative h-[440px] w-[calc(100%-1rem)] space-y-4 rounded-[16px] border-[1px] border-[#E6E6E6] p-[18px] sm:w-[calc(45%-1rem)] md:w-full lg:w-[380px]">
         <div className="h-[60px] w-[60px] rounded-full bg-[#D9D9D9]">
           <img
-            src={userDetails?.profilePicture as string}
+            src={userDetails?.applicant?.profilePicture as string}
             alt="Profile"
             className="h-full w-full rounded-full"
           />
         </div>
         <div className="flex flex-col">
           <h3 className="text-[20px] font-semibold text-[#000000]">
-            {userDetails?.firstName} {userDetails?.lastName}
+            {userDetails?.applicant?.firstName}{" "}
+            {userDetails?.applicant?.lastName}
           </h3>
-          {userDetails?.city && userDetails?.city && (
+          {userDetails?.applicant?.city && userDetails?.applicant?.city && (
             <p className="font-bold text-[#8E8E8E]">
-              {userDetails?.city} {userDetails?.country}
+              {userDetails?.applicant?.city} {userDetails?.applicant?.country}
             </p>
           )}
         </div>
@@ -58,8 +62,8 @@ const UserCard: React.FC<NetworkCardProps> = ({
             <div className="flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded-full border-[1px] border-[#E6E6E6]">
               <Link
                 to={
-                  userDetails?.linkedInProfile
-                    ? userDetails?.linkedInProfile
+                  userDetails?.applicant?.linkedInProfile
+                    ? userDetails?.applicant?.linkedInProfile
                     : linkedin
                 }
               >
@@ -69,8 +73,8 @@ const UserCard: React.FC<NetworkCardProps> = ({
             <div className="flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded-full border-[1px] border-[#E6E6E6]">
               <Link
                 to={
-                  userDetails?.twitterProfile
-                    ? userDetails?.twitterProfile
+                  userDetails?.applicant?.twitterProfile
+                    ? userDetails?.applicant?.twitterProfile
                     : twitter
                 }
               >
@@ -83,7 +87,7 @@ const UserCard: React.FC<NetworkCardProps> = ({
               onClick={() => {
                 setIsClosed(false);
                 setIsMinimized(false);
-                setRecipient(userDetails.email);
+                setRecipient(userDetails?.applicant?.email as string);
                 setRecipientDetails(userDetails);
                 setChatWindowOpened((prev) => !prev);
               }}
@@ -96,14 +100,14 @@ const UserCard: React.FC<NetworkCardProps> = ({
         <hr className="w-full border-[1px] border-[#AFAFAF]" />
         <div className="flex items-center justify-between text-[16px] font-bold text-[#6438C2]">
           <p>
-            {userDetails?.cv?.professionalTitle ||
-              userDetails?.professionalTitle ||
+            {userDetails?.applicant?.cv?.professionalTitle ||
+              userDetails?.applicant?.professionalTitle ||
               "Applicant"}
           </p>
           <p>Level</p>
         </div>
 
-        <div className="absolute bottom-4 left-0 right-0 flex w-full items-center justify-center gap-x-6 font-bold">
+        <div className="absolute right-0 bottom-4 left-0 flex w-full items-center justify-center gap-x-6 font-bold">
           <Link
             to={`/applicant/public-profile-view/${userDetails?.id}`}
             className="w-1/3 rounded-[10px] bg-[#E6E6E6] px-2 py-[8px] text-center text-sm text-[#000000]"

@@ -177,6 +177,9 @@ export const FRONTEND_BASE_URL =
 
 export const NOTIFICATION_API_URL =
   import.meta.env.VITE_API_NOTIFICATION_SERVICE || "http://localhost:3009";
+
+export const SOCKET_URL =
+  import.meta.env.VITE_API_CHAT_SERVER_URL || "http://localhost:3003";
 export const NODE_ENV = import.meta.env.NODE_ENV || "development";
 export const applicantNavBarItemMap = new Map<string, string>([]);
 applicantNavBarItemMap.set("Dashboard", "/applicant/dashboard");
