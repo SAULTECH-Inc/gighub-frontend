@@ -4,8 +4,10 @@ import { useScheduleInterview } from "../../../store/useScheduleInterview.ts";
 import CustomSelect from "../../../components/common/CustomSelect.tsx";
 import DatePicker from "../../../components/common/DatePicker.tsx";
 import { InterviewScheduleDetails } from "../../../utils/types";
+import { useTimezones } from "../../../hooks/useTimezones.ts";
 
 const InterviewStepThree: React.FC = () => {
+  const timezones = useTimezones();
   const { nextStep, prevStep, interviewDetails, setInterviewDetails } =
     useScheduleInterview();
   const [errors] = useState<{ [key: string]: string }>({});
@@ -147,13 +149,7 @@ const InterviewStepThree: React.FC = () => {
               Time Zone
             </label>
             <CustomSelect
-              options={[
-                { value: "GMT", label: "GMT" },
-                { value: "UTC", label: "UTC" },
-                { value: "PST", label: "PST" },
-                { value: "CST", label: "CST" },
-                { value: "EST", label: "EST" },
-              ]}
+              options={timezones}
               placeholder={interviewDetails?.timeZone || "Select Time Zone"}
               className="w-full rounded-md border border-[#CCCCCC] px-4 py-2 focus:border-[#CCCCCC] focus:ring-0 focus:outline-none"
               onChange={(option) => {
