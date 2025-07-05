@@ -3,10 +3,11 @@ import CustomSelect from "../../../common/CustomSelect.tsx";
 import { useApplicantJobProfile } from "../../../../store/useApplicantJobProfile.ts";
 import { useSectionEditable } from "../../../../store/useEditable.ts";
 import { useAuth } from "../../../../store/useAuth.ts";
-import { JobRoles } from "../../../../utils/dumm.ts";
 import { Option } from "../../../../utils/types";
+import { useJobRoles } from "../../../../hooks/useJobRoles.ts";
 
 export const PreferredJobRole: React.FC = () => {
+  const jobRoles = useJobRoles();
   const { applicant } = useAuth();
   const { preferences, setPreference } = useApplicantJobProfile();
   const { isEditable } = useSectionEditable("job-preference");
@@ -34,7 +35,7 @@ export const PreferredJobRole: React.FC = () => {
       </label>
       <div className="w-full rounded-[16px] border-[1px] border-[#E6E6E6] bg-white p-4">
         <CustomSelect
-          options={JobRoles}
+          options={jobRoles}
           className="w-full rounded-[10px] border border-[#E6E6E6] bg-[#F7F8FA] p-2 text-left"
           placeholder="Select Roles"
           disabled={!isEditable}

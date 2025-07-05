@@ -6,6 +6,7 @@ import check from "../../assets/icons/check.svg";
 import { SiVisa } from "react-icons/si";
 import MasterCardLogo from "../common/MasterCardLogo.tsx";
 import { useForm, Controller } from "react-hook-form";
+import qrCodeData from "../../assets/images/qrcode.png";
 
 interface ModalProps {
   modalId: string;
@@ -133,14 +134,10 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
     handlePaymentSuccess();
   };
 
-  // Generate QR code data (you might want to use a proper QR library)
-  const qrCodeData =
-    "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Bank%20Transfer%20Payment%20-%20Account:%201234567890%20-%20Amount:%20$40";
-
   if (!isOpen) return null;
 
   return (
-    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="relative h-[650px] w-[96%] overflow-y-auto rounded-[10px] bg-white p-6 shadow-xl md:w-[492px]">
         <div className="absolute top-6 right-6 z-10 mb-6 flex items-center justify-end">
           <img

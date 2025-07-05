@@ -16,7 +16,6 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
 }) => {
   const {
     otp,
-    loading,
     setOtp,
     verifyOtp,
     employerSignupRequest,
@@ -24,6 +23,7 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
   } = useAuth();
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [isInvalid, setIsInvalid] = useState(false);
+  const [loading, setLoading] = useState(false);
   const shakeAnimation = isInvalid
     ? { x: [-5, 5, -5, 5, 0] } // Shake effect, ends smoothly at 0
     : { x: 0 }; // Normal state
@@ -70,15 +70,20 @@ const EmployerSignupStepThree: React.FC<StepTwoProp> = ({
       toast.error("All OTP fields are required.");
       return;
     }
+    setLoading(true);
     const success = await verifyOtp(
       employerSignupRequest?.email as string,
       otp as string,
     );
     if (success) {
       setIsInvalid(false);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setLoading(false);
+      await new Promise(resolve => setTimeout(resolve, 1000));
       handleNext();
     } else {
       setIsInvalid(true);
+      setLoading(false);
     }
   };
 

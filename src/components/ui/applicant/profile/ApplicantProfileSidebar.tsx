@@ -105,7 +105,7 @@ const ApplicantProfileSidebar: FC = () => {
         <div className="mt-8 flex flex-col space-y-3">
           <Link
             to="/applicant/find-jobs"
-            className="font-lato rounded-[16px] bg-[#6438C2] py-2 text-center text-[20px] text-white shadow hover:bg-purple-700"
+            className="cursor-pointer font-lato rounded-[16px] bg-[#6438C2] py-2 text-center text-[20px] text-white shadow hover:bg-purple-700"
           >
             Find Jobs
           </Link>
@@ -114,7 +114,7 @@ const ApplicantProfileSidebar: FC = () => {
 
       <Link
         to="/applicant/find-jobs"
-        className="font-lato w-[182px] rounded-[16px] bg-[#6438C2] py-2 text-center text-[20px] text-white shadow-sm hover:bg-purple-700"
+        className="cursor-pointer font-lato w-[182px] rounded-[16px] bg-[#6438C2] py-2 text-center text-[20px] text-white shadow-sm hover:bg-purple-700"
       >
         Find Jobs
       </Link>
