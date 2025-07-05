@@ -41,7 +41,7 @@ interface StepOneProp {
 const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
   const { employerSignupRequest, setEmployerSignupRequest, verifyAccount } =
     useAuth();
-  const [accountExist, setAccountExist] = useState<boolean>(true);
+  const [accountExist, setAccountExist] = useState<boolean>(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
@@ -93,7 +93,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
 
   return (
     <motion.div
-      className="relative mx-auto mt-10 w-[80%] px-[10px] md:mt-0 md:w-[500px] md:px-0 lg:w-[500px]"
+      className="relative mx-auto mt-20 w-[80%] px-[10px] md:mt-0 md:w-[500px] md:px-0 lg:w-[500px]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

@@ -25,7 +25,7 @@ const EmployerJobMultistepForm: React.FC<EmployerJobMultistepFormProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black p-2">
+    <div className="bg-black/50 fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-2">
       <div className="flex max-h-[95vh] w-full max-w-[900px] flex-col items-center overflow-y-auto rounded-lg bg-[#F7F7F7] shadow-xl">
         <div className="flex w-[92%] max-w-[900px] flex-col gap-4 py-2">
           <div className="flex justify-between">

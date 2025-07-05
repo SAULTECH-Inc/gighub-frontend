@@ -77,7 +77,7 @@ const EmployerSignupStepFour: React.FC<StepTwoProp> = ({ handlePrev }) => {
         transition={{ duration: 0.5 }}
       >
         <motion.label
-          className="text-[13px] text-gray-100"
+          className="text-[13px] text-black"
           initial={{ y: 50 }}
           animate={{ y: 0 }}
           transition={{ duration: 0.5 }}

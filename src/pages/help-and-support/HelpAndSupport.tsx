@@ -10,6 +10,7 @@ import {
   employerNavItemsMobile,
 } from "../../utils/constants.ts";
 import { USER_TYPE } from "../../utils/helpers.ts";
+import MainFooter from "../../components/layouts/MainFooter.tsx";
 
 const HelpAndSupportPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -590,6 +591,7 @@ const HelpAndSupportPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <MainFooter/>
     </div>
   );
 };

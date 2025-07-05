@@ -77,6 +77,9 @@ export interface LoginRequest {
 
 export interface AuthData {
   isAuthenticated: boolean;
+  setIsAuthenticated: (value: boolean)=>void;
+  getUserByEmail: (email: string)=>Promise<APIResponse<ApplicantData | EmployerData>>;
+  setSignupMethod: (value: string)=>void;
   redirectPath: string | "";
   employer: EmployerData | null;
   setEmployerData: (employer: EmployerData) => void;
@@ -86,6 +89,7 @@ export interface AuthData {
   setAuthRole: (authRole: Role) => void;
   email: string | "";
   otp: string | "";
+  signupMethod: string | null;
   applicant: ApplicantData;
   setApplicantData: (applicant: ApplicantData) => void;
   loginRequest: LoginRequest | null;
@@ -140,6 +144,9 @@ export interface AuthData {
   ) => Promise<boolean>;
   verifyPassword: (password: string) => Promise<boolean>;
   updateApplicantSocial: (socials: Socials) => Promise<Socials>;
+  handleGoogleLogin: ()=>void;
+  handleOutlookLogin: ()=>void;
+  handleLinkedinLogin: ()=>void;
 }
 
 export const useAuth = create<AuthData>()(
@@ -150,6 +157,7 @@ export const useAuth = create<AuthData>()(
       isAuthenticated: false,
       redirectPath: "",
       signupSuccess: false,
+      signupMethod: null,
       employer: {} as EmployerData,
       applicant: {} as ApplicantData,
       role: null,
@@ -165,6 +173,20 @@ export const useAuth = create<AuthData>()(
       applicantEducation: {} as EducationResponseDto,
       loading: false,
       error: null,
+      setIsAuthenticated: (value: boolean)=>{
+        set((state)=>{
+          state.isAuthenticated = value;
+        });
+      },
+      setSignupMethod: (value: string)=>{
+        set((state)=>{
+          state.signupMethod = value
+        })
+      },
+      getUserByEmail: async(email: string)=>{
+        const response = await privateApiClient.get<APIResponse<ApplicantData | EmployerData >>(`${API_BASE_URL}/users/get-user/by-email?email=${email}`);
+        return response?.data;
+      },
       setAuthToken: (authToken: string) => {
         set((state) => {
           state.authToken = authToken;
@@ -770,6 +792,15 @@ export const useAuth = create<AuthData>()(
           handleError(err);
           return {} as Socials;
         }
+      },
+      handleGoogleLogin: async ()=>{
+        window.location.href = `${API_BASE_URL}/auth/google`;
+      },
+      handleOutlookLogin: async ()=>{
+
+      },
+      handleLinkedinLogin: async ()=>{
+        window.location.href = `${API_BASE_URL}/auth/linkedin`;
       },
     })),
     {

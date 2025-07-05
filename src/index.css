@@ -1,7 +1,8 @@
 /* Import Google Font - Nunito (based on usage) */
 @import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000&display=swap");
-
 @import "tailwindcss";
+
+@config "../tailwind.config.js";
 
 /* ============================
    Global Styles
@@ -77,4 +78,20 @@ input[type="range"]::-ms-thumb {
   appearance: none;
   background: #6e4aed;
   cursor: pointer;
+}
+
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes zoomIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Background Images */
+.bg-testimonial {
+  background-image: url('../src/assets/images/testimonial.png');
 }

@@ -524,3 +524,9 @@ export const getStatusColor = (status: InterviewStatus) => {
   };
   return colors[status] || "bg-gray-100 text-gray-800";
 };
+
+export const signingSignupRouteMap: Record<string, string> = {
+  google: "http://localhost:3005/auth/google?state=",
+  outlook: "http://localhost:3005/auth/outlook?state=",
+  linkedin: "http://localhost:3005/auth/linkedin?state="
+};

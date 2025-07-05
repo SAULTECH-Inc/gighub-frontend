@@ -97,7 +97,16 @@
 //   return false;
 // };
 //
-// const JsonTextEditor = ({
+// interface GTextEditorProp{
+//   placeholder?: string;
+//   className?: string;
+//   value: string;
+//   onChange: (value: any)=>void;
+//   disabled?: boolean;
+//   required?: boolean;
+// }
+//
+// const GTextEditor: React.FC<GTextEditorProp> = ({
 //                           placeholder = "Start typing...",
 //                           className = "",
 //                           value = "",
@@ -105,6 +114,18 @@
 //                           disabled = false,
 //                           required = false
 //                         }) => {
+//   // Convert JSON tree to display text
+//   const jsonToText = useCallback((obj: any) => {
+//     if (typeof obj === 'string') return obj;
+//     if (typeof obj === 'object' && obj !== null) {
+//       const keys = Object.keys(obj);
+//       if (keys.length === 1) {
+//         return jsonToText(obj[keys[0]]);
+//       }
+//     }
+//     return '';
+//   }, []);
+//
 //   const [content, setContent] = useState(() => {
 //     try {
 //       return value ? JSON.parse(value) : { p: "" };
@@ -113,14 +134,10 @@
 //     }
 //   });
 //
-//   const [toolbarSet, setToolbarSet] = useState(() => {
-//     const saved = localStorage.getItem('texteditor-toolbar-set');
-//     return saved || 'basic';
-//   });
-//
+//   const [toolbarSet, setToolbarSet] = useState('basic');
 //   const [selection, setSelection] = useState({ start: 0, end: 0 });
-//   const [activeFormats, setActiveFormats] = useState(new Set());
-//   const [history, setHistory] = useState([]);
+//   const [, setActiveFormats] = useState(new Set());
+//   const [history, setHistory] = useState<any[]>([]);
 //   const [historyIndex, setHistoryIndex] = useState(-1);
 //   const [clipboard, setClipboard] = useState('');
 //   const editorRef = useRef(null);
@@ -134,31 +151,8 @@
 //     }
 //   }, [content, history.length]);
 //
-//   // Persist toolbar set to localStorage
-//   useEffect(() => {
-//     localStorage.setItem('texteditor-toolbar-set', toolbarSet);
-//   }, [toolbarSet]);
-//
-//   // Persist content to localStorage
-//   useEffect(() => {
-//     localStorage.setItem('texteditor-content', JSON.stringify(content));
-//   }, [content]);
-//
-//   // Load content from localStorage on mount
-//   useEffect(() => {
-//     const savedContent = localStorage.getItem('texteditor-content');
-//     if (savedContent && !value) {
-//       try {
-//         const parsed = JSON.parse(savedContent);
-//         setContent(parsed);
-//       } catch (e) {
-//         console.warn('Failed to parse saved content');
-//       }
-//     }
-//   }, []);
-//
 //   // Add to history
-//   const addToHistory = useCallback((newContent) => {
+//   const addToHistory = useCallback((newContent: any) => {
 //     setHistory(prev => {
 //       const newHistory = prev.slice(0, historyIndex + 1);
 //       newHistory.push(newContent);
@@ -252,7 +246,7 @@
 //   }, [content, selection, clipboard, jsonToText, addToHistory]);
 //
 //   // Handle keyboard shortcuts
-//   const handleKeyDown = useCallback((e) => {
+//   const handleKeyDown = useCallback((e: any) => {
 //     if (disabled) return;
 //
 //     if (e.ctrlKey || e.metaKey) {
@@ -304,18 +298,6 @@
 //     }
 //   }, [disabled, undo, redo, cut, copy, paste, content, selection, jsonToText, addToHistory]);
 //
-//   // Convert JSON tree to display text
-//   const jsonToText = useCallback((obj) => {
-//     if (typeof obj === 'string') return obj;
-//     if (typeof obj === 'object' && obj !== null) {
-//       const keys = Object.keys(obj);
-//       if (keys.length === 1) {
-//         return jsonToText(obj[keys[0]]);
-//       }
-//     }
-//     return '';
-//   }, []);
-//
 //   // Update parent component
 //   useEffect(() => {
 //     const textValue = jsonToText(content);
@@ -323,7 +305,7 @@
 //     onChange?.({ key: 'json', value: jsonValue });
 //   }, [content, onChange, jsonToText]);
 //
-//   const handleTextChange = (e) => {
+//   const handleTextChange = useCallback((e) => {
 //     if (disabled) return;
 //
 //     const newText = e.target.value;
@@ -336,7 +318,7 @@
 //     }, 500);
 //
 //     return () => clearTimeout(timeoutId);
-//   };
+//   }, [disabled, addToHistory]);
 //
 //   const handleSelectionChange = () => {
 //     if (editorRef.current) {
@@ -393,8 +375,8 @@
 //     const tools = toolbarSets[toolbarSet] || toolbarSets.basic;
 //
 //     return (
-//       <div className="border-b border-gray-200 p-2 flex flex-wrap gap-1 bg-gray-50">
-//         <div className="flex items-center gap-1 mr-4">
+//       <div className="border-b border-gray-200 p-2 flex flex-wrap gap-1 bg-gray-50 relative">
+//         <div className="flex items-center gap-1 mr-4 relative">
 //           <button
 //             type="button"
 //             onClick={() => setShowToolbarSelector(!showToolbarSelector)}
@@ -406,7 +388,7 @@
 //           </button>
 //
 //           {showToolbarSelector && (
-//             <div className="absolute z-10 mt-8 bg-white border border-gray-200 rounded shadow-lg">
+//             <div className="absolute z-10 top-full left-0 mt-1 bg-white border border-gray-200 rounded shadow-lg">
 //               {Object.keys(toolbarSets).map((set) => (
 //                 <button
 //                   key={set}
@@ -427,10 +409,10 @@
 //
 //         <div className="h-6 w-px bg-gray-300 mx-2"></div>
 //
-//         {tools.map((tool) => {
+//         {tools.map((tool: any, index: number) => {
 //           // Handle separators
 //           if (tool === '|') {
-//             return <div key={Math.random()} className="h-6 w-px bg-gray-300 mx-1"></div>;
+//             return <div key={`separator-${index}`} className="h-6 w-px bg-gray-300 mx-1"></div>;
 //           }
 //
 //           const Icon = toolIcons[tool];
@@ -498,3 +480,5 @@
 //     </div>
 //   );
 // };
+//
+// export default GTextEditor;

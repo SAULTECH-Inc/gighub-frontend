@@ -93,7 +93,7 @@ const Certifications: React.FC<CertificationProps> = ({
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="bg-opacity-20 fixed inset-0 z-50 flex items-center justify-center bg-black">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
           <div className="relative w-90 rounded-lg bg-white p-6 md:w-96">
             {/* Close Button */}
             <button
