@@ -6,31 +6,21 @@ import tailwindScrollbarHide from "tailwind-scrollbar-hide";
 import defaultTheme from 'tailwindcss/defaultTheme';
 import colors from "tailwindcss/colors";
 /** @type {import('tailwindcss').Config} */
-
-const {
-  lightBlue,
-  warmGray,
-  trueGray,
-  coolGray,
-  blueGray,
-  ...safeColors
-} = colors;
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx,css}",
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   darkMode: "class", // Enable dark mode with class toggle
   theme: {
     extend: {
       colors: {
-        ...safeColors,
+        ...colors,
         primary: "#6A0DAD",
         secondary: "#FFFFFF",
         tertiary: "#6438c2",
         orange: "#FE691E",
-        white: "#FFFFFF",
-        charcoal: "rgba(34, 34, 34, 1)",
+        charcoal: "#222222",
       },
       boxShadow: {
         card: "0px 4px 30px 0px rgba(238, 238, 238, 1)",
@@ -74,6 +64,13 @@ export default {
       },
     },
   },
+  safelist: [
+    'bg-primary', 'text-primary',
+    'bg-secondary', 'text-secondary',
+    'bg-tertiary', 'text-tertiary',
+    'bg-orange', 'text-orange',
+    'bg-charcoal', 'text-charcoal',
+  ],
   plugins: [
     forms,
     typography,

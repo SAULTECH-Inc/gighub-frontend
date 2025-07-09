@@ -1,6 +1,5 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { API_BASE_URL, storage } from "../utils/constants.ts";
-import { TOKEN } from "../utils/helpers.ts";
 
 const baseURL = API_BASE_URL || "http://localhost:3005";
 
@@ -21,10 +20,10 @@ export const privateApiClient: AxiosInstance = axios.create({
 
 privateApiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    if (TOKEN) {
-      config.headers.Authorization = `Bearer ${TOKEN}`;
+    const token = storage.getItem("authToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
-    config.headers.Authorization = `Bearer ${storage.getItem("authToken")}`;
     return config;
   },
   (error) => Promise.reject(error),
@@ -35,19 +34,21 @@ privateApiClient.interceptors.response.use(
   async (error) => {
     if (error.response && error.response.status === 401) {
       try {
-        const refreshResponse = await publicApiClient.post(
-          "/auth/refresh-token",
+        const refreshResponse = await axios.post(
+          `${baseURL}/auth/refresh-token`,
           {},
           { withCredentials: true },
         );
-        const newAccessToken = refreshResponse.data;
-        storage.setItem("authToken", newAccessToken);
-        error.config.headers.Authorization = `Bearer ${newAccessToken}`;
-        return privateApiClient.request(error.config);
-      } catch (error: any) {
+        const newAccessToken = refreshResponse.data?.token;
+        if (newAccessToken) {
+          storage.setItem("authToken", newAccessToken);
+          error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+          return privateApiClient.request(error.config);
+        }
+      } catch (refreshError) {
         storage.removeItem("authToken");
         window.location.href = "/login";
-        throw error;
+        throw refreshError;
       }
     }
     return Promise.reject(error);

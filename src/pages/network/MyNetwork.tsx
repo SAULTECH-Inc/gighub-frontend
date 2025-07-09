@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import NetworkCard from "./NetworkCard.tsx";
 import { NetworkHeader } from "./NetworkHeader.tsx";
 import { useAuth } from "../../store/useAuth.ts";
-import { ClockSpinner } from "../../components/common/ClockSpinner.tsx";
 import ChatWindow from "../../chat-module/component/ChatWindow.tsx";
 import { NetworkDetails } from "../../utils/types";
 import { searchMyConnection } from "../../services/api";
@@ -11,7 +10,7 @@ import useConnections from "../../hooks/useConnections.tsx";
 const ITEMS_PER_PAGE = 10;
 
 const MyNetwork: React.FC = () => {
-  const { applicant } = useAuth();
+  const { applicant, employer } = useAuth();
   const [isChatWindowOpened, setIsChatWindowOpened] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -21,8 +20,8 @@ const MyNetwork: React.FC = () => {
     profession: "",
   });
 
-  const { data, isLoading, isError } = useConnections(
-    applicant.id,
+  const { data, isError } = useConnections(
+    applicant.id || employer?.id as number,
     currentPage,
     ITEMS_PER_PAGE,
   );
@@ -55,9 +54,9 @@ const MyNetwork: React.FC = () => {
     }
   };
 
-  if (isLoading) {
-    return <ClockSpinner isLoading={isLoading} />;
-  }
+  // if (isLoading) {
+  //   return <ClockSpinner isLoading={isLoading} />;
+  // }
 
   if (isError) {
     return (
@@ -120,4 +119,4 @@ const MyNetwork: React.FC = () => {
   );
 };
 
-export default MyNetwork;
+export default memo(MyNetwork);

@@ -1,12 +1,4 @@
 import { Option } from "../components/ui/applicant/profile/Skills.tsx";
-
-export interface MessageItem {
-  id: number;
-  avatar: string; // Avatar URL or path
-  name: string;
-  message: string;
-  time: string;
-}
 export const skills: Option[] = [
   // Programming Languages
   { label: "Java", value: "Java" },

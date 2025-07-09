@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { useJobFormStore } from "../../../../store/useJobFormStore";
-import { skills as skillsOptions } from "../../../../utils/dumm.ts";
+
 import MultiSelect from "../../../common/MultiSelect.tsx";
 import { Crown } from "../../../../assets/images.ts";
 import CustomCheckbox from "../../../common/CustomCheckbox.tsx";
 import { useSubscriptionStore } from "../../../../store/useSubscriptionStore.ts";
 import { useCountries } from "../../../../hooks/useCountries.ts";
+import { useSkills } from "../../../../hooks/useSkills.ts";
 
 const CreateJobStepThree: React.FC = () => {
+  const skills = useSkills();
   const { isSubscribed } = useSubscriptionStore();
   const {countries} = useCountries();
   const { nextStep, prevStep, job, setJobData } = useJobFormStore();
@@ -37,7 +39,7 @@ const CreateJobStepThree: React.FC = () => {
               label="Skill Set"
               requiredAsterisk={true}
               placeholder="Select or add a skill"
-              options={skillsOptions}
+              options={skills}
               selectedItems={(job?.skillSet || []).map((skill) => ({
                 label: skill.skill,
                 value: skill.skill,

@@ -5,8 +5,8 @@ import { ExperienceResponseDto, Option } from "../../../../utils/types";
 import { useApplicantJobProfile } from "../../../../store/useApplicantJobProfile.ts";
 import CustomSelect from "../../../common/CustomSelect.tsx";
 import { jobLocation } from "../../../../utils/constants.ts";
-import { JobRoles } from "../../../../utils/dumm.ts";
 import { useCities } from "../../../../hooks/useCities.ts";
+import { useJobRoles } from "../../../../hooks/useJobRoles.ts";
 
 interface ExperienceUpdateFormProps {
   experienceData: ExperienceResponseDto;
@@ -18,6 +18,7 @@ const ExperienceUpdateForm: React.FC<ExperienceUpdateFormProps> = ({
   isEditable,
 }) => {
   const {cities} = useCities();
+  const jobRoles = useJobRoles();
   const { experience, setExperience } = useApplicantJobProfile();
   const [description, setDescription] = useState(
     experienceData?.description ?? "",
@@ -67,7 +68,7 @@ const ExperienceUpdateForm: React.FC<ExperienceUpdateFormProps> = ({
           <label>Your Role</label>
           <CustomDropdown
             placeholder={experienceData.position}
-            options={JobRoles}
+            options={jobRoles}
             disabled={!isEditable}
             handleSelect={(option: Option) => {
               setExperience({

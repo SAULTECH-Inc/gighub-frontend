@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom";
 import { NotFound } from "../pages/auth/NotFound.tsx";
 import { Home } from "../pages/Home.tsx";
 import { ApplicantDashboard } from "../pages/applicant/ApplicantDashboard.tsx";
-import { EmployerNetwork } from "../pages/employer/EmployerNetwork.tsx";
 import UserTypeSelection from "../pages/UserTypeSelection.tsx";
 import EmployerProfile from "../pages/employer/EmployerProfile.tsx";
 import ApplicantProfile from "../pages/applicant/ApplicantProfile.tsx";
@@ -38,6 +37,9 @@ import TermsAndConditions from "../pages/contract/TermsAndConditions.tsx";
 import MySchedules from "../pages/schedules/MySchedules.tsx";
 import { memo } from "react";
 import ApplicantJobDetails from "../pages/applicant/ApplicantJobDetails.tsx";
+import SocialSignupSuccess from "../pages/auth/SocialSignupSuccess.tsx";
+import SignupOption from "../pages/SignupOption.tsx";
+import SocialLoginSuccess from "../pages/auth/SocialLoginSuccess.tsx";
 
 const AppRoutes = () => {
   return (
@@ -153,7 +155,7 @@ const AppRoutes = () => {
         path="/applicant/job-details/:title"
         element={<ApplicantJobDetails />}
       />
-      <Route path="/employer/network" element={<EmployerNetwork />} />
+      <Route path="/employer/network" element={<Network />} />
       <Route
         path="/applicant/dashboard/jobselection"
         element={<JobSelection />}
@@ -221,6 +223,21 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
       />
+      <Route
+        path="/auth/social/signup/callback"
+      element={
+        <SocialSignupSuccess/>
+      }/>
+      <Route
+        path="/auth/social/login/callback"
+        element={
+          <SocialLoginSuccess/>
+        }/>
+      <Route
+        path="/signup-option"
+        element={
+          <SignupOption/>
+        }/>
     </Routes>
   );
 };
