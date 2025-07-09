@@ -6,7 +6,6 @@ import {
 } from "../../../../store/useJobFormStore";
 import React, { useEffect, useState } from "react";
 import DatePicker from "../../../common/DatePicker";
-import { DepartmentType } from "../../../../utils/DepartmentType";
 import SearchableSelectWithAdd from "../../../common/SearchableSelectWithAdd";
 import { JobLocations } from "../../../../utils/JobType";
 import { EmploymentType } from "../../../../utils/DepartmentType";
@@ -15,14 +14,11 @@ import CustomSelect from "../../../common/CustomSelect";
 import CustomRadioButton from "../../../common/CustomRadioButton";
 import { currencies } from "../../../../utils/Countries";
 import { FaAsterisk } from "react-icons/fa";
-import { jobLevels } from "../../../../utils/types";
-
-interface Option {
-  value: string;
-  label: string;
-}
+import { jobLevels, Option } from "../../../../utils/types";
+import { useDepartments } from "../../../../hooks/useDepartments.ts";
 
 const CreateJobStepTwo: React.FC = () => {
+  const departments = useDepartments();
   const { job, nextStep, prevStep, setJobData } = useJobFormStore();
   const [selectedDate, setSelectedDate] = useState<string>(job.endDate || "");
   const [error, setError] = useState<string>("");
@@ -245,7 +241,7 @@ const CreateJobStepTwo: React.FC = () => {
                 </label>
                 <SearchableSelectWithAdd
                   placeholder={job?.department || "Choose a Department..."}
-                  options={DepartmentType}
+                  options={departments}
                   className="w-full rounded-[10px] border border-[#E6E6E6] p-2 text-left text-sm sm:text-base"
                   onChange={handleDepartmentChange}
                 />

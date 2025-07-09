@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { USER_TYPE } from "../../utils/helpers.ts";
 import { UserType } from "../../utils/enums.ts";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
@@ -11,8 +11,8 @@ import {
   employerNavItemsMobile,
 } from "../../utils/constants.ts";
 import { useNetworkTab } from "../../store/useNetworkTab.ts";
-import { FindConnections } from "./FindConnections.tsx";
 import MyNetwork from "./MyNetwork.tsx";
+import FindConnections from "./FindConnections.tsx";
 
 const Network: React.FC = () => {
   /* active tab */
@@ -69,4 +69,4 @@ const Network: React.FC = () => {
   );
 };
 
-export default Network;
+export default memo(Network);

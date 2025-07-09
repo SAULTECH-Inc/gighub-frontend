@@ -45,7 +45,7 @@ const EmployerMultistepForm: React.FC = () => {
       />
 
       {/* Step Indicator */}
-      <div className="absolute top-10 left-1/2 flex -translate-x-1/2 transform flex-col gap-y-2 md:top-5 md:left-1/2 md:transform">
+      <div className="absolute top-5 left-1/2 flex -translate-x-1/2 transform flex-col gap-y-2 md:top-5 md:left-1/2 md:transform">
         <span className="mt-2 block text-center md:mt-0 md:text-left">
           {step} of 4
         </span>

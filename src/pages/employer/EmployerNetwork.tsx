@@ -1,181 +1,122 @@
-import { FC, useEffect, useRef, useState } from "react";
-import { FaAngleLeft, FaChevronRight } from "react-icons/fa";
-import TopNavBar from "../../components/layouts/TopNavBar.tsx";
-import {
-  applicantNavBarItemMap,
-  applicantNavItems,
-  applicantNavItemsMobile,
-  employerNavBarItemMap,
-  employerNavItems,
-  employerNavItemsMobile,
-} from "../../utils/constants.ts";
-// import {useNavigate} from "react-router-dom";
-import { USER_TYPE } from "../../utils/helpers.ts";
-import { UserType } from "../../utils/enums.ts";
-import NetworkCard from "../network/NetworkCard.tsx";
-import NetworkConnectionsCard from "../network/NetworkConnectionsCard.tsx";
+import React, { memo, useEffect, useState } from "react";
+import { useAuth } from "../../store/useAuth.ts";
+import ChatWindow from "../../chat-module/component/ChatWindow.tsx";
 import { NetworkDetails } from "../../utils/types";
+import { searchMyConnection } from "../../services/api";
+import useConnections from "../../hooks/useConnections.tsx";
+import { NetworkHeader } from "../network/NetworkHeader.tsx";
+import NetworkCard from "../network/NetworkCard.tsx";
 
-export const EmployerNetwork: FC = () => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [displayScrollIcons, setDisplayScrollIcons] = useState(false);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-  const [, setChatWindowOpened] = useState<boolean>(false);
-  // const navigate = useNavigate();
+const ITEMS_PER_PAGE = 10;
 
-  const scrollLeft = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
-    }
-  };
+export const EmployerNetwork: React.FC = () => {
+  const { employer } = useAuth();
+  const [isChatWindowOpened, setIsChatWindowOpened] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const scrollRight = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
-    }
-  };
+  const [searchParams, setSearchParams] = useState({
+    name: "",
+    location: "",
+    profession: "",
+  });
 
-  const checkScrollPosition = () => {
-    if (!scrollRef.current) return;
+  const { data, isError } = useConnections(
+    employer?.id as number,
+    currentPage,
+    ITEMS_PER_PAGE,
+  );
+  const [connections, setConnections] = useState<NetworkDetails[]>([]);
 
-    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-    setCanScrollLeft(scrollLeft > 0);
-    setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
-  };
-
-  // Attach scroll event listener
+  // Initialize connections when data is loaded
   useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
+    if (data?.data) {
+      setConnections(data.data);
+    }
+  }, [data]);
 
-    container.addEventListener("scroll", checkScrollPosition);
-    checkScrollPosition(); // Initial check
+  // Unified search handler
+  const handleSearchChange = async (
+    field: keyof typeof searchParams,
+    value: string,
+  ) => {
+    const updatedParams = {
+      ...searchParams,
+      [field]: value,
+    };
+    setSearchParams(updatedParams);
 
-    return () => container.removeEventListener("scroll", checkScrollPosition);
-  }, []);
+    const response = await searchMyConnection(updatedParams);
+    if (response?.statusCode === 200) {
+      setConnections(response.data);
+    } else {
+      console.error("Failed to search connections", response?.data);
+      setConnections([]); // Clear on failure
+    }
+  };
+
+  // if (isLoading) {
+  //   return <ClockSpinner isLoading={isLoading} />;
+  // }
+
+  if (isError) {
+    return (
+      <div className="flex h-full w-full flex-row items-center justify-center">
+        <p className="py-10 text-center text-red-500">No connections</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen">
-      {USER_TYPE === UserType.APPLICANT ? (
-        <TopNavBar
-          navItems={applicantNavItems}
-          navItemsMobile={applicantNavItemsMobile}
-          navbarItemsMap={applicantNavBarItemMap}
-        />
-      ) : (
-        <TopNavBar
-          navItems={employerNavItems}
-          navItemsMobile={employerNavItemsMobile}
-          navbarItemsMap={employerNavBarItemMap}
-        />
-      )}
-      <div className="flex w-full flex-col-reverse sm:flex-row">
-        {/*w-full sm:w-[50%] md-w-[70%] lg:w-[298px]*/}
-        <div className="my-4 grid h-fit w-full grid-cols-2 gap-1 border-2">
-          <NetworkCard
-            userDetails={{} as NetworkDetails}
-            setChatWindowOpened={setChatWindowOpened}
-          />
-          <NetworkCard
-            userDetails={{} as NetworkDetails}
-            setChatWindowOpened={setChatWindowOpened}
-          />
-          <NetworkCard
-            userDetails={{} as NetworkDetails}
-            setChatWindowOpened={setChatWindowOpened}
-          />
-          <NetworkCard
-            userDetails={{} as NetworkDetails}
-            setChatWindowOpened={setChatWindowOpened}
-          />
-          <NetworkCard
-            userDetails={{} as NetworkDetails}
-            setChatWindowOpened={setChatWindowOpened}
-          />
-          <NetworkCard
-            userDetails={{} as NetworkDetails}
-            setChatWindowOpened={setChatWindowOpened}
-          />
-          <NetworkCard
-            userDetails={{} as NetworkDetails}
-            setChatWindowOpened={setChatWindowOpened}
-          />
-          <NetworkCard
-            userDetails={{} as NetworkDetails}
-            setChatWindowOpened={setChatWindowOpened}
-          />
-          <NetworkCard
-            userDetails={{} as NetworkDetails}
-            setChatWindowOpened={setChatWindowOpened}
-          />
-        </div>
-        <div className="bg-green flex w-full flex-col gap-2 p-4 sm:w-[50%] md:w-[35%] md:items-center">
-          <p className="p-2 text-[20px] font-medium text-[#000000]">
-            Find New Connections
-          </p>
-          <div className="flex w-full items-center justify-center sm:hidden">
-            <div className="">
-              {/* Left Scroll Button */}
-              {displayScrollIcons && (
-                <button
-                  onClick={scrollLeft}
-                  disabled={!canScrollLeft}
-                  className={`absolute left-0 rounded-full py-2 ${
-                    canScrollLeft
-                      ? "fill-blue bg-blue-500"
-                      : "cursor-not-allowed bg-gray-300 text-gray-500"
-                  }`}
-                >
-                  <FaAngleLeft size={40} className="fill-white" />
-                </button>
-              )}
-            </div>
+    <div className="mx-auto flex w-full flex-col gap-4 p-4">
+      {/* Header */}
+      <NetworkHeader
+        handleSearchByName={(name) => handleSearchChange("name", name)}
+        handleSearchByLocation={(location) =>
+          handleSearchChange("location", location)
+        }
+        handleSearchByProfession={(profession) =>
+          handleSearchChange("profession", profession)
+        }
+      />
 
-            <div
-              className="flex w-[95%] overflow-hidden"
-              onMouseOver={() => setDisplayScrollIcons(true)}
-              onMouseLeave={() => setDisplayScrollIcons(false)}
-            >
-              <div
-                ref={scrollRef}
-                className="scrollbar-hide flex w-full gap-5 overflow-x-auto scroll-smooth xl:flex-col"
-              >
-                <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-                <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-                <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-                <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-                <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-                <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-                <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-                <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-              </div>
-            </div>
-            {displayScrollIcons && (
-              <button
-                onClick={scrollRight}
-                disabled={!canScrollRight}
-                className={`absolute right-0 rounded-full p-1 ${
-                  canScrollRight
-                    ? "bg-gray-700"
-                    : "cursor-not-allowed fill-[#D9D9D9]"
-                }`}
-              >
-                <FaChevronRight size={24} />
-              </button>
-            )}
-          </div>
-          <div className="hidden flex-col gap-5 sm:flex">
-            <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-            <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-            <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-            <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-            <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-            <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-            <NetworkConnectionsCard userDetails={{} as NetworkDetails} />
-          </div>
-        </div>
+      {/* Main Content Area */}
+      <div className="flex w-auto flex-wrap gap-4 rounded-[16px] bg-white p-4">
+        {connections.length > 0 ? (
+          connections.map((user) => (
+            <NetworkCard
+              setChatWindowOpened={setIsChatWindowOpened}
+              userDetails={user}
+              key={user.id}
+            />
+          ))
+        ) : (
+          <p className="w-full text-center">No matching connections found.</p>
+        )}
       </div>
+
+      {/* Pagination */}
+      <div className="mt-4 flex items-center justify-center">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="rounded-md bg-gray-300 px-4 py-2"
+        >
+          Previous
+        </button>
+        <span className="mx-2">{currentPage}</span>
+        <button
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+          disabled={connections.length < ITEMS_PER_PAGE}
+          className="rounded-md bg-gray-300 px-4 py-2"
+        >
+          Next
+        </button>
+      </div>
+
+      {/* Chat Window */}
+      {isChatWindowOpened && <ChatWindow />}
     </div>
   );
 };
+
+export default memo(EmployerNetwork);

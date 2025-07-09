@@ -12,14 +12,15 @@ import CustomSelect from "../../../common/CustomSelect.tsx";
 import { toast } from "react-toastify";
 import CustomCheckbox from "../../../common/CustomCheckbox.tsx";
 import { jobLocation } from "../../../../utils/constants.ts";
-import { JobRoles } from "../../../../utils/dumm.ts";
 import { useCities } from "../../../../hooks/useCities.ts";
+import { useJobRoles } from "../../../../hooks/useJobRoles.ts";
 
 interface AddExperienceModalProp {
   modalId: string;
 }
 
 const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
+  const jobRoles = useJobRoles();
   const {cities} = useCities();
   const {
     experience,
@@ -106,7 +107,7 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
             <label>Your Role</label>
             <CustomDropdown
               placeholder="Enter your role"
-              options={JobRoles}
+              options={jobRoles}
               handleSelect={(option: Option) => {
                 setExperience({
                   ...experience,

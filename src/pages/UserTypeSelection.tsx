@@ -28,7 +28,7 @@ const UserTypeSelection: React.FC = () => {
   };
 
   const handleProceed = () => {
-    navigator(`/${userType}/signup`);
+    navigator(`/signup-option`);
   };
 
   const handleBack = () => {

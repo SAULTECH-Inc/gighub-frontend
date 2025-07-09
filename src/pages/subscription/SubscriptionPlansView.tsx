@@ -202,7 +202,7 @@ const SubscriptionPlansView: React.FC = () => {
 
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#6438C2]/10 to-[#FA4E09]/10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#6438C2] to-[#FA4E09]"></div>
         <div className="relative container mx-auto px-4 py-16">
           <div
             className={`mb-12 text-center transition-all duration-1000 ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}
@@ -210,7 +210,7 @@ const SubscriptionPlansView: React.FC = () => {
             <h1 className="mb-4 bg-gradient-to-r from-[#6438C2] to-[#FA4E09] bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
               Supercharge Your Job Search
             </h1>
-            <p className="mx-auto mb-8 max-w-3xl text-xl text-gray-600 md:text-2xl">
+            <p className="mx-auto mb-8 max-w-3xl text-xl text-white md:text-2xl">
               Let AI do the heavy lifting while you focus on what matters -
               landing your dream job
             </p>
@@ -219,19 +219,19 @@ const SubscriptionPlansView: React.FC = () => {
                 <div className="text-3xl font-bold text-[#6438C2] md:text-4xl">
                   {animatedStats.applications.toLocaleString()}+
                 </div>
-                <div className="text-gray-600">Applications Sent</div>
+                <div className="text-white">Applications Sent</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-[#FA4E09] md:text-4xl">
                   {animatedStats.users.toLocaleString()}+
                 </div>
-                <div className="text-gray-600">Happy Users</div>
+                <div className="text-white">Happy Users</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-[#65FF81] md:text-4xl">
                   {animatedStats.success}%
                 </div>
-                <div className="text-gray-600">Success Rate</div>
+                <div className="text-white">Success Rate</div>
               </div>
             </div>
           </div>

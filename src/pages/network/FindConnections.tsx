@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import NetworkConnectionsCard from "./NetworkConnectionsCard.tsx";
 import { NetworkHeader } from "./NetworkHeader.tsx";
 import UserCard from "./UserCard.tsx";
@@ -8,11 +8,10 @@ import { useSearchUserConnections } from "../../hooks/useSearchUserConnections.t
 import { useConnectionRequest } from "../../hooks/useConnectionRequest.ts";
 import { useAuth } from "../../store/useAuth.ts";
 import ChatWindow from "../../chat-module/component/ChatWindow.tsx";
-import { ClockSpinner } from "../../components/common/ClockSpinner.tsx";
 
-export const FindConnections: React.FC = () => {
+const FindConnections: React.FC = () => {
   const [isChatWindowOpened, setIsChatWindowOpened] = useState(false);
-  const { applicant } = useAuth();
+  const { applicant, employer } = useAuth();
   const [searchParams, setSearchParams] = useState({
     name: "",
     location: "",
@@ -24,19 +23,16 @@ export const FindConnections: React.FC = () => {
 
   const {
     data: baseUsers,
-    isLoading: isLoadingUsers,
     isError: isErrorUsers,
     error: errorUsers,
-  } = useUsers(applicant.id, page, limit);
+  } = useUsers(applicant.id || employer?.id as number, page, limit);
   const {
     data: connectionRequests,
-    isLoading: isLoadingConnections,
     isError: isErrorConnections,
     error: errorConnections,
   } = useConnectionRequest(page, limit);
   const {
     data: searchResults,
-    isLoading: isLoadingSearch,
     isError: isErrorSearch,
     error: errorSearch,
   } = useSearchUserConnections(page, limit, searchParams);
@@ -64,13 +60,13 @@ export const FindConnections: React.FC = () => {
   };
 
   // Combined loading & error states
-  if (isLoadingUsers || isLoadingSearch || isLoadingConnections) {
-    return (
-      <ClockSpinner
-        isLoading={isLoadingUsers || isLoadingSearch || isLoadingConnections}
-      />
-    );
-  }
+  // if (isLoadingUsers || isLoadingSearch || isLoadingConnections) {
+  //   return (
+  //     <ClockSpinner
+  //       isLoading={isLoadingUsers || isLoadingSearch || isLoadingConnections}
+  //     />
+  //   );
+  // }
   if (isErrorUsers || isErrorSearch || isErrorConnections) {
     return (
       <p>
@@ -125,3 +121,5 @@ export const FindConnections: React.FC = () => {
     </>
   );
 };
+
+export default memo(FindConnections);

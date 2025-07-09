@@ -1,4 +1,4 @@
-import React from "react";
+import React  from "react";
 import CustomDropdown from "../../../common/CustomDropdown.tsx";
 import { useAuth } from "../../../../store/useAuth.ts";
 import {
@@ -8,6 +8,8 @@ import { useSectionEditable } from "../../../../store/useEditable.ts";
 import DatePicker from "../../../common/DatePicker.tsx";
 import { useCities } from "../../../../hooks/useCities.ts";
 import { useCountries } from "../../../../hooks/useCountries.ts";
+import { AddressResult, useSearchAddress } from "../../../../hooks/useSearchAddress.ts";
+import SearchInput from "../../../common/SearchInput.tsx";
 const PersonalInfo: React.FC = () => {
   const {cities} = useCities();
   const {countries} = useCountries();
@@ -18,6 +20,7 @@ const PersonalInfo: React.FC = () => {
     setApplicantPersonalInfo,
     updateApplicantPersonalInfo,
   } = useAuth();
+  const {results} = useSearchAddress(applicantPersonalInfo?.address || "", 300);
   const { isEditable, toggleEdit } = useSectionEditable("personal-info");
 
   const handleChange = async (e: {
@@ -181,12 +184,17 @@ const PersonalInfo: React.FC = () => {
 
         <div className="flex w-full flex-col">
           <label className="mb-1 text-sm text-gray-600">Address</label>
-          <input
-            type="text"
-            onChange={handleChange}
+          <SearchInput
+            onChange={(a)=>{
+              setApplicantPersonalInfo({
+                ...applicantPersonalInfo,
+                address: a,
+              });
+            }}
             name="address"
             value={applicantPersonalInfo?.address || ""}
             disabled={!isEditable}
+            suggestions={results.map((r: AddressResult) => r.display_name)}
             className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
           />
         </div>
