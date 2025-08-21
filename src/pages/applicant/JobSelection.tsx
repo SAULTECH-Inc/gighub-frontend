@@ -26,7 +26,9 @@ import {
   employerNavItemsMobile,
 } from "../../utils/constants.ts";
 import { useFetchMyJobs, useSearchJobs } from "../../hooks/useJobQuery.ts";
-import { JobPostResponse, JobStatus } from "../../utils/types";
+import {ApplicantData, JobPostResponse, JobStatus } from "../../utils/types";
+import useModalStore from "../../store/modalStateStores.ts";
+import EmployerJobMultistepForm from "../employer/EmployerJobMultistepForm.tsx";
 
 type Section = "open" | "draft";
 
@@ -40,6 +42,7 @@ const JobSelection: React.FC = () => {
   const [sortBy, setSortBy] = useState('appliedDate');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [currentPage, setCurrentPage] = useState(1);
+  const {openModal, isModalOpen} = useModalStore();
   const itemsPerPage = 10;
 
   // Jobs page state
@@ -47,72 +50,12 @@ const JobSelection: React.FC = () => {
   const [jobSortBy, setJobSortBy] = useState('posted');
   const [jobSortOrder, setJobSortOrder] = useState<'asc' | 'desc'>('desc');
   const [jobStatusFilter, setJobStatusFilter] = useState('all');
+  const [applicants, setApplicants] = useState<ApplicantData[]>([]);
 
   // Modal states
   const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showCVModal, setShowCVModal] = useState(false);
-
-  // Mock applicants data (replace with real data from API)
-  const applicants = [
-    {
-      id: 1,
-      name: 'Sarah Johnson',
-      email: 'sarah.johnson@email.com',
-      phone: '+1 (555) 123-4567',
-      location: 'San Francisco, CA',
-      experience: 5,
-      status: 'applied',
-      appliedDate: '2024-08-20',
-      rating: 4.5,
-      skills: ['React', 'TypeScript', 'Node.js', 'GraphQL'],
-      github: 'https://github.com/sarahjohnson',
-      linkedin: 'https://linkedin.com/in/sarahjohnson',
-      resume: 'sarah_johnson_resume.pdf',
-      bio: 'Experienced frontend developer with a passion for creating intuitive user interfaces.',
-      education: 'BS Computer Science, Stanford University',
-      previousCompanies: ['Google', 'Facebook', 'Startup Inc.'],
-      achievements: ['Led team of 5 developers', 'Reduced load time by 40%', 'Implemented new design system']
-    },
-    {
-      id: 2,
-      name: 'Michael Chen',
-      email: 'michael.chen@email.com',
-      phone: '+1 (555) 987-6543',
-      location: 'Seattle, WA',
-      experience: 7,
-      status: 'shortlisted',
-      appliedDate: '2024-08-19',
-      rating: 4.8,
-      skills: ['Vue.js', 'Python', 'AWS', 'Docker'],
-      github: 'https://github.com/michaelchen',
-      linkedin: 'https://linkedin.com/in/michaelchen',
-      resume: 'michael_chen_resume.pdf',
-      bio: 'Full-stack developer specializing in Vue.js and Python.',
-      education: 'MS Software Engineering, MIT',
-      previousCompanies: ['Microsoft', 'Amazon', 'Tech Solutions'],
-      achievements: ['Architected microservices platform', 'Mentored 10+ developers', 'Patent holder']
-    },
-    {
-      id: 3,
-      name: 'Emily Rodriguez',
-      email: 'emily.rodriguez@email.com',
-      phone: '+1 (555) 456-7890',
-      location: 'Austin, TX',
-      experience: 3,
-      status: 'interviewed',
-      appliedDate: '2024-08-18',
-      rating: 4.2,
-      skills: ['Angular', 'Java', 'MongoDB', 'Redis'],
-      github: 'https://github.com/emilyrodriguez',
-      linkedin: 'https://linkedin.com/in/emilyrodriguez',
-      resume: 'emily_rodriguez_resume.pdf',
-      bio: 'Passionate full-stack developer with expertise in Angular and Java.',
-      education: 'BS Computer Engineering, University of Texas',
-      previousCompanies: ['IBM', 'Oracle', 'Local Startup'],
-      achievements: ['Built real-time dashboard', 'Improved API performance by 50%', 'Led agile team']
-    }
-  ];
 
   const [pagination, setPagination] = useState({
     page: 1,
@@ -138,6 +81,10 @@ const JobSelection: React.FC = () => {
   });
 
   const [jobs, setJobs] = useState<JobPostResponse[]>([]);
+
+  const fetchJobApplicants = async(jobId: number, page: number=1,limit: number=10)=>{
+
+  }
 
   useEffect(() => {
     if (searchKeyword.trim() !== "") {
@@ -1057,8 +1004,10 @@ const JobSelection: React.FC = () => {
 
                   <div className="flex flex-col lg:flex-row gap-3 lg:ml-6">
                     <button
-                      onClick={() => setSelectedJob(job.id)}
-                      className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all shadow-md hover:shadow-lg"
+                      onClick={() => {
+                        fetchJobApplicants(job.id);
+                      }}
+                      className="flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all shadow-md hover:shadow-lg"
                     >
                       <Eye className="w-4 h-4" />
                       <span>View Applicants</span>
@@ -1112,6 +1061,9 @@ const JobSelection: React.FC = () => {
           </div>
         )}
       </div>
+      {
+        isModalOpen("post-job-modal") && <EmployerJobMultistepForm modalId="post-job-modal"/>
+      }
     </div>
   );
 };
