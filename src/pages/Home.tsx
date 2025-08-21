@@ -27,9 +27,12 @@ import Button from "../components/common/Button";
 import TestimonialCarousel from "../components/common/TestimonialCarousel";
 import Footer from "../components/layouts/Footer";
 import Header from "../components/layouts/Header";
-import { memo } from "react";
+import { memo, useState } from "react";
+import { usePlatform } from "../store/usePlatform";
 
 const HomeComponent = () => {
+  const {subscribe} = usePlatform();
+  const [email, setEmail] = useState<string>("");
   return (
     <>
       <Header />
@@ -668,16 +671,23 @@ const HomeComponent = () => {
               <br />
               that match your skills and interests.
             </p>
-            <div className="mt-7 flex items-center overflow-hidden rounded-[10px] border border-white md:w-[429px]">
+            <form className="mt-7 flex items-center overflow-hidden rounded-[10px] border border-white md:w-[429px]">
               <input
                 type="email"
+                value={email}
+                onChange={(e)=>setEmail(e.target.value)}
                 placeholder="subscribe to our Newsletter"
                 className="w-[70%] border-none bg-transparent text-white"
               />
-              <button className="bg-white px-9 py-2 text-center text-black">
+              <button
+                type="button"
+                onClick={()=>{
+                  subscribe(email).then(r => r);
+                }}
+                className="bg-white px-9 py-2 text-center text-black cursor-pointer">
                 Subscribe
               </button>
-            </div>
+            </form>
           </div>
 
           <img

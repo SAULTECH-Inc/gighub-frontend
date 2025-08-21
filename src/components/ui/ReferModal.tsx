@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
 import useModalStore from "../../store/modalStateStores.ts";
-import Rating from "../common/Rating.tsx";
 import personpics from "../../assets/images/person-pics.png";
 import { ApplicantData } from "../../utils/types";
 import { useSearchUserConnections } from "../../hooks/useSearchUserConnections.ts";
+import {
+  X,
+  Search,
+  Users,
+  UserPlus,
+  Star,
+  CheckCircle,
+  Mail,
+  Loader2
+} from "lucide-react";
 
 interface ReferModalProp {
   modalId: string;
@@ -23,9 +32,8 @@ const ReferModal: React.FC<ReferModalProp> = ({ modalId, handleRefer }) => {
   const limit = 10;
 
   const [selectedUsers, setSelectedUsers] = useState<ApplicantData[]>([]);
-  const [selectableUsers, setSelectableUsers] = useState<SelectableReferee[]>(
-    [],
-  );
+  const [selectableUsers, setSelectableUsers] = useState<SelectableReferee[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [searchParams, setSearchParams] = useState({
     name: "",
@@ -54,177 +62,239 @@ const ReferModal: React.FC<ReferModalProp> = ({ modalId, handleRefer }) => {
     }
   }, [searchResults, selectedUsers]);
 
-  const handleCloseApplicationModal = () => closeModal(modalId);
+  const handleCloseModal = () => {
+    closeModal(modalId);
+    setSelectedUsers([]);
+    setSearchParams({ name: "", location: "", profession: "" });
+  };
+
+  const handleSubmitRefer = async () => {
+    setIsSubmitting(true);
+    try {
+      const applicantEmails = selectedUsers
+        .map((u) => u.email)
+        .filter((s) => s !== null)
+        .filter(Boolean);
+      await handleRefer(applicantEmails);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const selectUser = (user: ApplicantData) => {
+    setSelectedUsers((prev) => [...prev, user]);
+    setSelectableUsers((prev) =>
+      prev?.filter((r) => r.user.id !== user.id),
+    );
+  };
+
+  const deselectUser = (user: ApplicantData) => {
+    setSelectedUsers((prev) =>
+      prev.filter((u) => u.id !== user.id),
+    );
+    setSelectableUsers((prev) => [
+      { user, selected: false },
+      ...(prev || []),
+    ]);
+  };
 
   if (!isOpen) return null;
 
   return (
-    <div className="bg-opacity-20 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
-      <div className="relative flex h-[90vh] w-full max-w-[98%] flex-col overflow-hidden rounded-lg bg-white pt-8 md:h-[650px] md:max-w-[720px]">
-        <div className="w-full flex-1 space-y-4 overflow-y-auto px-4">
-          {/* Header */}
-          <div className="flex w-full items-center justify-between">
-            <h1 className="text-lg font-semibold text-[#6438C2] md:text-[24px]">
-              Refer Someone
-            </h1>
-            <svg
-              style={{ cursor: "pointer" }}
-              onClick={handleCloseApplicationModal}
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M19.001 5L5.00098 19M5.00098 5L19.001 19"
-                stroke="#6438C2"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="relative w-full max-w-2xl max-h-[95vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-200 bg-gradient-to-r from-indigo-50 to-purple-50">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl text-white">
+              <UserPlus className="w-5 h-5" />
+            </div>
+            <div>
+              <h1 className="text-lg sm:text-xl font-bold text-slate-900">
+                Refer Someone
+              </h1>
+              <p className="text-sm text-slate-600 mt-1">
+                Connect talent with opportunity
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handleCloseModal}
+            className="p-2 rounded-full hover:bg-slate-100 transition-colors"
+          >
+            <X className="w-5 h-5 text-slate-600" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-hidden flex flex-col">
+          {/* Description */}
+          <div className="p-4 sm:p-6 pb-4 border-b border-slate-100">
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+              Help someone in your network discover this opportunity. They'll be notified about the position and your referral.
+            </p>
           </div>
 
-          {/* Subtext */}
-          <div className="w-full text-sm text-[#8E8E8E] md:text-base">
-            <p>Connect opportunities with talent by referring someone</p>
-            <p>from your network to this job</p>
-          </div>
-
-          {/* Search */}
-          <div className="flex w-full items-center justify-between gap-x-2 rounded-[10px] border border-[#E6E6E6] px-4 py-2">
-            <input
-              placeholder="Search from your network"
-              value={searchParams.name}
-              onChange={(e) =>
-                setSearchParams({
-                  ...searchParams,
-                  name: e.target.value,
-                })
-              }
-              className="w-full border-none bg-transparent outline-none focus:ring-0"
-            />
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M14.583 14.583L18.333 18.333"
-                stroke="#8E8E8E"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+          {/* Search Bar */}
+          <div className="p-4 sm:p-6 pb-4">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" />
+              </div>
+              <input
+                placeholder="Search from your network..."
+                value={searchParams.name}
+                onChange={(e) =>
+                  setSearchParams({
+                    ...searchParams,
+                    name: e.target.value,
+                  })
+                }
+                className="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base placeholder-slate-500"
               />
-              <path
-                d="M16.667 9.16699C16.667 5.02486 13.3092 1.66699 9.16699 1.66699C5.02486 1.66699 1.66699 5.02486 1.66699 9.16699C1.66699 13.3092 5.02486 16.667 9.16699 16.667C13.3092 16.667 16.667 13.3092 16.667 9.16699Z"
-                stroke="#8E8E8E"
-                strokeWidth="1.5"
-                strokeLinejoin="round"
-              />
-            </svg>
+            </div>
           </div>
 
           {/* Selected Users */}
           {selectedUsers.length > 0 && (
-            <div className="mt-2 flex w-full flex-wrap gap-2">
-              {selectedUsers.map((user) => (
-                <div
-                  key={user.id}
-                  className="flex items-center gap-x-2 rounded-full bg-[#6438C2] px-3 py-1 text-xs text-white"
-                >
-                  <span>
-                    {user.firstName} {user.lastName}
-                  </span>
-                  <button
-                    onClick={() => {
-                      // Remove from selected
-                      setSelectedUsers((prev) =>
-                        prev.filter((u) => u.id !== user.id),
-                      );
-                      // Add back to selectable list
-                      setSelectableUsers((prev) => [
-                        { user, selected: false },
-                        ...(prev || []),
-                      ]);
-                    }}
-                    className="ml-1 font-bold text-white hover:text-gray-300"
+            <div className="px-4 sm:px-6 pb-4">
+              <div className="flex items-center space-x-2 mb-3">
+                <CheckCircle className="w-4 h-4 text-green-600" />
+                <span className="text-sm font-medium text-slate-700">
+                  Selected ({selectedUsers.length})
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {selectedUsers.map((user) => (
+                  <div
+                    key={user.id}
+                    className="flex items-center space-x-2 bg-indigo-100 text-indigo-800 px-3 py-1.5 rounded-full text-sm font-medium border border-indigo-200"
                   >
-                    &times;
-                  </button>
-                </div>
-              ))}
+                    <span>
+                      {user.firstName} {user.lastName}
+                    </span>
+                    <button
+                      onClick={() => deselectUser(user)}
+                      className="hover:bg-indigo-200 rounded-full p-0.5 transition-colors"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
           {/* User List */}
-          <div className="flex h-[300px] w-full flex-col gap-y-2 overflow-y-auto rounded-[16px] border border-[#E6E6E6] p-4">
-            {selectableUsers?.map((referee) => (
-              <div
-                key={referee.user.id}
-                className="flex w-full flex-col items-center justify-between gap-y-2 rounded-[10px] bg-[#F7F8FA] px-4 py-2 hover:bg-[#e6e6e6] md:flex-row"
-              >
-                {/* Avatar & Name */}
-                <div className="flex w-full items-center gap-x-2">
-                  <div className="h-[27px] w-[27px] overflow-hidden rounded-full">
-                    <img
-                      src={personpics}
-                      alt="user"
-                      className="h-full w-full rounded-full object-cover"
-                    />
+          <div className="flex-1 px-4 sm:px-6 pb-4 overflow-hidden">
+            <div className="h-full bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
+              {selectableUsers?.length > 0 ? (
+                <div className="h-full overflow-y-auto p-3 sm:p-4 space-y-2 sm:space-y-3">
+                  {selectableUsers.map((referee) => (
+                    <div
+                      key={referee.user.id}
+                      className="bg-white rounded-lg border border-slate-200 hover:border-indigo-300 hover:shadow-sm transition-all duration-200 cursor-pointer"
+                      onClick={() => selectUser(referee.user)}
+                    >
+                      <div className="p-3 sm:p-4">
+                        <div className="flex items-center justify-between">
+                          {/* User Info */}
+                          <div className="flex items-center space-x-3 flex-1 min-w-0">
+                            <div className="relative">
+                              <img
+                                src={referee.user.profilePicture || personpics}
+                                alt={`${referee.user.firstName} ${referee.user.lastName}`}
+                                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-slate-200"
+                              />
+                              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-slate-900 text-sm sm:text-base truncate">
+                                {referee.user.firstName} {referee.user.lastName}
+                              </h3>
+                              <p className="text-xs sm:text-sm text-slate-600 truncate">
+                                {referee.user.professionalTitle || 'Professional'}
+                              </p>
+
+                              {/* Rating - Mobile: Below name, Desktop: Inline */}
+                              <div className="flex items-center space-x-2 mt-1 sm:mt-2">
+                                <div className="flex items-center space-x-1">
+                                  <Star className="w-3 h-3 sm:w-4 sm:h-4 text-amber-400 fill-current" />
+                                  <span className="text-xs sm:text-sm text-slate-600">4.5</span>
+                                </div>
+                                <span className="text-slate-300">•</span>
+                                <div className="flex items-center space-x-1">
+                                  <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-slate-400" />
+                                  <span className="text-xs sm:text-sm text-slate-600">Available</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Select Button */}
+                          <div className="flex-shrink-0 ml-3">
+                            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-indigo-300 hover:border-indigo-500 hover:bg-indigo-50 transition-all duration-200 flex items-center justify-center">
+                              <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="h-full flex items-center justify-center p-8">
+                  <div className="text-center">
+                    <Users className="w-12 h-12 sm:w-16 sm:h-16 text-slate-300 mx-auto mb-4" />
+                    <h3 className="text-base sm:text-lg font-medium text-slate-600 mb-2">
+                      No connections found
+                    </h3>
+                    <p className="text-sm text-slate-500">
+                      Try adjusting your search or check back later
+                    </p>
                   </div>
-                  <p className="text-sm">
-                    {referee.user.firstName} {referee.user.lastName}
-                  </p>
                 </div>
-
-                {/* Title & Rating */}
-                <div className="flex w-full items-center gap-x-2">
-                  <p className="text-sm text-gray-700">
-                    {referee.user.professionalTitle}
-                  </p>
-                  <Rating value={2} readOnly={true} />
-                </div>
-
-                {/* Selection Indicator */}
-                <div className="flex w-full items-center justify-end">
-                  <div
-                    onClick={() => {
-                      setSelectedUsers((prev) => [...prev, referee.user]);
-                      setSelectableUsers((prev) =>
-                        prev?.filter((r) => r.user.id !== referee.user.id),
-                      );
-                    }}
-                    className={`h-[18px] w-[18px] cursor-pointer rounded-full border-[#6438C2] ${
-                      referee.selected ? "border-[5px]" : "border-[1px]"
-                    }`}
-                  ></div>
-                </div>
-              </div>
-            ))}
+              )}
+            </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="mt-4 flex w-full items-center justify-between bg-[#6438C2] px-4 py-3">
-          <p className="text-sm text-white">
-            The person you refer will be notified
-          </p>
-          <button
-            onClick={() => {
-              const applicantEmails = selectedUsers
-                .map((u) => u.email)
-                .filter((s) => s !== null)
-                .filter(Boolean);
-              handleRefer(applicantEmails);
-            }}
-            className="w-[139px] rounded-[10px] bg-white px-4 py-2 text-sm font-medium text-black"
-          >
-            Refer now
-          </button>
+        <div className="border-t border-slate-200 p-4 sm:p-6 bg-slate-50">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center space-x-2 text-sm text-slate-600">
+              <Mail className="w-4 h-4" />
+              <span>Selected users will be notified via email</span>
+            </div>
+
+            <div className="flex space-x-3 w-full sm:w-auto">
+              <button
+                onClick={handleCloseModal}
+                className="flex-1 sm:flex-none px-6 py-2.5 border border-slate-300 text-slate-700 rounded-lg font-medium hover:bg-white transition-colors"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleSubmitRefer}
+                disabled={selectedUsers.length === 0 || isSubmitting}
+                className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-slate-400 disabled:to-slate-500 text-white rounded-lg font-semibold transition-all duration-200 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Sending...</span>
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="w-4 h-4" />
+                    <span>Refer {selectedUsers.length > 0 ? `(${selectedUsers.length})` : 'Now'}</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../../store/useAuth.ts";
-import {
-  CvResponseDto,
-  ProfessionalSummaryData,
-} from "../../../../utils/types";
+import { CvResponseDto, ProfessionalSummaryData } from "../../../../utils/types";
 import TextEditor from "../../../common/TextEditor.tsx";
 import { useSectionEditable } from "../../../../store/useEditable.ts";
+import { FileText, Edit3, Save, CheckCircle2, User } from "lucide-react";
 
 const ProfessionalSummary: React.FC = () => {
   const {
@@ -17,11 +15,11 @@ const ProfessionalSummary: React.FC = () => {
   } = useAuth();
   const { isEditable, toggleEdit } = useSectionEditable("professional-summary");
   const [value, setValue] = useState<string>(
-    professionalSummaryData?.professionalSummary
-      ? professionalSummaryData?.professionalSummary
-      : "",
+      professionalSummaryData?.professionalSummary
+          ? professionalSummaryData?.professionalSummary
+          : "",
   );
-  // In ProfessionalSummary.tsx
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setProfessionalSummaryData({
@@ -37,12 +35,11 @@ const ProfessionalSummary: React.FC = () => {
         professionalSummary: value,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   const handleUpdateProfessionalSummary = async () => {
     const response = await updateProfessionalSummaryData(
-      professionalSummaryData,
+        professionalSummaryData,
     );
     if (response) {
       setProfileData({
@@ -51,6 +48,10 @@ const ProfessionalSummary: React.FC = () => {
           ...applicant.cv,
           professionalSummary: response.professionalSummary,
         } as CvResponseDto,
+      });
+      setProfessionalSummaryData({
+        ...professionalSummaryData,
+        ...response
       });
       toggleEdit();
     }
@@ -64,58 +65,123 @@ const ProfessionalSummary: React.FC = () => {
   };
 
   return (
-    <section
-      id="professional-summary"
-      className="relative mt-4 space-y-3 border-t-[2px] border-t-[#E6E6E6] pt-5"
-    >
-      <div className="absolute top-2 right-1 flex items-center justify-evenly gap-x-2 text-xs">
-        <button
-          onClick={toggleEdit}
-          type="button"
-          className="w-12 rounded-[5px] border-[1px] border-[#ccc] bg-[#F6F6F7] p-1"
-        >
-          Edit
-        </button>
-        <button
-          disabled={!isEditable}
-          type="button"
-          onClick={handleUpdateProfessionalSummary}
-          className={`${!isEditable ? "cursor-not-allowed" : "cursor-pointer"} w-12 rounded-[5px] border-[1px] border-[#ccc] bg-[#F6F6F7] p-1`}
-        >
-          Save
-        </button>
-      </div>
-      <h3 className="font-lato mb-4 text-[20px]">Professional Summary</h3>
-      <div className="flex w-full flex-col">
-        <label
-          htmlFor="professionalTitle"
-          className="mb-1 text-sm text-gray-600"
-        >
-          Professional Title
-        </label>
-        <input
-          type="text"
-          name="professionalTitle"
-          value={professionalSummaryData?.professionalTitle || ""}
-          onChange={handleChange}
-          disabled={!isEditable}
-          className="h-12 w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-3 focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none"
-        />
-      </div>
-      <div className="mt-4 flex flex-col">
-        <label className="mb-5 text-[16px] text-gray-600">Short bio</label>
+      <section id="professional-summary" className="relative">
+        {/* Section Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <FileText className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">Professional Summary</h3>
+              <p className="text-sm text-gray-500">Tell us about your professional background and goals</p>
+            </div>
+          </div>
 
-        {/* Textarea */}
-        <TextEditor
-          value={value}
-          onChange={(content) => {
-            setValue(content);
-            handleEditorChange(content);
-          }}
-          disabled={!isEditable}
-        />
-      </div>
-    </section>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2">
+            <button
+                onClick={toggleEdit}
+                type="button"
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isEditable
+                        ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : 'bg-green-50 text-green-700 hover:bg-green-100'
+                }`}
+            >
+              <Edit3 className="w-4 h-4" />
+              {isEditable ? 'Cancel' : 'Edit'}
+            </button>
+
+            {isEditable && (
+                <button
+                    onClick={handleUpdateProfessionalSummary}
+                    type="button"
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors duration-200"
+                >
+                  <Save className="w-4 h-4" />
+                  Save Changes
+                </button>
+            )}
+          </div>
+        </div>
+
+        {/* Form Content */}
+        <div className="bg-gray-50 rounded-xl p-6 space-y-6">
+          {/* Professional Title */}
+          <div className="space-y-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+              <User className="w-4 h-4" />
+              Professional Title
+            </label>
+            <input
+                type="text"
+                name="professionalTitle"
+                value={professionalSummaryData?.professionalTitle || ""}
+                onChange={handleChange}
+                disabled={!isEditable}
+                className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                    isEditable
+                        ? 'border-gray-300 bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500'
+                        : 'border-gray-200 bg-gray-100 text-gray-600'
+                } focus:outline-none`}
+                placeholder="e.g., Senior Software Developer, Marketing Manager, UX Designer"
+            />
+            <p className="text-xs text-gray-500">
+              This will appear as your headline on your profile
+            </p>
+          </div>
+
+          {/* Professional Summary */}
+          <div className="space-y-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+              <FileText className="w-4 h-4" />
+              Professional Summary
+            </label>
+            <div className={`rounded-lg border transition-all duration-200 ${
+                isEditable
+                    ? 'border-gray-300 bg-white'
+                    : 'border-gray-200 bg-gray-100'
+            }`}>
+              <TextEditor
+                  value={professionalSummaryData?.professionalSummary || ""}
+                  onChange={(content) => {
+                    setProfessionalSummaryData({
+                      ...professionalSummaryData,
+                      professionalSummary: content,
+                    } as ProfessionalSummaryData);
+                  }}
+                  disabled={!isEditable}
+              />
+            </div>
+            <p className="text-xs text-gray-500">
+              Write a compelling summary of your professional experience, skills, and career objectives.
+              This helps employers understand your value proposition at a glance.
+            </p>
+          </div>
+
+          {/* Tips Section */}
+          {isEditable && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-blue-800 mb-2">💡 Tips for a great summary:</h4>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Keep it concise (2-3 sentences or 50-100 words)</li>
+                  <li>• Highlight your key achievements and skills</li>
+                  <li>• Mention your career goals and what you're looking for</li>
+                  <li>• Use action words and quantify your achievements when possible</li>
+                </ul>
+              </div>
+          )}
+
+          {/* Status Indicator */}
+          {!isEditable && (
+              <div className="flex items-center gap-2 pt-4 border-t border-gray-200">
+                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                <span className="text-sm text-green-600 font-medium">Summary saved successfully</span>
+              </div>
+          )}
+        </div>
+      </section>
   );
 };
 

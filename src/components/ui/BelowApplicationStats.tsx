@@ -1,16 +1,15 @@
 import { FC } from "react";
 import ApplicationSummary from "./ApplicationSummary.tsx";
 import JobMatchCard from "../features/JobMatchCard.tsx";
+import {LAYOUT} from "../../pages/applicant/ApplicantDashboard.tsx";
 
 const BelowApplicationStats: FC = () => {
-  return (
-    <>
-      <div className="flex w-full flex-col gap-x-4 gap-y-4 md:grid md:grid-cols-[63%_35%] md:items-center md:justify-evenly">
-        <JobMatchCard />
-        <ApplicationSummary />
-      </div>
-    </>
-  );
+    return (
+        <div className={`grid grid-cols-1 xl:grid-cols-[1.6fr_1fr] ${LAYOUT.gridGap}`}>
+            <JobMatchCard />
+            <ApplicationSummary />
+        </div>
+    );
 };
 
 export default BelowApplicationStats;

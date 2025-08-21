@@ -1,4 +1,7 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { debounce } from "lodash";
+import { toast } from "react-toastify";
+import { RiCheckboxCircleLine, RiSearchLine, RiCloseLine, RiMailLine, RiNotification3Line, RiRobotLine } from "react-icons/ri";
 import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
   AutoApplyState,
@@ -6,159 +9,293 @@ import {
   NotificationType,
   useSettingsStore,
 } from "../../../../store/useSettingsStore.ts";
-import { debounce } from "lodash";
-import { toast } from "react-toastify";
+
+interface AutoApplyConfig {
+  key: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description: string;
+}
 
 const AutoApply = () => {
-  // State to track toggle status for each item
-  const { applicantSettings, autoApply, setAutoApply, updateAutoApply } =
-    useSettingsStore();
-  const notificationTypes = ["all", "emailNotification", "pushNotification"];
-  const autoApplyOptions = [
-    "jobAutoApplied",
-    "jobMatchFound",
-    "jobMatchedButFailedToApply",
-  ];
+  const {
+    applicantSettings,
+    autoApply,
+    setAutoApply,
+    updateAutoApply
+  } = useSettingsStore();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const autoApplyOptions: AutoApplyConfig[] = useMemo(() => [
+    {
+      key: "jobAutoApplied",
+      label: "Successful Auto-Application",
+      icon: RiCheckboxCircleLine,
+      description: "When a job is automatically applied to successfully on your behalf",
+    },
+    {
+      key: "jobMatchFound",
+      label: "Perfect Job Match Found",
+      icon: RiSearchLine,
+      description: "When we find a job that matches your profile criteria",
+    },
+    {
+      key: "jobMatchedButFailedToApply",
+      label: "Application Failed",
+      icon: RiCloseLine,
+      description: "When a job matches your profile but the auto-application fails",
+    },
+  ], []);
+
+  const notificationTypeOptions = useMemo(() => [
+    {
+      key: "all",
+      label: "All Notifications",
+      description: "Enable all notification methods",
+      icon: RiNotification3Line,
+    },
+    {
+      key: "emailNotification",
+      label: "Email Notifications",
+      description: "Receive auto-apply updates via email",
+      icon: RiMailLine,
+    },
+    {
+      key: "pushNotification",
+      label: "Push Notifications",
+      description: "Receive browser/app push notifications",
+      icon: RiNotification3Line,
+    },
+  ], []);
 
   useEffect(() => {
-    if (applicantSettings) {
+    if (applicantSettings?.notifications?.options?.autoApply) {
       setAutoApply(applicantSettings.notifications.options.autoApply);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicantSettings]);
+  }, [applicantSettings, setAutoApply]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedUpdate = useCallback(
     debounce(async (settings: AutoApplyNotification) => {
-      const response = await updateAutoApply(settings);
-      if (response) {
-        setAutoApply(response);
-      } else {
-        toast.error(
-          "Failed to update application status notification settings",
-        );
+      setIsLoading(true);
+      try {
+        const response = await updateAutoApply(settings);
+        if (response) {
+          setAutoApply(response);
+          toast.success("Auto-apply notification settings updated");
+        } else {
+          toast.error("Failed to update auto-apply notification settings");
+        }
+      } catch (error) {
+        toast.error("An error occurred while updating settings");
+        console.error("Update error:", error);
+      } finally {
+        setIsLoading(false);
       }
-    }, 500),
-    [autoApply],
+    }, 800),
+    [updateAutoApply, setAutoApply]
   );
 
   useEffect(() => {
     return () => {
-      debouncedUpdate.cancel(); // prevent memory leak
+      debouncedUpdate.cancel();
     };
   }, [debouncedUpdate]);
 
-  const getAutoApplyStateField = (item: string) => {
-    switch (item) {
-      case "jobAutoApplied":
-        return "A job is auto-applied successfully";
-      case "jobMatchFound":
-        return "Job Match Found";
-      default:
-        return "Job matches my profile but fails to apply";
-    }
-  };
+  const handleAutoApplyToggle = useCallback((key: string) => {
+    if (!autoApply) return;
 
-  const getNotificationTypeStateField = (item: string) => {
-    switch (item) {
-      case "emailNotification":
-        return "Email Notification";
-      case "pushNotification":
-        return "Push Notification";
-      default:
-        return "All";
-    }
-  };
-
-  const handleNotificationTypeToggle = (item: string) => {
-    const updatedSettings = {
-      ...autoApply,
-      notificationType: {
-        ...autoApply.notificationType,
-        [item]: !autoApply.notificationType[item as keyof NotificationType],
-      },
-    };
-    setAutoApply(updatedSettings);
-    debouncedUpdate(updatedSettings);
-  };
-
-  const handleAutoApplyToggle = (item: string) => {
     const updatedSettings = {
       ...autoApply,
       option: {
         ...autoApply.option,
-        [item]: !autoApply.option[item as keyof AutoApplyState],
+        [key]: !autoApply.option[key as keyof AutoApplyState],
       },
     };
     setAutoApply(updatedSettings);
     debouncedUpdate(updatedSettings);
-  };
-  return (
-    <div className="font-lato flex w-[95%] flex-col self-center md:w-[90%]">
-      <hr className="mb-4 w-full border-t border-[#E6E6E6]" />
+  }, [autoApply, setAutoApply, debouncedUpdate]);
 
-      {/* Page Title */}
-      <h2 className="text-left text-xl text-[24px] font-bold text-black">
-        Auto Apply Notification
-      </h2>
+  const handleNotificationTypeToggle = useCallback((key: string) => {
+    if (!autoApply) return;
 
-      {/* White Box Container */}
-      <div className="mt-4 flex min-h-[200px] w-full flex-col items-start rounded-[16px] border border-[#E6E6E6] bg-white px-4 py-6 md:px-8">
-        {/* Header Titles */}
-        <div className="text-md grid w-full grid-cols-2 font-bold text-black">
-          <h3>Notify me when:</h3>
-          <h3>Notification Type</h3>
-        </div>
+    const updatedSettings = {
+      ...autoApply,
+      notificationType: {
+        ...autoApply.notificationType,
+        [key]: !autoApply.notificationType[key as keyof NotificationType],
+      },
+    };
+    setAutoApply(updatedSettings);
+    debouncedUpdate(updatedSettings);
+  }, [autoApply, setAutoApply, debouncedUpdate]);
 
-        {/* Horizontal Rule */}
-        <hr className="my-3 w-full border-t border-[#E6E6E6]" />
-
-        {/* Two-Column Layout */}
-        <div className="grid w-full grid-cols-2 gap-x-8 px-2 py-8">
-          {/* Left Column - Auto Apply Updates */}
-          <div className="w-full">
-            <div className="mt-2 space-y-4">
-              {autoApplyOptions.map((item, index) => (
-                <label
-                  key={index}
-                  className="flex items-center justify-between"
-                >
-                  <span className="text-[16px] text-[#8E8E8E]">
-                    {getAutoApplyStateField(item)}
-                  </span>
-                  <ToggleSwitch
-                    isOn={autoApply.option[item as keyof AutoApplyState]}
-                    onToggle={() => handleAutoApplyToggle(item)}
-                  />
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Column - Notification Type */}
-          <div className="w-full">
-            <div className="mt-2 space-y-4">
-              {notificationTypes.map((item, index) => (
-                <label
-                  key={index}
-                  className="flex items-center justify-between"
-                >
-                  <span className="text-[16px] text-[#8E8E8E]">
-                    {getNotificationTypeStateField(item)}
-                  </span>
-                  <ToggleSwitch
-                    isOn={
-                      autoApply.notificationType[item as keyof NotificationType]
-                    }
-                    onToggle={() => handleNotificationTypeToggle(item)}
-                  />
-                </label>
-              ))}
-            </div>
-          </div>
+  if (!autoApply) {
+    return (
+      <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+        <div className="animate-pulse">
+          <div className="h-px bg-gray-200 mb-4"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
         </div>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <section className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+      {/* Section Divider */}
+      <hr className="mb-8 border-gray-200" />
+
+      {/* Section Header */}
+      <div className="mb-6">
+        <div className="flex items-center space-x-3 mb-2">
+          <div className="p-2 bg-indigo-100 rounded-lg">
+            <RiRobotLine className="h-6 w-6 text-indigo-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Auto-Apply Notifications
+          </h2>
+        </div>
+        <p className="text-gray-600 text-sm">
+          Get notified about the status of jobs automatically applied to on your behalf by our AI system.
+        </p>
+      </div>
+
+      {/* Main Content Card */}
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        {/* Card Header */}
+        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-4 border-b border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Auto-Apply Events
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Choose which auto-apply events you want to be notified about
+              </p>
+            </div>
+            <div className="md:text-right">
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Notification Methods
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Select how you want to receive notifications
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card Content */}
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column - Auto Apply Options */}
+            <div className="space-y-4">
+              {autoApplyOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = autoApply.option[option.key as keyof AutoApplyState];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-indigo-200 bg-indigo-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleAutoApplyToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Right Column - Notification Types */}
+            <div className="space-y-4">
+              {notificationTypeOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = autoApply.notificationType[option.key as keyof NotificationType];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-purple-200 bg-purple-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleNotificationTypeToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Loading Indicator */}
+        {isLoading && (
+          <div className="px-6 pb-4">
+            <div className="flex items-center justify-center space-x-2 text-gray-500">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-indigo-500 border-t-transparent"></div>
+              <span className="text-sm">Saving preferences...</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
   );
 };
 

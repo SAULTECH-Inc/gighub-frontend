@@ -5,6 +5,7 @@ import {
   ConnectionType,
   InterviewStatus,
   InterviewType,
+  Priority,
   RateeType,
   UserType,
 } from "../enums.ts";
@@ -42,7 +43,7 @@ export interface APIResponse<D> {
     limit: number;
     totalPages: number;
     page: number;
-  };
+  } | null;
   data: D;
   message?: string;
   path?: string;
@@ -291,7 +292,6 @@ export interface CertificationResponseDto {
   institution?: string;
   dateObtained?: string;
   description?: string;
-  yearObtained?: string;
   proficiency?: string;
 }
 
@@ -410,6 +410,7 @@ export interface SalaryRange {
   currency: string;
   minAmount: number;
   maxAmount: number;
+  frequency: string;
 }
 
 export interface JobPreferenceRequest {
@@ -524,6 +525,12 @@ export interface CompanyInfos {
   companyAddress: string;
 }
 
+export interface VerificationDetails{
+  companyRegistrationNumber?: string | null;
+  governmentIdentificationNumber?: string | null;
+  taxIdentificationNumber?: string | null;
+}
+
 export interface ContactInfo {
   managerEmail: string;
   managerPhoneNumber: string;
@@ -540,11 +547,11 @@ export interface AboutCompany {
 }
 
 export interface Socials {
-  facebookProfile: string;
-  twitterProfile: string;
-  linkedInProfile: string;
-  instagramProfile: string;
-  githubProfile: string;
+  facebookProfile?: string | null;
+  twitterProfile?: string | null;
+  linkedInProfile?: string | null;
+  instagramProfile?: string | null;
+  githubProfile?: string | null;
 }
 
 export interface ComplianceAndVerifications {
@@ -922,3 +929,75 @@ export interface UserSubscriptionResponse {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface SupportRequest {
+  name: string;
+  email: string;
+  phoneNumber?: string;
+  priority: Priority;
+  message: string;
+}
+
+export interface Currency {
+  symbol: string;
+  name: string;
+  code: string;
+  region?: string;
+} // Helper function to get currency by symbol
+export const CURRENCIES: Currency[] = [
+  // Major Global Currencies
+  { symbol: "₦", name: "Nigerian Naira", code: "NGN", region: "Africa" },
+  { symbol: "$", name: "US Dollar", code: "USD", region: "North America" },
+  { symbol: "€", name: "Euro", code: "EUR", region: "Europe" },
+  { symbol: "£", name: "British Pound", code: "GBP", region: "Europe" },
+  { symbol: "¥", name: "Japanese Yen", code: "JPY", region: "Asia" },
+  {
+    symbol: "C$",
+    name: "Canadian Dollar",
+    code: "CAD",
+    region: "North America"
+  },
+  { symbol: "A$", name: "Australian Dollar", code: "AUD", region: "Oceania" },
+
+  // European Currencies
+  { symbol: "CHF", name: "Swiss Franc", code: "CHF", region: "Europe" },
+  { symbol: "kr", name: "Swedish Krona", code: "SEK", region: "Europe" },
+  { symbol: "kr", name: "Norwegian Krone", code: "NOK", region: "Europe" },
+  { symbol: "kr", name: "Danish Krone", code: "DKK", region: "Europe" },
+  { symbol: "zł", name: "Polish Zloty", code: "PLN", region: "Europe" },
+  { symbol: "₽", name: "Russian Ruble", code: "RUB", region: "Europe" },
+  { symbol: "₴", name: "Ukrainian Hryvnia", code: "UAH", region: "Europe" },
+
+  // Asian Currencies
+  { symbol: "₹", name: "Indian Rupee", code: "INR", region: "Asia" },
+  { symbol: "¥", name: "Chinese Yuan", code: "CNY", region: "Asia" },
+  { symbol: "₩", name: "South Korean Won", code: "KRW", region: "Asia" },
+  { symbol: "S$", name: "Singapore Dollar", code: "SGD", region: "Asia" },
+  { symbol: "HK$", name: "Hong Kong Dollar", code: "HKD", region: "Asia" },
+  { symbol: "₨", name: "Pakistani Rupee", code: "PKR", region: "Asia" },
+
+  // Middle Eastern Currencies
+  { symbol: "﷼", name: "Saudi Riyal", code: "SAR", region: "Middle East" },
+  { symbol: "د.إ", name: "UAE Dirham", code: "AED", region: "Middle East" },
+  { symbol: "﷼", name: "Qatari Riyal", code: "QAR", region: "Middle East" },
+  { symbol: "د.ك", name: "Kuwaiti Dinar", code: "KWD", region: "Middle East" },
+  { symbol: "₪", name: "Israeli Shekel", code: "ILS", region: "Middle East" },
+
+  // African Currencies
+  { symbol: "LE", name: "Egyptian Pound", code: "EGP", region: "Africa" },
+  { symbol: "R", name: "South African Rand", code: "ZAR", region: "Africa" },
+  { symbol: "Ksh", name: "Kenyan Shilling", code: "KES", region: "Africa" },
+  { symbol: "₵", name: "Ghanaian Cedi", code: "GHS", region: "Africa" },
+
+  // Americas
+  {
+    symbol: "R$",
+    name: "Brazilian Real",
+    code: "BRL",
+    region: "South America"
+  },
+  { symbol: "MX$", name: "Mexican Peso", code: "MXN", region: "North America" }
+];
+export const getCurrencyBySymbol = (symbol: string): Currency | undefined => {
+  return CURRENCIES.find((currency) => currency.symbol === symbol);
+};

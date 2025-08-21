@@ -52,7 +52,7 @@ const UserSettings: FC = () => {
     console.log("✅ useEffect triggered for subscription");
 
     if (userType === UserType.APPLICANT && applicant?.id) {
-      getUserSubscription(applicant.id as number);
+      getUserSubscription(applicant.id as number).then(r => r);
       getUserSubscriptionHistory(applicant.id as number);
     } else if (userType === UserType.EMPLOYER && employer?.id) {
       getUserSubscription(employer.id as number);

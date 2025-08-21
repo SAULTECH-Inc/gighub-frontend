@@ -1,5 +1,8 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { debounce } from "lodash";
+import { toast } from "react-toastify";
+import { RiUser3Line, RiBookmarkLine, RiSearchLine, RiTimeLine, RiMailLine, RiNotification3Line } from "react-icons/ri";
 import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
-import { useCallback, useEffect } from "react";
 import {
   JobRecommendations,
   JobRecommendationsNotification,
@@ -7,222 +10,391 @@ import {
   NotificationType,
   useSettingsStore,
 } from "../../../../store/useSettingsStore.ts";
-import { debounce } from "lodash";
-import { toast } from "react-toastify";
+
+interface RecommendationConfig {
+  key: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description: string;
+}
+
+interface FrequencyConfig {
+  key: string;
+  label: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
 
 const JobRecommendation = () => {
-  // State to track toggle status for each item
   const {
     applicantSettings,
     jobRecommendations,
     setJobRecommendationsNotification,
     updateJobRecommendationsNotification,
   } = useSettingsStore();
-  const frequency = ["instance", "daily", "weekly"];
-  const notificationTypes = ["all", "emailNotification", "pushNotification"];
-  const jobRecommendation = [
-    "profilePreferences",
-    "savedJobSearch",
-    "jobMatchFound",
-  ];
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const recommendationOptions: RecommendationConfig[] = useMemo(() => [
+    {
+      key: "profilePreferences",
+      label: "Profile Preferences",
+      icon: RiUser3Line,
+      description: "Jobs matching your profile settings and preferences",
+    },
+    {
+      key: "savedJobSearch",
+      label: "Saved Job Searches",
+      icon: RiBookmarkLine,
+      description: "New jobs matching your saved search criteria",
+    },
+    {
+      key: "jobMatchFound",
+      label: "Perfect Job Matches",
+      icon: RiSearchLine,
+      description: "Jobs that closely match your skills and experience",
+    },
+  ], []);
+
+  const frequencyOptions: FrequencyConfig[] = useMemo(() => [
+    {
+      key: "instant",
+      label: "Instant",
+      description: "Notify me immediately when jobs are found",
+      icon: RiTimeLine,
+    },
+    {
+      key: "daily",
+      label: "Daily",
+      description: "Send me a daily digest of new job recommendations",
+      icon: RiTimeLine,
+    },
+    {
+      key: "weekly",
+      label: "Weekly",
+      description: "Send me a weekly summary of job recommendations",
+      icon: RiTimeLine,
+    },
+  ], []);
+
+  const notificationTypeOptions = useMemo(() => [
+    {
+      key: "all",
+      label: "All Notifications",
+      description: "Enable all notification methods",
+      icon: RiNotification3Line,
+    },
+    {
+      key: "emailNotification",
+      label: "Email Notifications",
+      description: "Receive recommendations via email",
+      icon: RiMailLine,
+    },
+    {
+      key: "pushNotification",
+      label: "Push Notifications",
+      description: "Receive browser/app push notifications",
+      icon: RiNotification3Line,
+    },
+  ], []);
 
   useEffect(() => {
-    if (applicantSettings) {
+    if (applicantSettings?.notifications?.options?.jobRecommendations) {
       setJobRecommendationsNotification(
-        applicantSettings.notifications.options.jobRecommendations,
+        applicantSettings.notifications.options.jobRecommendations
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicantSettings]);
+  }, [applicantSettings, setJobRecommendationsNotification]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedUpdate = useCallback(
     debounce(async (settings: JobRecommendationsNotification) => {
-      const response = await updateJobRecommendationsNotification(settings);
-      if (response) {
-        setJobRecommendationsNotification(response);
-      } else {
-        toast.error(
-          "Failed to update application status notification settings",
-        );
+      setIsLoading(true);
+      try {
+        const response = await updateJobRecommendationsNotification(settings);
+        if (response) {
+          setJobRecommendationsNotification(response);
+          toast.success("Job recommendation settings updated");
+        } else {
+          toast.error("Failed to update recommendation settings");
+        }
+      } catch (error) {
+        toast.error("An error occurred while updating settings");
+        console.error("Update error:", error);
+      } finally {
+        setIsLoading(false);
       }
-    }, 500),
-    [jobRecommendations],
+    }, 800),
+    [updateJobRecommendationsNotification, setJobRecommendationsNotification]
   );
 
   useEffect(() => {
     return () => {
-      debouncedUpdate.cancel(); // prevent memory leak
+      debouncedUpdate.cancel();
     };
   }, [debouncedUpdate]);
 
-  const getJobRecommendationStateField = (item: string) => {
-    switch (item) {
-      case "profilePreferences":
-        return "Profile Preferences";
-      case "savedJobSearch":
-        return "Saved Job Search";
-      case "jobMatchFound":
-        return "Job Match Found";
-      default:
-        return "All";
-    }
-  };
+  const handleRecommendationToggle = useCallback((key: string) => {
+    if (!jobRecommendations) return;
 
-  const getNotificationTypeStateField = (item: string) => {
-    switch (item) {
-      case "emailNotification":
-        return "Email Notification";
-      case "pushNotification":
-        return "Push Notification";
-      default:
-        return "All";
-    }
-  };
-
-  const getFrequencyField = (item: string) => {
-    switch (item.toLowerCase()) {
-      case "instant":
-        return "Instant";
-      case "daily":
-        return "Daily";
-      case "weekly":
-        return "Weekly";
-      default:
-        return "Monthly";
-    }
-  };
-  const handleFrequencyToggle = (item: string) => {
-    const updatedSettings = {
-      ...jobRecommendations,
-      frequency: {
-        ...jobRecommendations.frequency,
-        [item]:
-          !jobRecommendations.frequency[item as keyof NotificationFrequency],
-      },
-    };
-    setJobRecommendationsNotification(updatedSettings);
-    debouncedUpdate(updatedSettings);
-  };
-  const handleNotificationTypeToggle = (item: string) => {
-    const updatedSettings = {
-      ...jobRecommendations,
-      notificationType: {
-        ...jobRecommendations.notificationType,
-        [item]:
-          !jobRecommendations.notificationType[item as keyof NotificationType],
-      },
-    };
-    setJobRecommendationsNotification(updatedSettings);
-    debouncedUpdate(updatedSettings);
-  };
-
-  const handleJobRecommendationToggle = (item: string) => {
     const updatedSettings = {
       ...jobRecommendations,
       option: {
         ...jobRecommendations.option,
-        [item]: !jobRecommendations.option[item as keyof JobRecommendations],
+        [key]: !jobRecommendations.option[key as keyof JobRecommendations],
       },
     };
     setJobRecommendationsNotification(updatedSettings);
     debouncedUpdate(updatedSettings);
-  };
+  }, [jobRecommendations, setJobRecommendationsNotification, debouncedUpdate]);
 
-  return (
-    <div className="font-lato flex w-[95%] flex-col self-center md:w-[90%]">
-      <hr className="mb-4 w-full border-t border-[#E6E6E6]" />
+  const handleFrequencyToggle = useCallback((key: string) => {
+    if (!jobRecommendations) return;
 
-      {/* Page Title */}
-      <h2 className="text-left text-xl text-[24px] font-bold text-black">
-        Job Recommendation
-      </h2>
+    const updatedSettings = {
+      ...jobRecommendations,
+      frequency: {
+        ...jobRecommendations.frequency,
+        [key]: !jobRecommendations.frequency[key as keyof NotificationFrequency],
+      },
+    };
+    setJobRecommendationsNotification(updatedSettings);
+    debouncedUpdate(updatedSettings);
+  }, [jobRecommendations, setJobRecommendationsNotification, debouncedUpdate]);
 
-      {/* White Box Container */}
-      <div className="mt-4 flex min-h-[265px] w-full flex-col items-start rounded-[16px] border border-[#E6E6E6] bg-white px-4 py-6 md:px-8">
-        {/* Header Titles */}
-        <div className="text-md grid w-full grid-cols-2 font-bold text-black">
-          <h3>Notify me about recommended jobs based on</h3>
-          <h3>Frequency</h3>
-        </div>
+  const handleNotificationTypeToggle = useCallback((key: string) => {
+    if (!jobRecommendations) return;
 
-        {/* Horizontal Rule */}
-        <hr className="my-3 w-full border-t border-[#E6E6E6]" />
+    const updatedSettings = {
+      ...jobRecommendations,
+      notificationType: {
+        ...jobRecommendations.notificationType,
+        [key]: !jobRecommendations.notificationType[key as keyof NotificationType],
+      },
+    };
+    setJobRecommendationsNotification(updatedSettings);
+    debouncedUpdate(updatedSettings);
+  }, [jobRecommendations, setJobRecommendationsNotification, debouncedUpdate]);
 
-        {/* Two-Column Layout */}
-        <div className="grid w-full grid-cols-2 items-start gap-x-8 px-2 py-8">
-          {/* Left Column - Job Preferences */}
-          <div className="w-full">
-            <div className="mt-2 space-y-4">
-              {jobRecommendation.map((item, index) => (
-                <label
-                  key={index}
-                  className="flex items-center justify-between"
-                >
-                  <span className="text-[16px] text-[#8E8E8E]">
-                    {getJobRecommendationStateField(item)}
-                  </span>
-                  <ToggleSwitch
-                    isOn={
-                      jobRecommendations.option[
-                        item as keyof JobRecommendations
-                      ]
-                    }
-                    onToggle={() => handleJobRecommendationToggle(item)}
-                  />
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Column - Frequency */}
-          <div className="w-full">
-            <div className="mt-2 space-y-4">
-              {frequency.map((item, index) => (
-                <label
-                  key={index}
-                  className="flex items-center justify-between"
-                >
-                  <span className="text-[16px] text-[#8E8E8E]">
-                    {getFrequencyField(item)}
-                  </span>
-                  <ToggleSwitch
-                    isOn={
-                      jobRecommendations.frequency[
-                        item as keyof NotificationFrequency
-                      ]
-                    }
-                    onToggle={() => handleFrequencyToggle(item)}
-                  />
-                </label>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Notification Type */}
-        <hr className="my-5 w-full border-t border-[#E6E6E6]" />
-        <h3 className="text-md font-bold text-black">Notification Type</h3>
-
-        <div className="mt-4 w-full space-y-4 gap-x-8 p-8">
-          {notificationTypes.map((item, index) => (
-            <label key={index} className="flex items-center justify-between">
-              <span className="text-[16px] text-[#8E8E8E]">
-                {getNotificationTypeStateField(item)}
-              </span>
-              <ToggleSwitch
-                isOn={
-                  jobRecommendations.notificationType[
-                    item as keyof NotificationType
-                  ]
-                }
-                onToggle={() => handleNotificationTypeToggle(item)}
-              />
-            </label>
-          ))}
+  if (!jobRecommendations) {
+    return (
+      <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+        <div className="animate-pulse">
+          <div className="h-px bg-gray-200 mb-4"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-80 bg-gray-200 rounded"></div>
         </div>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <section className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+      {/* Section Divider */}
+      <hr className="mb-8 border-gray-200" />
+
+      {/* Section Header */}
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Job Recommendations
+        </h2>
+        <p className="text-gray-600 text-sm">
+          Customize how and when you receive personalized job recommendations based on your preferences.
+        </p>
+      </div>
+
+      {/* Main Content Card */}
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        {/* Card Header */}
+        <div className="bg-gradient-to-r from-green-50 to-blue-50 px-6 py-4 border-b border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Recommendation Sources
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Choose what type of job matches you want to receive
+              </p>
+            </div>
+            <div className="md:text-right">
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Notification Frequency
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Select how often you want to be notified
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card Content */}
+        <div className="p-6">
+          {/* Top Section: Recommendation Types & Frequency */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Left Column - Recommendation Types */}
+            <div className="space-y-4">
+              {recommendationOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = jobRecommendations.option[option.key as keyof JobRecommendations];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-green-200 bg-green-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleRecommendationToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Right Column - Frequency Options */}
+            <div className="space-y-4">
+              {frequencyOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = jobRecommendations.frequency[option.key as keyof NotificationFrequency];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-blue-200 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleFrequencyToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Notification Type Section */}
+          <div className="border-t border-gray-200 pt-6">
+            <div className="mb-4">
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Notification Methods
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Choose how you want to receive your job recommendations
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {notificationTypeOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = jobRecommendations.notificationType[option.key as keyof NotificationType];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-purple-200 bg-purple-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-xs text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleNotificationTypeToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Loading Indicator */}
+        {isLoading && (
+          <div className="px-6 pb-4">
+            <div className="flex items-center justify-center space-x-2 text-gray-500">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-green-500 border-t-transparent"></div>
+              <span className="text-sm">Saving preferences...</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
   );
 };
 

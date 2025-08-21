@@ -1,4 +1,7 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { debounce } from "lodash";
+import { toast } from "react-toastify";
+import { RiEyeLine, RiDownloadLine, RiMailLine, RiNotification3Line, RiBriefcaseLine } from "react-icons/ri";
 import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
   EmployerActionNotification,
@@ -6,8 +9,13 @@ import {
   NotificationType,
   useSettingsStore,
 } from "../../../../store/useSettingsStore.ts";
-import { debounce } from "lodash";
-import { toast } from "react-toastify";
+
+interface EmployerActionConfig {
+  key: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description: string;
+}
 
 const EmployerAction = () => {
   const {
@@ -16,158 +24,278 @@ const EmployerAction = () => {
     setEmployerAction,
     updateEmployerAction,
   } = useSettingsStore();
-  const notificationTypes = ["all", "emailNotification", "pushNotification"];
-  const employerActions = [
-    "viewedMyProfile",
-    "downloadedMyResume",
-    "sentDirectMessage",
-  ];
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const employerActionOptions: EmployerActionConfig[] = useMemo(() => [
+    {
+      key: "viewedMyProfile",
+      label: "Profile Views",
+      icon: RiEyeLine,
+      description: "When an employer views your profile",
+    },
+    {
+      key: "downloadedMyResume",
+      label: "Resume Downloads",
+      icon: RiDownloadLine,
+      description: "When an employer downloads your resume",
+    },
+    {
+      key: "sentDirectMessage",
+      label: "Direct Messages",
+      icon: RiMailLine,
+      description: "When an employer sends you a direct message",
+    },
+  ], []);
+
+  const notificationTypeOptions = useMemo(() => [
+    {
+      key: "all",
+      label: "All Notifications",
+      description: "Enable all notification methods",
+      icon: RiNotification3Line,
+    },
+    {
+      key: "emailNotification",
+      label: "Email Notifications",
+      description: "Receive employer action updates via email",
+      icon: RiMailLine,
+    },
+    {
+      key: "pushNotification",
+      label: "Push Notifications",
+      description: "Receive browser/app push notifications",
+      icon: RiNotification3Line,
+    },
+  ], []);
 
   useEffect(() => {
-    if (applicantSettings) {
+    if (applicantSettings?.notifications?.options?.employerAction) {
       setEmployerAction(applicantSettings.notifications.options.employerAction);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicantSettings]);
+  }, [applicantSettings, setEmployerAction]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedUpdate = useCallback(
     debounce(async (settings: EmployerActionNotification) => {
-      const response = await updateEmployerAction(settings);
-      if (response) {
-        setEmployerAction(response);
-      } else {
-        toast.error(
-          "Failed to update application status notification settings",
-        );
+      setIsLoading(true);
+      try {
+        const response = await updateEmployerAction(settings);
+        if (response) {
+          setEmployerAction(response);
+          toast.success("Employer action notification settings updated");
+        } else {
+          toast.error("Failed to update employer action notification settings");
+        }
+      } catch (error) {
+        toast.error("An error occurred while updating settings");
+        console.error("Update error:", error);
+      } finally {
+        setIsLoading(false);
       }
-    }, 500),
-    [employerAction],
+    }, 800),
+    [updateEmployerAction, setEmployerAction]
   );
 
   useEffect(() => {
     return () => {
-      debouncedUpdate.cancel(); // prevent memory leak
+      debouncedUpdate.cancel();
     };
   }, [debouncedUpdate]);
 
-  const getEmployerActionStateField = (item: string) => {
-    switch (item) {
-      case "viewedMyProfile":
-        return "Views my profile";
-      case "downloadedMyResume":
-        return "Downloads my Resume";
-      default:
-        return "Sends a direct message";
-    }
-  };
+  const handleEmployerActionToggle = useCallback((key: string) => {
+    if (!employerAction) return;
 
-  const getNotificationTypeStateField = (item: string) => {
-    switch (item) {
-      case "emailNotification":
-        return "Email Notification";
-      case "pushNotification":
-        return "Push Notification";
-      default:
-        return "All";
-    }
-  };
-
-  const handleNotificationTypeToggle = (item: string) => {
-    const updatedSettings = {
-      ...employerAction,
-      notificationType: {
-        ...employerAction.notificationType,
-        [item]:
-          !employerAction.notificationType[item as keyof NotificationType],
-      },
-    };
-    setEmployerAction(updatedSettings);
-    debouncedUpdate(updatedSettings);
-  };
-
-  const handleEmployerActionsToggle = (item: string) => {
     const updatedSettings = {
       ...employerAction,
       option: {
         ...employerAction.option,
-        [item]: !employerAction.option[item as keyof EmployerActionOption],
+        [key]: !employerAction.option[key as keyof EmployerActionOption],
       },
     };
     setEmployerAction(updatedSettings);
     debouncedUpdate(updatedSettings);
-  };
+  }, [employerAction, setEmployerAction, debouncedUpdate]);
 
-  return (
-    <div className="font-lato flex w-[95%] flex-col self-center md:w-[90%]">
-      <hr className="mb-4 w-full border-t border-[#E6E6E6]" />
+  const handleNotificationTypeToggle = useCallback((key: string) => {
+    if (!employerAction) return;
 
-      {/* Page Title */}
-      <h2 className="text-left text-xl text-[24px] font-bold text-black">
-        Employer Action
-      </h2>
+    const updatedSettings = {
+      ...employerAction,
+      notificationType: {
+        ...employerAction.notificationType,
+        [key]: !employerAction.notificationType[key as keyof NotificationType],
+      },
+    };
+    setEmployerAction(updatedSettings);
+    debouncedUpdate(updatedSettings);
+  }, [employerAction, setEmployerAction, debouncedUpdate]);
 
-      {/* White Box Container */}
-      <div className="mt-4 flex min-h-[200px] w-full flex-col items-start rounded-[16px] border border-[#E6E6E6] bg-white px-4 py-6 md:px-8">
-        {/* Header Titles */}
-        <div className="text-md grid w-full grid-cols-2 font-bold text-black">
-          <h3>Notify me when an employer:</h3>
-          <h3>Notification Type</h3>
-        </div>
-
-        {/* Horizontal Rule */}
-        <hr className="my-3 w-full border-t border-[#E6E6E6]" />
-
-        {/* Two-Column Layout */}
-        <div className="grid w-full grid-cols-2 gap-x-8 px-2 py-8">
-          {/* Left Column - Employer Actions */}
-          <div className="w-full">
-            <div className="mt-2 space-y-4">
-              {employerActions.map((item, index) => (
-                <label
-                  key={index}
-                  className="flex items-center justify-between"
-                >
-                  <span className="text-[16px] text-[#8E8E8E]">
-                    {getEmployerActionStateField(item)}
-                  </span>
-                  <ToggleSwitch
-                    isOn={
-                      employerAction.option[item as keyof EmployerActionOption]
-                    }
-                    onToggle={() => handleEmployerActionsToggle(item)}
-                  />
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Column - Notification Type */}
-          <div className="w-full">
-            <div className="mt-2 space-y-4">
-              {notificationTypes.map((item, index) => (
-                <label
-                  key={index}
-                  className="flex items-center justify-between"
-                >
-                  <span className="text-[16px] text-[#8E8E8E]">
-                    {getNotificationTypeStateField(item)}
-                  </span>
-                  <ToggleSwitch
-                    isOn={
-                      employerAction.notificationType[
-                        item as keyof NotificationType
-                      ]
-                    }
-                    onToggle={() => handleNotificationTypeToggle(item)}
-                  />
-                </label>
-              ))}
-            </div>
-          </div>
+  if (!employerAction) {
+    return (
+      <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+        <div className="animate-pulse">
+          <div className="h-px bg-gray-200 mb-4"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
         </div>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <section className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+      {/* Section Divider */}
+      <hr className="mb-8 border-gray-200" />
+
+      {/* Section Header */}
+      <div className="mb-6">
+        <div className="flex items-center space-x-3 mb-2">
+          <div className="p-2 bg-teal-100 rounded-lg">
+            <RiBriefcaseLine className="h-6 w-6 text-teal-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Employer Actions
+          </h2>
+        </div>
+        <p className="text-gray-600 text-sm">
+          Get notified when employers interact with your profile and show interest in your application.
+        </p>
+      </div>
+
+      {/* Main Content Card */}
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        {/* Card Header */}
+        <div className="bg-gradient-to-r from-teal-50 to-cyan-50 px-6 py-4 border-b border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Employer Interaction Events
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Choose which employer actions you want to be notified about
+              </p>
+            </div>
+            <div className="md:text-right">
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Notification Methods
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Select how you want to receive notifications
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card Content */}
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column - Employer Action Options */}
+            <div className="space-y-4">
+              {employerActionOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = employerAction.option[option.key as keyof EmployerActionOption];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-teal-200 bg-teal-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-teal-100 text-teal-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleEmployerActionToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Right Column - Notification Types */}
+            <div className="space-y-4">
+              {notificationTypeOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = employerAction.notificationType[option.key as keyof NotificationType];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-purple-200 bg-purple-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleNotificationTypeToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Loading Indicator */}
+        {isLoading && (
+          <div className="px-6 pb-4">
+            <div className="flex items-center justify-center space-x-2 text-gray-500">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-teal-500 border-t-transparent"></div>
+              <span className="text-sm">Saving preferences...</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
   );
 };
 

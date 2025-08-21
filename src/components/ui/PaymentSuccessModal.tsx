@@ -13,7 +13,7 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="bg-opacity-50 fixed inset-0 flex items-center justify-center bg-black">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/20">
       <div className="h-[600px] w-[492px] bg-white p-6 shadow-xl">
         <div className="mb-6 flex items-center justify-end">
           <img

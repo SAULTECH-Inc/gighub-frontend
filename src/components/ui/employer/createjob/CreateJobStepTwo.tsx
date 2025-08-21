@@ -16,6 +16,18 @@ import { currencies } from "../../../../utils/Countries";
 import { FaAsterisk } from "react-icons/fa";
 import { jobLevels, Option } from "../../../../utils/types";
 import { useDepartments } from "../../../../hooks/useDepartments.ts";
+import {
+  RiArrowRightLine,
+  RiArrowLeftLine,
+  RiBuilding2Line,
+  RiBriefcase4Line,
+  RiMapPinLine,
+  RiCalendarLine,
+  RiUserLine,
+  RiMoneyDollarCircleLine,
+  RiTimeLine,
+  RiTrophyLine
+} from "react-icons/ri";
 
 const CreateJobStepTwo: React.FC = () => {
   const departments = useDepartments();
@@ -81,13 +93,11 @@ const CreateJobStepTwo: React.FC = () => {
   }, [title]);
 
   const handleDateChange = (value: Date) => {
-    setSelectedDate(value.toLocaleDateString()); // Fix here
-
+    setSelectedDate(value.toLocaleDateString());
     setJobData({
       ...job,
-      endDate: value.toISOString(), // You may prefer ISO format for consistency/storage
+      endDate: value.toISOString(),
     });
-
     setErrors({
       ...errors,
       endDate: value ? "" : "Please select end date.",
@@ -205,120 +215,155 @@ const CreateJobStepTwo: React.FC = () => {
   };
 
   return (
-    <div className="flex w-full flex-col items-center">
-      <div className="flex h-full min-h-[500px] w-[96%] max-w-[900px] flex-col items-center rounded-[10px] bg-white px-2 py-2">
-        <div className="flex w-full flex-col gap-2 sm:w-[95%]">
-          <div className="my-3 flex justify-between border-b-[1px] text-gray-600">
-            <div
+    <div className="flex w-full flex-col items-center p-3 sm:p-6">
+      {/* Main Card */}
+      <div className="w-full max-w-[880px] bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Card Header */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 sm:px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Job Details</h2>
+
+          {/* Modern Tab Navigation */}
+          <div className="flex flex-col xs:flex-row bg-white/80 rounded-lg p-1 backdrop-blur-sm gap-1 xs:gap-0">
+            <button
               onClick={() => handleSelectedOption("company")}
-              className={`flex-1 cursor-pointer text-center text-sm ${
-                selectedOption === "company"
-                  ? "border-b-4 border-[#6438C2] text-[#6438C2]"
-                  : "text-gray-600"
-              }`}
+              className={`
+                flex-1 flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-2.5 rounded-md text-xs sm:text-sm font-medium transition-all duration-200
+                ${selectedOption === "company"
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+              }
+              `}
             >
-              Company
-            </div>
-            <div
+              <RiBuilding2Line className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span>Company</span>
+            </button>
+            <button
               onClick={() => handleSelectedOption("job")}
-              className={`flex-1 cursor-pointer text-center text-sm ${
-                selectedOption === "job"
-                  ? "border-b-4 border-[#6438C2] text-[#6438C2]"
-                  : "text-gray-600"
-              }`}
+              className={`
+                flex-1 flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-2.5 rounded-md text-xs sm:text-sm font-medium transition-all duration-200
+                ${selectedOption === "job"
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+              }
+              `}
             >
-              Job
-            </div>
+              <RiBriefcase4Line className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span>Job</span>
+            </button>
           </div>
         </div>
-        {selectedOption === "company" && (
-          <div className="flex w-full flex-col gap-2 sm:w-[95%]">
-            {/*First Row*/}
-            <div className="flex flex-col gap-x-3 md:flex-row md:items-center md:justify-evenly">
-              <div className="flex w-full flex-col">
-                <label className="text-sm font-medium text-[#000000] sm:text-base">
-                  Department
-                </label>
-                <SearchableSelectWithAdd
-                  placeholder={job?.department || "Choose a Department..."}
-                  options={departments}
-                  className="w-full rounded-[10px] border border-[#E6E6E6] p-2 text-left text-sm sm:text-base"
-                  onChange={handleDepartmentChange}
-                />
+
+        {/* Content Area with proper spacing for dropdowns */}
+        <div className="p-3 sm:p-6 pb-32 sm:pb-40 min-h-[500px] sm:min-h-[600px]">
+          {selectedOption === "company" && (
+            <div className="space-y-6 sm:space-y-10">
+              {/* Department and Hiring Manager Row */}
+              <div className="grid grid-cols-1 gap-6 sm:gap-10 lg:grid-cols-2">
+                <div className="space-y-3 sm:space-y-4">
+                  <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-900">
+                    <RiBuilding2Line className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
+                    <span>Department</span>
+                  </label>
+                  <div className="relative z-[100]">
+                    <SearchableSelectWithAdd
+                      placeholder={job?.department || "Choose Department..."}
+                      options={departments}
+                      className="w-full h-10 sm:h-12 rounded-lg border-2 border-gray-200 px-3 sm:px-4 text-xs sm:text-sm focus:border-blue-500 transition-colors duration-200"
+                      onChange={handleDepartmentChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3 sm:space-y-4">
+                  <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-900">
+                    <RiUserLine className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
+                    <span>Hiring Manager</span>
+                  </label>
+                  <div className="flex items-center h-10 sm:h-12 gap-2 sm:gap-3 rounded-lg border-2 border-gray-200 px-3 sm:px-4 focus-within:border-blue-500 transition-colors duration-200">
+                    <img src={Referrer1} alt="" className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex-shrink-0" />
+                    <input
+                      type="text"
+                      placeholder="Full name"
+                      value={job?.hiringManager || ""}
+                      onChange={(e) => {
+                        setJobData({
+                          ...job,
+                          hiringManager: e.target.value,
+                        });
+                      }}
+                      className="flex-1 border-none focus:outline-none focus:border-none text-xs sm:text-sm outline-none bg-transparent min-w-0"
+                    />
+                    <img src={Teams} alt="Teams" className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                  </div>
+                </div>
               </div>
-              <div className="flex w-full flex-col">
-                <label className="text-sm text-[#000000] sm:text-base">
-                  Hiring Manager
-                </label>
-                <div className="flex h-10 w-full gap-3 rounded-[10px] border border-[#E6E6E6] px-4">
-                  <img src={Referrer1} alt="" width={27} />
-                  <input
-                    type="text"
-                    placeholder="Full name"
-                    value={job?.hiringManager}
-                    onChange={(e) => {
-                      setJobData({
-                        ...job,
-                        hiringManager: e.target.value,
-                      });
-                    }}
-                    className="w-full border-none text-sm outline-none focus:border-none focus:ring-0 focus:outline-none sm:text-base"
-                  />
-                  <img src={Teams} alt="ArrowDown" />
+
+              {/* End Date and Location Row */}
+              <div className="grid grid-cols-1 gap-6 sm:gap-10 lg:grid-cols-2">
+                <div className="space-y-3 sm:space-y-4">
+                  <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-900">
+                    <RiCalendarLine className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
+                    <span>Application End Date</span>
+                  </label>
+                  <div className="relative z-[90]">
+                    <DatePicker
+                      required={true}
+                      selectedDate={new Date(job.endDate)}
+                      onDateChange={(date) => {
+                        handleDateChange(date as Date);
+                      }}
+                      disabled={false}
+                      className="h-10 sm:h-12 w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 text-xs sm:text-sm focus:border-blue-500 transition-colors duration-200"
+                    />
+                    {errors.endDate && (
+                      <div className="flex items-center gap-2 text-red-600 bg-red-50 p-2 rounded-lg mt-2">
+                        <div className="w-2 h-2 bg-red-600 rounded-full flex-shrink-0"></div>
+                        <span className="text-xs font-medium">{errors.endDate}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-3 sm:space-y-4">
+                  <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-900">
+                    <RiMapPinLine className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
+                    <span>Location</span>
+                    <FaAsterisk className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-red-500" />
+                  </label>
+                  <div className="relative z-[100]">
+                    <SearchableSelectWithAdd
+                      placeholder={job.location || "Choose Location..."}
+                      className="h-10 sm:h-12 w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 text-xs sm:text-sm focus:border-blue-500 transition-colors duration-200"
+                      options={JobLocations}
+                      onChange={handleLocationChange}
+                      onAddOption={handleAddOption}
+                    />
+                    {errors.location && (
+                      <div className="flex items-center gap-2 text-red-600 bg-red-50 p-2 rounded-lg mt-2">
+                        <div className="w-2 h-2 bg-red-600 rounded-full flex-shrink-0"></div>
+                        <span className="text-xs font-medium">{errors.location}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-            {/*Second row*/}
-            <div className="flex flex-col gap-x-3 md:flex-row md:items-center md:justify-evenly">
-              <div className="flex w-full flex-col">
-                <label className="text-sm text-[#000000] sm:text-base">
-                  End Date
-                </label>
-                <div className="relative">
-                  <DatePicker
-                    required={true}
-                    selectedDate={new Date(job.endDate)}
-                    onDateChange={(date) => {
-                      handleDateChange(date as Date);
-                    }}
-                    disabled={false}
-                    className="h-10 w-full rounded-[10px] border border-[#E6E6E6] px-4 text-sm outline-none focus:border-[#E6E6E6] focus:ring-0 focus:outline-none sm:text-base"
-                  />
-                  {errors.endDate && (
-                    <p className="text-xs text-red-500">{errors.endDate}</p>
-                  )}
-                </div>
-              </div>
-              <div className="flex w-full flex-col">
-                <label className="flex items-center gap-1 text-sm text-[#000000] sm:text-base">
-                  Location <FaAsterisk className="w-2 fill-[#FA4E09]" />
-                </label>
+          )}
 
-                <SearchableSelectWithAdd
-                  placeholder={job.location || "Choose a Location..."}
-                  className="h-10 w-full rounded-[10px] border border-[#E6E6E6] px-4 text-left text-sm sm:text-base"
-                  options={JobLocations}
-                  onChange={handleLocationChange}
-                  onAddOption={handleAddOption}
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {selectedOption === "job" && (
-          <div className="flex w-full flex-col gap-3 py-2 sm:w-[95%] sm:py-0">
-            <div className="flex w-full flex-col justify-between gap-2 text-sm sm:flex-row sm:text-base">
-              <div className="flex w-full flex-col gap-2">
-                <div className="flex items-center gap-1 text-[#000000]">
-                  Job Title <FaAsterisk className="w-2 fill-[#FA4E09]" />
-                </div>
-
-                <div className="flex h-10 rounded-[10px] border border-[#E6E6E6] px-4">
+          {selectedOption === "job" && (
+            <div className="space-y-6 sm:space-y-10">
+              {/* Job Title and Experience Row */}
+              <div className="grid grid-cols-1 gap-6 sm:gap-10 lg:grid-cols-2">
+                <div className="space-y-3 sm:space-y-4">
+                  <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-900">
+                    <RiBriefcase4Line className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
+                    <span>Job Title</span>
+                    <FaAsterisk className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-red-500" />
+                  </label>
                   <input
                     type="text"
-                    placeholder="Graphic Designer"
-                    className="w-full border-none text-sm outline-none focus:border-none focus:ring-0 focus:outline-none sm:text-base"
+                    placeholder="e.g. Senior Software Engineer"
+                    className="h-10 sm:h-12 w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 text-xs sm:text-sm focus:border-blue-500 transition-colors duration-200"
                     onChange={(e) => {
                       setTitle(e.target.value);
                       setJobData({
@@ -332,297 +377,347 @@ const CreateJobStepTwo: React.FC = () => {
                           : "Job title is required.",
                       });
                     }}
-                    value={job.title}
+                    value={job.title || ""}
                   />
+                  {errors.title && (
+                    <div className="flex items-center gap-2 text-red-600 bg-red-50 p-2 rounded-lg">
+                      <div className="w-2 h-2 bg-red-600 rounded-full flex-shrink-0"></div>
+                      <span className="text-xs font-medium">{errors.title}</span>
+                    </div>
+                  )}
                 </div>
-                {errors.title && (
-                  <p className="text-xs text-red-500">{errors.title}</p>
-                )}
-              </div>
-              <div className="flex w-full flex-col gap-2">
-                <div className="flex items-center gap-1 text-[#000000]">
-                  Experience in years/ Level
-                  <FaAsterisk className="w-2 fill-[#FA4E09]" />
-                </div>
-                <div className="relative flex w-full overflow-hidden rounded-[10px] border border-[#E6E6E6]">
-                  <div className="flex h-10 w-[60%] border-r border-[#E6E6E6]">
+
+                <div className="space-y-3 sm:space-y-4">
+                  <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-900">
+                    <RiTrophyLine className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
+                    <span>Experience & Level</span>
+                    <FaAsterisk className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-red-500" />
+                  </label>
+                  <div className="flex h-10 sm:h-12 overflow-hidden rounded-lg border-2 border-gray-200 focus-within:border-blue-500 transition-colors duration-200">
                     <input
                       type="number"
                       placeholder="Years"
-                      className="no-arrows w-full border-none text-sm outline-none focus:border-none focus:ring-0 focus:outline-none sm:text-base"
+                      className="flex-1 px-2 sm:px-4 border-none text-xs sm:text-sm outline-none bg-transparent min-w-0"
                       onChange={(e) => {
                         handleNumberInputChange(e, "experienceYears");
                         setErrors({
                           ...errors,
                           experienceYears: e.target.value
                             ? ""
-                            : "Please select year(s) of experience.",
+                            : "Please enter years of experience.",
                         });
                       }}
                       value={job.experienceYears || ""}
                     />
-                  </div>
-                  <select
-                    className="h-full border-none text-sm outline-none focus:border-none focus:ring-0 sm:text-base"
-                    value={job.level || ""}
-                    onChange={handleLevelChange}
-                  >
-                    <option value="" disabled>
-                      Select Level
-                    </option>
-                    {jobLevels.map((level, key) => (
-                      <option key={key} value={level.value}>
-                        {level.label}
+                    <div className="w-px bg-gray-200"></div>
+                    <select
+                      className="flex-1 px-2 sm:px-4 border-none text-xs sm:text-sm outline-none bg-transparent min-w-0"
+                      value={job.level || ""}
+                      onChange={handleLevelChange}
+                    >
+                      <option value="" disabled>
+                        Level
                       </option>
-                    ))}
-                  </select>
+                      {jobLevels.map((level, key) => (
+                        <option key={key} value={level.value}>
+                          {level.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {(errors.experienceYears || errors.level) && (
+                    <div className="flex items-center gap-2 text-red-600 bg-red-50 p-2 rounded-lg">
+                      <div className="w-2 h-2 bg-red-600 rounded-full flex-shrink-0"></div>
+                      <span className="text-xs font-medium">
+                        {errors.experienceYears || errors.level}
+                      </span>
+                    </div>
+                  )}
                 </div>
-                {errors.experienceYears && (
-                  <p className="text-xs text-red-500">
-                    {errors.experienceYears}
-                  </p>
-                )}
-                {errors.level && (
-                  <p className="text-xs text-red-500">{errors.level}</p>
-                )}
               </div>
-            </div>
-            <label className="w-full text-sm text-[#000000] sm:text-base">
-              Salary Budget
-            </label>
-            <div className="flex w-full flex-col gap-1 sm:gap-4">
-              <div className="flex w-full flex-wrap gap-2 border-[#E6E6E6] sm:gap-10">
-                <CustomRadioButton
-                  name="paymentOption"
-                  value="option1"
-                  checked={selectOption === "option1"}
-                  onChange={() => handleSelectOptionChange("option1")}
-                  label={window.innerWidth >= 400 ? "Exact Amount" : "Exact"}
-                  size={16}
-                  color="#6E4AED"
-                />
-                <CustomRadioButton
-                  name="paymentOption"
-                  value="option2"
-                  checked={selectOption === "option2"}
-                  onChange={() => handleSelectOptionChange("option2")}
-                  label="Range"
-                  size={16}
-                  color="#6E4AED"
-                />
-                <CustomRadioButton
-                  name="paymentOption"
-                  value="option3"
-                  checked={selectOption === "option3"}
-                  onChange={() => {
-                    handleSelectOptionChange("option3");
-                    setJobData({
-                      ...job,
-                      maximumAmount: undefined,
-                      minimumAmount: undefined,
-                    });
-                  }}
-                  label="Prefer not to mention"
-                  size={16}
-                  color="#6E4AED"
-                />
-              </div>
-              {(selectOption === "option1" || selectOption === "option2") && (
-                <div className="flex w-full flex-col gap-2 md:flex-row">
-                  <div className="w-full">
+
+              {/* Salary Budget Section */}
+              <div className="space-y-4 sm:space-y-6">
+                <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-900">
+                  <RiMoneyDollarCircleLine className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
+                  <span>Salary Budget</span>
+                </label>
+
+                {/* Radio Button Options */}
+                <div className="flex flex-col xs:flex-row xs:flex-wrap gap-3 sm:gap-6 p-3 sm:p-4 bg-gray-50 rounded-lg">
+                  <CustomRadioButton
+                    name="paymentOption"
+                    value="option1"
+                    checked={selectOption === "option1"}
+                    onChange={() => handleSelectOptionChange("option1")}
+                    label="Exact Amount"
+                    size={14}
+                    color="#6E4AED"
+                  />
+                  <CustomRadioButton
+                    name="paymentOption"
+                    value="option2"
+                    checked={selectOption === "option2"}
+                    onChange={() => handleSelectOptionChange("option2")}
+                    label="Range"
+                    size={14}
+                    color="#6E4AED"
+                  />
+                  <CustomRadioButton
+                    name="paymentOption"
+                    value="option3"
+                    checked={selectOption === "option3"}
+                    onChange={() => {
+                      handleSelectOptionChange("option3");
+                      setJobData({
+                        ...job,
+                        maximumAmount: undefined,
+                        minimumAmount: undefined,
+                      });
+                    }}
+                    label="Prefer not to mention"
+                    size={14}
+                    color="#6E4AED"
+                  />
+                </div>
+
+                {/* Salary Input Fields */}
+                {(selectOption === "option1" || selectOption === "option2") && (
+                  <div className="space-y-4 sm:space-y-6">
+                    {/* Amount Input Section */}
                     {selectOption === "option1" && (
-                      <div className="relative flex h-10 gap-3 rounded-[10px] border border-[#E6E6E6] px-4">
-                        <span className="flex items-center text-sm sm:text-base">
-                          {job.currency}
-                        </span>
-                        <input
-                          type="number"
-                          className="no-arrows w-full border-y-0 border-r-0 border-[#E6E6E6] text-sm outline-none focus:border-none focus:ring-0 focus:outline-none sm:border-1 sm:border-x-1 sm:text-base"
-                          placeholder="Exact Amount"
-                          value={job.maximumAmount || ""}
-                          onChange={(e) => {
-                            const value = e.target.value
-                              ? parseInt(e.target.value, 10)
-                              : 0;
-                            setJobData({
-                              ...job,
-                              maximumAmount: value,
-                              minimumAmount: 0,
-                            });
-                          }}
-                        />
-                        <select
-                          className="hidden h-[full] w-full border-y-0 border-r-0 border-l-1 border-[#E6E6E6] text-sm outline-none focus:border-none focus:ring-0 sm:block"
-                          value={job.frequency || ""}
-                          onChange={handleFrequencyChange}
-                        >
-                          <option value="" disabled>
-                            Select Frequency
-                          </option>
-                          <option value="per year">yearly</option>
-                          <option value="per month">monthly</option>
-                          <option value="per week">weekly</option>
-                          <option value="per day">daily</option>
-                          <option value="per hour">hourly</option>
-                        </select>
-                      </div>
-                    )}
-                    {selectOption === "option2" && (
-                      <div className="flex w-full flex-col justify-between gap-2 sm:flex-row">
-                        <div className="flex h-10 w-full items-center overflow-hidden rounded-[10px] border border-[#E6E6E6]">
-                          <span className="p-1 text-[12px] text-gray-500 sm:text-sm">
-                            {job.currency}
+                      <div className="space-y-3 sm:space-y-4">
+                        <label className="text-xs sm:text-sm font-medium text-gray-700">Amount</label>
+                        <div className="flex h-10 sm:h-12 items-center gap-2 sm:gap-3 rounded-lg border-2 border-gray-200 px-3 sm:px-4 focus-within:border-blue-500 transition-colors duration-200">
+                          <span className="text-xs sm:text-sm font-medium text-gray-600 min-w-[35px] sm:min-w-[50px] flex-shrink-0">
+                            {job.currency || "USD"}
                           </span>
+                          <div className="w-px h-4 sm:h-6 bg-gray-200"></div>
                           <input
                             type="number"
-                            className="no-arrows w-full border-y-0 border-x-[#E6E6E6] text-sm outline-none focus:border-none focus:ring-0 focus:outline-none"
+                            className="flex-1 border-none text-xs sm:text-sm outline-none bg-transparent min-w-0"
+                            placeholder="Enter exact amount"
+                            value={job.maximumAmount || ""}
+                            onChange={(e) => {
+                              const value = e.target.value
+                                ? parseInt(e.target.value, 10)
+                                : 0;
+                              setJobData({
+                                ...job,
+                                maximumAmount: value,
+                                minimumAmount: 0,
+                              });
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {selectOption === "option2" && (
+                      <div className="space-y-3 sm:space-y-4">
+                        <label className="text-xs sm:text-sm font-medium text-gray-700">Salary Range</label>
+
+                        {/* Mobile: Stacked layout */}
+                        <div className="block sm:hidden space-y-3">
+                          <div className="flex h-10 items-center gap-2 rounded-lg border-2 border-gray-200 px-3 focus-within:border-blue-500 transition-colors duration-200">
+                            <span className="text-xs font-medium text-gray-600 min-w-[35px] flex-shrink-0">
+                              {job.currency || "USD"}
+                            </span>
+                            <div className="w-px h-4 bg-gray-200"></div>
+                            <input
+                              type="number"
+                              className="flex-1 border-none text-xs outline-none bg-transparent min-w-0"
+                              placeholder="Minimum"
+                              value={job.minimumAmount || ""}
+                              onChange={(e) =>
+                                handleNumberInputChange(e, "minimumAmount")
+                              }
+                            />
+                          </div>
+                          <div className="flex h-10 items-center gap-2 rounded-lg border-2 border-gray-200 px-3 focus-within:border-blue-500 transition-colors duration-200">
+                            <span className="text-xs font-medium text-gray-600 min-w-[35px] flex-shrink-0">
+                              {job.currency || "USD"}
+                            </span>
+                            <div className="w-px h-4 bg-gray-200"></div>
+                            <input
+                              type="number"
+                              className="flex-1 border-none text-xs outline-none bg-transparent min-w-0"
+                              placeholder="Maximum"
+                              value={job.maximumAmount || ""}
+                              onChange={(e) =>
+                                handleNumberInputChange(e, "maximumAmount")
+                              }
+                            />
+                          </div>
+                        </div>
+
+                        {/* Desktop: Single row layout */}
+                        <div className="hidden sm:flex h-12 items-center gap-3 rounded-lg border-2 border-gray-200 px-4 focus-within:border-blue-500 transition-colors duration-200">
+                          <span className="text-sm font-medium text-gray-600 min-w-[50px] flex-shrink-0">
+                            {job.currency || "USD"}
+                          </span>
+                          <div className="w-px h-6 bg-gray-200"></div>
+                          <input
+                            type="number"
+                            className="flex-1 border-none text-sm outline-none bg-transparent min-w-0"
                             placeholder="Minimum"
                             value={job.minimumAmount || ""}
                             onChange={(e) =>
                               handleNumberInputChange(e, "minimumAmount")
                             }
                           />
+                          <div className="w-px h-6 bg-gray-200"></div>
                           <input
                             type="number"
-                            className="no-arrows w-full border-y-0 border-r-0 border-l-0 text-sm outline-none focus:border-none focus:ring-0 focus:outline-none"
+                            className="flex-1 border-none text-sm outline-none bg-transparent min-w-0"
                             placeholder="Maximum"
                             value={job.maximumAmount || ""}
                             onChange={(e) =>
                               handleNumberInputChange(e, "maximumAmount")
                             }
                           />
-                          <div className="border border-[#E6E6E6]">
-                            <select
-                              className="hidden h-full border-none outline-none focus:border-none focus:ring-0 sm:block"
-                              value={job.frequency || ""}
-                              onChange={handleFrequencyChange}
-                            >
-                              <option value="" disabled>
-                                Select Frequency
-                              </option>
-                              <option value="per year">yearly</option>
-                              <option value="per month">monthly</option>
-                              <option value="per week">weekly</option>
-                              <option value="per day">daily</option>
-                              <option value="per hour">hourly</option>
-                            </select>
-                          </div>
                         </div>
                       </div>
                     )}
-                  </div>
-                  <div className="flex w-full gap-2 md:w-[50%]">
-                    <select
-                      className="h-full w-[50%] rounded-[10px] border border-[#E6E6E6] text-sm outline-none focus:border-none focus:ring-0 sm:hidden"
-                      value={job.frequency || ""}
-                      onChange={handleFrequencyChange}
-                    >
-                      <option value="" disabled>
-                        Select Frequency
-                      </option>
-                      <option value="per year">yearly</option>
-                      <option value="per month">monthly</option>
-                      <option value="per week">weekly</option>
-                      <option value="per day">daily</option>
-                    </select>
-                    <div className="w-[50%] sm:w-full">
-                      <CustomSelect
-                        placeholder={job.currency || "Choose currency..."}
-                        options={currencies}
-                        className="h-10 w-full overflow-hidden rounded-[10px] border border-[#E6E6E6] bg-[#F7F8FA] px-2 text-left text-sm md:text-[12px]"
-                        onChange={handleCurrencySelect}
-                      />
+
+                    {/* Frequency and Currency Section */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                      <div className="space-y-3 sm:space-y-4">
+                        <label className="text-xs sm:text-sm font-medium text-gray-700">Frequency</label>
+                        <select
+                          className="h-10 sm:h-12 w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 text-xs sm:text-sm focus:border-blue-500 transition-colors duration-200"
+                          value={job.frequency || ""}
+                          onChange={handleFrequencyChange}
+                        >
+                          <option value="" disabled>
+                            Select Frequency
+                          </option>
+                          <option value="per year">Yearly</option>
+                          <option value="per month">Monthly</option>
+                          <option value="per week">Weekly</option>
+                          <option value="per day">Daily</option>
+                          <option value="per hour">Hourly</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-3 sm:space-y-4 relative z-[80]">
+                        <label className="text-xs sm:text-sm font-medium text-gray-700">Currency</label>
+                        <CustomSelect
+                          placeholder={job.currency || "Choose currency..."}
+                          options={currencies}
+                          className="h-10 sm:h-12 w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 text-xs sm:text-sm focus:border-blue-500 transition-colors duration-200"
+                          onChange={handleCurrencySelect}
+                        />
+                      </div>
                     </div>
+
+                    {error && (
+                      <div className="flex items-center gap-2 text-red-600 bg-red-50 p-2 sm:p-3 rounded-lg">
+                        <div className="w-2 h-2 bg-red-600 rounded-full flex-shrink-0"></div>
+                        <span className="text-xs sm:text-sm font-medium">{error}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Job Type, Employment Type, Priority Row */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div className="space-y-3 sm:space-y-4">
+                  <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-900">
+                    <RiBriefcase4Line className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
+                    <span>Job Type</span>
+                    <FaAsterisk className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-red-500" />
+                  </label>
+                  <div className="relative z-[70]">
+                    <CustomSelect
+                      placeholder={job.jobType || "Choose..."}
+                      options={JobType}
+                      className="h-10 sm:h-12 w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 text-xs sm:text-sm focus:border-blue-500 transition-colors duration-200"
+                      onChange={handleJobSelect}
+                    />
+                    {errors.jobType && (
+                      <div className="flex items-center gap-2 text-red-600 bg-red-50 p-2 rounded-lg mt-2">
+                        <div className="w-2 h-2 bg-red-600 rounded-full flex-shrink-0"></div>
+                        <span className="text-xs font-medium">{errors.jobType}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
-              )}
-              <p className="text-[10px] text-red-500">{error}</p>
-            </div>
-            <div className="flex w-full flex-wrap justify-between gap-2">
-              <div className="flex w-full flex-col gap-2 sm:w-[48%]">
-                <div className="flex items-center gap-1 text-[#000000]">
-                  Job Type
-                  <FaAsterisk className="w-2 fill-[#FA4E09]" />
-                </div>
-                <CustomSelect
-                  placeholder={job.jobType || "Choose..."}
-                  options={JobType}
-                  className="h-10 w-full rounded-[10px] border border-[#E6E6E6] bg-[#F7F8FA] px-2 text-left text-sm"
-                  onChange={handleJobSelect}
-                />
-                {errors.jobType && (
-                  <p className="text-xs text-red-500">{errors.jobType}</p>
-                )}
-              </div>
-              <div className="flex w-full flex-col gap-2 sm:w-[48%]">
-                <div className="flex items-center gap-1 text-[#000000]">
-                  Employment Type
-                  <FaAsterisk className="w-2 fill-[#FA4E09]" />
+
+                <div className="space-y-3 sm:space-y-4">
+                  <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-900">
+                    <RiTimeLine className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
+                    <span>Employment Type</span>
+                    <FaAsterisk className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-red-500" />
+                  </label>
+                  <div className="relative z-[60]">
+                    <CustomSelect
+                      placeholder={job.employmentType || "Choose ..."}
+                      options={EmploymentType}
+                      className="h-10 sm:h-12 w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 text-xs sm:text-sm focus:border-blue-500 transition-colors duration-200"
+                      onChange={handleEmploymentSelect}
+                    />
+                    {errors.employmentType && (
+                      <div className="flex items-center gap-2 text-red-600 bg-red-50 p-2 rounded-lg mt-2">
+                        <div className="w-2 h-2 bg-red-600 rounded-full flex-shrink-0"></div>
+                        <span className="text-xs font-medium">{errors.employmentType}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <CustomSelect
-                  placeholder={job.employmentType || "Choose ..."}
-                  options={EmploymentType}
-                  className="h-10 w-full rounded-[10px] border border-[#E6E6E6] bg-[#F7F8FA] px-2 text-left text-sm"
-                  onChange={handleEmploymentSelect}
-                />
-                {errors.employmentType && (
-                  <p className="text-xs text-red-500">
-                    {errors.employmentType}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex w-full flex-col gap-2 sm:w-[48%]">
-                <div className="flex items-center gap-1 text-[#000000]">
-                  Priority
-                  <FaAsterisk className="w-2 fill-[#FA4E09]" />
+                <div className="space-y-3 sm:space-y-4 sm:col-span-2 lg:col-span-1">
+                  <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-900">
+                    <RiTrophyLine className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
+                    <span>Priority</span>
+                    <FaAsterisk className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-red-500" />
+                  </label>
+                  <div className="relative z-[50]">
+                    <CustomSelect
+                      placeholder={job.priority || "Choose ..."}
+                      options={[
+                        { label: "High", value: "HIGH" },
+                        { label: "Medium", value: "MEDIUM" },
+                        { label: "Low", value: "LOW" },
+                      ]}
+                      className="h-10 sm:h-12 w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 text-xs sm:text-sm focus:border-blue-500 transition-colors duration-200"
+                      onChange={(option) => {
+                        setJobData({
+                          ...job,
+                          priority: option.value,
+                        });
+                      }}
+                    />
+                    {errors.priority && (
+                      <div className="flex items-center gap-2 text-red-600 bg-red-50 p-2 rounded-lg mt-2">
+                        <div className="w-2 h-2 bg-red-600 rounded-full flex-shrink-0"></div>
+                        <span className="text-xs font-medium">{errors.priority}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-
-                <CustomSelect
-                  placeholder={job.priority || "Choose ..."}
-                  options={[
-                    {
-                      label: "High",
-                      value: "HIGH",
-                    },
-                    {
-                      label: "Medium",
-                      value: "MEDIUM",
-                    },
-                    {
-                      label: "Low",
-                      value: "LOW",
-                    },
-                  ]}
-                  className="h-10 w-full rounded-[10px] border border-[#E6E6E6] bg-[#F7F8FA] px-2 text-left text-sm"
-                  onChange={(option) => {
-                    setJobData({
-                      ...job,
-                      priority: option.value,
-                    });
-                  }}
-                />
-                {errors.priority && (
-                  <p className="text-xs text-red-500">{errors.priority}</p>
-                )}
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-      <div className="mx-2 my-2 flex w-[96%] max-w-[900px] justify-end gap-6 text-sm">
+
+      {/* Action Buttons */}
+      <div className="w-full max-w-[880px] flex flex-col xs:flex-row justify-between gap-3 xs:gap-0 mt-6 px-3 sm:px-0">
         <button
-          className="w-[35%] self-end rounded-[15px] border border-[#E6E6E6] bg-[#F7F7F7] py-[8px] sm:w-[29%]"
           onClick={prevStep}
+          className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 sm:px-8 py-3 rounded-xl font-medium transition-all duration-200 text-sm sm:text-base order-2 xs:order-1"
         >
-          Back
+          <RiArrowLeftLine className="h-4 w-4" />
+          <span>Back</span>
         </button>
         <button
-          className="w-[35%] rounded-[15px] bg-[#6438C2] py-[8px] text-white sm:w-[29%]"
           onClick={handleNextStep}
+          className="flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 sm:px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base order-1 xs:order-2"
         >
-          Proceed
+          <span>Continue</span>
+          <RiArrowRightLine className="h-4 w-4" />
         </button>
       </div>
     </div>

@@ -64,7 +64,7 @@ const JobDetailsMegaModal: React.FC<JobDetailsMegaModalProps> = ({
 
   return (
     <div
-      className="font-inter bg-opacity-20 fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black px-2 pt-16 pb-10 md:px-6"
+      className="font-inter fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/20 px-2 pt-16 pb-10 md:px-6"
       onClick={close}
     >
       <div

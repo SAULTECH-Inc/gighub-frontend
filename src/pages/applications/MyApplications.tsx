@@ -1,3 +1,5 @@
+import React, { useEffect, useState, useCallback, memo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import TopNavBar from "../../components/layouts/TopNavBar";
 import ApplicantSchedules from "../../components/ui/ApplicantSchedules";
 import {
@@ -5,220 +7,313 @@ import {
   applicantNavItems,
   applicantNavItemsMobile,
 } from "../../utils/constants";
-
 import ShortlistedJobs from "../job/ShortlistedJobs";
 import ApplicationCard from "./ApplicationCard";
 import ApplicationSearch from "./ApplicationSearch";
-import { Cancel, Search } from "../../assets/icons";
+import { Search, X, AlertCircle, FileText } from "lucide-react";
 import { Pagination } from "antd";
-import React, { useEffect, useState } from "react";
 import { ApplicationResponse, SortBy } from "../../utils/types";
 import { getMyApplications } from "../../services/api";
 import useModalStore from "../../store/modalStateStores.ts";
 import ViewApplicationMethodModal from "../../components/ui/ViewApplicationMethodModal.tsx";
 import { showErrorToast } from "../../utils/toastConfig.tsx";
 
-const MyApplications: React.FC = () => {
-  const [applicationToView, setApplicationToView] =
-    useState<ApplicationResponse | null>(null);
+const MyApplications: React.FC = memo(() => {
+  const [applicationToView, setApplicationToView] = useState<ApplicationResponse | null>(null);
   const { isModalOpen, openModal } = useModalStore();
-  const [allApplications, setAllApplications] = useState<ApplicationResponse[]>(
-    [],
-  );
+  const [allApplications, setAllApplications] = useState<ApplicationResponse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+
   const [sort, setSort] = useState<SortBy>({
     sortDirection: "desc",
     orderBy: "createdAt",
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const [applicationStatus, setApplicationStatus] = useState<string | null>(
-    null,
-  );
+  const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
   const [pageSize, setPageSize] = useState(20);
   const [searchQuery, setSearchQuery] = useState({
     jobTitle: "",
     companyName: "",
   });
-  useEffect(() => {
-    const doFetchApplications = async () => {
-      return await getMyApplications(
+
+  // Fetch applications with loading and error handling
+  const fetchApplications = useCallback(async (
+    page = currentPage,
+    size = pageSize,
+    jobTitle = "",
+    companyName = ""
+  ) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await getMyApplications(
         applicationStatus,
         sort,
-        currentPage,
-        pageSize,
+        page,
+        size,
+        jobTitle || undefined,
+        companyName || undefined
       );
-    };
-    doFetchApplications()
-      .then((response) => {
-        setAllApplications(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching applications:", error);
-        showErrorToast(error?.response?.data?.message);
-      });
-  }, [currentPage, pageSize, applicationStatus, sort]);
+      setAllApplications(response.data || []);
+      setTotalCount(response.total || response.data?.length || 0);
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.message || "Failed to load applications";
+      setError(errorMessage);
+      showErrorToast(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [applicationStatus, sort, currentPage, pageSize]);
 
-  const handlePageChange = (page: number, size?: number) => {
+  useEffect(() => {
+    fetchApplications();
+  }, [fetchApplications]);
+
+  const handlePageChange = useCallback((page: number, size?: number) => {
     setCurrentPage(page);
-    if (size) setPageSize(size);
-  };
+    if (size && size !== pageSize) {
+      setPageSize(size);
+      setCurrentPage(1); // Reset to first page when changing page size
+    }
+  }, [pageSize]);
 
-  const handleSearchApplications = async () => {
-    await getMyApplications(
-      applicationStatus,
-      sort,
-      currentPage,
-      pageSize,
-      searchQuery.jobTitle,
-      searchQuery.companyName,
-    )
-      .then((res) => {
-        setAllApplications(res?.data);
-      })
-      .catch((err) => {
-        console.error(err);
-        showErrorToast(err?.response?.data?.message);
-      });
-  };
+  const handleSearchApplications = useCallback(async () => {
+    setCurrentPage(1); // Reset to first page for new search
+    await fetchApplications(1, pageSize, searchQuery.jobTitle, searchQuery.companyName);
+  }, [searchQuery, pageSize, fetchApplications]);
+
+  const clearSearch = useCallback(() => {
+    setSearchQuery({ jobTitle: "", companyName: "" });
+    setCurrentPage(1);
+    fetchApplications(1, pageSize);
+  }, [pageSize, fetchApplications]);
+
+  const handleViewApplication = useCallback((application: ApplicationResponse) => {
+    setApplicationToView(application);
+    openModal("application-method");
+  }, [openModal]);
+
+  // Loading skeleton component
+  const ApplicationSkeleton = () => (
+    <div className="space-y-4">
+      {[...Array(5)].map((_, index) => (
+        <div key={index} className="animate-pulse rounded-xl bg-slate-100 p-4">
+          <div className="flex items-center space-x-4">
+            <div className="h-12 w-12 rounded-lg bg-slate-200"></div>
+            <div className="flex-1 space-y-2">
+              <div className="h-4 bg-slate-200 rounded w-1/2"></div>
+              <div className="h-3 bg-slate-200 rounded w-1/3"></div>
+            </div>
+            <div className="h-6 w-16 bg-slate-200 rounded"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
-    <div className="min:h-screen flex w-full flex-col items-center bg-[#F7F8FA]">
-      <div className="w-full">
-        <TopNavBar
-          navItems={applicantNavItems}
-          navItemsMobile={applicantNavItemsMobile}
-          navbarItemsMap={applicantNavBarItemMap}
-        />
-      </div>
-      <div className="flex w-[96%] flex-col items-center justify-center gap-6 lg:items-start xl:flex-row">
-        <div className="flex w-full flex-col xl:w-[70%]">
-          {/*Search Bar*/}
-          <div className="my-4 w-full rounded-2xl bg-white p-2 md:p-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              {/* Search fields container */}
-              <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-0">
-                {/* Job Title Field */}
-                <div className="flex flex-1 items-center rounded-lg bg-gray-50 py-2 pr-2 pl-3 sm:rounded-r-none">
-                  <img
-                    src={Search}
-                    alt="search"
-                    className="h-5 w-5 shrink-0 text-gray-400"
-                  />
-                  <div className="flex w-full items-center justify-between">
-                    <input
-                      type="text"
-                      placeholder="Job Title"
-                      value={searchQuery?.jobTitle}
-                      onChange={(e) =>
-                        setSearchQuery({
-                          ...searchQuery,
-                          jobTitle: e.target.value,
-                        })
-                      }
-                      className="ml-2 w-full border-none bg-transparent text-sm font-bold text-black placeholder-black outline-none focus:ring-0 md:text-base"
-                    />
-                    <div
-                      onClick={() =>
-                        setSearchQuery({ ...searchQuery, jobTitle: "" })
-                      }
-                      className="hidden h-7 w-7 items-center justify-center rounded-full bg-gray-100 sm:flex"
-                    >
-                      <img src={Cancel} alt="clear" className="h-3 w-3" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+      {/* Navigation */}
+      <TopNavBar
+        navItems={applicantNavItems}
+        navItemsMobile={applicantNavItemsMobile}
+        navbarItemsMap={applicantNavBarItemMap}
+      />
+
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-6 xl:flex-row">
+          {/* Main Content */}
+          <div className="flex-1 xl:w-[70%]">
+            {/* Enhanced Search Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-slate-200"
+            >
+              <div className="p-4 sm:p-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+                  {/* Search Fields */}
+                  <div className="flex flex-1 flex-col gap-3 sm:flex-row">
+                    {/* Job Title Field */}
+                    <div className="relative flex-1">
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        Job Title
+                      </label>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                        <input
+                          type="text"
+                          placeholder="Search by job title..."
+                          value={searchQuery.jobTitle}
+                          onChange={(e) => setSearchQuery({ ...searchQuery, jobTitle: e.target.value })}
+                          className="w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-10 text-sm placeholder-slate-400 transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                        />
+                        {searchQuery.jobTitle && (
+                          <button
+                            onClick={() => setSearchQuery({ ...searchQuery, jobTitle: "" })}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Company Name Field */}
+                    <div className="relative flex-1">
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        Company Name
+                      </label>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                        <input
+                          type="text"
+                          placeholder="Search by company..."
+                          value={searchQuery.companyName}
+                          onChange={(e) => setSearchQuery({ ...searchQuery, companyName: e.target.value })}
+                          className="w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-10 text-sm placeholder-slate-400 transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                        />
+                        {searchQuery.companyName && (
+                          <button
+                            onClick={() => setSearchQuery({ ...searchQuery, companyName: "" })}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Divider - Hidden on mobile */}
-                <div className="hidden h-px bg-gray-300 sm:block sm:h-auto sm:w-px"></div>
+                  {/* Action Buttons */}
+                  <div className="flex gap-3 sm:gap-2">
+                    <button
+                      onClick={handleSearchApplications}
+                      disabled={isLoading}
+                      className="flex-1 sm:flex-none sm:w-32 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 py-3 px-6 text-sm font-medium text-white shadow-lg transition-all hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    >
+                      {isLoading ? "..." : "Search"}
+                    </button>
 
-                {/* Company Name Field */}
-                <div className="flex flex-1 items-center rounded-lg bg-gray-50 py-2 pr-2 pl-3 sm:rounded-l-none sm:pl-4">
-                  <img
-                    src={Search}
-                    alt="search"
-                    className="h-5 w-5 shrink-0 text-gray-400"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Company Name"
-                    value={searchQuery?.companyName}
-                    onChange={(e) =>
-                      setSearchQuery({
-                        ...searchQuery,
-                        companyName: e.target.value,
-                      })
-                    }
-                    className="w-full border-none bg-transparent text-sm font-bold text-black placeholder-black outline-none focus:ring-0 md:text-base"
-                  />
-                  <div
-                    onClick={() =>
-                      setSearchQuery({ ...searchQuery, companyName: "" })
-                    }
-                    className="hidden h-7 w-7 items-center justify-center rounded-full bg-gray-100 sm:flex"
-                  >
-                    <img src={Cancel} alt="clear" className="h-3 w-3" />
+                    {(searchQuery.jobTitle || searchQuery.companyName) && (
+                      <button
+                        onClick={clearSearch}
+                        className="rounded-lg border border-slate-300 bg-white py-3 px-4 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+                      >
+                        Clear
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
+            </motion.div>
 
-              {/* Search Button */}
-              <button
-                onClick={handleSearchApplications}
-                className="h-12 rounded-xl bg-[#6B5AED] px-4 font-medium text-white transition-colors hover:bg-[#5849d2] sm:h-11 sm:w-32 md:w-40"
-              >
-                <span className="hidden sm:inline">Find Job</span>
-                <span className="sm:hidden">Search</span>
-              </button>
-            </div>
-          </div>
-
-          {/*Main*/}
-          <div className="my-2 flex w-full flex-col justify-between gap-4 overflow-hidden rounded-[16px] bg-white p-4">
-            <div className="mb-4">
-              <ApplicationSearch
-                setApplicationStatus={setApplicationStatus}
-                setSort={setSort}
-                sort={sort}
-              />
-            </div>
-            <div className="flex w-full flex-col gap-4">
-              {allApplications.map((application, index) => (
-                <ApplicationCard
-                  key={index}
-                  application={application}
-                  onView={() => {
-                    setApplicationToView(application);
-                    openModal("application-method");
-                  }}
+            {/* Applications Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-slate-200"
+            >
+              <div className="p-4 sm:p-6">
+                {/* Filter and Sort */}
+                <ApplicationSearch
+                  setApplicationStatus={setApplicationStatus}
+                  setSort={setSort}
+                  sort={sort}
                 />
-              ))}
-            </div>
-            <div className="mt-6 mb-4 flex w-full justify-center">
-              <Pagination
-                current={currentPage}
-                pageSize={pageSize}
-                total={allApplications.length}
-                showSizeChanger
-                onChange={handlePageChange}
-                pageSizeOptions={["5", "10", "20", "50"]}
-                showQuickJumper
-              />
-            </div>
-          </div>
-        </div>
 
-        <div className="my-4 flex w-full flex-col justify-center gap-5 md:flex-row xl:w-[30%] xl:flex-col">
-          <div className="flex w-full items-center md:w-[50%] xl:w-full">
-            <div className="flex w-full">
+                {/* Content */}
+                <div className="mt-6">
+                  {isLoading ? (
+                    <ApplicationSkeleton />
+                  ) : error ? (
+                    <div className="text-center py-12">
+                      <AlertCircle className="mx-auto h-12 w-12 text-red-400 mb-4" />
+                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Error Loading Applications</h3>
+                      <p className="text-slate-600 mb-4">{error}</p>
+                      <button
+                        onClick={() => fetchApplications()}
+                        className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700 transition-colors"
+                      >
+                        Try Again
+                      </button>
+                    </div>
+                  ) : allApplications.length === 0 ? (
+                    <div className="text-center py-12">
+                      <FileText className="mx-auto h-12 w-12 text-slate-400 mb-4" />
+                      <h3 className="text-lg font-semibold text-slate-600 mb-2">No Applications Found</h3>
+                      <p className="text-slate-500">
+                        {searchQuery.jobTitle || searchQuery.companyName
+                          ? "Try adjusting your search criteria"
+                          : "You haven't applied to any jobs yet"}
+                      </p>
+                    </div>
+                  ) : (
+                    <AnimatePresence>
+                      <div className="space-y-4">
+                        {allApplications.map((application, index) => (
+                          <motion.div
+                            key={application.id || index}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                          >
+                            <ApplicationCard
+                              application={application}
+                              onView={() => handleViewApplication(application)}
+                            />
+                          </motion.div>
+                        ))}
+                      </div>
+                    </AnimatePresence>
+                  )}
+                </div>
+
+                {/* Pagination */}
+                {!isLoading && !error && allApplications.length > 0 && (
+                  <div className="mt-8 flex justify-center">
+                    <Pagination
+                      current={currentPage}
+                      pageSize={pageSize}
+                      total={totalCount}
+                      showSizeChanger
+                      onChange={handlePageChange}
+                      pageSizeOptions={["10", "20", "50", "100"]}
+                      showQuickJumper
+                      showTotal={(total, range) =>
+                        `${range[0]}-${range[1]} of ${total} applications`
+                      }
+                      className="[&_.ant-pagination-item-active]:bg-indigo-600 [&_.ant-pagination-item-active]:border-indigo-600"
+                    />
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Sidebar */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="xl:w-[30%] space-y-6"
+          >
+            <div className="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-slate-200">
               <ApplicantSchedules />
             </div>
-          </div>
-          <div className="scrollbar-hide my-3 w-full overflow-y-auto md:w-[50%] xl:w-full">
-            <div className="flex w-full">
+
+            <div className="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-slate-200">
               <ShortlistedJobs />
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
+
+      {/* Modal */}
       {isModalOpen("application-method") && applicationToView && (
         <ViewApplicationMethodModal
           modalId="application-method"
@@ -227,6 +322,8 @@ const MyApplications: React.FC = () => {
       )}
     </div>
   );
-};
+});
+
+MyApplications.displayName = 'MyApplications';
 
 export default MyApplications;

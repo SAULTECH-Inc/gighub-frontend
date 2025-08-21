@@ -81,7 +81,7 @@ const SubscriptionPlansView: React.FC = () => {
         "AI-powered job matching",
         "Personalized cover letters",
         "Basic analytics dashboard",
-        "Email support",
+        "Email entity",
       ],
     },
     {
@@ -100,7 +100,7 @@ const SubscriptionPlansView: React.FC = () => {
         "Priority job matching",
         "Advanced filtering options",
         "Detailed analytics & insights",
-        "Priority email support",
+        "Priority email entity",
         "Custom application templates",
       ],
     },

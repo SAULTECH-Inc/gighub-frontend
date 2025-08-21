@@ -5,16 +5,16 @@ import CreateJobStepThree from "../../components/ui/employer/createjob/CreateJob
 import CreateJobStepFour from "../../components/ui/employer/createjob/CreateJobStepFour";
 import { useJobFormStore } from "../../store/useJobFormStore";
 import { Gighub } from "../../assets/icons";
-import cancel from "../../assets/icons/cancelMedium.svg";
 import useModalStore from "../../store/modalStateStores";
+import { RiCloseLine, RiBriefcase4Line } from "react-icons/ri";
 
 interface EmployerJobMultistepFormProps {
   modalId: string;
 }
 
 const EmployerJobMultistepForm: React.FC<EmployerJobMultistepFormProps> = ({
-  modalId,
-}) => {
+                                                                             modalId,
+                                                                           }) => {
   const { step } = useJobFormStore();
   const { modals, closeModal } = useModalStore();
   const isOpen = modals[modalId];
@@ -22,54 +22,66 @@ const EmployerJobMultistepForm: React.FC<EmployerJobMultistepFormProps> = ({
   const handleClose = () => {
     closeModal(modalId);
   };
+
   if (!isOpen) return null;
 
+  const progressPercentage = (step / 4) * 100;
+
   return (
-    <div className="bg-black/50 fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-2">
-      <div className="flex max-h-[95vh] w-full max-w-[900px] flex-col items-center overflow-y-auto rounded-lg bg-[#F7F7F7] shadow-xl">
-        <div className="flex w-[92%] max-w-[900px] flex-col gap-4 py-2">
-          <div className="flex justify-between">
-            <h1 className="font-bold text-[#000000] sm:text-2xl">
-              Add new job
-            </h1>
-            <img
-              src={cancel}
-              alt="cancel"
-              onClick={handleClose}
-              className="w-3 sm:w-4"
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <img src={Gighub} alt="gighub logo" />
-              <p className="fw-900 text-[#FA4E09]">GigHub</p>
-            </div>
-            <div className="flex flex-wrap gap-4 font-bold sm:items-center">
-              <div className="relative flex h-[10px] w-[100px] self-center overflow-hidden rounded-[10px] sm:w-[247px]">
-                <div
-                  className="absolute top-0 left-0 h-full bg-[#6438C2]"
-                  style={{ width: `${(step / 4) * 100}%` }}
-                ></div>
-                <div
-                  className="absolute top-0 right-0 h-full bg-white"
-                  style={{
-                    width: `${(1 - step / 4) * 100}%`,
-                    left: `${(step / 4) * 100}%`,
-                  }}
-                ></div>
+      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 backdrop-blur-sm p-2">
+        <div className="flex max-h-[95vh] w-full max-w-[920px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+          {/* Modern Header */}
+          <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-6 text-white">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
+                  <RiBriefcase4Line className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold">Create New Job</h1>
+                  <p className="text-purple-100 text-sm">Step {step} of 4</p>
+                </div>
               </div>
-              <span className="">{step} / 4</span>
+              <button
+                  onClick={handleClose}
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-all duration-200"
+              >
+                <RiCloseLine className="h-5 w-5 text-white" />
+              </button>
+            </div>
+
+            {/* Progress Section */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img src={Gighub} alt="gighub logo" className="h-6 w-6" />
+                <span className="font-bold text-orange-300">GigHub</span>
+              </div>
+
+              {/* Modern Progress Bar */}
+              <div className="flex items-center gap-4">
+                <div className="relative h-2 w-48 bg-white/20 rounded-full overflow-hidden">
+                  <div
+                      className="absolute top-0 left-0 h-full bg-white rounded-full transition-all duration-700 ease-out"
+                      style={{ width: `${progressPercentage}%` }}
+                  />
+                </div>
+                <span className="text-sm font-medium text-white/90 min-w-[3rem]">
+                {step}/4
+              </span>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="flex w-full flex-col items-center justify-center rounded-[10px] px-4">
-          {step === 1 && <CreateJobStepOne />}
-          {step === 2 && <CreateJobStepTwo />}
-          {step === 3 && <CreateJobStepThree />}
-          {step === 4 && <CreateJobStepFour />}
+
+          {/* Content Area */}
+          <div className="flex-1 overflow-y-auto bg-gray-50">
+            {step === 1 && <CreateJobStepOne />}
+            {step === 2 && <CreateJobStepTwo />}
+            {step === 3 && <CreateJobStepThree />}
+            {step === 4 && <CreateJobStepFour />}
+          </div>
         </div>
       </div>
-    </div>
   );
 };
+
 export default EmployerJobMultistepForm;

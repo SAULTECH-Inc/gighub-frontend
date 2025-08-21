@@ -31,9 +31,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       className="relative mx-auto w-full rounded-[10px] bg-gray-100 p-0"
       onContextMenu={(e) => e.preventDefault()}
     >
-      <p className="absolute right-9 mt-4 text-right text-[16px] text-[#6438C2]">
-        {value ? value.length : 0}/500
-      </p>
       <ReactQuill
         value={value}
         onChange={(content) => onChange(content)} // Always wrap

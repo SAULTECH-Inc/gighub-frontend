@@ -5,11 +5,18 @@ import MultiSelect from "../../../common/MultiSelect";
 import { Crown } from "../../../../assets/images";
 import { toast } from "react-toastify";
 import { useSubscriptionStore } from "../../../../store/useSubscriptionStore.ts";
+import {
+  RiArrowLeftLine,
+  RiBuilding2Line,
+  RiSchoolLine,
+  RiCheckLine,
+  RiStarLine,
+  RiRocketLine
+} from "react-icons/ri";
 
 const CreateJobStepFour: React.FC = () => {
   const { isSubscribed } = useSubscriptionStore();
-  const { prevStep, job, setJobData, postJob, resetFormData } =
-    useJobFormStore();
+  const { prevStep, job, setJobData, postJob, resetFormData } = useJobFormStore();
 
   const submitJob = async () => {
     try {
@@ -24,77 +31,199 @@ const CreateJobStepFour: React.FC = () => {
     }
   };
 
+  const premiumFeatures = [
+    "Advanced candidate filtering",
+    "Priority job placement",
+    "Enhanced application methods",
+    "Detailed analytics",
+    "Priority support"
+  ];
+
   return (
-    <div className="flex w-full flex-col items-center">
-      <div className="flex min-h-[400px] w-[96%] max-w-[900px] flex-col items-center rounded-[10px] bg-white py-4">
-        <div className="flex w-[95%] flex-col gap-3">
+    <div className="flex w-full flex-col items-center p-6">
+      {/* Main Card */}
+      <div className="w-full max-w-[880px] bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Card Header */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Final Preferences</h2>
+          <p className="text-sm text-gray-600">Set advanced candidate preferences to find the perfect match</p>
+        </div>
+
+        {/* Content Area */}
+        <div className="p-6 space-y-8">
+          {/* Premium Features Overview */}
           {!isSubscribed && (
-            <div className="flex w-fit gap-1 rounded-[7px] bg-[#6438C2] px-[6px] py-[3px]">
-              <img src={Crown} alt="premium crown" className="w-4" />
-              <p className="text-[12px] text-white sm:text-base">Premium</p>
+            <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-200">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl flex items-center justify-center">
+                    <img src={Crown} alt="premium crown" className="w-6 h-6" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Unlock Premium Features</h3>
+                  <p className="text-gray-600 mb-4">Get access to advanced targeting and better candidate matches with our premium features.</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+                    {premiumFeatures.map((feature, index) => (
+                      <div key={index} className="flex items-center gap-2 text-sm text-gray-700">
+                        <RiCheckLine className="h-4 w-4 text-green-500 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2">
+                    <RiStarLine className="h-4 w-4" />
+                    Upgrade to Premium
+                  </button>
+                </div>
+              </div>
             </div>
           )}
-          <div className="">
-            <MultiSelect
-              label="Preferred Candidate Previous Company"
-              placeholder="Search or add a company"
-              options={PreferredCompanies}
-              disabled={!isSubscribed}
-              selectedItems={(job?.preferredCandidatePreviousCompany || []).map(
-                (company) => ({
-                  label: company,
-                  value: company,
-                }),
+
+          {/* Previous Company Preferences */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <RiBuilding2Line className="h-5 w-5 text-gray-500" />
+                <h3 className="text-base font-medium text-gray-900">Preferred Previous Companies</h3>
+              </div>
+              {!isSubscribed && (
+                <div className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-medium">
+                  <img src={Crown} alt="premium crown" className="w-3 h-3" />
+                  <span>Premium</span>
+                </div>
               )}
-              setSelectedItems={(items) =>
-                setJobData({
-                  ...job,
-                  preferredCandidatePreviousCompany: items.map(
-                    (item) => item.value,
-                  ), // Keep it as string[]
-                })
-              }
-            />
-          </div>
-          {!isSubscribed && (
-            <div className="flex w-fit gap-1 rounded-[7px] bg-[#6438C2] px-[6px] py-[3px]">
-              <img src={Crown} alt="premium crown" className="w-4" />
-              <p className="text-[12px] text-white sm:text-base">Premium</p>
             </div>
-          )}
-          <MultiSelect
-            label="Preferred Candidate University"
-            placeholder="Search or add university"
-            options={universities}
-            disabled={!isSubscribed}
-            selectedItems={(job?.preferredCandidateUniversity || []).map(
-              (university) => ({
-                label: university,
-                value: university,
-              }),
-            )}
-            setSelectedItems={(items) =>
-              setJobData({
-                ...job,
-                preferredCandidateUniversity: items.map((item) => item.value), // Keep it as string[]
-              })
-            }
-          />
+
+            <div className="space-y-3">
+              <MultiSelect
+                label="Preferred Candidate Previous Company"
+                placeholder="Search or add companies (e.g. Google, Microsoft, Apple)"
+                options={PreferredCompanies}
+                disabled={!isSubscribed}
+                selectedItems={(job?.preferredCandidatePreviousCompany || []).map(
+                  (company) => ({
+                    label: company,
+                    value: company,
+                  }),
+                )}
+                setSelectedItems={(items) =>
+                  setJobData({
+                    ...job,
+                    preferredCandidatePreviousCompany: items.map(
+                      (item) => item.value,
+                    ),
+                  })
+                }
+              />
+
+              {!isSubscribed && (
+                <div className="flex items-center gap-3 text-sm text-gray-600 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
+                      <RiBuilding2Line className="w-4 h-4 text-white" />
+                    </div>
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Target Experienced Professionals</p>
+                    <p className="text-gray-600">Find candidates with experience from top companies in your industry.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* University Preferences */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <RiSchoolLine className="h-5 w-5 text-gray-500" />
+                <h3 className="text-base font-medium text-gray-900">Preferred Universities</h3>
+              </div>
+              {!isSubscribed && (
+                <div className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-medium">
+                  <img src={Crown} alt="premium crown" className="w-3 h-3" />
+                  <span>Premium</span>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <MultiSelect
+                label="Preferred Candidate University"
+                placeholder="Search or add universities (e.g. MIT, Stanford, Harvard)"
+                options={universities}
+                disabled={!isSubscribed}
+                selectedItems={(job?.preferredCandidateUniversity || []).map(
+                  (university) => ({
+                    label: university,
+                    value: university,
+                  }),
+                )}
+                setSelectedItems={(items) =>
+                  setJobData({
+                    ...job,
+                    preferredCandidateUniversity: items.map((item) => item.value),
+                  })
+                }
+              />
+
+              {!isSubscribed && (
+                <div className="flex items-center gap-3 text-sm text-gray-600 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
+                      <RiSchoolLine className="w-4 h-4 text-white" />
+                    </div>
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Target Top Graduates</p>
+                    <p className="text-gray-600">Find candidates from prestigious universities and educational institutions.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Job Summary Section */}
+          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+            <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <RiCheckLine className="h-5 w-5 text-green-500" />
+              Job Summary
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div className="space-y-2">
+                <p><span className="font-medium text-gray-700">Title:</span> {job.title || "Not specified"}</p>
+                <p><span className="font-medium text-gray-700">Department:</span> {job.department || "Not specified"}</p>
+                <p><span className="font-medium text-gray-700">Location:</span> {job.location || "Not specified"}</p>
+                <p><span className="font-medium text-gray-700">Experience:</span> {job.experienceYears ? `${job.experienceYears} years` : "Not specified"}</p>
+              </div>
+              <div className="space-y-2">
+                <p><span className="font-medium text-gray-700">Job Type:</span> {job.jobType || "Not specified"}</p>
+                <p><span className="font-medium text-gray-700">Employment:</span> {job.employmentType || "Not specified"}</p>
+                <p><span className="font-medium text-gray-700">Priority:</span> {job.priority || "Not specified"}</p>
+                <p><span className="font-medium text-gray-700">Skills:</span> {job.skillSet?.length ? `${job.skillSet.length} selected` : "None selected"}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="mx-2 my-2 flex w-[96%] max-w-[900px] justify-end gap-6">
+
+      {/* Action Buttons */}
+      <div className="w-full max-w-[880px] flex justify-between mt-6">
         <button
-          className="w-[35%] self-end rounded-[15px] border border-[#E6E6E6] bg-[#F7F7F7] py-[8px] text-sm sm:w-[29%]"
           onClick={prevStep}
+          className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-8 py-3 rounded-xl font-medium transition-all duration-200"
         >
-          Back
+          <RiArrowLeftLine className="h-4 w-4" />
+          <span>Back</span>
         </button>
         <button
           type="button"
-          onClick={() => submitJob()} // Replace 123 with the actual employerId
-          className="w-[35%] rounded-[15px] border border-[#E6E6E6] bg-[#6438C2] px-1 py-[8px] text-sm text-white sm:w-[29%]"
+          onClick={submitJob}
+          className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200"
         >
-          Submit Job
+          <RiRocketLine className="h-4 w-4" />
+          <span>Publish Job</span>
         </button>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { useSectionEditable } from "../../../../store/useEditable.ts";
 import CustomSelect from "../../../common/CustomSelect.tsx";
 import { Option } from "../../../../utils/types";
 import { JobTypes } from "../../../../utils/employmentTypes.ts";
+import { X } from "lucide-react";
 
 export const PreferredJobType: React.FC = () => {
   const { applicant } = useAuth();
@@ -28,41 +29,50 @@ export const PreferredJobType: React.FC = () => {
       });
     }
   };
-  return (
-    <div>
-      <label className="font-lato block text-lg text-gray-700">
-        Preferred Job Type
-      </label>
-      <div className="w-full rounded-[16px] border border-[#E6E6E6] border-gray-300 bg-white p-4">
-        <CustomSelect
-          options={JobTypes}
-          className="w-full rounded-[10px] border-[#E6E6E6] bg-[#F7F8FA] p-2 text-left"
-          placeholder="Select Job Type"
-          disabled={!isEditable}
-          onChange={(option: Option) => {
-            handleJobTypeSelect(option.value).then((r) => r);
-          }}
-        />
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          {preferences?.jobTypes?.map((type, index) => (
-            <div
-              key={index}
-              className="flex h-[38px] w-[168px] items-center justify-between rounded-[10px] bg-[#56E5A1] px-4 text-sm font-medium text-white"
-            >
-              <span>{type}</span>
-              <button
-                type="button"
-                disabled={!isEditable}
-                onClick={() => removeJobType(index)}
-                className="text-lg font-bold text-white"
+  return (
+    <div className="space-y-4">
+      <CustomSelect
+        options={JobTypes}
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none"
+        placeholder="Select Job Type"
+        disabled={!isEditable}
+        onChange={(option: Option) => {
+          handleJobTypeSelect(option.value).then((r) => r);
+        }}
+      />
+
+      {/* Selected Job Types */}
+      {preferences?.jobTypes && preferences.jobTypes.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-sm text-gray-600">Selected job types:</p>
+          <div className="flex flex-wrap gap-2">
+            {preferences.jobTypes.map((type, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 px-3 py-2 bg-purple-100 border border-purple-200 rounded-lg text-sm font-medium text-purple-800"
               >
-                &times;
-              </button>
-            </div>
-          ))}
+                <span>{type}</span>
+                <button
+                  type="button"
+                  disabled={!isEditable}
+                  onClick={() => removeJobType(index)}
+                  className="p-1 text-purple-600 hover:text-red-600 transition-colors duration-200 disabled:opacity-50"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Empty State */}
+      {(!preferences?.jobTypes || preferences.jobTypes.length === 0) && !isEditable && (
+        <div className="text-center py-6 text-gray-500">
+          <p className="text-sm">No job types selected</p>
+        </div>
+      )}
     </div>
   );
 };

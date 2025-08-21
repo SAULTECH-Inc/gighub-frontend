@@ -1,5 +1,14 @@
 import React from "react";
 import useModalStore from "../../store/modalStateStores.ts";
+import {
+  X,
+  CheckCircle,
+  Calendar,
+  Mail,
+  Bell,
+  TrendingUp
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface SuccessModalProps {
   modalId: string;
@@ -9,7 +18,7 @@ const ApplicationSuccessModal: React.FC<SuccessModalProps> = ({ modalId }) => {
   const { modals, closeModal } = useModalStore();
   const isOpen = modals[modalId];
 
-  const handleCloseApplicationSuccessModal = () => {
+  const handleCloseModal = () => {
     if (isOpen) {
       closeModal(modalId);
     }
@@ -18,63 +27,133 @@ const ApplicationSuccessModal: React.FC<SuccessModalProps> = ({ modalId }) => {
   if (!isOpen) return null;
 
   return (
-    <div
-      className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black"
-      onClick={handleCloseApplicationSuccessModal}
-    >
-      <div
-        className="relative flex h-[500px] w-[95%] flex-col items-center justify-center rounded-[12px] bg-white p-5 shadow-lg md:h-[664px] md:w-[455px]"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="relative w-full max-w-md max-h-[95vh] bg-white rounded-2xl shadow-2xl overflow-hidden">
+        {/* Close Button */}
         <button
-          onClick={handleCloseApplicationSuccessModal}
-          className="absolute top-3 right-3 cursor-pointer text-xl text-gray-500"
+          onClick={handleCloseModal}
+          className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-slate-100 transition-colors"
         >
-          ×
+          <X className="w-5 h-5 text-slate-600" />
         </button>
 
-        <div className="mb-5 flex h-fit w-fit items-center justify-center rounded-full">
-          <svg
-            width="80"
-            height="80"
-            viewBox="0 0 100 100"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect width="100" height="100" fill="url(#pattern0_65_26)" />
-            <defs>
-              <pattern
-                id="pattern0_65_26"
-                patternContentUnits="objectBoundingBox"
-                width="1"
-                height="1"
+        {/* Content */}
+        <div className="p-6 sm:p-8 text-center">
+          {/* Success Animation Container */}
+          <div className="relative mb-6">
+            {/* Animated Background Circles */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-24 h-24 bg-green-100 rounded-full animate-pulse opacity-20"></div>
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-16 h-16 bg-green-200 rounded-full animate-ping opacity-30"></div>
+            </div>
+
+            {/* Main Success Icon */}
+            <div className="relative flex items-center justify-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg">
+                <CheckCircle className="w-10 h-10 text-white fill-current" />
+              </div>
+            </div>
+          </div>
+
+          {/* Success Message */}
+          <div className="mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+              🎉 Congratulations!
+            </h2>
+            <h3 className="text-lg font-semibold text-green-600 mb-4">
+              Application Submitted Successfully
+            </h3>
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-sm mx-auto">
+              Your application has been successfully submitted and all your details
+              have been received by the recruiter. You can monitor your application
+              status on your dashboard.
+            </p>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="space-y-4 mb-6">
+            {/* Primary Action */}
+            <Link
+              to="/applications"
+              onClick={handleCloseModal}
+              className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 hover:shadow-lg"
+            >
+              <TrendingUp className="w-4 h-4" />
+              <span>Check Application Status</span>
+            </Link>
+
+            {/* Secondary Actions */}
+            <div className="grid grid-cols-2 gap-3">
+              <Link
+                to="/dashboard"
+                onClick={handleCloseModal}
+                className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors text-sm"
               >
-                <use xlinkHref="#image0_65_26" transform="scale(0.0111111)" />
-              </pattern>
-              <image
-                id="image0_65_26"
-                width="90"
-                height="90"
-                xlinkHref="data:image/png;base64,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"
-              />
-            </defs>
-          </svg>
+                <Calendar className="w-4 h-4" />
+                <span>Dashboard</span>
+              </Link>
+
+              <button
+                onClick={handleCloseModal}
+                className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors text-sm"
+              >
+                <Bell className="w-4 h-4" />
+                <span>Set Alerts</span>
+              </button>
+            </div>
+          </div>
+
+          {/* What's Next Section */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 mb-6 border border-blue-200">
+            <h4 className="text-sm font-semibold text-slate-800 mb-3 flex items-center justify-center space-x-2">
+              <Mail className="w-4 h-4 text-blue-600" />
+              <span>What happens next?</span>
+            </h4>
+
+            <div className="space-y-2 text-left">
+              <div className="flex items-start space-x-3">
+                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                <p className="text-xs text-slate-600">
+                  You'll receive an email confirmation shortly
+                </p>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                <p className="text-xs text-slate-600">
+                  The recruiter will review your application
+                </p>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                <p className="text-xs text-slate-600">
+                  We'll notify you of any status updates
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Tips Section */}
+          <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
+            <h4 className="text-sm font-semibold text-amber-800 mb-2">
+              💡 Pro Tip
+            </h4>
+            <p className="text-xs text-amber-700">
+              While you wait, consider applying to similar positions or
+              updating your profile to attract more opportunities.
+            </p>
+          </div>
         </div>
 
-        <h2 className="mt-6 mb-6 text-[20px] font-semibold text-[#FA4E09]">
-          Congratulations!
-        </h2>
-
-        <p className="mb-6 w-[320px] text-left text-[13px] text-gray-600 md:w-[360px] md:text-center">
-          Your application has been successfully submitted, and all your details
-          have been received by the recruiter. You can monitor your application
-          status by visiting your Job Application Dashboard. Thank you for
-          taking the next step in your career journey with us!
-        </p>
-
-        <button className="w-[186px] rounded-[8px] bg-[#6438C2] px-6 py-2 text-[13px] font-medium text-white">
-          Check Status
-        </button>
+        {/* Footer */}
+        <div className="border-t border-slate-200 px-6 py-4 bg-slate-50">
+          <div className="flex items-center justify-center space-x-4 text-xs text-slate-500">
+            <span>Application ID: #APL-{Date.now().toString().slice(-6)}</span>
+            <span>•</span>
+            <span>{new Date().toLocaleDateString()}</span>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { UserType } from "../../utils/enums.ts";
-import { useAuth } from "../../store/useAuth.ts";
+import { removeFromLocalStorage, useAuth } from "../../store/useAuth.ts";
 import { ApplicantData, ApplicantPersonalInfo, EmployerData, Role } from "../../utils/types";
 import { useChatStore } from "../../store/useChatStore.ts";
 import { useSubscriptionStore } from "../../store/useSubscriptionStore.ts";
@@ -47,6 +47,7 @@ const SocialLoginSuccess: React.FC = () => {
       if (!token || !email || !userType) {
         console.log("Missing required params, redirecting to login");
         await new Promise(resolve => setTimeout(resolve, 1000));
+        await removeFromLocalStorage();
         navigate("/login");
         return;
       }
@@ -111,6 +112,7 @@ const SocialLoginSuccess: React.FC = () => {
       } catch (error) {
         console.error("Login failed:", error);
         await new Promise(resolve => setTimeout(resolve, 2000));
+        await removeFromLocalStorage();
         navigate("/login");
       }
     };

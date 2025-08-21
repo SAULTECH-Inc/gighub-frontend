@@ -1,3 +1,7 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { debounce } from "lodash";
+import { toast } from "react-toastify";
+import { RiFileList3Line, RiCheckboxCircleLine, RiCloseLine, RiCalendarEventLine, RiMailLine, RiNotification3Line, RiFileTextLine } from "react-icons/ri";
 import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
   ApplicationStatus,
@@ -5,9 +9,13 @@ import {
   NotificationType,
   useSettingsStore,
 } from "../../../../store/useSettingsStore.ts";
-import { toast } from "react-toastify";
-import { debounce } from "lodash";
-import { useCallback, useEffect } from "react";
+
+interface OptionConfig {
+  key: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description: string;
+}
 
 const JobApplicationUpdate = () => {
   const {
@@ -16,169 +24,289 @@ const JobApplicationUpdate = () => {
     setApplicationStatusNotification,
     updateApplicationStatusNotification,
   } = useSettingsStore();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Configuration for application status options
+  const applicationStatusOptions: OptionConfig[] = useMemo(() => [
+    {
+      key: "all",
+      label: "All Updates",
+      icon: RiFileList3Line,
+      description: "Receive notifications for all application status changes",
+    },
+    {
+      key: "submitted",
+      label: "Application Submitted",
+      icon: RiCheckboxCircleLine,
+      description: "When your application is successfully submitted",
+    },
+    {
+      key: "shortlisted",
+      label: "Shortlisted",
+      icon: RiCheckboxCircleLine,
+      description: "When you've been shortlisted for a position",
+    },
+    {
+      key: "rejected",
+      label: "Application Rejected",
+      icon: RiCloseLine,
+      description: "When your application has been declined",
+    },
+    {
+      key: "scheduledForInterview",
+      label: "Interview Scheduled",
+      icon: RiCalendarEventLine,
+      description: "When an interview has been scheduled",
+    },
+  ], []);
+
+  const notificationTypeOptions = useMemo(() => [
+    {
+      key: "all",
+      label: "All Notifications",
+      description: "Enable all notification methods",
+      icon: RiNotification3Line,
+    },
+    {
+      key: "emailNotification",
+      label: "Email Notifications",
+      description: "Receive updates via email",
+      icon: RiMailLine,
+    },
+    {
+      key: "pushNotification",
+      label: "Push Notifications",
+      description: "Receive browser/app push notifications",
+      icon: RiNotification3Line,
+    },
+  ], []);
+
   useEffect(() => {
-    if (applicantSettings) {
+    if (applicantSettings?.notifications?.options?.applicationStatus) {
       setApplicationStatusNotification(
-        applicantSettings?.notifications?.options?.applicationStatus,
+        applicantSettings.notifications.options.applicationStatus
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicantSettings]);
+  }, [applicantSettings, setApplicationStatusNotification]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedUpdate = useCallback(
     debounce(async (settings: ApplicationStatusNotification) => {
-      const response = await updateApplicationStatusNotification(settings);
-      if (response) {
-        setApplicationStatusNotification(response);
-      } else {
-        toast.error(
-          "Failed to update application status notification settings",
-        );
+      setIsLoading(true);
+      try {
+        const response = await updateApplicationStatusNotification(settings);
+        if (response) {
+          setApplicationStatusNotification(response);
+          toast.success("Application status notification settings updated");
+        } else {
+          toast.error("Failed to update notification settings");
+        }
+      } catch (error) {
+        toast.error("An error occurred while updating settings");
+        console.error("Update error:", error);
+      } finally {
+        setIsLoading(false);
       }
-    }, 500),
-    [applicationStatusNotification],
+    }, 800),
+    [updateApplicationStatusNotification, setApplicationStatusNotification]
   );
 
   useEffect(() => {
     return () => {
-      debouncedUpdate.cancel(); // prevent memory leak
+      debouncedUpdate.cancel();
     };
   }, [debouncedUpdate]);
 
-  // Define application updates options
-  const applicationUpdates = [
-    "all",
-    "submitted",
-    "shortlisted",
-    "rejected",
-    "scheduledForInterview",
-  ];
+  const handleApplicationStatusToggle = useCallback((key: string) => {
+    if (!applicationStatusNotification) return;
 
-  // Define notification types options
-  const notificationTypes = ["all", "emailNotification", "pushNotification"];
-  const getNotificationTypeStateField = (item: string) => {
-    switch (item) {
-      case "emailNotification":
-        return "Email Notification";
-      case "pushNotification":
-        return "Push Notification";
-      default:
-        return "All";
-    }
-  };
-
-  const handleToggle = (item: string) => {
-    const updatedSettings = {
-      ...applicationStatusNotification,
-      notificationType: {
-        ...applicationStatusNotification.notificationType,
-        [item]:
-          !applicationStatusNotification.notificationType[
-            item as keyof NotificationType
-          ],
-      },
-    };
-    setApplicationStatusNotification(updatedSettings);
-    debouncedUpdate(updatedSettings);
-  };
-
-  // Helper function to get the field name dynamically
-  const getApplicationUpdateStateField = (item: string) => {
-    switch (item.toLowerCase()) {
-      case "submitted":
-        return "Submitted";
-      case "shortlisted":
-        return "Shortlisted";
-      case "rejected":
-        return "Rejected";
-      case "scheduledForInterview":
-        return "Interview Schedule";
-      default:
-        return "All";
-    }
-  };
-
-  // Function to get the application update state
-  const handleApplicationUpdateToggle = (item: string) => {
     const updatedSettings = {
       ...applicationStatusNotification,
       option: {
         ...applicationStatusNotification.option,
-        [item]:
-          !applicationStatusNotification.option[
-            item as keyof ApplicationStatus
-          ],
+        [key]: !applicationStatusNotification.option[key as keyof ApplicationStatus],
       },
     };
     setApplicationStatusNotification(updatedSettings);
     debouncedUpdate(updatedSettings);
-  };
+  }, [applicationStatusNotification, setApplicationStatusNotification, debouncedUpdate]);
 
-  return (
-    <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
-      {/* Title */}
-      <h2 className="text-left text-xl text-[24px] font-bold text-black">
-        Job Application Update
-      </h2>
+  const handleNotificationTypeToggle = useCallback((key: string) => {
+    if (!applicationStatusNotification) return;
 
-      {/* Privacy Box */}
-      <div className="mt-4 flex min-h-[265px] w-full flex-col items-start rounded-[16px] border border-[#E6E6E6] bg-white px-4 py-6 md:px-8">
-        {/* Two Column Headings */}
-        <div className="grid w-full grid-cols-2">
-          <h3 className="text-md font-bold text-black">
-            Receive Update on Application Status
-          </h3>
-          <h3 className="text-md text-right font-bold text-black">
-            Notification Type
-          </h3>
-        </div>
+    const updatedSettings = {
+      ...applicationStatusNotification,
+      notificationType: {
+        ...applicationStatusNotification.notificationType,
+        [key]: !applicationStatusNotification.notificationType[key as keyof NotificationType],
+      },
+    };
+    setApplicationStatusNotification(updatedSettings);
+    debouncedUpdate(updatedSettings);
+  }, [applicationStatusNotification, setApplicationStatusNotification, debouncedUpdate]);
 
-        {/* Horizontal Rule */}
-        <hr className="my-3 w-full border-t border-[#E6E6E6]" />
-
-        {/* Two-Column Layout */}
-        <div className="grid w-full grid-cols-2 gap-x-8 px-2 py-8">
-          {/* Left Column - Application Status */}
-          <div className="w-full space-y-4">
-            {applicationUpdates.map((item, index) => (
-              <label key={index} className="flex items-center justify-between">
-                <span className="text-[16px] font-bold text-[#8E8E8E]">
-                  {getApplicationUpdateStateField(item)}
-                </span>
-                <ToggleSwitch
-                  isOn={
-                    applicationStatusNotification?.option[
-                      item as keyof ApplicationStatus
-                    ]
-                  }
-                  onToggle={() => handleApplicationUpdateToggle(item)}
-                />
-              </label>
-            ))}
-          </div>
-
-          {/* Right Column - Notification Type */}
-          <div className="w-full space-y-4">
-            {notificationTypes.map((item, index) => (
-              <label key={index} className="flex items-center justify-between">
-                <span className="text-[16px] font-bold text-[#8E8E8E]">
-                  {getNotificationTypeStateField(item)}
-                </span>
-                <ToggleSwitch
-                  isOn={
-                    applicationStatusNotification?.notificationType[
-                      item as keyof NotificationType
-                    ]
-                  }
-                  onToggle={() => handleToggle(item)}
-                />
-              </label>
-            ))}
-          </div>
+  if (!applicationStatusNotification) {
+    return (
+      <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
         </div>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <section className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+      {/* Section Header */}
+      <div className="mb-6">
+        <div className="flex items-center space-x-3 mb-2">
+          <div className="p-2 bg-green-100 rounded-lg">
+            <RiFileTextLine className="h-6 w-6 text-green-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Job Application Updates
+          </h2>
+        </div>
+        <p className="text-gray-600 text-sm">
+          Choose when and how you want to be notified about your job application status changes.
+        </p>
+      </div>
+
+      {/* Main Content Card */}
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        {/* Card Header */}
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Application Status Events
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Select which status changes you want to be notified about
+              </p>
+            </div>
+            <div className="md:text-right">
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Notification Methods
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Choose how you want to receive notifications
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card Content */}
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column - Application Status Options */}
+            <div className="space-y-4">
+              {applicationStatusOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = applicationStatusNotification.option[option.key as keyof ApplicationStatus];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-green-200 bg-green-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleApplicationStatusToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Right Column - Notification Types */}
+            <div className="space-y-4">
+              {notificationTypeOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = applicationStatusNotification.notificationType[option.key as keyof NotificationType];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-purple-200 bg-purple-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleNotificationTypeToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Loading Indicator */}
+        {isLoading && (
+          <div className="px-6 pb-4">
+            <div className="flex items-center justify-center space-x-2 text-gray-500">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-green-500 border-t-transparent"></div>
+              <span className="text-sm">Saving preferences...</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
   );
 };
 

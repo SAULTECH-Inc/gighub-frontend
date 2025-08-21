@@ -9,6 +9,7 @@ interface ToggleSwitchProps {
   borderColor?: string; // Tailwind color class or hex color
   trackOffColor?: string; // Tailwind color class or hex color for the track when off
   togglerOffColor?: string; // Tailwind color class or hex color for the toggler when off
+  disabled?: boolean;
 }
 
 const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
@@ -19,6 +20,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   borderColor = "#E6E6E6", // Default light grey
   trackOffColor = "white", // Default white for track when off
   togglerOffColor = "white", // Default white for toggler when off
+  disabled = false,
 }) => {
   const [enabled, setEnabled] = useState(isOn);
 
@@ -57,7 +59,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       paddingRem = 0.125; // 2px
       break;
     default: // Custom size if a number is provided (represents desired height in rem)
-      trackHeightRem = typeof size === "number" && size > 0 ? size : 1.25; // Ensure size is positive
+      trackHeightRem = 1.25; // Ensure size is positive
       trackWidthRem = trackHeightRem * 2; // Maintain 2:1 aspect ratio for track
       paddingRem = trackHeightRem * 0.1; // 10% of height for padding
       if (paddingRem * 2 >= trackHeightRem) {
@@ -108,6 +110,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       aria-label="Toggle Switch"
       tabIndex={0}
       onClick={toggleSwitch}
+      disabled={disabled}
       className={`relative flex items-center rounded-full transition-colors duration-300 focus:ring-2 focus:outline-none focus:ring-[${primaryColor}] focus:ring-opacity-50 ${enabled && isTailwindClass(primaryColor) ? `bg-${primaryColor}` : ""} ${!enabled && isTailwindClass(trackOffColor) ? `bg-${trackOffColor}` : ""} ${isTailwindClass(borderColor) ? `border border-${borderColor}` : "border"} `}
       style={{
         width: `${trackWidthRem}rem`,

@@ -1,61 +1,164 @@
 import { EmployerData } from "../../../../utils/types";
 import React from "react";
+import { motion } from "framer-motion";
+import {
+  Building2,
+  Users,
+  MapPin,
+  Linkedin,
+  Facebook,
+  Twitter,
+  Instagram,
+  ExternalLink
+} from "lucide-react";
 
 interface AboutUsProp {
   user: EmployerData;
 }
-const AboutUs: React.FC<AboutUsProp> = ({ user }) => {
-  return (
-    <section className="md:20 mt-32 w-full rounded-lg bg-white p-6 shadow">
-      <h2 className="mb-4 text-xl font-semibold">About Us</h2>
-      <div className="flex flex-col items-start justify-between gap-y-4 md:flex-row">
-        {/* Left Section */}
-        <div className="w-full bg-[#F7F7F7] p-4 md:mr-6 md:h-[208px] md:w-[482px] md:flex-1">
-          <div
-            dangerouslySetInnerHTML={{ __html: user?.companyDescription || "" }}
-            className="text-decoration-skip-ink text-decoration-skip-ink font-lato h-[150px] text-left text-[16px] leading-[19.2px] font-[700] text-[#7F7F7F] underline-offset-4"
-          ></div>
-          <div className="grid grid-cols-2 flex-wrap gap-x-4 md:flex">
-            <a href={user?.linkedInProfile || "#"} className="text-purple-600">
-              LinkedIn
-            </a>
-            <a href={user?.facebookProfile || "#"} className="text-purple-600">
-              Facebook
-            </a>
-            <a href={user?.twitterProfile || "#"} className="text-purple-600">
-              Twitter
-            </a>
-            <a href={user?.instagramProfile || "#"} className="text-purple-600">
-              Instagram
-            </a>
-          </div>
-        </div>
 
-        {/* Right Section */}
-        <div className="text-decoration-skip-ink font-lato flex h-[208px] w-full flex-1 flex-col justify-between space-y-4 bg-[#F7F7F7] p-4 text-left text-[16px] leading-[19.2px] font-[700] text-[#7F7F7F] underline-offset-4 md:w-[482px]">
-          <div className="flex items-center gap-x-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-purple-600 text-white">
-              <span className="text-xs">💼</span>
+const AboutUs: React.FC<AboutUsProp> = ({ user }) => {
+  const socialLinks = [
+    {
+      name: "LinkedIn",
+      url: user?.linkedInProfile,
+      icon: Linkedin,
+      color: "text-blue-600 hover:bg-blue-50"
+    },
+    {
+      name: "Facebook",
+      url: user?.facebookProfile,
+      icon: Facebook,
+      color: "text-blue-700 hover:bg-blue-50"
+    },
+    {
+      name: "Twitter",
+      url: user?.twitterProfile,
+      icon: Twitter,
+      color: "text-sky-500 hover:bg-sky-50"
+    },
+    {
+      name: "Instagram",
+      url: user?.instagramProfile,
+      icon: Instagram,
+      color: "text-pink-600 hover:bg-pink-50"
+    },
+  ].filter(link => link.url && link.url !== "#");
+
+  const companyStats = [
+    {
+      icon: Building2,
+      label: "Industry",
+      value: user?.industry,
+      color: "text-indigo-600 bg-indigo-50",
+    },
+    {
+      icon: Users,
+      label: "Company Size",
+      value: user?.companySize,
+      color: "text-emerald-600 bg-emerald-50",
+    },
+    {
+      icon: MapPin,
+      label: "Location",
+      value: user?.companyAddress,
+      color: "text-amber-600 bg-amber-50",
+    },
+  ].filter(stat => stat.value);
+
+  return (
+    <div className="p-6 sm:p-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="mb-6 text-2xl font-bold text-slate-900">About Us</h2>
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Company Description */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="space-y-6"
+          >
+            <div className="rounded-xl bg-slate-50 p-6">
+              <h3 className="mb-4 text-lg font-semibold text-slate-800">Our Story</h3>
+              <div
+                dangerouslySetInnerHTML={{ __html: user?.companyDescription || "No description available." }}
+                className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-600"
+              />
             </div>
-            <p className="text-sm font-semibold">{user?.industry || ""}</p>
-          </div>
-          <div className="flex items-center gap-x-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-purple-600 text-white">
-              <span className="text-xs">🏢</span>
-            </div>
-            {user?.companySize && (
-              <p className="text-sm font-semibold">{user?.companySize}</p>
+
+            {/* Social Media Links */}
+            {socialLinks.length > 0 && (
+              <div className="rounded-xl bg-slate-50 p-6">
+                <h3 className="mb-4 text-lg font-semibold text-slate-800">Connect With Us</h3>
+                <div className="flex flex-wrap gap-3">
+                  {socialLinks.map((social, index) => {
+                    const IconComponent = social.icon;
+                    return (
+                      <motion.a
+                        key={social.name}
+                        href={social.url || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        className={`flex items-center space-x-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium transition-all ${social.color}`}
+                      >
+                        <IconComponent className="h-4 w-4" />
+                        <span>{social.name}</span>
+                        <ExternalLink className="h-3 w-3 opacity-60" />
+                      </motion.a>
+                    );
+                  })}
+                </div>
+              </div>
             )}
-          </div>
-          <div className="flex items-center gap-x-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-purple-600 text-white">
-              <span className="text-sm">🌍</span>
+          </motion.div>
+
+          {/* Company Information */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="space-y-4"
+          >
+            <div className="rounded-xl bg-slate-50 p-6">
+              <h3 className="mb-6 text-lg font-semibold text-slate-800">Company Details</h3>
+              <div className="space-y-4">
+                {companyStats.map((stat, index) => {
+                  const IconComponent = stat.icon;
+                  return (
+                    <motion.div
+                      key={stat.label}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: 0.3 + index * 0.1 }}
+                      className="flex items-start space-x-4"
+                    >
+                      <div className={`rounded-lg p-2.5 ${stat.color}`}>
+                        <IconComponent className="h-5 w-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-500">{stat.label}</p>
+                        <p className="text-base font-semibold text-slate-900 break-words">
+                          {stat.value}
+                        </p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
-            <p className="text-sm font-semibold">{user?.companyAddress}</p>
-          </div>
+          </motion.div>
         </div>
-      </div>
-    </section>
+      </motion.div>
+    </div>
   );
 };
 

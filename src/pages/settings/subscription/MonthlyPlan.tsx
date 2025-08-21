@@ -1,14 +1,10 @@
-import ArrowIcon from "../../../assets/icons/circle-arrow.png";
 import { currencyAbbreviationToSymbol } from "../../../utils/constants.ts";
-import {
-  calculateNextSubscriptionDate,
-  subCycle,
-  USER_TYPE,
-} from "../../../utils/helpers.ts";
+import { calculateNextSubscriptionDate, subCycle, USER_TYPE } from "../../../utils/helpers.ts";
 import { useAuth } from "../../../store/useAuth.ts";
 import { UserType } from "../../../utils/enums.ts";
 import { useSubscriptionStore } from "../../../store/useSubscriptionStore.ts";
 import { UserSubscriptionResponse } from "../../../utils/types";
+import { RiVipCrownLine, RiArrowRightLine, RiRobotLine } from "react-icons/ri";
 
 const MonthlyPlan = () => {
   const { userType } = useAuth();
@@ -16,80 +12,119 @@ const MonthlyPlan = () => {
 
   const handleUpgrade = async () => {
     if (USER_TYPE === UserType.APPLICANT) {
-      /* empty */
+      // Handle upgrade logic
     }
   };
 
-  //calculate next subscription
+  const handleManagePayment = () => {
+    // Handle payment management
+  };
 
   return (
-    <div className="flex w-[95%] flex-col gap-6 py-10 md:flex-row md:px-10">
-      {/* Left Box - Monthly Plan */}
-      <div className="flex h-[192px] w-full flex-col justify-between rounded-lg bg-white p-5 shadow md:flex-1">
-        {/* Top Row: Monthly Plan & Price */}
-        <div className="flex items-center justify-between">
-          {/* Monthly Plan Tag */}
-          <div className="flex h-[30px] w-[116px] items-center justify-center bg-[#6438C2] px-3 py-1 text-xs font-bold text-white">
-            {subscription?.subscription?.billingCycle} Plan
+    <section className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+      {/* Section Header */}
+      <div className="mb-6">
+        <div className="flex items-center space-x-3 mb-2">
+          <div className="p-2 bg-purple-100 rounded-lg">
+            <RiVipCrownLine className="h-6 w-6 text-purple-600" />
           </div>
-          {userType === UserType.APPLICANT && (
-            <div className="text-xs md:text-sm">Auto Apply</div>
-          )}
-
-          {/* Pricing */}
-          <div className="flex items-start">
-            <p className="text-[16px] leading-none font-bold text-black md:text-[28px]">
-              {
-                currencyAbbreviationToSymbol[
-                  subscription?.subscription?.currency || "$"
-                ]
-              }
-              {subscription?.subscription?.price}
-            </p>
-            <span className="relative top-[-1px] ml-1 text-sm leading-[19.2px] tracking-[0%] text-[#8E8E8E]">
-              /{subCycle(subscription as UserSubscriptionResponse)}
-            </span>
-          </div>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Subscription Management
+          </h2>
         </div>
-
-        {/* Middle Row: Application Count & Upgrade Button */}
-        <div className="mt-3 flex items-center justify-between">
-          {/* Application Usage */}
-          {subscription?.isActive && (
-            <div className="text-orange flex h-[42px] w-[137px] items-center justify-center rounded-[10px] bg-[#F7F6F7] shadow-sm">
-              <p className="text-center">Active</p>
-            </div>
-          )}
-
-          {/* Upgrade Button */}
-          <button
-            onClick={handleUpgrade}
-            className="flex h-[42px] w-[137px] items-center justify-center gap-[10px] rounded-[10px] bg-[#6438C2] text-[14px] font-bold text-white"
-            style={{ padding: "9px 42px" }}
-          >
-            Upgrade
-            <img src={ArrowIcon} alt="Arrow" className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* Right Box - Next Payment */}
-      <div className="flex h-[192px] w-full flex-col justify-between rounded-lg bg-white p-5 shadow md:flex-1">
-        {/* Payment Header */}
-        <p className="text-md font-bold text-black">Next Payment</p>
-
-        {/* Payment Date */}
-        <p className="font-lato text-[20px] leading-[24px] font-bold tracking-[0%]">
-          {subscription && calculateNextSubscriptionDate(subscription)}
+        <p className="text-gray-600 text-sm">
+          Manage your subscription plan and billing information.
         </p>
-
-        {/* Manage Payment Button */}
-        <button className="flex h-[42px] w-[180px] items-center justify-center gap-[10px] self-end rounded-[10px] bg-[#6438C2] text-center text-[14px] font-bold text-white">
-          Manage Payment
-          <img src={ArrowIcon} alt="Arrow" className="h-4 w-4" />
-        </button>
       </div>
-    </div>
+
+      {/* Two-Column Layout */}
+      <div className="flex flex-col gap-6 md:flex-row">
+        {/* Left Box - Current Plan */}
+        <div className="flex h-[240px] w-full flex-col justify-between rounded-2xl bg-white p-6 shadow-sm border border-gray-200 md:flex-1">
+          {/* Top Section */}
+          <div className="space-y-4">
+            {/* Plan Badge and Features */}
+            <div className="flex items-center justify-between">
+              <div className="inline-flex items-center px-4 py-2 bg-[#6438C2] text-white rounded-lg text-sm font-bold">
+                {subscription?.subscription?.billingCycle || "Monthly"} Plan
+              </div>
+              {userType === UserType.APPLICANT && (
+                <div className="flex items-center space-x-2 text-gray-600">
+                  <RiRobotLine className="h-4 w-4 text-[#6438C2]" />
+                  <span className="text-sm font-medium">Auto Apply</span>
+                </div>
+              )}
+            </div>
+
+            {/* Pricing Display */}
+            <div className="flex items-baseline space-x-1">
+              <span className="text-3xl font-bold text-black leading-none">
+                {currencyAbbreviationToSymbol[subscription?.subscription?.currency || "$"]}
+                {subscription?.subscription?.price || "0"}
+              </span>
+              <span className="text-sm text-[#8E8E8E] leading-[19.2px]">
+                /{subCycle(subscription as UserSubscriptionResponse)}
+              </span>
+            </div>
+          </div>
+
+          {/* Bottom Section */}
+          <div className="flex items-center justify-between">
+            {/* Status Indicator */}
+            {subscription?.isActive && (
+              <div className="flex h-[42px] w-[120px] items-center justify-center rounded-[10px] bg-[#F7F6F7] shadow-sm">
+                <span className="text-center font-medium text-gray-700">Active</span>
+              </div>
+            )}
+
+            {/* Upgrade Button */}
+            <button
+              onClick={handleUpgrade}
+              className="flex h-[42px] w-[137px] items-center justify-center gap-[10px] rounded-[10px] bg-[#6438C2] hover:bg-[#5730af] text-[14px] font-bold text-white transition-colors duration-200 shadow-lg"
+            >
+              Upgrade
+              <RiArrowRightLine className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Right Box - Next Payment */}
+        <div className="flex h-[240px] w-full flex-col justify-between rounded-2xl bg-white p-6 shadow-sm border border-gray-200 md:flex-1">
+          {/* Header */}
+          <div>
+            <h3 className="text-lg font-bold text-black mb-2">Next Payment</h3>
+
+            {/* Payment Date */}
+            <div className="space-y-1">
+              <p className="text-sm text-gray-600">Due Date</p>
+              <p className="text-2xl font-bold text-black leading-tight">
+                {subscription ? calculateNextSubscriptionDate(subscription) : "Not scheduled"}
+              </p>
+            </div>
+
+            {/* Amount */}
+            <div className="mt-4">
+              <p className="text-sm text-gray-600">Amount</p>
+              <p className="text-lg font-semibold text-black">
+                {currencyAbbreviationToSymbol[subscription?.subscription?.currency || "$"]}
+                {subscription?.subscription?.price || "0.00"}
+              </p>
+            </div>
+          </div>
+
+          {/* Manage Payment Button */}
+          <div className="flex justify-end">
+            <button
+              onClick={handleManagePayment}
+              className="flex h-[42px] w-[180px] items-center justify-center gap-[10px] rounded-[10px] bg-[#6438C2] hover:bg-[#5730af] text-[14px] font-bold text-white transition-colors duration-200 shadow-lg"
+            >
+              Manage Payment
+              <RiArrowRightLine className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 

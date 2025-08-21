@@ -1,30 +1,42 @@
 import React, { useState, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import documentAttachment from "../../../../assets/icons/documentAttachment.svg";
 import videoAttachment from "../../../../assets/icons/videoAttachment.svg";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../../store/useAuth.ts";
 import { EmployerSignupRequest } from "../../../../utils/types";
+import { Upload, X, File, Globe, CheckCircle, AlertCircle } from "lucide-react";
 
 interface StepTwoProp {
   handleNext: () => void;
   handlePrev: () => void;
 }
 
+interface UploadedFile {
+  name: string;
+  progress: number;
+  file: File;
+  icon: string;
+  id: string;
+}
+
 const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
-  handleNext,
-  handlePrev,
-}) => {
+                                                        handleNext,
+                                                        handlePrev,
+                                                      }) => {
   const {
     error,
     employerSignupRequest,
     setEmployerSignupRequest,
     sendVerificationOtp,
   } = useAuth();
-  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
-  const [documentType, setDocumentType] = useState<string | undefined>("");
+
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [documentType, setDocumentType] = useState<string>("");
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [browseClicked, setBrowseClicked] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [browseClicked, setBrowseClicked] = useState<boolean | undefined>();
 
   const handleBrowseClick = () => {
     setBrowseClicked(true);
@@ -34,11 +46,9 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
   };
 
   const handleChange = (
-    e:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const { name, value } = e.target as HTMLInputElement & HTMLSelectElement;
+    const { name, value } = e.target;
     if (name === "documentType") {
       setDocumentType(value);
     } else {
@@ -49,54 +59,54 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
     }
   };
 
+  const generateFileId = () => Math.random().toString(36).substr(2, 9);
+
   const handleFileUpload = (files: FileList | null) => {
-    if (files) {
-      const fileArray = Array.from(files);
-      const newFiles = fileArray.map((file) => ({
-        name: file.name,
-        progress: 0,
-        file,
-        icon: getFileIcon(file.name),
-      }));
-      setUploadedFiles((prevFiles) => [...prevFiles, ...newFiles]);
-
-      // Update formData based on documentType
-      if (documentType === "coverPage") {
-        setEmployerSignupRequest({
-          ...employerSignupRequest,
-          [documentType]: newFiles[0].file,
-        } as EmployerSignupRequest);
-      } else if (documentType === "companyLogo") {
-        setEmployerSignupRequest({
-          ...employerSignupRequest,
-          [documentType]: newFiles[0].file,
-        } as EmployerSignupRequest);
-      }
-
-      // Simulate file upload progress (replace with actual upload logic)
-      newFiles.forEach((file, index) => {
-        console.log(index);
-        const interval = setInterval(() => {
-          setUploadedFiles((prev) => {
-            const updatedFiles = [...prev];
-            const currentFile = updatedFiles.find((f) => f.name === file.name);
-            if (currentFile && currentFile.progress < 100) {
-              currentFile.progress += 10; // Increment progress by 10% for simulation
-            }
-            return updatedFiles;
-          });
-          if (file.progress >= 100) clearInterval(interval); // Stop when 100% is reached
-        }, 500); // Update progress every 500ms (simulated)
-      });
+    if (!files || files.length === 0) return;
+    if (!documentType) {
+      setBrowseClicked(true);
+      return;
     }
+
+    const fileArray = Array.from(files);
+    const newFiles: UploadedFile[] = fileArray.map((file) => ({
+      name: file.name,
+      progress: 0,
+      file,
+      icon: getFileIcon(file.name),
+      id: generateFileId(),
+    }));
+
+    setUploadedFiles((prevFiles) => [...prevFiles, ...newFiles]);
+
+    // Update formData based on documentType
+    if (documentType === "coverPage" || documentType === "companyLogo") {
+      setEmployerSignupRequest({
+        ...employerSignupRequest,
+        [documentType]: newFiles[0].file,
+      } as EmployerSignupRequest);
+    }
+
+    // Simulate file upload progress
+    newFiles.forEach((newFile) => {
+      const interval = setInterval(() => {
+        setUploadedFiles((prev) =>
+          prev.map((file) =>
+            file.id === newFile.id && file.progress < 100
+              ? { ...file, progress: Math.min(file.progress + 10, 100) }
+              : file
+          )
+        );
+      }, 300);
+
+      // Clear interval when progress reaches 100%
+      setTimeout(() => clearInterval(interval), 3000);
+    });
   };
 
   const getFileIcon = (fileName: string) => {
-    if (fileName.toLowerCase().includes("resume")) {
-      return documentAttachment;
-    } else if (fileName.toLowerCase().includes("cover letter")) {
-      return documentAttachment;
-    } else if (fileName.toLowerCase().includes("video")) {
+    const name = fileName.toLowerCase();
+    if (name.includes("video") || name.endsWith('.mp4') || name.endsWith('.avi')) {
       return videoAttachment;
     }
     return documentAttachment;
@@ -104,199 +114,302 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    setIsDragOver(false);
     handleFileUpload(e.dataTransfer.files);
   };
 
-  const handleRemoveFile = (fileName: string) => {
-    setUploadedFiles((prevFiles) =>
-      prevFiles.filter((file) => file.name !== fileName),
-    );
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleRemoveFile = (fileId: string) => {
+    setUploadedFiles((prevFiles) => prevFiles.filter((file) => file.id !== fileId));
   };
 
   const handleSendOtp = async () => {
-    const success = await sendVerificationOtp(
-      employerSignupRequest?.email as string,
-      "SIGNUP",
-    );
-    if (success) {
-      toast.success("Verification OTP sent successfully!");
-      handleNext();
-    } else {
-      toast.error(
-        error || "Failed to send verification OTP. Please try again later.",
+    setIsLoading(true);
+    try {
+      const success = await sendVerificationOtp(
+        employerSignupRequest?.email as string,
+        "SIGNUP"
       );
-      return false;
+      if (success) {
+        toast.success("Verification OTP sent successfully!");
+        handleNext();
+      } else {
+        toast.error(error || "Failed to send verification OTP. Please try again later.");
+      }
+    } catch (err) {
+      toast.error("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const documentOptions = [
+    { value: "", label: "Select document type", disabled: true },
+    { value: "coverPage", label: "Cover Page" },
+    { value: "companyLogo", label: "Company Logo" },
+  ];
+
   return (
     <motion.div
-      className="mx-auto w-[95%] px-[10px] md:mt-32 md:mr-28 md:w-[680px] lg:w-[500px] lg:px-0"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      className="w-full space-y-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <motion.div
-        className="w-full rounded-[16px] border-[1px] border-[#E6E6E6] p-6"
-        initial={{ y: 50 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <motion.div
-          className="mx-auto flex w-full flex-col justify-center"
-          initial={{ x: -50 }}
-          animate={{ x: 0 }}
-          transition={{ duration: 0.5 }}
+      {/* Header */}
+      <div className="space-y-2">
+        <motion.h2
+          className="text-2xl sm:text-3xl font-semibold text-gray-900"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <h1 className="mb-4 text-xl font-bold">Company Page Setup</h1>
+          Company Page Setup
+        </motion.h2>
+        <motion.p
+          className="text-gray-600 text-sm sm:text-base"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          Add your company details and upload required documents
+        </motion.p>
+      </div>
 
-          <motion.div
-            className="relative mb-4 w-full"
-            initial={{ x: -50 }}
-            animate={{ x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <motion.label
-              className="mb-2 block text-[13px] font-medium text-[#000000]"
-              initial={{ y: 50 }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.5 }}
-              htmlFor="company-website"
-            >
-              Company Website
-            </motion.label>
-            <input
-              type="text"
-              className="w-full rounded-[16px] border-[2px] border-[#E6E6E6] bg-[#F7F8FA] px-4 py-2 outline-none focus:border-[2px] focus:border-[#E6E6E6] focus:ring-0"
-              name="companyWebsite"
-              value={employerSignupRequest?.companyWebsite}
-              placeholder="https://example.com"
-              onChange={handleChange}
-              id="company-website"
-            />
-          </motion.div>
+      {/* Main Form Card */}
+      <motion.div
+        className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
+        {/* Company Website */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            <Globe className="inline w-4 h-4 mr-1" />
+            Company Website
+          </label>
+          <input
+            type="url"
+            name="companyWebsite"
+            value={employerSignupRequest?.companyWebsite || ""}
+            onChange={handleChange}
+            placeholder="https://example.com"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6438C2] focus:border-transparent transition-colors hover:border-gray-400"
+          />
+        </div>
 
+        {/* Document Type Selection */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            <File className="inline w-4 h-4 mr-1" />
+            Document Type
+          </label>
           <select
-            className="mb-4 h-[52px] w-full rounded-[16px] border-[2px] border-[#E6E6E6] bg-[#F7F8FA] px-4 py-2 outline-none focus:border-[2px] focus:border-[#E6E6E6] focus:ring-0"
-            onChange={(e) => {
-              handleChange(e);
-              setDocumentType(e.target.value);
-            }}
             name="documentType"
-            value={documentType || ""}
+            value={documentType}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6438C2] focus:border-transparent transition-colors hover:border-gray-400 bg-white"
           >
-            <option value="" disabled>
-              Document name
-            </option>
-            <option value="coverPage">Cover Page</option>
-            <option value="companyLogo">Company Logo</option>
+            {documentOptions.map((option) => (
+              <option key={option.value} value={option.value} disabled={option.disabled}>
+                {option.label}
+              </option>
+            ))}
           </select>
+        </div>
+
+        {/* File Upload Area */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            <Upload className="inline w-4 h-4 mr-1" />
+            Upload Documents
+          </label>
 
           <motion.div
-            className="mb-4 flex h-[194px] w-full flex-col items-center justify-center rounded-[16px] border-[1px] border-dashed border-[#6438C2] bg-[#f2f5f7]"
+            className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 ${
+              isDragOver
+                ? "border-[#6438C2] bg-purple-50"
+                : documentType
+                  ? "border-gray-300 hover:border-[#6438C2] hover:bg-gray-50"
+                  : "border-gray-200 bg-gray-50"
+            }`}
             onDrop={handleDrop}
-            onDragOver={(e) => e.preventDefault()}
-            initial={{ scale: 0.95 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5 }}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            whileHover={documentType ? { scale: 1.01 } : {}}
+            transition={{ duration: 0.2 }}
           >
-            <p className="mb-2 text-center text-gray-600">
-              Drag and drop your files here
-            </p>
-            <span className="my-4">OR</span>
             <input
               type="file"
-              className="hidden"
-              onChange={(e) => handleFileUpload(e.target.files)}
-              name="workExperience"
               ref={fileInputRef}
+              onChange={(e) => handleFileUpload(e.target.files)}
+              className="hidden"
               multiple
-              disabled={!documentType}
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4,.avi"
             />
-            <button
-              type="button"
-              className="mx-auto flex h-[44px] w-[162px] items-center justify-center rounded-[16px] border border-[#E6E6E6] bg-[#6438C2] font-[13px] text-white hover:bg-[#5931A9] focus:border-none focus:ring-0 focus:outline-none"
-              onClick={handleBrowseClick}
-              disabled={!documentType}
-            >
-              Browse Files
-            </button>
-          </motion.div>
-          {!documentType && browseClicked && (
-            <motion.p
-              className="mt-2 text-sm text-red-600"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              * Please select a document name before uploading.
-            </motion.p>
-          )}
 
-          <motion.p
-            className="mt-[20px] text-sm text-gray-600 md:text-[16px]"
-            initial={{ y: 50 }}
-            animate={{ y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            Uploaded Files
-          </motion.p>
-          <motion.div
-            className="mt-[20px] flex w-full flex-col gap-y-[10px]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            {uploadedFiles.map((file, index) => (
-              <motion.div
-                key={index}
-                className="flex h-[89px] w-full items-center justify-between rounded-[16px] border-[1px] border-[#E6E6E6] p-3"
-                initial={{ x: -50 }}
-                animate={{ x: 0 }}
-                transition={{ duration: 0.5 }}
+            <div className="space-y-4">
+              <Upload
+                className={`mx-auto w-8 h-8 ${
+                  documentType ? "text-[#6438C2]" : "text-gray-400"
+                }`}
+              />
+              <div>
+                <p className={`text-base font-medium ${
+                  documentType ? "text-gray-700" : "text-gray-500"
+                }`}>
+                  Drag and drop your files here
+                </p>
+                <p className="text-sm text-gray-500 mt-1">or</p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleBrowseClick}
+                disabled={!documentType}
+                className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
+                  documentType
+                    ? "bg-[#6438C2] text-white hover:bg-[#5931A9] active:transform active:scale-95"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
               >
-                <div className="flex items-center gap-x-2">
-                  <img src={file.icon} alt="file icon" />
-                  <div className="text-xs text-gray-400 md:text-sm">
-                    {file.name}
-                  </div>
-                </div>
-                <div className="text-xs text-gray-600 md:text-sm">
-                  {file.progress}% Uploaded
-                </div>
-                <button
-                  type="button"
-                  className="text-sm text-red-600"
-                  onClick={() => handleRemoveFile(file.name)}
-                >
-                  &#10005;
-                </button>
-              </motion.div>
-            ))}
+                Browse Files
+              </button>
+            </div>
           </motion.div>
-        </motion.div>
+
+          {/* Error Message */}
+          <AnimatePresence>
+            {!documentType && browseClicked && (
+              <motion.div
+                className="flex items-center gap-2 text-sm text-red-600 bg-red-50 p-3 rounded-lg"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                Please select a document type before uploading files.
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Uploaded Files */}
+        <AnimatePresence>
+          {uploadedFiles.length > 0 && (
+            <motion.div
+              className="space-y-3"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h4 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <File className="w-4 h-4" />
+                Uploaded Files ({uploadedFiles.length})
+              </h4>
+
+              <div className="space-y-2">
+                {uploadedFiles.map((file) => (
+                  <motion.div
+                    key={file.id}
+                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <img
+                        src={file.icon}
+                        alt="File icon"
+                        className="w-6 h-6 flex-shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {file.name}
+                        </p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-32">
+                            <motion.div
+                              className="bg-[#6438C2] h-2 rounded-full"
+                              initial={{ width: 0 }}
+                              animate={{ width: `${file.progress}%` }}
+                              transition={{ duration: 0.3 }}
+                            />
+                          </div>
+                          <span className="text-xs text-gray-600 flex items-center gap-1">
+                            {file.progress === 100 ? (
+                              <>
+                                <CheckCircle className="w-3 h-3 text-green-500" />
+                                Complete
+                              </>
+                            ) : (
+                              `${file.progress}%`
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveFile(file.id)}
+                      className="p-2 text-gray-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
 
+      {/* Navigation Buttons */}
       <motion.div
-        className="mt-6 flex w-full justify-end gap-x-4"
-        initial={{ y: 50 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
+        className="flex flex-col sm:flex-row gap-3 sm:justify-end"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
       >
         <button
           type="button"
           onClick={handlePrev}
-          className="h-[44px] w-[162px] rounded-[16px] border border-[#E6E6E6] bg-white font-[13px] text-gray-600 hover:bg-[#F7F8FA] focus:border-none focus:ring-0 focus:outline-none"
+          className="w-full sm:w-auto px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
         >
           Back
         </button>
         <button
           type="button"
           onClick={handleSendOtp}
-          className="h-[44px] w-[162px] rounded-[16px] bg-[#6438C2] font-[13px] text-white hover:bg-[#5931A9] focus:border-none focus:ring-0 focus:outline-none"
+          disabled={isLoading}
+          className={`w-full sm:w-auto px-6 py-3 rounded-lg font-medium text-white transition-all duration-200 ${
+            isLoading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#6438C2] hover:bg-[#5931A9] active:transform active:scale-[0.98]"
+          }`}
         >
-          Proceed
+          {isLoading ? (
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              Sending OTP...
+            </div>
+          ) : (
+            "Continue"
+          )}
         </button>
       </motion.div>
     </motion.div>
