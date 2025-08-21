@@ -78,7 +78,7 @@ const ApplicantProfileCard: React.FC = () => {
   };
 
   return (
-    <div className="mx-auto flex h-[123px] w-full items-center justify-between rounded-t-[16px] bg-[#6438C2] p-4 text-white">
+    <div className="mx-auto flex h-[123px] w-full items-center justify-between bg-[#6438C2] p-4 text-white">
       {/* Left Section: Logo and Details */}
       <div className="flex items-center space-x-4">
         {/* Logo */}

@@ -92,3 +92,10 @@ export enum RateeType {
   JOB = "JOB",
   USER = "USER",
 }
+
+export enum Priority{
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH",
+  URGENT = "URGENT",
+}

@@ -1,13 +1,21 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { debounce } from "lodash";
+import { toast } from "react-toastify";
+import { RiUserAddLine, RiRefreshLine, RiCalendarEventLine, RiMailLine, RiNotification3Line, RiFolderUserLine } from "react-icons/ri";
+import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
   ManageJobApplicationsNotifications,
   ManageJobNotificationState,
   NotificationType,
   useSettingsStore,
 } from "../../../../store/useSettingsStore.ts";
-import { useCallback, useEffect } from "react";
-import { debounce } from "lodash";
-import { toast } from "react-toastify";
-import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
+
+interface ManageJobConfig {
+  key: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description: string;
+}
 
 const ManageJobNotification = () => {
   const {
@@ -16,161 +24,266 @@ const ManageJobNotification = () => {
     setManageJobApplications,
     updateManageJobApplications,
   } = useSettingsStore();
-  useEffect(() => {
-    if (employerSettings) {
-      setManageJobApplications(
-        employerSettings?.notifications?.options?.manageJobApplications,
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [employerSettings]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const [isLoading, setIsLoading] = useState(false);
+
+  const manageJobOptions: ManageJobConfig[] = useMemo(() => [
+    {
+      key: "applicantApplies",
+      label: "New Applications",
+      icon: RiUserAddLine,
+      description: "When a candidate applies to one of your job postings",
+    },
+    {
+      key: "applicationStatusUpdated",
+      label: "Application Status Updates",
+      icon: RiRefreshLine,
+      description: "When an applicant's application status is changed",
+    },
+    {
+      key: "interviewScheduled",
+      label: "Interview Scheduling",
+      icon: RiCalendarEventLine,
+      description: "When interviews are scheduled with applicants",
+    },
+  ], []);
+
+  const notificationTypeOptions = useMemo(() => [
+    {
+      key: "all",
+      label: "All Notifications",
+      description: "Enable all notification methods",
+      icon: RiNotification3Line,
+    },
+    {
+      key: "emailNotification",
+      label: "Email Notifications",
+      description: "Receive application updates via email",
+      icon: RiMailLine,
+    },
+    {
+      key: "pushNotification",
+      label: "Push Notifications",
+      description: "Receive browser/app push notifications",
+      icon: RiNotification3Line,
+    },
+  ], []);
+
+  useEffect(() => {
+    if (employerSettings?.notifications?.options?.manageJobApplications) {
+      setManageJobApplications(employerSettings.notifications.options.manageJobApplications);
+    }
+  }, [employerSettings, setManageJobApplications]);
+
   const debouncedUpdate = useCallback(
     debounce(async (settings: ManageJobApplicationsNotifications) => {
-      const response = await updateManageJobApplications(settings);
-      if (response) {
-        setManageJobApplications(response);
-      } else {
-        toast.error(
-          "Failed to update application status notification settings",
-        );
+      setIsLoading(true);
+      try {
+        const response = await updateManageJobApplications(settings);
+        if (response) {
+          setManageJobApplications(response);
+          toast.success("Job application management settings updated");
+        } else {
+          toast.error("Failed to update job application management settings");
+        }
+      } catch (error) {
+        toast.error("An error occurred while updating settings");
+        console.error("Update error:", error);
+      } finally {
+        setIsLoading(false);
       }
-    }, 500),
-    [manageJobApplications],
+    }, 800),
+    [updateManageJobApplications, setManageJobApplications]
   );
 
   useEffect(() => {
     return () => {
-      debouncedUpdate.cancel(); // prevent memory leak
+      debouncedUpdate.cancel();
     };
   }, [debouncedUpdate]);
 
-  // Define application updates options
-  const applicationUpdates = [
-    "applicantApplies",
-    "applicationStatusUpdated",
-    "interviewScheduled",
-  ];
+  const handleManageJobToggle = useCallback((key: string) => {
+    if (!manageJobApplications) return;
 
-  // Define notification types options
-  const notificationTypes = ["all", "emailNotification", "pushNotification"];
-  const getNotificationTypeStateField = (item: string) => {
-    switch (item) {
-      case "emailNotification":
-        return "Email Notification";
-      case "pushNotification":
-        return "Push Notification";
-      default:
-        return "All";
-    }
-  };
-
-  const handleToggle = (item: string) => {
-    const updatedSettings = {
-      ...manageJobApplications,
-      notificationType: {
-        ...manageJobApplications.notificationType,
-        [item]:
-          !manageJobApplications.notificationType[
-            item as keyof NotificationType
-          ],
-      },
-    };
-    setManageJobApplications(updatedSettings);
-    debouncedUpdate(updatedSettings);
-  };
-
-  // Helper function to get the field name dynamically
-  const getApplicationUpdateStateField = (item: string) => {
-    switch (item) {
-      case "applicantApplies":
-        return "Notify me when an applicant  applies";
-      case "applicationStatusUpdated":
-        return "Notify me when an applicant's application status is updated";
-      default:
-        return "Notify me about applicant interview  schedule";
-    }
-  };
-
-  // Function to get the application update state
-  const handleApplicationUpdateToggle = (item: string) => {
     const updatedSettings = {
       ...manageJobApplications,
       option: {
         ...manageJobApplications.option,
-        [item]:
-          !manageJobApplications.option[
-            item as keyof ManageJobNotificationState
-          ],
+        [key]: !manageJobApplications.option[key as keyof ManageJobNotificationState],
       },
     };
     setManageJobApplications(updatedSettings);
     debouncedUpdate(updatedSettings);
-  };
+  }, [manageJobApplications, setManageJobApplications, debouncedUpdate]);
 
-  return (
-    <div className="font-lato flex w-[90%] flex-col self-center py-10">
-      {/* Title */}
-      <h2 className="text-left text-xl text-[24px] font-bold text-black">
-        Manage Job Application
-      </h2>
+  const handleNotificationTypeToggle = useCallback((key: string) => {
+    if (!manageJobApplications) return;
 
-      {/* Privacy Box */}
-      <div className="mt-4 flex min-h-[265px] w-full flex-col items-start rounded-[16px] border border-[#E6E6E6] bg-white px-8 py-6">
-        {/* Two Column Headings */}
-        <div className="grid w-full grid-cols-2">
-          <h3 className="text-md font-bold text-black">Notify me when:</h3>
-          <h3 className="text-md text-right font-bold text-black">
-            Notification Type
-          </h3>
-        </div>
+    const updatedSettings = {
+      ...manageJobApplications,
+      notificationType: {
+        ...manageJobApplications.notificationType,
+        [key]: !manageJobApplications.notificationType[key as keyof NotificationType],
+      },
+    };
+    setManageJobApplications(updatedSettings);
+    debouncedUpdate(updatedSettings);
+  }, [manageJobApplications, setManageJobApplications, debouncedUpdate]);
 
-        {/* Horizontal Rule */}
-        <hr className="my-3 w-full border-t border-[#E6E6E6]" />
-
-        {/* Two-Column Layout */}
-        <div className="grid w-full grid-cols-2 gap-x-8 p-8">
-          {/* Left Column - Application Status */}
-          <div className="w-full space-y-4">
-            {applicationUpdates.map((item, index) => (
-              <label key={index} className="flex items-center justify-between">
-                <span className="text-[16px] font-bold text-[#8E8E8E]">
-                  {getApplicationUpdateStateField(item)}
-                </span>
-                <ToggleSwitch
-                  isOn={
-                    manageJobApplications?.option[
-                      item as keyof ManageJobNotificationState
-                    ]
-                  }
-                  onToggle={() => handleApplicationUpdateToggle(item)}
-                />
-              </label>
-            ))}
-          </div>
-
-          {/* Right Column - Notification Type */}
-          <div className="w-full space-y-4">
-            {notificationTypes.map((item, index) => (
-              <label key={index} className="flex items-center justify-between">
-                <span className="text-[16px] font-bold text-[#8E8E8E]">
-                  {getNotificationTypeStateField(item)}
-                </span>
-                <ToggleSwitch
-                  isOn={
-                    manageJobApplications?.notificationType[
-                      item as keyof NotificationType
-                    ]
-                  }
-                  onToggle={() => handleToggle(item)}
-                />
-              </label>
-            ))}
-          </div>
+  if (!manageJobApplications) {
+    return (
+      <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
         </div>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <section className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+      {/* Section Header */}
+      <div className="mb-6">
+        <div className="flex items-center space-x-3 mb-2">
+          <div className="p-2 bg-cyan-100 rounded-lg">
+            <RiFolderUserLine className="h-6 w-6 text-cyan-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Job Application Management
+          </h2>
+        </div>
+        <p className="text-gray-600 text-sm">
+          Stay informed about candidate applications and manage your hiring process efficiently.
+        </p>
+      </div>
+
+      {/* Main Content Card */}
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        {/* Card Header */}
+        <div className="bg-gradient-to-r from-cyan-50 to-blue-50 px-6 py-4 border-b border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Application Events
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Select how you want to receive notifications
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card Content */}
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column - Job Management Options */}
+            <div className="space-y-4">
+              {manageJobOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = manageJobApplications.option[option.key as keyof ManageJobNotificationState];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-cyan-200 bg-cyan-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-cyan-100 text-cyan-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleManageJobToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Right Column - Notification Types */}
+            <div className="space-y-4">
+              {notificationTypeOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = manageJobApplications.notificationType[option.key as keyof NotificationType];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-purple-200 bg-purple-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleNotificationTypeToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Loading Indicator */}
+        {isLoading && (
+          <div className="px-6 pb-4">
+            <div className="flex items-center justify-center space-x-2 text-gray-500">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-cyan-500 border-t-transparent"></div>
+              <span className="text-sm">Saving preferences...</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
   );
 };
 

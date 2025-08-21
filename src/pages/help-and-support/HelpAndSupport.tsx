@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { UserType } from "../../utils/enums.ts";
+import { Priority, UserType } from "../../utils/enums.ts";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import {
   applicantNavBarItemMap,
@@ -11,8 +11,10 @@ import {
 } from "../../utils/constants.ts";
 import { USER_TYPE } from "../../utils/helpers.ts";
 import MainFooter from "../../components/layouts/MainFooter.tsx";
+import { usePlatform } from "../../store/usePlatform.ts";
 
 const HelpAndSupportPage: React.FC = () => {
+  const { contactCustomerSupport } = usePlatform();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
@@ -21,7 +23,7 @@ const HelpAndSupportPage: React.FC = () => {
     email: "",
     subject: "",
     message: "",
-    priority: "medium",
+    priority: Priority.MEDIUM,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -46,7 +48,7 @@ const HelpAndSupportPage: React.FC = () => {
     },
     {
       title: "Chat with Support",
-      description: "Get instant help from our support team",
+      description: "Get instant help from our entity team",
       icon: "💬",
       action: "chat",
       color: "from-green-500 to-teal-600",
@@ -175,19 +177,23 @@ const HelpAndSupportPage: React.FC = () => {
     setIsSubmitting(true);
 
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    setIsSubmitting(false);
-    setShowSuccessMessage(true);
-    setContactForm({
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-      priority: "medium",
+    const response = await contactCustomerSupport({
+      ...contactForm,
     });
+    if (response.statusCode === 201) {
+      setIsSubmitting(false);
+      setShowSuccessMessage(true);
+      setTimeout(() => {}, 5000);
+      setContactForm({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+        priority: Priority.MEDIUM,
+      });
 
-    setTimeout(() => setShowSuccessMessage(false), 5000);
+      setTimeout(() => setShowSuccessMessage(false), 5000);
+    }
   };
 
   const handleQuickAction = (action: string) => {
@@ -463,15 +469,15 @@ const HelpAndSupportPage: React.FC = () => {
                     onChange={(e) =>
                       setContactForm({
                         ...contactForm,
-                        priority: e.target.value,
+                        priority: (e.target.value).toUpperCase() as Priority,
                       })
                     }
                     className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#6438C2]"
                   >
-                    <option value="low">Low - General inquiry</option>
-                    <option value="medium">Medium - Account issue</option>
-                    <option value="high">High - Billing problem</option>
-                    <option value="urgent">
+                    <option value="LOW">Low - General inquiry</option>
+                    <option value="MEDIUM">Medium - Account issue</option>
+                    <option value="HIGH">High - Billing problem</option>
+                    <option value="URGENT">
                       Urgent - Can't access account
                     </option>
                   </select>
@@ -591,7 +597,7 @@ const HelpAndSupportPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <MainFooter/>
+      <MainFooter />
     </div>
   );
 };

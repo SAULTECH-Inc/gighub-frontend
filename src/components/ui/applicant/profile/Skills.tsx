@@ -1,5 +1,6 @@
 import React, { memo } from "react";
 import CustomSelect from "../../../common/CustomSelect.tsx";
+import { X, Code } from "lucide-react";
 
 export interface Option {
   label: string;
@@ -15,12 +16,12 @@ interface SkillsProps {
 }
 
 const Skills: React.FC<SkillsProps> = ({
-  options,
-  skills,
-  addSkill,
-  removeSkill,
-  isEditable,
-}) => {
+                                         options,
+                                         skills,
+                                         addSkill,
+                                         removeSkill,
+                                         isEditable,
+                                       }) => {
   // Handle dropdown change
   const handleDropdownChange = (option: Option) => {
     if (!skills.includes(option.value)) {
@@ -29,38 +30,57 @@ const Skills: React.FC<SkillsProps> = ({
   };
 
   return (
-    <div className="flex w-full flex-1 flex-col justify-start space-y-2 p-0 md:w-1/2">
-      <label className="text-lg font-medium">Skills</label>
-      <div className="w-full bg-white">
-        {/* Selected Items Box */}
-        <div className="flex w-full flex-wrap gap-2 space-y-2 rounded-[16px] border border-[#E6E6E6] p-3 md:p-4">
-          <div className="w-full">
-            <CustomSelect
-              options={options}
-              onChange={handleDropdownChange}
-              placeholder="+ Add Skill"
-              disabled={isEditable}
-              className="w-full rounded-[10px] border border-[#E6E6E6] bg-[#F7F8FA] p-2 text-left"
-            />
-          </div>
-          {skills?.map((skill: string, index) => (
-            <div
-              key={index}
-              className={`flex items-center space-x-2 rounded-[10px] bg-[#FA4E09] px-4 py-2 text-white ${!isEditable ? "cursor-pointer" : "cursor-not-allowed"}`}
-            >
-              <span>{skill}</span>
-              <button
-                type="button"
-                disabled={isEditable}
-                onClick={() => removeSkill(skill)}
-                className={`rounded-full font-semibold text-white ${!isEditable ? "cursor-pointer" : "cursor-not-allowed"}`}
+    <div className="space-y-4">
+      <CustomSelect
+        options={options}
+        onChange={handleDropdownChange}
+        placeholder="Select a skill to add"
+        disabled={isEditable}
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+      />
+
+      {/* Selected Skills */}
+      {skills && skills.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-sm text-gray-600">Your skills:</p>
+          <div className="flex flex-wrap gap-2">
+            {skills.map((skill: string, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 px-3 py-2 bg-blue-100 border border-blue-200 rounded-lg text-sm font-medium text-blue-800"
               >
-                &times;
-              </button>
-            </div>
-          ))}
+                <Code className="w-3 h-3" />
+                <span>{skill}</span>
+                <button
+                  type="button"
+                  disabled={isEditable}
+                  onClick={() => removeSkill(skill)}
+                  className="p-1 text-blue-600 hover:text-red-600 transition-colors duration-200 disabled:opacity-50"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Empty State */}
+      {(!skills || skills.length === 0) && !isEditable && (
+        <div className="text-center py-6 text-gray-500">
+          <Code className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+          <p className="text-sm">No skills added yet</p>
+        </div>
+      )}
+
+      {/* Helper Text */}
+      {isEditable && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <p className="text-xs text-blue-600">
+            💡 Add skills that are relevant to your target job roles. Include both technical and soft skills.
+          </p>
+        </div>
+      )}
     </div>
   );
 };

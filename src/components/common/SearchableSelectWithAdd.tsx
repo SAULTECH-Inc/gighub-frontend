@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+import { RiSearchLine, RiAddLine } from "react-icons/ri";
 
 interface Option {
   label: string;
@@ -12,20 +13,32 @@ interface SearchableSelectWithAddProps {
   options: Option[];
   onChange?: (option: Option) => void;
   onAddOption?: (option: Option) => void;
+  value?: string;
+  disabled?: boolean;
 }
 
 const SearchableSelectWithAdd: React.FC<SearchableSelectWithAddProps> = ({
-  placeholder = "Select an option...",
-  className,
-  options,
-  onChange,
-  onAddOption,
-}) => {
+                                                                           placeholder = "Select an option...",
+                                                                           className = "",
+                                                                           options,
+                                                                           onChange,
+                                                                           onAddOption,
+                                                                           value,
+                                                                           disabled = false,
+                                                                         }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Set initial selected option based on value prop
+  useEffect(() => {
+    if (value) {
+      const option = options.find(opt => opt.value === value);
+      if (option) setSelectedOption(option);
+    }
+  }, [value, options]);
 
   // Filter options based on search input
   useEffect(() => {
@@ -44,6 +57,7 @@ const SearchableSelectWithAdd: React.FC<SearchableSelectWithAddProps> = ({
         !dropdownRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
+        setSearch("");
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -58,18 +72,19 @@ const SearchableSelectWithAdd: React.FC<SearchableSelectWithAddProps> = ({
       onChange(option);
     }
     setIsOpen(false);
+    setSearch("");
   };
 
   const handleAddOption = () => {
     if (search.trim() === "") return;
 
     const newOption: Option = {
-      label: search,
-      value: search.replace(/\s+/g, "-"), // Removed toLowerCase() to preserve case
+      label: search.trim(),
+      value: search.trim().replace(/\s+/g, "-"),
     };
 
     if (onAddOption) {
-      onAddOption(newOption); // Call the onAddOption callback
+      onAddOption(newOption);
     }
 
     setSelectedOption(newOption);
@@ -80,65 +95,91 @@ const SearchableSelectWithAdd: React.FC<SearchableSelectWithAddProps> = ({
     setSearch("");
   };
 
+  const canAddNew = search.trim() !== "" &&
+    !options.some(option => option.label.toLowerCase() === search.toLowerCase());
+
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative w-full" ref={dropdownRef}>
       {/* Dropdown button */}
       <button
         type="button"
-        className={`${className}`}
-        onClick={() => setIsOpen(!isOpen)}
+        disabled={disabled}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className={`
+          relative flex w-full items-center justify-between rounded-lg border-2 bg-white px-3 sm:px-4 py-2 sm:py-3 text-left transition-all duration-200
+          ${disabled
+          ? 'cursor-not-allowed bg-gray-100 border-gray-200 text-gray-400'
+          : 'border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100'
+        }
+          ${className}
+        `}
       >
-        {selectedOption ? selectedOption.label : placeholder}
-        {isOpen ? (
-          <MdKeyboardArrowUp className="absolute top-3 right-3 cursor-pointer text-[30px]" />
-        ) : (
-          <MdKeyboardArrowDown className="absolute top-2 right-3 cursor-pointer text-[30px]" />
-        )}
+        <span className="block truncate text-xs sm:text-sm">
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
+
+        <div className="flex items-center">
+          {isOpen ? (
+            <MdKeyboardArrowUp className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 transition-transform duration-200" />
+          ) : (
+            <MdKeyboardArrowDown className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 transition-transform duration-200" />
+          )}
+        </div>
       </button>
 
       {/* Dropdown menu */}
-      {isOpen && (
-        <div className="absolute z-10 mt-2 w-full rounded-[10px] border border-gray-300 bg-white p-3 shadow-lg">
+      {isOpen && !disabled && (
+        <div className="absolute z-100 mt-2 w-full rounded-lg border-2 border-gray-200 bg-white shadow-lg animate-in slide-in-from-top-2 duration-200">
           {/* Search input */}
-          <input
-            type="text"
-            className="w-full border-b border-gray-300 px-3 py-2 text-sm focus:outline-none"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <div className="p-3 border-b border-gray-100">
+            <div className="relative">
+              <RiSearchLine className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
+                className="w-full pl-10 pr-3 py-2 border border-gray-200 rounded-md text-xs sm:text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-100"
+                placeholder="Search or type to add new..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                autoFocus
+              />
+            </div>
+          </div>
 
           {/* Options List */}
-          <ul className="max-h-48 overflow-y-auto">
+          <div className="max-h-48 overflow-y-auto">
             {filteredOptions.length > 0 ? (
-              filteredOptions.map((option) => (
-                <li
-                  key={option.value}
-                  className="cursor-pointer px-4 py-2 text-sm hover:bg-blue-100"
+              filteredOptions.map((option, index) => (
+                <button
+                  key={`${option.value}-${index}`}
+                  type="button"
+                  className="w-full text-left px-4 py-3 text-xs sm:text-sm hover:bg-blue-50 transition-colors duration-150 border-b border-gray-50 last:border-b-0"
                   onClick={() => handleSelect(option)}
                 >
                   {option.label}
-                </li>
+                </button>
               ))
+            ) : search.trim() === "" ? (
+              <div className="px-4 py-6 text-xs sm:text-sm text-gray-500 text-center">
+                Start typing to search options
+              </div>
             ) : (
-              <li className="px-4 py-2 text-sm text-gray-500">
-                No results found
-              </li>
+              <div className="px-4 py-6 text-xs sm:text-sm text-gray-500 text-center">
+                No matching options found
+              </div>
             )}
-          </ul>
 
-          {/* Add new option button */}
-          {search.trim() !== "" &&
-            !options.some(
-              (option) => option.label.toLowerCase() === search.toLowerCase(),
-            ) && (
+            {/* Add new option */}
+            {canAddNew && (
               <button
-                className="mt-2 w-full rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
+                type="button"
+                className="w-full flex items-center gap-2 px-4 py-3 text-xs sm:text-sm text-blue-600 hover:bg-blue-50 transition-colors duration-150 border-t border-gray-100 font-medium"
                 onClick={handleAddOption}
               >
-                Add "{search}"
+                <RiAddLine className="h-4 w-4" />
+                <span>Add "{search.trim()}"</span>
               </button>
             )}
+          </div>
         </div>
       )}
     </div>

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
+import { RiArrowDownSLine, RiAddLine, RiCloseLine } from "react-icons/ri";
 import { FaAsterisk } from "react-icons/fa";
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 interface Option {
   label: string;
@@ -14,18 +14,18 @@ interface MultiSelectProps {
   selectedItems: Option[];
   setSelectedItems: (items: Option[]) => void;
   requiredAsterisk?: boolean;
-  disabled?: boolean; // ✅ Optional disabled prop
+  disabled?: boolean;
 }
 
 const MultiSelect: React.FC<MultiSelectProps> = ({
-  label,
-  placeholder,
-  options,
-  selectedItems,
-  setSelectedItems,
-  requiredAsterisk = false,
-  disabled = false,
-}) => {
+                                                   label,
+                                                   placeholder = "Select options...",
+                                                   options,
+                                                   selectedItems,
+                                                   setSelectedItems,
+                                                   requiredAsterisk = false,
+                                                   disabled = false,
+                                                 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
@@ -34,10 +34,11 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   useEffect(() => {
     setFilteredOptions(
       options.filter((option) =>
-        option.label.toLowerCase().includes(search.toLowerCase()),
+        option.label.toLowerCase().includes(search.toLowerCase()) &&
+        !selectedItems.some((selected) => selected.value === option.value)
       ),
     );
-  }, [search, options]);
+  }, [search, options, selectedItems]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -46,6 +47,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
         !dropdownRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
+        setSearch("");
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -59,23 +61,23 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     if (!selectedItems.some((item) => item.value === option.value)) {
       setSelectedItems([...selectedItems, option]);
     }
-    setIsOpen(false);
+    setSearch("");
   };
 
   const handleAddOption = () => {
     if (disabled || search.trim() === "") return;
 
     const newOption: Option = {
-      label: search,
-      value: search.replace(/\s+/g, "-"),
+      label: search.trim(),
+      value: search.trim().toLowerCase().replace(/\s+/g, "-"),
     };
 
     if (!selectedItems.some((item) => item.value === newOption.value)) {
       setSelectedItems([...selectedItems, newOption]);
     }
 
-    setIsOpen(false);
     setSearch("");
+    setIsOpen(false);
   };
 
   const handleRemove = (value: string) => {
@@ -84,98 +86,125 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     setSelectedItems(updatedItems);
   };
 
-  return (
-    <div className="relative w-full" ref={dropdownRef}>
-      <div
-        className={`flex w-full flex-wrap rounded-[16px] border ${
-          disabled ? "cursor-not-allowed bg-gray-200" : "bg-[#F7F8FA]"
-        } border-[#E6E6E6] p-2 md:p-4`}
-      >
-        <div className="flex items-center gap-1 text-[12px] sm:text-base">
-          {label}
-          {requiredAsterisk && <FaAsterisk className="w-2 fill-[#FA4E09]" />}
-        </div>
+  const canAddNew = search.trim() !== "" &&
+    !options.some(option => option.label.toLowerCase() === search.toLowerCase()) &&
+    !selectedItems.some(item => item.label.toLowerCase() === search.toLowerCase());
 
+  return (
+    <div className="w-full space-y-3" ref={dropdownRef}>
+      {/* Label */}
+      <label className="flex items-center gap-2 text-sm font-medium text-gray-900">
+        {label}
+        {requiredAsterisk && <FaAsterisk className="w-2 h-2 text-red-500" />}
+      </label>
+
+      {/* Input Area */}
+      <div className="relative">
         <button
           type="button"
-          className={`mt-2 flex w-full items-center justify-between rounded-lg border border-[#E6E6E6] ${
-            disabled
-              ? "cursor-not-allowed bg-gray-300 text-gray-500"
-              : "bg-white text-[#8E8E8E]"
-          } p-2 text-[12px] sm:text-base`}
+          className={`
+            w-full flex items-center justify-between p-4 text-left border-2 rounded-xl transition-all duration-200
+            ${disabled
+            ? 'cursor-not-allowed bg-gray-100 border-gray-200 text-gray-400'
+            : 'bg-white border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-50'
+          }
+          `}
           onClick={() => !disabled && setIsOpen(!isOpen)}
           disabled={disabled}
         >
-          {placeholder}
-          {isOpen ? (
-            <MdKeyboardArrowUp className="text-[24px]" />
-          ) : (
-            <MdKeyboardArrowDown className="text-[24px]" />
-          )}
+          <span className={`
+            ${selectedItems.length > 0 ? 'text-gray-700 font-medium' : 'text-gray-500'}
+            ${disabled ? 'text-gray-400' : ''}
+          `}>
+            {selectedItems.length > 0 ? `${selectedItems.length} item${selectedItems.length > 1 ? 's' : ''} selected` : placeholder}
+          </span>
+          <RiArrowDownSLine className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
         </button>
 
+        {/* Dropdown */}
         {isOpen && !disabled && (
-          <div className="absolute z-10 mt-2 w-full rounded-lg border border-gray-300 bg-white p-3 shadow-lg">
-            <input
-              type="text"
-              className="w-full border-b border-gray-300 px-3 py-2 text-sm focus:outline-none"
-              placeholder="Search..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              disabled={disabled}
-            />
+          <div className="absolute z-20 w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl max-h-64 overflow-hidden">
+            {/* Search Input */}
+            <div className="p-3 border-b border-gray-100">
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-50"
+                placeholder="Search or type to add new..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                autoFocus
+              />
+            </div>
 
-            <ul className="mt-2 max-h-48 overflow-y-auto">
+            {/* Options List */}
+            <div className="max-h-40 overflow-y-auto">
               {filteredOptions.length > 0 ? (
                 filteredOptions.map((option) => (
-                  <li
+                  <button
                     key={option.value}
-                    className="cursor-pointer px-4 py-2 text-sm hover:bg-[#6438C2]"
+                    type="button"
+                    className="w-full text-left px-4 py-3 text-sm hover:bg-blue-50 transition-colors duration-150 border-b border-gray-50 last:border-b-0"
                     onClick={() => handleSelect(option)}
                   >
                     {option.label}
-                  </li>
+                  </button>
                 ))
+              ) : search.trim() === "" ? (
+                <div className="px-4 py-6 text-sm text-gray-500 text-center">
+                  Start typing to search options
+                </div>
               ) : (
-                <li className="px-4 py-2 text-sm text-gray-500">
-                  No results found
-                </li>
+                <div className="px-4 py-6 text-sm text-gray-500 text-center">
+                  No matching options found
+                </div>
               )}
-            </ul>
 
-            {search.trim() !== "" &&
-              !options.some(
-                (option) => option.label.toLowerCase() === search.toLowerCase(),
-              ) && (
+              {/* Add New Option */}
+              {canAddNew && (
                 <button
-                  className="mt-2 w-full rounded bg-[#6438C2] px-4 py-2 text-sm text-white hover:bg-[#6438C2]"
+                  type="button"
+                  className="w-full flex items-center gap-2 px-4 py-3 text-sm text-blue-600 hover:bg-blue-50 transition-colors duration-150 border-t border-gray-100 font-medium"
                   onClick={handleAddOption}
                 >
-                  Add "{search}"
+                  <RiAddLine className="h-4 w-4" />
+                  <span>Add "{search.trim()}"</span>
                 </button>
               )}
+            </div>
           </div>
         )}
+      </div>
 
-        <div className="mt-2 flex h-auto max-h-max flex-wrap gap-2 overflow-y-auto">
+      {/* Selected Items Display - Now Below */}
+      {selectedItems.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-3">
           {selectedItems.map((item) => (
             <div
               key={item.value}
-              className="flex items-center space-x-2 rounded-lg bg-[#FA4E09] px-4 py-2 text-[12px] text-white"
+              className="flex items-center gap-1 bg-orange-500 text-white px-3 py-1.5 rounded-full text-sm font-medium shadow-sm"
             >
               <span>{item.label}</span>
-              <button
-                type="button"
-                onClick={() => handleRemove(item.value)}
-                className="cursor-pointer font-semibold text-white"
-                disabled={disabled}
-              >
-                &times;
-              </button>
+              {!disabled && (
+                <button
+                  type="button"
+                  onClick={() => handleRemove(item.value)}
+                  className="ml-1 hover:bg-orange-600 rounded-full p-0.5 transition-colors duration-150"
+                >
+                  <RiCloseLine className="h-3 w-3" />
+                </button>
+              )}
             </div>
           ))}
         </div>
-      </div>
+      )}
+
+      {/* Disabled State Message */}
+      {disabled && (
+        <div className="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 p-2 rounded-lg">
+          <span>🔒</span>
+          <span>This feature requires a premium subscription</span>
+        </div>
+      )}
     </div>
   );
 };

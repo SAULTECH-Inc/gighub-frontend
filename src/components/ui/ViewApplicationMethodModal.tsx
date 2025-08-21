@@ -1,14 +1,21 @@
-import React from "react";
-import cancel from "../../assets/icons/cancel.svg";
-import profilepics from "../../assets/images/profilepics.png";
-import video from "../../assets/icons/videoThick.svg";
-import userProfile from "../../assets/icons/userProfile.svg";
-import documentAttachement from "../../assets/icons/documentAttachement.svg";
+import React, { memo, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  X,
+  Building2,
+  MapPin,
+  FileText,
+  Video,
+  User,
+  Briefcase,
+  ExternalLink,
+  AlertTriangle
+} from "lucide-react";
+import { Link } from "react-router-dom";
 import useModalStore from "../../store/modalStateStores.ts";
 import { ApplicationResponse } from "../../utils/types";
 import { withdrawApplication } from "../../services/api";
 import { ApplicationStatus } from "../../utils/dummyApplications.ts";
-import { Link } from "react-router-dom";
 import { UserType } from "../../utils/enums.ts";
 import { USER_TYPE } from "../../utils/helpers.ts";
 
@@ -17,172 +24,287 @@ interface ModalProps {
   application: ApplicationResponse;
 }
 
-const ViewApplicationMethodModal: React.FC<ModalProps> = ({
-  modalId,
-  application,
-}) => {
+const ViewApplicationMethodModal: React.FC<ModalProps> = memo(({
+                                                                 modalId,
+                                                                 application,
+                                                               }) => {
   const { modals, closeModal } = useModalStore();
-  const isOpen = modals[modalId]; // Reactive state for this modal
+  const isOpen = modals[modalId];
 
-  const handleWithdrawApplication = async (jobId: number) => {
-    const response = await withdrawApplication(jobId);
-    if (response) {
-      closeModal(modalId);
+  const handleWithdrawApplication = useCallback(async (jobId: number) => {
+    try {
+      const response = await withdrawApplication(jobId);
+      if (response) {
+        closeModal(modalId);
+        // Optionally trigger a refresh of the applications list
+      }
+    } catch (error) {
+      console.error("Failed to withdraw application:", error);
     }
+  }, [closeModal, modalId]);
+
+  const handleClose = useCallback(() => {
+    closeModal(modalId);
+  }, [closeModal, modalId]);
+
+  const profilePath = USER_TYPE === UserType.EMPLOYER
+    ? `/applicant/public-profile-view/${application?.applicant?.id}`
+    : `/employers/${application?.job?.employer?.id}/${application?.job?.employer?.companyName}/profile`;
+
+  const getStatusVariant = (status: string) => {
+    const statusLower = status.toLowerCase();
+    if (statusLower.includes('pending')) return 'warning';
+    if (statusLower.includes('hired') || statusLower.includes('accepted')) return 'success';
+    if (statusLower.includes('rejected')) return 'error';
+    if (statusLower.includes('shortlisted')) return 'info';
+    return 'default';
   };
 
-  const profilePath =
-    USER_TYPE === UserType.EMPLOYER
-      ? `/applicant/public-profile-view/${application?.applicant?.id}`
-      : `/employers/${application?.job?.employer?.id}/${application?.job?.employer?.companyName}/profile`;
+  const statusVariant = getStatusVariant(application.status);
+  const statusStyles = {
+    warning: 'bg-amber-50 text-amber-700 border-amber-200',
+    success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    error: 'bg-red-50 text-red-700 border-red-200',
+    info: 'bg-blue-50 text-blue-700 border-blue-200',
+    default: 'bg-slate-50 text-slate-700 border-slate-200'
+  };
+
+  const applicationMethods = [
+    {
+      key: 'byCv' as keyof typeof application.job.applicationMethod,
+      icon: FileText,
+      label: 'CV/Resume',
+      filename: 'Aliyu_CV.pdf',
+      color: 'bg-blue-100 text-blue-600'
+    },
+    {
+      key: 'byVideo' as keyof typeof application.job.applicationMethod,
+      icon: Video,
+      label: 'Video Interview',
+      filename: 'Video Response',
+      color: 'bg-purple-100 text-purple-600'
+    },
+    {
+      key: 'byProfile' as keyof typeof application.job.applicationMethod,
+      icon: User,
+      label: 'Profile',
+      filename: 'Complete Profile',
+      color: 'bg-green-100 text-green-600'
+    },
+    {
+      key: 'byCoverLetter' as keyof typeof application.job.applicationMethod,
+      icon: FileText,
+      label: 'Cover Letter',
+      filename: 'Cover Letter',
+      color: 'bg-orange-100 text-orange-600'
+    },
+    {
+      key: 'byPortfolio' as keyof typeof application.job.applicationMethod,
+      icon: Briefcase,
+      label: 'Portfolio',
+      filename: 'Portfolio Submission',
+      color: 'bg-pink-100 text-pink-600'
+    },
+  ] as const;
+
+  const activeApplicationMethods = applicationMethods.filter(
+    method => application?.job?.applicationMethod?.[method.key] === true
+  );
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
-      <div className="flex h-[700px] w-[calc(97%-10px)] flex-col justify-evenly overflow-hidden rounded-[16px] bg-white shadow-xl md:h-[830px] md:w-[568px]">
-        {/* Header */}
-        <div className="relative -mt-8 flex h-[113px] items-center rounded-t-[16px] bg-gradient-to-r from-[#6438C2] to-[#FFFFFF] md:-mt-9">
-          {/* Close Button */}
-          <div
-            onClick={() => closeModal(modalId)}
-            className="absolute top-9 right-4 flex h-[34px] w-[36px] cursor-pointer items-center justify-center rounded-full bg-white p-2 text-black focus:outline-none md:top-12"
-          >
-            <img className="cursor-pointer" src={cancel} alt="cancel" />
-          </div>
-          <div className="absolute top-[50px] flex w-[530px] items-end justify-between px-3 md:top-[70px]">
-            {/* Profile Image */}
-            <img
-              src={
-                USER_TYPE === UserType.EMPLOYER
-                  ? application?.applicant?.profilePicture || profilepics
-                  : application?.job?.employer?.companyLogo || profilepics
-              }
-              className="ml-3 h-[70px] w-[70px] flex-shrink-0 rounded-full md:h-[100px] md:w-[100px]"
-              alt="profile pics"
-            />
-            <div className="mb-0 ml-4 flex flex-1 items-end justify-between pt-5 pb-0">
-              {/* Company Info */}
-              <div className="flex flex-col">
-                <h2 className="text-[20px] font-bold text-black">
-                  {application?.job?.employer?.companyName}
-                </h2>
-                <p className="text-[16px] text-[#7F7F7F]">
-                  {application?.job?.location}
-                </p>
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+        onClick={handleClose}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          transition={{ type: "spring", duration: 0.3 }}
+          className="relative w-full max-w-lg max-h-[90vh] overflow-hidden rounded-2xl bg-white shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header with gradient background */}
+          <div className="relative h-32 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-800">
+            {/* Close Button */}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={handleClose}
+              className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm text-white transition-colors hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50"
+            >
+              <X className="h-5 w-5" />
+            </motion.button>
+
+            {/* Company Info Overlay */}
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              <div className="flex items-end space-x-4">
+                {/* Company Logo */}
+                <div className="h-16 w-16 overflow-hidden rounded-xl bg-white p-1 shadow-lg">
+                  {application?.job?.employer?.companyLogo ? (
+                    <img
+                      src={application.job.employer.companyLogo}
+                      alt={`${application.job.company} logo`}
+                      className="h-full w-full rounded-lg object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-slate-100 rounded-lg">
+                      <Building2 className="h-8 w-8 text-slate-400" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Company Details */}
+                <div className="flex-1 text-white">
+                  <h2 className="text-lg font-bold truncate">
+                    {application?.job?.employer?.companyName || application?.job?.company}
+                  </h2>
+                  <div className="flex items-center space-x-1 text-sm text-white/80">
+                    <MapPin className="h-4 w-4" />
+                    <span className="truncate">{application?.job?.location}</span>
+                  </div>
+                </div>
+
+                {/* Job Type Badge */}
+                {application?.job?.jobType && (
+                  <div className="rounded-lg bg-white/20 backdrop-blur-sm px-3 py-1 text-sm font-medium text-white">
+                    {application.job.jobType}
+                  </div>
+                )}
               </div>
-              {/* Remote Work */}
-              <p className="text-[20px] font-medium text-[#6B5AED]">
-                {application?.job?.jobType}
-              </p>
             </div>
           </div>
-        </div>
 
-        {/* Application Pending and View Profile */}
-        <div className="mt-[100px] flex w-full flex-col items-center justify-between gap-y-2 px-6 md:flex-row">
-          <div className="w-full rounded-[16px] border-[1px] border-[#FFE4B5] bg-[#ffffe0] px-3 py-2 text-center text-[16px] font-medium text-[#FFBA00] md:w-[197px]">
-            {application?.status}
-          </div>
-          <Link
-            to={profilePath}
-            className="w-full items-center rounded-[16px] bg-[#6438C2] px-4 py-2 text-center text-[16px] font-medium text-white hover:bg-purple-600 md:w-[147px]"
-          >
-            View Profile
-          </Link>
-        </div>
-
-        {/* Application Details */}
-        <div className="mx-auto mt-6 flex h-[318px] w-[90%] flex-col items-baseline justify-evenly rounded-[16px] border-[1px] border-[#E6E6E6] px-6 py-4 md:w-[512px]">
-          <h3 className="mb-4 text-sm font-medium text-gray-600">
-            You Applied with
-          </h3>
-          <div className="flex h-[223px] w-full flex-col items-center justify-center gap-y-4 rounded-[16px] bg-[#F7F7F7] md:w-[461px]">
-            {/* File Item */}
-            {application?.job?.applicationMethod?.byCv && (
-              <div className="flex h-[48px] w-[90%] items-center rounded-[16px] bg-[#FFFFFF] p-3 md:w-[392px]">
-                <div className="flex h-[33px] w-[35px] items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1">
-                  <img src={documentAttachement} alt="work icon" />
-                </div>
-                <span className="ml-3 text-sm text-gray-600">Aliyu_CV.pdf</span>
+          {/* Content */}
+          <div className="p-6">
+            {/* Status and Profile Link */}
+            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className={`inline-flex items-center rounded-lg border px-4 py-2 text-sm font-medium ${statusStyles[statusVariant]}`}>
+                <div className={`mr-2 h-2 w-2 rounded-full ${statusVariant === 'warning' ? 'bg-amber-500' : statusVariant === 'success' ? 'bg-emerald-500' : statusVariant === 'error' ? 'bg-red-500' : statusVariant === 'info' ? 'bg-blue-500' : 'bg-slate-500'}`} />
+                {application?.status}
               </div>
-            )}
 
-            {/* Video Item */}
-            {application?.job?.applicationMethod?.byVideo && (
-              <div className="flex h-[48px] w-[90%] items-center rounded-[16px] bg-[#FFFFFF] p-3 md:w-[392px]">
-                <div className="flex h-[33px] w-[35px] items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1">
-                  <img src={video} alt="video icon" />
-                </div>
-                <span className="ml-3 text-sm text-gray-600">Video</span>
-              </div>
-            )}
-
-            {/* Profile Item */}
-            {application?.job?.applicationMethod?.byProfile && (
-              <div className="flex h-[48px] w-[90%] items-center rounded-[16px] bg-[#FFFFFF] p-3 md:w-[392px]">
-                <div className="flex h-[33px] w-[35px] items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1">
-                  <img src={userProfile} alt="profile icon" />
-                </div>
-                <span className="ml-3 text-sm text-gray-600">Profile</span>
-              </div>
-            )}
-            {/* Document Item */}
-            {application?.job?.applicationMethod?.byCoverLetter && (
-              <div className="flex h-[48px] w-[90%] items-center rounded-[16px] bg-[#FFFFFF] p-3 md:w-[392px]">
-                <div className="flex h-[33px] w-full items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1 md:w-[392px]">
-                  <img src={documentAttachement} alt="document icon" />
-                </div>
-                <span className="ml-3 text-sm text-gray-600">Document</span>
-              </div>
-            )}
-
-            {/* Video Item */}
-            {application?.job?.applicationMethod?.byPortfolio && (
-              <div className="flex h-[48px] w-full items-center rounded-[16px] bg-[#FFFFFF] p-3 md:w-[392px]">
-                <div className="flex h-[33px] w-[35px] items-center justify-center rounded-[10px] bg-[#D9D9D9] object-cover p-1">
-                  <img src={video} alt="video icon" />
-                </div>
-                <span className="ml-3 text-sm text-gray-600">Video</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-6 flex w-full flex-col items-center justify-center gap-x-4 gap-y-2 px-6 py-4 md:flex-row md:justify-end">
-          {USER_TYPE === UserType.EMPLOYER ? (
-            <button
-              onClick={async () => {
-                await handleWithdrawApplication(application.job.id);
-              }}
-              className="w-full rounded-[10px] bg-[#6438C2] px-6 py-2 text-[16px] text-white hover:bg-purple-600 md:w-fit"
-            >
-              Reject
-            </button>
-          ) : (
-            <>
-              <button
-                onClick={() => closeModal(modalId)}
-                className="w-full rounded-[10px] border-[1px] border-[#E6E6E6] bg-gray-100 px-6 py-2 text-[16px] text-gray-700 hover:bg-gray-200 md:w-[181px]"
+              <Link
+                to={profilePath}
+                className="inline-flex items-center space-x-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
-                Cancel
-              </button>
-              <button
-                onClick={async () => {
-                  await handleWithdrawApplication(application.job.id);
-                }}
-                className="w-full rounded-[10px] bg-[#6438C2] px-6 py-2 text-[16px] text-white hover:bg-purple-600 md:w-fit"
-              >
-                {application?.status === ApplicationStatus.WITHDRAW
-                  ? "Re-Apply"
-                  : "Withdraw Application"}
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+                <span>View Profile</span>
+                <ExternalLink className="h-4 w-4" />
+              </Link>
+            </div>
+
+            {/* Job Title */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-slate-900 mb-1">
+                {application?.job?.title}
+              </h3>
+              <p className="text-sm text-slate-600">
+                Application submitted on{" "}
+                {new Date(application?.createdAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </p>
+            </div>
+
+            {/* Application Methods */}
+            <div className="mb-6">
+              <h4 className="mb-4 text-sm font-medium text-slate-700">
+                Application submitted with:
+              </h4>
+
+              <div className="rounded-xl bg-slate-50 p-4">
+                <div className="space-y-3">
+                  {activeApplicationMethods.length > 0 ? (
+                    activeApplicationMethods.map((method, index) => {
+                      const IconComponent = method.icon;
+                      return (
+                        <motion.div
+                          key={method.key}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="flex items-center space-x-3 rounded-lg bg-white p-3 shadow-sm"
+                        >
+                          <div className={`rounded-lg p-2 ${method.color}`}>
+                            <IconComponent className="h-4 w-4" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-slate-900">
+                              {method.label}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              {method.filename}
+                            </p>
+                          </div>
+                        </motion.div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-center py-4">
+                      <AlertTriangle className="h-8 w-8 text-amber-400 mx-auto mb-2" />
+                      <p className="text-sm text-slate-600">
+                        No application methods specified
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+              {USER_TYPE === UserType.EMPLOYER ? (
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleWithdrawApplication(application.job.id)}
+                  className="flex items-center justify-center space-x-2 rounded-lg bg-red-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  <AlertTriangle className="h-4 w-4" />
+                  <span>Reject Application</span>
+                </motion.button>
+              ) : (
+                <>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleClose}
+                    className="flex-1 sm:flex-none rounded-lg border border-slate-300 bg-white px-6 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+                  >
+                    Close
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleWithdrawApplication(application.job.id)}
+                    className="flex-1 sm:flex-none flex items-center justify-center space-x-2 rounded-lg bg-red-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                  >
+                    <AlertTriangle className="h-4 w-4" />
+                    <span>
+                      {application?.status === ApplicationStatus.WITHDRAW
+                        ? "Re-Apply"
+                        : "Withdraw Application"}
+                    </span>
+                  </motion.button>
+                </>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
-};
+});
+
+ViewApplicationMethodModal.displayName = 'ViewApplicationMethodModal';
 
 export default ViewApplicationMethodModal;

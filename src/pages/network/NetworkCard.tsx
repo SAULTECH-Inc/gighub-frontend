@@ -1,98 +1,81 @@
-import linkedin from "../../assets/icons/linkedin-round.svg";
-import twitter from "../../assets/icons/twitter-rounded.svg";
-import chatIcon from "../../assets/icons/chat-icon.svg";
-import avatarIcon from "../../assets/icons/avatar.svg";
-import { NetworkDetails } from "../../utils/types";
-import React from "react";
-import { Link } from "react-router-dom";
-import { useChatStore } from "../../store/useChatStore.ts";
-interface NetworkCardProps {
-  userDetails: NetworkDetails;
-  setChatWindowOpened: React.Dispatch<React.SetStateAction<boolean>>;
-}
-const NetworkCard: React.FC<NetworkCardProps> = ({
-  userDetails,
-  setChatWindowOpened,
-}) => {
-  const { setRecipient, setIsClosed, setIsMinimized } = useChatStore();
-  const location =
-    userDetails?.applicant?.city && userDetails?.applicant?.country
-      ? `${userDetails?.applicant?.city}, ${userDetails?.applicant?.country}`
-      : null;
+import React, { memo } from "react";
+import { USER_TYPE } from "../../utils/helpers.ts";
+import { UserType } from "../../utils/enums.ts";
+import TopNavBar from "../../components/layouts/TopNavBar.tsx";
+import {
+  applicantNavBarItemMap,
+  applicantNavItems,
+  applicantNavItemsMobile,
+  employerNavBarItemMap,
+  employerNavItems,
+  employerNavItemsMobile,
+} from "../../utils/constants.ts";
+import { useNetworkTab } from "../../store/useNetworkTab.ts";
+import MyNetwork from "./MyNetwork.tsx";
+import FindConnections from "./FindConnections.tsx";
+import { Users, UserPlus } from "lucide-react";
+
+const Network: React.FC = () => {
+  const { activeTab, setActiveTab } = useNetworkTab();
+
   return (
-    <>
-      <div className="mdl:w-[45%] h-[380px] w-full space-y-4 rounded-[16px] border-[1px] border-[#E6E6E6] p-[18px] sm:w-[45%] md:w-full lg:w-[298px]">
-        <div className="h-[60px] w-[60px] rounded-full bg-[#D9D9D9]">
-          <img
-            src={userDetails?.applicant?.profilePicture || avatarIcon}
-            alt="Profile"
-            className="h-full w-full rounded-full"
-          />
-        </div>
-        <div className="flex flex-col">
-          <h3 className="text-[20px] font-semibold text-[#000000]">
-            {userDetails?.applicant?.firstName}{" "}
-            {userDetails?.applicant?.lastName}
-          </h3>
-          {location && <p>{location}</p>}
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex gap-x-2">
-            <div className="flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded-full border-[1px] border-[#E6E6E6]">
-              <Link to={userDetails?.applicant?.linkedInProfile || "#"}>
-                <img src={linkedin} alt="linkedin-icon" />
-              </Link>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      {USER_TYPE === UserType.APPLICANT ? (
+        <TopNavBar
+          navItems={applicantNavItems}
+          navItemsMobile={applicantNavItemsMobile}
+          navbarItemsMap={applicantNavBarItemMap}
+        />
+      ) : (
+        <TopNavBar
+          navItems={employerNavItems}
+          navItemsMobile={employerNavItemsMobile}
+          navbarItemsMap={employerNavBarItemMap}
+        />
+      )}
+
+      {/* Enhanced Tab Navigation */}
+      <div className="sticky top-0 z-10 mt-12 bg-white/80 backdrop-blur-md border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center py-4">
+            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+              <button
+                onClick={() => setActiveTab("find-new-connections")}
+                className={`flex items-center space-x-2 px-6 py-3 rounded-md font-medium text-sm transition-all duration-200 ${
+                  activeTab === "find-new-connections"
+                    ? "bg-white text-purple-600 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                }`}
+              >
+                <UserPlus size={18} />
+                <span>Find New Connections</span>
+              </button>
+              <button
+                onClick={() => setActiveTab("my-connections")}
+                className={`flex items-center space-x-2 px-6 py-3 rounded-md font-medium text-sm transition-all duration-200 ${
+                  activeTab === "my-connections"
+                    ? "bg-white text-purple-600 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                }`}
+              >
+                <Users size={18} />
+                <span>My Connections</span>
+              </button>
             </div>
-            <div className="flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded-full border-[1px] border-[#E6E6E6]">
-              <Link to={userDetails?.applicant?.twitterProfile || "#"}>
-                <img src={twitter} alt="twitter-icon" />
-              </Link>
-            </div>
-          </div>
-          <div>
-            <div
-              onClick={() => {
-                setIsClosed(false);
-                setIsMinimized(false);
-                setRecipient(userDetails.applicant?.email as string);
-                setChatWindowOpened((prev) => !prev);
-              }}
-              className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-full border-[1px] border-[#E6E6E6] bg-[#6438C2]"
-            >
-              <img src={chatIcon} alt="chat icon" />
-            </div>
-          </div>
-        </div>
-        <hr className="w-full border-[1px] border-[#AFAFAF]" />
-        <div className="flex items-center justify-between text-[16px] font-bold text-[#6438C2]">
-          <p>
-            {userDetails?.applicant?.professionalTitle ||
-              userDetails?.applicant?.cv?.professionalTitle ||
-              "Applicant"}
-          </p>
-          <p>Level</p>
-        </div>
-        <div className="flex items-center justify-between text-[16px] font-bold text-[#6438C2]">
-          {userDetails.mutualFriends && userDetails.mutualFriends > 0 ? (
-            <p>
-              {userDetails.mutualFriends} Mutual Connection
-              {userDetails.mutualFriends > 1 ? "s" : ""}
-            </p>
-          ) : (
-            <p>No Mutual Connections</p>
-          )}
-          <div className="rounded-[10px] border border-[#E6E6E6] px-[16px] py-[6px] md:px-[10px] md:py-[4px] lg:px-[16px] lg:py-[6px]">
-            <Link
-              to={`/applicant/public-profile-view/${userDetails?.applicant?.id}`}
-              className="text-[16px] font-medium text-[#000000] md:text-[14px] lg:text-[16px]"
-            >
-              View Profile
-            </Link>
           </div>
         </div>
       </div>
-    </>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {activeTab === "find-new-connections" ? (
+          <FindConnections />
+        ) : (
+          <MyNetwork />
+        )}
+      </main>
+    </div>
   );
 };
 
-export default NetworkCard;
+export default memo(Network);

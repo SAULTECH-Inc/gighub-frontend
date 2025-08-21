@@ -15,14 +15,24 @@ import { useApplicantJobProfile } from "../../../../store/useApplicantJobProfile
 import CustomCheckbox from "../../../common/CustomCheckbox.tsx";
 import { useCities } from "../../../../hooks/useCities.ts";
 import { useCountries } from "../../../../hooks/useCountries.ts";
+import {
+  X,
+  GraduationCap,
+  Plus,
+  MapPin,
+  Globe,
+  Calendar,
+  BookOpen,
+  AlertCircle
+} from "lucide-react";
 
 interface AddEducationModalProp {
   modalId: string;
 }
 
 const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
-  const {cities} = useCities();
-  const {countries} = useCountries();
+  const { cities } = useCities();
+  const { countries } = useCountries();
   const { modals, closeModal } = useModalStore();
   const isOpen = modals[modalId];
   const {
@@ -38,6 +48,8 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
 
   const [description, setDescription] = useState<string>("");
   const [currentlyEnrolled, setCurrentEnrolled] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   // Lock scroll when modal is open
   useEffect(() => {
@@ -56,7 +68,7 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        closeModal(modalId);
+        handleCloseModal();
       }
     };
 
@@ -67,7 +79,6 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
     return () => {
       document.removeEventListener("keydown", handleEscape);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   useEffect(() => {
@@ -81,17 +92,49 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
         endDate: new Date(),
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [description, currentlyEnrolled]);
+
+  const validateForm = (): boolean => {
+    const newErrors: {[key: string]: string} = {};
+
+    if (!applicantEducation?.degree?.trim()) {
+      newErrors.degree = "Degree is required";
+    }
+    if (!applicantEducation?.fieldOfStudy?.trim()) {
+      newErrors.fieldOfStudy = "Field of study is required";
+    }
+    if (!applicantEducation?.institution?.trim()) {
+      newErrors.institution = "Institution is required";
+    }
+    if (!applicantEducation?.startDate) {
+      newErrors.startDate = "Start date is required";
+    }
+    if (!currentlyEnrolled && !applicantEducation?.endDate) {
+      newErrors.endDate = "End date is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleAddEducation = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
+    if (!validateForm()) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
       const newEducation = await addApplicantEducation(applicantEducation);
       if (newEducation) {
-        toast.success("Education updated successfully!");
+        toast.success("Education added successfully!");
         resetApplicantEducation();
+        setDescription("");
+        setCurrentEnrolled(false);
+        setErrors({});
+
         const edus: EducationResponseDto[] = [...(educations || [])];
         edus.push(newEducation);
         setEducations(edus);
@@ -99,10 +142,24 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
           ...cvDetails,
           educations: edus,
         } as CvResponseDto);
+
+        closeModal(modalId);
       }
     } catch (error) {
-      toast.error("Failed to update education.");
-      console.error("Error updating education:", error);
+      toast.error("Failed to add education.");
+      console.error("Error adding education:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    if (!isSubmitting) {
+      resetApplicantEducation();
+      setDescription("");
+      setCurrentEnrolled(false);
+      setErrors({});
+      closeModal(modalId);
     }
   };
 
@@ -112,165 +169,320 @@ const AddEducationModal: React.FC<AddEducationModalProp> = ({ modalId }) => {
       ...applicantEducation,
       [name]: new Date(value),
     });
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => {
+        const { [name]: _, ...rest } = prev;
+        return rest;
+      });
+    }
+  };
+
+  const formatDateForInput = (dateValue: any): string => {
+    if (!dateValue) return "";
+
+    try {
+      const date = new Date(dateValue);
+
+      // Check if the date is valid
+      if (isNaN(date.getTime())) {
+        console.warn("Invalid date value:", dateValue);
+        return "";
+      }
+
+      return date.toISOString().split("T")[0];
+    } catch (error) {
+      console.warn("Error formatting date:", dateValue, error);
+      return "";
+    }
   };
 
   if (!isOpen) return null;
 
   return (
     <div
-      className="bg-opacity-50 fixed inset-0 -top-4 z-50 flex items-center justify-center bg-black"
-      onClick={() => closeModal(modalId)}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+      onClick={handleCloseModal}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="mt-10 flex max-h-[95vh] w-[100%] flex-col gap-y-5 overflow-y-auto rounded-[16px] bg-white p-4 shadow-sm md:mt-0 md:w-[690px] md:p-8 lg:w-[820px] lg:p-10"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
       >
-        <h3>Not Specified</h3>
-
-        <div className="flex w-full flex-row gap-x-6">
-          <div className="flex w-full flex-col gap-y-2">
-            <label>Degree</label>
-            <CustomDropdown
-              placeholder="Class of degree"
-              options={classOfDegrees}
-              handleSelect={(selected: Option) => {
-                setApplicantEducation({
-                  ...applicantEducation,
-                  degree: selected.value,
-                });
-              }}
-              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-1 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none lg:p-3"
-            />
-          </div>
-          <div className="flex w-full flex-col gap-y-2">
-            <label>Field of Study</label>
-            <CustomDropdown
-              placeholder="Field of study"
-              options={fieldsOfStudies}
-              handleSelect={(selected: Option) => {
-                setApplicantEducation({
-                  ...applicantEducation,
-                  fieldOfStudy: selected.value,
-                });
-              }}
-              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-1 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none lg:p-3"
-            />
-          </div>
-        </div>
-
-        <div className="flex w-full flex-row gap-x-6">
-          <div className="flex w-full flex-col gap-y-2">
-            <label>Institution</label>
-            <CustomDropdown
-              placeholder="Enter institution"
-              options={institutions}
-              handleSelect={(selected: Option) => {
-                setApplicantEducation({
-                  ...applicantEducation,
-                  institution: selected.value,
-                });
-              }}
-              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none lg:p-3"
-            />
-          </div>
-          <div className="flex w-full flex-col gap-y-2">
-            <label>Country</label>
-            <CustomDropdown
-              placeholder="Enter country"
-              options={countries}
-              handleSelect={(selected: Option) => {
-                setApplicantEducation({
-                  ...applicantEducation,
-                  country: selected.value,
-                });
-              }}
-              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none lg:p-3"
-            />
-          </div>
-        </div>
-
-        <div className="flex w-full flex-col gap-x-2 md:flex-row lg:gap-x-6">
-          <div className="flex w-full flex-col gap-y-2 md:w-1/2">
-            <label>City</label>
-            <CustomDropdown
-              placeholder="Enter city"
-              options={cities}
-              handleSelect={(selected: Option) => {
-                setApplicantEducation({
-                  ...applicantEducation,
-                  city: selected.value,
-                });
-              }}
-              className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 text-start focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none lg:p-3"
-            />
-          </div>
-          <div className="flex w-full flex-col gap-x-2 md:flex-row lg:w-1/2 lg:gap-x-6">
-            <div className="flex w-full flex-col gap-y-2 md:w-1/2">
-              <label>Start</label>
-              <input
-                type="date"
-                name="startDate"
-                onChange={handleChangeDate}
-                value={
-                  applicantEducation?.startDate
-                    ? new Date(applicantEducation.startDate)
-                        .toISOString()
-                        .split("T")[0]
-                    : ""
-                }
-                className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 focus:border-[#E6E6E6] focus:ring-0 focus:outline-none lg:p-3"
-              />
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-purple-600 to-purple-700">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-white/20 rounded-lg">
+              <GraduationCap className="w-6 h-6 text-white" />
             </div>
-            {!currentlyEnrolled && (
-              <div className="flex w-full flex-col gap-y-2 md:w-1/2">
-                <label>End</label>
-                <input
-                  type="date"
-                  name="endDate"
-                  disabled={currentlyEnrolled}
-                  onChange={handleChangeDate}
-                  value={
-                    applicantEducation?.endDate
-                      ? new Date(applicantEducation.endDate)
-                          .toISOString()
-                          .split("T")[0]
-                      : ""
-                  }
-                  className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] p-2 focus:border-[#E6E6E6] focus:ring-0 focus:outline-none lg:p-3"
+            <div>
+              <h2 className="text-xl font-semibold text-white">Add Education</h2>
+              <p className="text-purple-100 text-sm">Add your educational background and qualifications</p>
+            </div>
+          </div>
+          <button
+            onClick={handleCloseModal}
+            disabled={isSubmitting}
+            className="p-2 text-white hover:bg-white/20 rounded-lg transition-colors duration-200 disabled:opacity-50"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="space-y-6">
+            {/* Degree and Field of Study */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <BookOpen className="w-4 h-4" />
+                  Degree <span className="text-red-500">*</span>
+                </label>
+                <CustomDropdown
+                  placeholder="Select degree type"
+                  options={classOfDegrees}
+                  handleSelect={(selected: Option) => {
+                    setApplicantEducation({
+                      ...applicantEducation,
+                      degree: selected.value,
+                    });
+                    if (errors.degree) {
+                      setErrors(prev => {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        const { degree, ...rest } = prev;
+                        return rest;
+                      });
+                    }
+                  }}
+                  className={`text-left w-full px-4 py-3 rounded-lg border transition-colors duration-200 ${
+                    errors.degree
+                      ? 'border-red-500 bg-red-50'
+                      : 'border-gray-300 bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500'
+                  } focus:outline-none`}
+                />
+                {errors.degree && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.degree}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Field of Study <span className="text-red-500">*</span>
+                </label>
+                <CustomDropdown
+                  placeholder="Select field of study"
+                  options={fieldsOfStudies}
+                  handleSelect={(selected: Option) => {
+                    setApplicantEducation({
+                      ...applicantEducation,
+                      fieldOfStudy: selected.value,
+                    });
+                    if (errors.fieldOfStudy) {
+                      setErrors(prev => {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        const { fieldOfStudy, ...rest } = prev;
+                        return rest;
+                      });
+                    }
+                  }}
+                  className={`text-left w-full px-4 py-3 rounded-lg border transition-colors duration-200 ${
+                    errors.fieldOfStudy
+                      ? 'border-red-500 bg-red-50'
+                      : 'border-gray-300 bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500'
+                  } focus:outline-none`}
+                />
+                {errors.fieldOfStudy && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.fieldOfStudy}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Institution and Country */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <GraduationCap className="w-4 h-4" />
+                  Institution <span className="text-red-500">*</span>
+                </label>
+                <CustomDropdown
+                  placeholder="Select institution"
+                  options={institutions}
+                  handleSelect={(selected: Option) => {
+                    setApplicantEducation({
+                      ...applicantEducation,
+                      institution: selected.value,
+                    });
+                    if (errors.institution) {
+                      setErrors(prev => {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        const { institution, ...rest } = prev;
+                        return rest;
+                      });
+                    }
+                  }}
+                  className={`text-left w-full px-4 py-3 rounded-lg border transition-colors duration-200 ${
+                    errors.institution
+                      ? 'border-red-500 bg-red-50'
+                      : 'border-gray-300 bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500'
+                  } focus:outline-none`}
+                />
+                {errors.institution && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.institution}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <Globe className="w-4 h-4" />
+                  Country
+                </label>
+                <CustomDropdown
+                  placeholder="Select country"
+                  options={countries}
+                  handleSelect={(selected: Option) => {
+                    setApplicantEducation({
+                      ...applicantEducation,
+                      country: selected.label,
+                    });
+                  }}
+                  className="text-left w-full px-4 py-3 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none"
                 />
               </div>
-            )}
+            </div>
+
+            {/* City and Dates */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <MapPin className="w-4 h-4" />
+                  City
+                </label>
+                <CustomDropdown
+                  placeholder="Select city"
+                  options={cities}
+                  handleSelect={(selected: Option) => {
+                    setApplicantEducation({
+                      ...applicantEducation,
+                      city: selected.value,
+                    });
+                  }}
+                  className="text-left w-full px-4 py-3 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <Calendar className="w-4 h-4" />
+                  Start Date <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  name="startDate"
+                  onChange={handleChangeDate}
+                  value={formatDateForInput(applicantEducation?.startDate)}
+                  className={`w-full px-4 py-3 rounded-lg border transition-colors duration-200 ${
+                    errors.startDate
+                      ? 'border-red-500 bg-red-50'
+                      : 'border-gray-300 bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500'
+                  } focus:outline-none`}
+                />
+                {errors.startDate && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.startDate}
+                  </p>
+                )}
+              </div>
+
+              {!currentlyEnrolled && (
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <Calendar className="w-4 h-4" />
+                    End Date <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="endDate"
+                    onChange={handleChangeDate}
+                    value={formatDateForInput(applicantEducation?.endDate)}
+                    className={`w-full px-4 py-3 rounded-lg border transition-colors duration-200 ${
+                      errors.endDate
+                        ? 'border-red-500 bg-red-50'
+                        : 'border-gray-300 bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500'
+                    } focus:outline-none`}
+                  />
+                  {errors.endDate && (
+                    <p className="text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.endDate}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Currently Enrolled Checkbox */}
+            <div className="flex items-center">
+              <CustomCheckbox
+                label="Currently enrolled"
+                checked={currentlyEnrolled}
+                onChange={(e) => setCurrentEnrolled(e.target.checked)}
+              />
+            </div>
+
+            {/* Description */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Description
+              </label>
+              <div className="border border-gray-300 rounded-lg overflow-hidden">
+                <RichTextEditor
+                  onChange={setDescription}
+                  value={description}
+                />
+              </div>
+              <p className="text-xs text-gray-500">
+                Optional: Add details about your achievements, relevant coursework, or academic honors
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-start lg:justify-end">
-          <span>
-            <CustomCheckbox
-              label="Currently there"
-              checked={currentlyEnrolled}
-              onChange={(e) => setCurrentEnrolled(e.target.checked)}
-            />
-          </span>
-        </div>
-
-        <div className="mb-0 flex w-full flex-col gap-y-2 py-0">
-          <label>Description</label>
-          <RichTextEditor onChange={setDescription} value={description} />
-        </div>
-
-        <div className="flex justify-end">
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
           <button
-            onClick={handleAddEducation}
-            type="button"
-            className="w-[197px] rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#FFFFFF] px-4 py-2 font-medium text-purple-600"
-          >
-            Add
-          </button>
-          <button
-            onClick={() => closeModal(modalId)}
-            className="ml-4 w-[197px] rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#FFFFFF] px-4 py-2 font-medium text-gray-500"
+            onClick={handleCloseModal}
+            disabled={isSubmitting}
+            className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors duration-200 font-medium disabled:opacity-50"
           >
             Cancel
+          </button>
+          <button
+            onClick={handleAddEducation}
+            disabled={isSubmitting}
+            className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 font-medium disabled:opacity-50"
+          >
+            {isSubmitting ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Adding...
+              </>
+            ) : (
+              <>
+                <Plus className="w-4 h-4" />
+                Add Education
+              </>
+            )}
           </button>
         </div>
       </div>

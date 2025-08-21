@@ -13,6 +13,7 @@ import {
 import { useSectionEditable } from "../../../../store/useEditable.ts";
 import { toast } from "react-toastify";
 import { jobSkills } from "../../../../utils/JobType.ts";
+import { Zap, Edit3, Save, CheckCircle2 } from "lucide-react";
 
 export interface CertParams {
   id?: number;
@@ -20,6 +21,7 @@ export interface CertParams {
   institution: string;
   year: string;
 }
+
 const SkillsAndCompetences: React.FC = () => {
   const { cvDetails, setCvDetails, updateSkillsAndCompetencies } =
     useApplicantJobProfile();
@@ -75,7 +77,6 @@ const SkillsAndCompetences: React.FC = () => {
   };
 
   const handleToggleEdit = () => {
-    // Implement toggleEdit logic
     toggleEdit();
   };
 
@@ -96,53 +97,103 @@ const SkillsAndCompetences: React.FC = () => {
   };
 
   return (
-    <section
-      id="skills-competences"
-      className="relative w-full space-y-3 border-t-[2px] border-t-[#E6E6E6] pt-5"
-    >
-      <div className="absolute top-2 right-1 z-10 flex items-center justify-evenly gap-x-2 text-xs">
-        <button
-          type="button"
-          onClick={handleToggleEdit}
-          className="w-12 rounded-[5px] border-[1px] border-[#ccc] bg-[#F6F6F7] p-1"
-        >
-          Edit
-        </button>
-        <button
-          type="button"
-          onClick={handleUpdateSkillsAndCompetences}
-          className={`${!isEditable ? "cursor-not-allowed" : "cursor-pointer"} w-12 rounded-[5px] border-[1px] border-[#ccc] bg-[#F6F6F7] p-1`}
-        >
-          Save
-        </button>
+    <section id="skills-competences" className="relative">
+      {/* Section Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-blue-100 rounded-lg">
+            <Zap className="w-5 h-5 text-blue-600" />
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900">Skills and Competences</h3>
+            <p className="text-sm text-gray-500">Showcase your technical skills and professional certifications</p>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleToggleEdit}
+            type="button"
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              isEditable
+                ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
+            }`}
+          >
+            <Edit3 className="w-4 h-4" />
+            {isEditable ? 'Cancel' : 'Edit'}
+          </button>
+
+          {isEditable && (
+            <button
+              onClick={handleUpdateSkillsAndCompetences}
+              type="button"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors duration-200"
+            >
+              <Save className="w-4 h-4" />
+              Save Changes
+            </button>
+          )}
+        </div>
       </div>
-      <div className="w-full space-y-6">
-        <h3 className="text-xl">Skills and Competences</h3>
-        <div className="flex w-full flex-col space-y-4 md:flex-row md:items-start md:justify-evenly md:space-y-0 md:gap-x-8">
+
+      {/* Form Content */}
+      <div className="bg-gray-50 rounded-xl p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Skills Section */}
-          <Skills
-            isEditable={!isEditable}
-            options={jobSkills.map((skill) => {
-              return {
+          <div className="bg-white rounded-lg p-6 border border-gray-200">
+            <h4 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              Technical Skills
+            </h4>
+            <Skills
+              isEditable={!isEditable}
+              options={jobSkills.map((skill) => ({
                 value: skill,
                 label: skill,
-              };
-            })}
-            skills={cvDetails?.skills?.map((s) => s?.skill) as string[]}
-            addSkill={addSkill}
-            removeSkill={removeSkill}
-          />
+              }))}
+              skills={cvDetails?.skills?.map((s) => s?.skill) as string[]}
+              addSkill={addSkill}
+              removeSkill={removeSkill}
+            />
+          </div>
 
           {/* Certification Section */}
-          <Certifications
-            isEditable={isEditable}
-            handleCertificationRemove={handleCertificationRemove}
-            certifications={
-              cvDetails?.certifications as CertificationResponseDto[]
-            }
-            addCertification={addCertification}
-          />
+          <div className="bg-white rounded-lg p-6 border border-gray-200">
+            <h4 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              Professional Certifications
+            </h4>
+            <Certifications
+              isEditable={isEditable}
+              handleCertificationRemove={handleCertificationRemove}
+              certifications={cvDetails?.certifications as CertificationResponseDto[]}
+              addCertification={addCertification}
+            />
+          </div>
         </div>
+
+        {/* Tips Section */}
+        {isEditable && (
+          <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h4 className="text-sm font-medium text-blue-800 mb-2">💡 Tips for skills and certifications:</h4>
+            <ul className="text-sm text-blue-700 space-y-1">
+              <li>• Include both technical and soft skills relevant to your target roles</li>
+              <li>• Add industry-recognized certifications to strengthen your profile</li>
+              <li>• Keep skills current and remove outdated technologies</li>
+              <li>• Include the institution and year for certifications</li>
+            </ul>
+          </div>
+        )}
+
+        {/* Status Indicator */}
+        {!isEditable && (
+          <div className="flex items-center gap-2 pt-4 border-t border-gray-200 mt-6">
+            <CheckCircle2 className="w-5 h-5 text-green-500" />
+            <span className="text-sm text-green-600 font-medium">Skills and competences saved successfully</span>
+          </div>
+        )}
       </div>
     </section>
   );

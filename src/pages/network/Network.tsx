@@ -13,59 +13,68 @@ import {
 import { useNetworkTab } from "../../store/useNetworkTab.ts";
 import MyNetwork from "./MyNetwork.tsx";
 import FindConnections from "./FindConnections.tsx";
+import { Users, UserPlus } from "lucide-react";
 
 const Network: React.FC = () => {
-  /* active tab */
   const { activeTab, setActiveTab } = useNetworkTab();
+
   return (
-    <>
-      <div className="mx-auto flex w-full flex-col bg-[#F7F8FA]">
-        {USER_TYPE === UserType.APPLICANT ? (
-          <TopNavBar
-            navItems={applicantNavItems}
-            navItemsMobile={applicantNavItemsMobile}
-            navbarItemsMap={applicantNavBarItemMap}
-          />
-        ) : (
-          <TopNavBar
-            navItems={employerNavItems}
-            navItemsMobile={employerNavItemsMobile}
-            navbarItemsMap={employerNavBarItemMap}
-          />
-        )}
-        <div className="mt-12 flex w-full items-center justify-center border-b border-[#E6E6E6] bg-white px-4 py-6">
-          <div className="flex gap-6">
-            <button
-              onClick={() => setActiveTab("find-new-connections")}
-              className={`border-b-4 pb-2 transition-colors ${
-                activeTab === "find-new-connections"
-                  ? "border-purple-600 font-medium text-purple-600"
-                  : "border-transparent text-gray-600 hover:border-purple-600 hover:text-purple-600"
-              }`}
-            >
-              Find New Connections
-            </button>
-            <button
-              onClick={() => setActiveTab("my-connections")}
-              className={`border-b-4 pb-2 transition-colors ${
-                activeTab === "my-connections"
-                  ? "border-purple-600 font-medium text-purple-600"
-                  : "border-transparent text-gray-600 hover:border-purple-600 hover:text-purple-600"
-              }`}
-            >
-              My Connections
-            </button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      {USER_TYPE === UserType.APPLICANT ? (
+        <TopNavBar
+          navItems={applicantNavItems}
+          navItemsMobile={applicantNavItemsMobile}
+          navbarItemsMap={applicantNavBarItemMap}
+        />
+      ) : (
+        <TopNavBar
+          navItems={employerNavItems}
+          navItemsMobile={employerNavItemsMobile}
+          navbarItemsMap={employerNavBarItemMap}
+        />
+      )}
+
+      {/* Enhanced Tab Navigation */}
+      <div className="sticky top-0 z-10 mt-12 bg-white/80 backdrop-blur-md border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center py-4">
+            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+              <button
+                onClick={() => setActiveTab("find-new-connections")}
+                className={`flex items-center space-x-2 px-6 py-3 rounded-md font-medium text-sm transition-all duration-200 ${
+                  activeTab === "find-new-connections"
+                    ? "bg-white text-purple-600 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                }`}
+              >
+                <UserPlus size={18} />
+                <span>Find New Connections</span>
+              </button>
+              <button
+                onClick={() => setActiveTab("my-connections")}
+                className={`flex items-center space-x-2 px-6 py-3 rounded-md font-medium text-sm transition-all duration-200 ${
+                  activeTab === "my-connections"
+                    ? "bg-white text-purple-600 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                }`}
+              >
+                <Users size={18} />
+                <span>My Connections</span>
+              </button>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Main Content Area */}
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeTab === "find-new-connections" ? (
           <FindConnections />
         ) : (
           <MyNetwork />
         )}
-      </div>
-    </>
+      </main>
+    </div>
   );
 };
 

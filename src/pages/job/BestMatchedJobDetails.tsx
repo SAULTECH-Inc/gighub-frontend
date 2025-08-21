@@ -1,25 +1,22 @@
-import React from "react";
-import jobTypeIcon from "../../assets/icons/jobTypeIcon.svg";
-import locationIcon from "../../assets/icons/locationIcon.svg";
-import peopleApplied from "../../assets/icons/peopleApplied.svg";
-import numberOfDaysRemaining from "../../assets/icons/numberOfDaysRemaining.svg";
-import shareIcon from "../../assets/icons/shareIcon.svg";
-import bookmarkIcon from "../../assets/icons/bookmarkIcon.svg";
-import useModalStore from "../../store/modalStateStores.ts";
-import { useJobSearchSettings } from "../../store/useJobSearchSettings.ts";
-import { ApplicationMethod, JobPostResponse } from "../../utils/types";
-import { RateeType } from "../../utils/enums.ts";
-import DOMPurify from "dompurify";
-import { FRONTEND_BASE_URL } from "../../utils/constants.ts";
-import { useJobActions } from "../../store/useJobActions.ts";
-import { showErrorToast } from "../../utils/toastConfig.tsx";
-import Rating from "../../components/common/Rating.tsx";
-import ShareModal from "../../components/ui/ShareModal.tsx";
-import ApplicationModal from "../../components/ui/ApplicationModal.tsx";
-import ApplicationSuccessModal from "../../components/ui/ApplicationSuccessModal.tsx";
-import PaymentSuccessModal from "../../components/ui/PaymentSuccessModal.tsx";
-import ReferModal from "../../components/ui/ReferModal.tsx";
-import JobDetailsMegaModal from "../../components/ui/JobDetailsMegaModal.tsx";
+import React, { useCallback, useMemo, useState, useRef, useEffect } from "react";
+import {
+  EllipsisVertical,
+  MapPin,
+  Clock,
+  Users,
+  Briefcase,
+  ExternalLink,
+  Star,
+  Share2,
+  Heart,
+  Check
+} from "lucide-react";
+import { JobPostResponse } from "../../utils/types";
+
+// Constants
+const FRONTEND_BASE_URL = "https://yourapp.com";
+const MAX_VISIBLE_TAGS = 3;
+const RESPONSIVE_BREAKPOINT = 1024;
 
 interface JobMatchCardProps {
   updateJobRating: (jobId: number, ratingValue: number) => void;
@@ -33,294 +30,425 @@ interface JobMatchCardProps {
   applicants: number;
   daysLeft: number;
   companyLogo?: string;
-  dashboard?: true;
+  dashboard?: boolean;
 }
-export const BestMatchedJobDetails: React.FC<JobMatchCardProps> = ({
-  job = {} as JobPostResponse,
-  updateJobRating,
-  title,
-  company,
-  tags,
-  description,
-  location,
-  type,
-  applicants,
-  daysLeft,
-  dashboard = false,
-  companyLogo,
-}) => {
-  const { openModal, isModalOpen } = useModalStore();
-  const { rateSomeone } = useJobActions();
-  const {
-    viewingJob,
-    jobCurrentlyViewed,
-    setCurrentlyViewed,
-    setViewingJob,
-    setJobToApply,
-    jobToApply,
-  } = useJobSearchSettings();
-  const rating = job?.rating?.averageScore || 0;
 
-  const handleApplication = () => {
-    setJobToApply(job);
-    openModal("application");
-  };
+// Enhanced Rating Component
+const Rating: React.FC<{
+  value: number;
+  onRate: (rating: number) => void;
+  readonly?: boolean;
+  size?: 'sm' | 'md';
+}> = ({ value, onRate, readonly = false, size = 'sm' }) => {
+  const [hoverValue, setHoverValue] = useState(0);
+  const iconSize = size === 'sm' ? 'h-4 w-4' : 'h-5 w-5';
 
-  const handleRating = async (value: number) => {
-    await rateSomeone(value, job?.id, RateeType.JOB, "")
-      .then((response) => {
-        if (response.statusCode === 201 && response.data) {
-          const updatedScore = response.data.score;
-          updateJobRating(job?.id, updatedScore);
-        }
-      })
-      .catch((error) => {
-        console.error("Rating failed:", error);
-        showErrorToast(error.response.data.message);
-      });
-  };
-
-  const handleRefer = async () => {
-    openModal("refer-modal");
-  };
-
-  const url = `${FRONTEND_BASE_URL}/jobs/${job?.id}/details`;
+  const handleKeyDown = useCallback((event: React.KeyboardEvent, star: number) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      if (!readonly) onRate(star);
+    }
+  }, [onRate, readonly]);
 
   return (
-    <div className="min-[480px] relative mx-auto flex w-full flex-col gap-y-8 rounded-[16px] bg-[#F7F8FA] p-4">
-      {/* Header */}
-      <div className="relative flex items-center justify-between">
-        <div className="flex w-full items-center space-x-3">
-          <img
-            src={companyLogo}
-            alt={`${company} Logo`}
-            className="h-14 w-14 rounded-full md:h-[60px] md:w-[60px]"
-          />
-          <div className="mt-5 flex w-full flex-col justify-start gap-y-2">
-            <div className="flex w-full items-center justify-start gap-2">
-              <h3 className="text-left text-[15px] font-bold text-black md:text-[20px]">
-                {title}
-              </h3>
-              <p className="text-left text-[10px] font-semibold text-gray-700 md:text-[13px]">
-                {company}
-              </p>
-            </div>
+      <div className="flex items-center space-x-1" role="group" aria-label={`Rating: ${value} out of 5 stars`}>
+        {[1, 2, 3, 4, 5].map((star) => (
+            <button
+                key={star}
+                type="button"
+                disabled={readonly}
+                onClick={() => !readonly && onRate(star)}
+                onMouseEnter={() => !readonly && setHoverValue(star)}
+                onMouseLeave={() => !readonly && setHoverValue(0)}
+                onKeyDown={(e) => handleKeyDown(e, star)}
+                className={`transition-all duration-200 ${
+                    readonly
+                        ? 'cursor-default'
+                        : 'cursor-pointer hover:scale-110 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-1 rounded'
+                }`}
+                aria-label={`Rate ${star} star${star !== 1 ? 's' : ''}`}
+            >
+              <Star
+                  className={`${iconSize} transition-colors ${
+                      star <= (hoverValue || value)
+                          ? 'fill-yellow-400 text-yellow-400'
+                          : 'text-gray-300 hover:text-gray-400'
+                  }`}
+              />
+            </button>
+        ))}
+        <span className="ml-2 text-xs text-gray-500 font-medium">
+        ({value.toFixed(1)})
+      </span>
+      </div>
+  );
+};
 
-            <div className="group mt-1 flex items-center justify-between gap-2">
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="rounded-full bg-[#6E4AED1F] px-3 py-1 text-[9px] font-medium text-[#6E4AED] md:text-[13px]"
-                  >
-                    {tag}
-                  </span>
-                ))}
+// Enhanced Action Menu Component
+const ActionMenu: React.FC<{
+  onShare: () => void;
+  onBookmark: () => void;
+  onRate: (rating: number) => void;
+  rating: number;
+  isBookmarked: boolean;
+}> = ({ onShare, onBookmark, onRate, rating, isBookmarked }) => {
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node) &&
+          buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showMenu]);
+
+  // Handle keyboard navigation
+  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      setShowMenu(false);
+      buttonRef.current?.focus();
+    }
+  }, []);
+
+  const handleMenuAction = useCallback((action: () => void) => {
+    action();
+    setShowMenu(false);
+    buttonRef.current?.focus();
+  }, []);
+
+  return (
+      <div className="relative">
+        <button
+            ref={buttonRef}
+            onClick={() => setShowMenu(!showMenu)}
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
+            aria-label="More actions"
+            aria-expanded={showMenu}
+            aria-haspopup="menu"
+        >
+          <EllipsisVertical size={16} className="text-gray-500" />
+        </button>
+
+        {showMenu && (
+            <div
+                ref={menuRef}
+                className="absolute right-0 top-full z-30 mt-2 w-56 rounded-lg bg-white shadow-lg border border-gray-200 py-2 animate-in fade-in slide-in-from-top-2 duration-200"
+                role="menu"
+                onKeyDown={handleKeyDown}
+            >
+              <div className="px-4 py-3 border-b border-gray-100">
+                <p className="text-sm font-medium text-gray-700 mb-3">Rate this job</p>
+                <Rating value={rating} onRate={onRate} size="md" />
               </div>
-              {/*Eye icon*/}
-              {
-                // On dashboard or on mobile (viewingJob ignored on small screens)
-                dashboard || window.innerWidth < 1024 ? (
-                  <div
-                    className="text-gray cursor-pointer transition-opacity group-hover:text-black"
-                    onClick={() => {
-                      setCurrentlyViewed(job);
-                      setJobToApply(job);
-                      openModal("job-mega-modal");
-                    }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      className="h-5 w-5 text-gray-500 hover:text-gray-700"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                      />
-                    </svg>
-                  </div>
-                ) : (
-                  <div className="hidden lg:block">
-                    {viewingJob ? (
-                      <div
-                        className="text-gray cursor-pointer transition-opacity group-hover:text-black"
-                        onClick={() => {
-                          setCurrentlyViewed(job);
-                          setJobToApply(job);
-                          setViewingJob(false);
-                        }}
-                      >
-                        {/* Hide icon */}
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          className="h-5 w-5 text-gray-500 hover:text-gray-700"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.957 9.957 0 012.19-3.357m3.287-2.308A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.973 9.973 0 01-4.507 5.568M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M3 3l18 18"
-                          />
-                        </svg>
-                      </div>
-                    ) : (
-                      <div
-                        className="text-gray cursor-pointer transition-opacity group-hover:text-black"
-                        onClick={() => {
-                          setCurrentlyViewed(job);
-                          setJobToApply(job);
-                          setViewingJob(true);
-                        }}
-                      >
-                        {/* Eye icon */}
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          className="h-5 w-5 text-gray-500 hover:text-gray-700"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
-                )
-              }
+
+              <button
+                  onClick={() => handleMenuAction(onShare)}
+                  className="flex w-full items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors focus:outline-none focus:bg-gray-50"
+                  role="menuitem"
+              >
+                <Share2 className="mr-3 h-4 w-4 flex-shrink-0" />
+                Share Job
+              </button>
+
+              <button
+                  onClick={() => handleMenuAction(onBookmark)}
+                  className="flex w-full items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors focus:outline-none focus:bg-gray-50"
+                  role="menuitem"
+              >
+                <Heart className={`mr-3 h-4 w-4 flex-shrink-0 transition-colors ${
+                    isBookmarked ? 'fill-red-500 text-red-500' : 'text-gray-400'
+                }`} />
+                {isBookmarked ? 'Remove from Bookmarks' : 'Add to Bookmarks'}
+              </button>
             </div>
-          </div>
-        </div>
-        <div className="absolute -top-1 -right-2 flex items-center space-x-3">
-          <Rating rate={handleRating} value={rating} />
-          <img
-            onClick={() => openModal("share")}
-            src={shareIcon}
-            alt="Share Icon"
-            className="h-4 w-4 cursor-pointer md:h-5 md:w-5"
-          />
-          <ShareModal url={url} modalId="share" />
-          <img
-            src={bookmarkIcon}
-            alt="Bookmark Icon"
-            className="h-4 w-4 cursor-pointer md:h-5 md:w-5"
-          />
-        </div>
+        )}
       </div>
+  );
+};
 
-      {/* Description */}
-      <div className="group relative flex flex-col flex-wrap">
-        {/* Description */}
-        <p
-          className={`font-lato line-clamp-6 w-full max-w-none cursor-pointer text-[12px] leading-5 whitespace-pre-wrap text-gray-700 md:text-[13px]`}
-          dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(description?.trim()),
-          }}
-        ></p>
+// Job Detail Item Component
+const JobDetailItem: React.FC<{
+  icon: React.ReactNode;
+  label: string;
+  value: string | number;
+  colorClass?: string;
+}> = ({ icon, label, value, colorClass = 'text-gray-700' }) => (
+    <div className="flex items-center gap-2">
+      <div className="p-1.5 bg-gray-50 rounded-lg flex-shrink-0">
+        {icon}
       </div>
-
-      {/* Job Info */}
-      <div className="flex w-full flex-wrap items-center gap-x-8 gap-y-3 px-4 md:gap-x-7">
-        <div className="flex items-center gap-x-2">
-          <img src={jobTypeIcon} alt="Job Type Icon" className="h-4 w-4" />
-          <p className="text-[11px] text-gray-600 md:text-[13px]">{type}</p>
-        </div>
-        <div className="flex items-center gap-x-2">
-          <img src={locationIcon} alt="Location Icon" className="h-4 w-4" />
-          <p className="text-[11px] text-gray-600 md:text-[13px]">{location}</p>
-        </div>
-        <div className="flex items-center gap-x-2">
-          <img
-            src={peopleApplied}
-            alt="People Applied Icon"
-            className="h-4 w-4"
-          />
-          <p className="text-[11px] text-gray-600 md:text-[13px]">
-            {applicants} Applied
-          </p>
-        </div>
-        <div className="flex items-center gap-x-2">
-          <img
-            src={numberOfDaysRemaining}
-            alt="Days Remaining Icon"
-            className="h-4 w-4"
-          />
-          <p className="text-[11px] text-gray-600 md:text-[13px]">
-            {daysLeft} days left
-          </p>
-        </div>
-        <div className="flex justify-evenly gap-x-2">
-          <button
-            onClick={() => {
-              openModal("refer-modal");
-            }}
-            className="rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#ffffff] px-4 py-1 text-[11px] font-medium text-[#6E4AED] md:text-[13px]"
-          >
-            Refer
-          </button>
-          <button
-            disabled={jobToApply?.applied}
-            onClick={handleApplication}
-            className="rounded-[10px] border-[1px] border-[#E6E6E6] bg-[#FFFFFF] px-4 py-1 text-[11px] font-medium text-black md:text-[13px]"
-          >
-            {!jobToApply?.applied ? "Apply" : "Applied"}
-          </button>
-          {/* Modals */}
-          {isModalOpen("application") && (
-            <ApplicationModal
-              applicationMethod={
-                jobToApply?.applicationMethod as ApplicationMethod
-              }
-              modalId="application"
-            />
-          )}
-          {isModalOpen("application-success") && (
-            <ApplicationSuccessModal modalId="application-success" />
-          )}
-          {isModalOpen("payment-success-modal") && (
-            <PaymentSuccessModal modalId="payment-success-modal" />
-          )}
-          {isModalOpen("refer-modal") && (
-            <ReferModal handleRefer={handleRefer} modalId="refer-modal" />
-          )}
-          {isModalOpen("job-mega-modal") && (
-            <JobDetailsMegaModal
-              job={jobCurrentlyViewed as JobPostResponse}
-              modalId="job-mega-modal"
-            />
-          )}
-        </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[10px] text-gray-500 font-medium">{label}</p>
+        <p className={`text-[11px] font-semibold truncate ${colorClass}`}>
+          {typeof value === 'number' && label === 'Days left' ? `${value}d` : value}
+        </p>
       </div>
     </div>
+);
+
+// Main Component
+export const BestMatchedJobDetails: React.FC<JobMatchCardProps> = ({
+                                                                     job = {} as JobPostResponse,
+                                                                     updateJobRating,
+                                                                     title,
+                                                                     company,
+                                                                     tags = [],
+                                                                     description,
+                                                                     location,
+                                                                     type,
+                                                                     applicants,
+                                                                     daysLeft,
+                                                                     dashboard = false,
+                                                                     companyLogo,
+                                                                   }) => {
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isApplied, setIsApplied] = useState(job?.applied || false);
+  const [isApplying, setIsApplying] = useState(false);
+
+  // Memoized values
+  const rating = useMemo(() => job?.rating?.averageScore || 0, [job?.rating?.averageScore]);
+  const shareUrl = useMemo(() => `${FRONTEND_BASE_URL}/jobs/${job?.id}/details`, [job?.id]);
+  const visibleTags = useMemo(() => tags.slice(0, MAX_VISIBLE_TAGS), [tags]);
+  const hiddenTagsCount = useMemo(() => Math.max(0, tags.length - MAX_VISIBLE_TAGS), [tags.length]);
+
+  const companyLogoUrl = useMemo(() =>
+          companyLogo || `https://ui-avatars.com/api/?name=${encodeURIComponent(company)}&background=6366f1&color=fff&size=40`,
+      [companyLogo, company]
+  );
+
+  const isMobileOrTablet = useMemo(() =>
+          typeof window !== 'undefined' && window.innerWidth < RESPONSIVE_BREAKPOINT,
+      []
+  );
+
+  // Event handlers
+  const handleJobView = useCallback(() => {
+    if (dashboard || isMobileOrTablet) {
+      console.log('Open job details modal');
+    } else {
+      window.open(shareUrl, '_blank', 'noopener,noreferrer');
+    }
+  }, [dashboard, isMobileOrTablet, shareUrl]);
+
+  const handleApplication = useCallback(async () => {
+    if (isApplied || isApplying) return;
+
+    setIsApplying(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setIsApplied(true);
+      console.log('Applied to job successfully');
+    } catch (error) {
+      console.error('Application failed:', error);
+    } finally {
+      setIsApplying(false);
+    }
+  }, [isApplied, isApplying]);
+
+  const handleRating = useCallback(async (value: number) => {
+    try {
+      console.log('Rating job with value:', value);
+      updateJobRating(job?.id || 0, value);
+    } catch (error) {
+      console.error('Rating failed:', error);
+    }
+  }, [job?.id, updateJobRating]);
+
+  const handleShare = useCallback(async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: `${title} at ${company}`,
+          text: `Check out this job opportunity: ${title} at ${company}`,
+          url: shareUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        console.log('Job URL copied to clipboard');
+      }
+    } catch (error) {
+      console.error('Share failed:', error);
+    }
+  }, [shareUrl, title, company]);
+
+  const handleBookmark = useCallback(() => {
+    setIsBookmarked(prev => !prev);
+    console.log(isBookmarked ? 'Removed from bookmarks' : 'Added to bookmarks');
+  }, [isBookmarked]);
+
+  // Get urgency styling for days left
+  const getDaysLeftStyling = useCallback((days: number) => {
+    if (days <= 3) return 'text-red-600 bg-red-50';
+    if (days <= 7) return 'text-orange-600 bg-orange-50';
+    return 'text-gray-700 bg-gray-50';
+  }, []);
+
+  const daysLeftStyling = useMemo(() => getDaysLeftStyling(daysLeft), [daysLeft, getDaysLeftStyling]);
+
+  return (
+      <article className="relative mx-auto flex w-full h-full min-w-[320px] max-w-full flex-col gap-y-5 rounded-xl bg-gray-100 border border-gray-100 p-2">
+        {/* Header Section */}
+        <header className="relative flex items-start justify-between gap-3">
+          <div className="flex w-full items-start space-x-3">
+            {/* Company Logo */}
+            <div className="flex-shrink-0">
+              <div className="relative">
+                <img
+                    src={companyLogoUrl}
+                    alt={`${company} logo`}
+                    className="h-12 w-12 rounded-xl object-cover ring-2 ring-gray-100 bg-white"
+                    loading="lazy"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(company)}&background=6366f1&color=fff&size=48`;
+                    }}
+                />
+                {rating >= 4.5 && (
+                    <div className="absolute -top-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full p-1 shadow-sm">
+                      <Star className="h-3 w-3 fill-white text-white" />
+                    </div>
+                )}
+              </div>
+            </div>
+
+            {/* Job Info */}
+            <div className="flex min-w-0 flex-1 flex-col gap-y-3">
+              {/* Title and Company */}
+              <div className="flex flex-col gap-y-1">
+                <h2 className="text-base font-bold text-gray-900 line-clamp-2 hover:text-indigo-600 cursor-pointer transition-colors leading-tight">
+                  {title}
+                </h2>
+                <div className="flex items-center space-x-2">
+                <span className="text-sm font-medium text-gray-600">
+                  {company}
+                </span>
+                  {rating > 0 && (
+                      <div className="flex items-center bg-yellow-50 px-2 py-0.5 rounded-full">
+                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                        <span className="ml-1 text-xs font-semibold text-gray-700">{rating.toFixed(1)}</span>
+                      </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-1.5">
+                {visibleTags.map((tag, index) => (
+                    <span
+                        key={`${tag}-${index}`}
+                        className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700 ring-1 ring-indigo-200 hover:bg-indigo-100 transition-colors cursor-pointer"
+                    >
+                  {tag}
+                </span>
+                ))}
+
+                {hiddenTagsCount > 0 && (
+                    <span
+                        className="inline-flex items-center rounded-full bg-gray-50 px-3 py-1 text-xs font-medium text-gray-600 ring-1 ring-gray-200 cursor-pointer hover:bg-gray-100 transition-colors"
+                        title={`${hiddenTagsCount} more tags: ${tags.slice(MAX_VISIBLE_TAGS).join(', ')}`}
+                    >
+                  +{hiddenTagsCount}
+                </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Action Menu */}
+          <ActionMenu
+              onShare={handleShare}
+              onBookmark={handleBookmark}
+              onRate={handleRating}
+              rating={rating}
+              isBookmarked={isBookmarked}
+          />
+        </header>
+
+        {/* Job Description */}
+        <section className="flex flex-col">
+          <div className="text-sm leading-relaxed text-gray-600">
+            <div
+                className="line-clamp-4"
+                dangerouslySetInnerHTML={{
+                  __html: description?.trim() || 'No description available'
+                }}
+            />
+          </div>
+        </section>
+
+        {/* Job Details Grid */}
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <JobDetailItem
+              icon={<Briefcase className="h-4 w-4 text-blue-600" />}
+              label="Type"
+              value={type}
+          />
+
+          <JobDetailItem
+              icon={<MapPin className="h-4 w-4 text-green-600" />}
+              label="Location"
+              value={location}
+          />
+
+          <JobDetailItem
+              icon={<Users className="h-4 w-4 text-purple-600" />}
+              label="Applicants"
+              value={applicants}
+          />
+
+          <JobDetailItem
+              icon={<Clock className="h-4 w-4 text-orange-600" />}
+              label="Days left"
+              value={daysLeft}
+              colorClass={daysLeftStyling.split(' ')[0]}
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <footer className="flex gap-3 pt-4 border-t border-gray-100">
+          <button
+              onClick={handleJobView}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              type="button"
+          >
+            <ExternalLink className="h-4 w-4" />
+            <span className="hidden sm:inline">View Details</span>
+            <span className="sm:hidden">View</span>
+          </button>
+
+          <button
+              onClick={handleApplication}
+              disabled={isApplied || isApplying}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 border-2 border-transparent rounded-xl hover:from-indigo-700 hover:to-purple-700 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:from-indigo-600 disabled:hover:to-purple-600 group"
+              type="button"
+          >
+            {isApplying ? (
+                <>
+                  <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                  <span>Applying...</span>
+                </>
+            ) : isApplied ? (
+                <>
+                  <Check className="h-4 w-4" />
+                  <span>Applied</span>
+                </>
+            ) : (
+                <>
+                  <span>Apply Now</span>
+                </>
+            )}
+          </button>
+        </footer>
+      </article>
   );
 };

@@ -1,8 +1,4 @@
 import React, { useState } from "react";
-import video from "../../assets/icons/video.svg";
-import work from "../../assets/icons/work.svg";
-import documentValidation from "../../assets/icons/documentValidation.svg";
-import applyAvatar from "../../assets/images/applyAvatar.png";
 import ApplicationSuccessModal from "./ApplicationSuccessModal.tsx";
 import useModalStore from "../../store/modalStateStores.ts";
 import { ApplicationMethod } from "../../utils/types";
@@ -10,6 +6,19 @@ import { useJobSearchSettings } from "../../store/useJobSearchSettings.ts";
 import { showErrorToast } from "../../utils/toastConfig.tsx";
 import { useJobActions } from "../../store/useJobActions.ts";
 import { Link } from "react-router-dom";
+import {
+  X,
+  FileText,
+  Video,
+  User,
+  Briefcase,
+  Mail,
+  CheckCircle,
+  ExternalLink,
+  Send,
+  Loader2,
+  Info
+} from "lucide-react";
 
 interface ApplicationModalProps {
   modalId: string;
@@ -17,12 +26,13 @@ interface ApplicationModalProps {
 }
 
 const ApplicationModal: React.FC<ApplicationModalProps> = ({
-  modalId,
-  applicationMethod,
-}) => {
+                                                             modalId,
+                                                             applicationMethod,
+                                                           }) => {
   const { modals, closeModal, openModal } = useModalStore();
   const isOpen = modals[modalId];
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { jobToApply } = useJobSearchSettings();
   const { applyToJob } = useJobActions();
 
@@ -35,33 +45,42 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
   };
 
   const handleApplyNow = async () => {
-    await applyToJob(
-      jobToApply?.id as number,
-      jobToApply?.applicationMethod as ApplicationMethod,
-    )
-      .then((response) => {
-        if (response.statusCode === 201) {
-          closeModal(modalId);
-          openModal("application-success");
-        }
-      })
-      .catch((err) => {
-        console.log(err?.response?.data?.message);
-        showErrorToast(err?.response?.data?.message);
+    if (selectedOptions.length === 0) {
+      showErrorToast("Please select at least one application method");
+      return;
+    }
 
+    setIsSubmitting(true);
+    try {
+      const response = await applyToJob(
+        jobToApply?.id as number,
+        jobToApply?.applicationMethod as ApplicationMethod,
+      );
+
+      if (response.statusCode === 201) {
         closeModal(modalId);
-      });
+        openModal("application-success");
+      }
+    } catch (err: any) {
+      console.log(err?.response?.data?.message);
+      showErrorToast(err?.response?.data?.message || "Application failed. Please try again.");
+      closeModal(modalId);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCloseApplicationModal = () => {
     closeModal(modalId);
+    setSelectedOptions([]);
   };
 
-  const iconMapping: Record<string, string> = {
-    "Applied with Profile": applyAvatar,
-    "Apply with Video": video,
-    "Apply with CV": documentValidation,
-    "Apply with work sample": work,
+  const iconMapping: Record<string, any> = {
+    "Applied with Profile": { icon: User, color: "text-blue-600" },
+    "Apply with Video": { icon: Video, color: "text-red-600" },
+    "Apply with CV": { icon: FileText, color: "text-green-600" },
+    "Apply with work sample": { icon: Briefcase, color: "text-purple-600" },
+    "Apply with Cover Letter": { icon: Mail, color: "text-indigo-600" },
   };
 
   const methodMap: Record<string, keyof ApplicationMethod> = {
@@ -69,142 +88,213 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
     "Apply with CV": "byCv",
     "Apply with Video": "byVideo",
     "Apply with work sample": "byPortfolio",
+    "Apply with Cover Letter": "byCoverLetter",
   };
+
+  // Get available methods
+  const availableMethods = Object.entries(methodMap).filter(
+    ([, key]) => applicationMethod[key]
+  );
+
+  const requiredMethods = [
+    { label: "CV", key: "byCv" },
+    { label: "Portfolio", key: "byPortfolio" },
+    { label: "Profile", key: "byProfile" },
+    { label: "Video", key: "byVideo" },
+    { label: "Cover Letter", key: "byCoverLetter" },
+  ].filter(({ key }) => applicationMethod[key as keyof ApplicationMethod]);
 
   if (!isOpen) return null;
 
   return (
     <>
-      <div
-        className="bg-opacity-20 fixed inset-0 z-50 flex items-center justify-center bg-black"
-        onClick={handleCloseApplicationModal}
-      >
-        <div
-          className="flex h-[664px] w-[95%] flex-col justify-evenly rounded-[14px] bg-white py-[4px] shadow-lg md:w-[455px]"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="mb-0 flex flex-col justify-between px-6">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-[20px] font-semibold">
-                Select Method of Application
-              </h2>
-              <button
-                type="button"
-                onClick={handleCloseApplicationModal}
-                className="cursor-pointer text-xl text-gray-500"
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div className="relative w-full max-w-2xl max-h-[95vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50/30">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl text-white">
+                <Send className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-lg sm:text-xl font-bold text-slate-900">
+                  Apply to Position
+                </h2>
+                <p className="text-sm text-slate-600 mt-1">
+                  Choose your application method
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleCloseApplicationModal}
+              className="p-2 rounded-full hover:bg-slate-100 transition-colors"
+            >
+              <X className="w-5 h-5 text-slate-600" />
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto">
+            {/* Job Info */}
+            <div className="p-4 sm:p-6 border-b border-slate-100">
+              <div className="flex items-center space-x-3 mb-3">
+                <Info className="w-5 h-5 text-blue-600" />
+                <h3 className="font-semibold text-slate-800">Position Details</h3>
+              </div>
+              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                <h4 className="font-semibold text-slate-900 mb-1">
+                  {jobToApply?.title}
+                </h4>
+                <p className="text-sm text-slate-600">
+                  {jobToApply?.company} • {jobToApply?.location}
+                </p>
+              </div>
+            </div>
+
+            {/* Requirements */}
+            {requiredMethods.length > 0 && (
+              <div className="p-4 sm:p-6 border-b border-slate-100">
+                <h3 className="font-semibold text-slate-800 mb-3 flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                  <span>Recruiter Requirements</span>
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {requiredMethods.map(({ label, key }) => {
+                    const isSelected = selectedOptions.includes(label);
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => handleSelection(label)}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          isSelected
+                            ? "bg-indigo-600 text-white border-2 border-indigo-600"
+                            : "bg-indigo-50 text-indigo-700 border-2 border-indigo-200 hover:border-indigo-300 hover:bg-indigo-100"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-xs sm:text-sm text-slate-500 mt-3 flex items-start space-x-2">
+                  <Info className="w-4 h-4 mt-0.5 text-slate-400 flex-shrink-0" />
+                  <span>
+                    Select your preferred application methods. We'll automatically send your application to the recruiter.
+                  </span>
+                </p>
+              </div>
+            )}
+
+            {/* Application Methods */}
+            <div className="p-4 sm:p-6">
+              <h3 className="font-semibold text-slate-800 mb-4 flex items-center space-x-2">
+                <Briefcase className="w-5 h-5 text-purple-600" />
+                <span>Application Methods</span>
+              </h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                {availableMethods.map(([label, key]) => {
+                  const isSelected = selectedOptions.includes(label);
+                  const IconComponent = iconMapping[label]?.icon || FileText;
+                  const iconColor = iconMapping[label]?.color || "text-slate-600";
+
+                  return (
+                    <div
+                      key={key}
+                      onClick={() => handleSelection(label)}
+                      className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+                        isSelected
+                          ? "border-indigo-500 bg-indigo-50 shadow-lg transform scale-105"
+                          : "border-slate-200 hover:border-indigo-300 hover:bg-slate-50"
+                      }`}
+                    >
+                      {/* Selection Indicator */}
+                      <div className="absolute top-3 right-3">
+                        <div
+                          className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+                            isSelected
+                              ? "border-indigo-500 bg-indigo-500"
+                              : "border-slate-300 bg-white"
+                          }`}
+                        >
+                          {isSelected && (
+                            <CheckCircle className="w-4 h-4 text-white fill-current" />
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex flex-col items-center text-center space-y-3">
+                        <div className={`p-3 rounded-xl bg-white border border-slate-200 ${iconColor}`}>
+                          <IconComponent className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-slate-900 text-sm">
+                            {label.replace("Applied with ", "").replace("Apply with ", "")}
+                          </h4>
+                          <p className="text-xs text-slate-500 mt-1">
+                            {label.includes("Profile") && "Use your profile information"}
+                            {label.includes("CV") && "Upload your resume/CV"}
+                            {label.includes("Video") && "Record a video introduction"}
+                            {label.includes("work sample") && "Show your portfolio"}
+                            {label.includes("Cover Letter") && "Write a personalized letter"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {selectedOptions.length === 0 && (
+                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                  <p className="text-sm text-amber-800 flex items-center space-x-2">
+                    <Info className="w-4 h-4" />
+                    <span>Please select at least one application method to proceed.</span>
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="border-t border-slate-200 p-4 sm:p-6 bg-slate-50">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Link
+                to={`/employers/${jobToApply?.employer?.id}/${jobToApply?.employer?.companyName}/profile`}
+                className="flex items-center justify-center space-x-2 flex-1 px-4 py-2.5 border-2 border-slate-300 text-slate-700 rounded-lg font-medium hover:bg-white hover:border-slate-400 transition-all duration-200 text-sm"
               >
-                ×
+                <ExternalLink className="w-4 h-4" />
+                <span>View Recruiter Profile</span>
+              </Link>
+
+              <button
+                onClick={handleApplyNow}
+                disabled={selectedOptions.length === 0 || isSubmitting}
+                className="flex items-center justify-center space-x-2 flex-1 sm:flex-none sm:min-w-[140px] px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-slate-400 disabled:to-slate-500 text-white rounded-lg font-semibold transition-all duration-200 disabled:cursor-not-allowed text-sm"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Applying...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    <span>Apply Now</span>
+                  </>
+                )}
               </button>
             </div>
-            <p className="mb-5 w-[214px] text-justify text-[13px] text-gray-600">
-              We will automatically help you figure out the raised
-            </p>
-          </div>
 
-          <hr className="my-0 w-full border-[#CCCCCC]" />
-
-          {/* Recruiter Requirement buttons */}
-          <p className="px-6 text-[13px]">Recruiter Requirements</p>
-          <div className="mb-3 flex space-x-2 px-6">
-            {[
-              { label: "CV", key: "byCv" },
-              { label: "Portfolio", key: "byPortfolio" },
-              { label: "Profile", key: "byProfile" },
-              { label: "Video", key: "byVideo" },
-              { label: "Cover Letter", key: "byCoverLetter" },
-            ]
-              .filter(
-                ({ key }) => applicationMethod[key as keyof ApplicationMethod],
-              )
-              .map(({ label, key }) => {
-                const isSelected = selectedOptions.includes(label);
-                return (
-                  <button
-                    type="button"
-                    key={key}
-                    className={`h-[30px] rounded-[8px] border px-4 py-1 text-[13px] ${
-                      isSelected
-                        ? "border-purple-600 bg-purple-600 text-white"
-                        : "border-purple-200 bg-purple-100 text-purple-600"
-                    } cursor-pointer`}
-                    onClick={() => handleSelection(label)}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-          </div>
-
-          <p className="mb-3 px-6 text-[13px] text-[#8E8E8E]">
-            Please select your method of application and we will automatically
-            send your application to the recruiter.
-          </p>
-
-          <div className="mx-auto grid grid-cols-2 gap-x-5 gap-y-3 md:gap-x-10">
-            {Object.entries(methodMap).map(([label, key]) => {
-              const isEnabled = applicationMethod[key];
-              const isSelected = selectedOptions.includes(label);
-
-              return (
-                <div
-                  key={label}
-                  className={`relative flex h-[123px] w-[145px] flex-col items-center justify-center rounded-[12px] border-[2px] p-3 md:w-[170px] ${isEnabled ? "cursor-pointer hover:outline-[2px] hover:outline-[#6438C2]" : "cursor-not-allowed opacity-50"} ${isSelected ? "border-[#6438C2]" : "border-[#E6E6E6]"} transition-all duration-300 ease-in-out`}
-                  onClick={() => isEnabled && handleSelection(label)}
-                >
-                  <div className="mb-2 flex h-[40px] w-[40px] items-center justify-center rounded-[8px] border-[1px] border-[#E6E6E6]">
-                    <img
-                      src={iconMapping[label]}
-                      alt={`${label} icon`}
-                      className="h-[20px] w-[20px]"
-                    />
-                  </div>
-                  <span className="text-center text-[13px] font-medium">
-                    {label}
-                  </span>
-
-                  <div
-                    className={`absolute top-1 right-1 flex h-[24px] w-[24px] items-center justify-center rounded-full ${
-                      isSelected
-                        ? "border-none bg-[#6438C2]"
-                        : "border-[1px] border-[#E6E6E6] bg-white"
-                    } ${isEnabled ? "cursor-pointer" : "cursor-not-allowed"}`}
-                  >
-                    {isSelected && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="white"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="h-[16px] w-[16px]"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-5 flex justify-end space-x-6 px-6 text-right">
-            <Link
-              to={`/employers/${jobToApply?.employer?.id}/${jobToApply?.employer?.companyName}/profile`}
-              type="button"
-              className="flex h-[34px] w-full flex-1 items-center rounded-[8px] border-[1px] border-[#ccc] px-5 py-1 text-xs text-gray-700 md:w-[169px] md:text-[13px]"
-            >
-              Go to recruiter profile
-            </Link>
-
-            <button
-              type="button"
-              onClick={handleApplyNow}
-              className="h-[34px] w-[106px] rounded-[8px] bg-[#6438C2] px-5 py-1 text-[13px] text-white"
-            >
-              Apply now
-            </button>
+            {/* Selected Summary */}
+            {selectedOptions.length > 0 && (
+              <div className="mt-3 text-center">
+                <p className="text-xs text-slate-600">
+                  Selected: {selectedOptions.join(", ")} ({selectedOptions.length} method{selectedOptions.length > 1 ? 's' : ''})
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

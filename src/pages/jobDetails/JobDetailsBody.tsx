@@ -5,147 +5,173 @@ import { USER_TYPE } from "../../utils/helpers.ts";
 import { UserType } from "../../utils/enums.ts";
 import useModalStore from "../../store/modalStateStores.ts";
 import { useJobSearchSettings } from "../../store/useJobSearchSettings.ts";
+import {
+  FileText,
+  Target,
+  CheckCircle,
+  Code,
+  Bookmark,
+  Share2,
+  Send,
+  Edit3
+} from "lucide-react";
 
 interface JobDetailsBodyProp {
   job: JobPostResponse;
   handleEditJob: () => void;
   handleBookmark?: () => void;
 }
+
 const JobDetailsBody: React.FC<JobDetailsBodyProp> = ({
-  job,
-  handleEditJob,
-  handleBookmark,
-}) => {
+                                                        job,
+                                                        handleEditJob,
+                                                        handleBookmark,
+                                                      }) => {
   const { openModal } = useModalStore();
   const { setJobToApply } = useJobSearchSettings();
+
+  const Section = ({
+                     icon: Icon,
+                     title,
+                     children
+                   }: {
+    icon: React.ElementType;
+    title: string;
+    children: React.ReactNode
+  }) => (
+    <div className="mb-8">
+      <div className="flex items-center space-x-3 mb-4">
+        <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl text-white shadow-lg">
+          <Icon className="w-5 h-5" />
+        </div>
+        <h2 className="text-xl font-bold text-slate-800">{title}</h2>
+      </div>
+      <div className="bg-slate-50 rounded-xl p-4 sm:p-6 border border-slate-200">
+        {children}
+      </div>
+    </div>
+  );
+
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center bg-gray-100">
-      {/* Top Section */}
-      <div className="flex h-fit w-full flex-col items-start justify-center rounded-[16px] bg-white px-6 py-4 shadow-sm md:h-[84px] md:flex-row md:items-center md:justify-between">
-        <h2 className="font-lato text-lg font-bold text-black">{job.title}</h2>
-        <div className="mt-2 flex flex-wrap space-x-4 text-[14px] font-bold text-[#6438C2] md:mt-0 md:text-[20px]">
-          <span>
-            {job.jobType} / {job.employmentType}
-          </span>
-          <span className="">|</span>
-          <span>{job.level}</span>
+    <div className="w-full">
+      {/* Job Title Header */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
+              {job.title}
+            </h1>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm sm:text-base">
+              <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full font-medium">
+                {job.jobType}
+              </span>
+              <span className="text-slate-400">•</span>
+              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full font-medium">
+                {job.employmentType}
+              </span>
+              <span className="text-slate-400">•</span>
+              <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
+                {job.level}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Job Details Box */}
-      <div className="mt-[20px] min-h-[747px] w-full rounded-[16px] bg-white p-4 shadow-sm md:p-8">
-        {/* Job Description Section */}
-        <div className="flex flex-col">
-          <div className="flex h-[40px] w-full items-center rounded-[16px] bg-[#6438C2] px-4">
-            <span className="font-lato text-lg font-bold text-white">
-              Job Description
-            </span>
-          </div>
-          <div
-            className="prose font-lato mt-4 w-full max-w-none p-1 text-[16px] leading-[19.2px] tracking-[0%] whitespace-pre-wrap text-[#8E8E8E] md:p-4"
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(job.description),
-            }}
-          ></div>
-        </div>
-
-        {/* Key Responsibilities */}
-        <div className="flex flex-col">
-          <div className="mt-6 flex h-[40px] w-full items-center rounded-[16px] bg-[#6438C2] px-4">
-            <span className="font-lato text-lg font-bold text-white">
-              Key Responsibility
-            </span>
-          </div>
-          <div
-            className="prose font-lato mt-4 w-full max-w-none list-inside list-disc space-y-3 p-1 text-[16px] leading-[19.2px] whitespace-pre-wrap text-[#8E8E8E] marker:text-purple-600 md:p-4"
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(job.responsibility),
-            }}
-          ></div>
-        </div>
-
-        {/* Key Requirements */}
-        {job.requirements && (
-          <div className="flex flex-col">
-            <div className="mt-6 flex h-[40px] w-full items-center rounded-[16px] bg-[#6438C2] px-4">
-              <span className="font-lato text-lg font-bold text-white">
-                Requirements
-              </span>
-            </div>
+      {/* Main Content Card */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="p-4 sm:p-6 lg:p-8">
+          {/* Job Description */}
+          <Section icon={FileText} title="Job Description">
             <div
-              className="prose font-lato mt-4 w-full max-w-none list-inside list-disc space-y-3 p-1 text-[16px] leading-[19.2px] whitespace-pre-wrap text-[#8E8E8E] marker:text-purple-600 md:p-4"
+              className="prose prose-slate max-w-none text-slate-700 leading-relaxed"
               dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(job.requirements),
+                __html: DOMPurify.sanitize(job.description),
               }}
             />
-          </div>
-        )}
+          </Section>
 
-        {/* Key Skills */}
-        <div className="flex flex-col">
-          <div className="mt-6 flex h-[40px] w-full items-center rounded-[16px] bg-[#6438C2] px-4">
-            <span className="font-lato text-lg font-bold text-white">
-              Skills
-            </span>
-          </div>
+          {/* Key Responsibilities */}
+          <Section icon={Target} title="Key Responsibilities">
+            <div
+              className="prose prose-slate max-w-none text-slate-700 leading-relaxed prose-ul:list-disc prose-ul:pl-6 prose-li:mb-2"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(job.responsibility),
+              }}
+            />
+          </Section>
 
-          <div className="mt-4 flex flex-wrap gap-2 px-4">
-            {job?.skillSet?.map((skill, idx) => (
-              <span
-                key={idx}
-                className="font-lato rounded-full bg-[#E9D8FD] px-3 py-1 text-sm font-medium text-[#4B0082]"
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
+          {/* Requirements */}
+          {job.requirements && (
+            <Section icon={CheckCircle} title="Requirements">
+              <div
+                className="prose prose-slate max-w-none text-slate-700 leading-relaxed prose-ul:list-disc prose-ul:pl-6 prose-li:mb-2"
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(job.requirements),
+                }}
+              />
+            </Section>
+          )}
+
+          {/* Skills */}
+          <Section icon={Code} title="Required Skills">
+            <div className="flex flex-wrap gap-2 sm:gap-3">
+              {job?.skillSet?.map((skill, idx) => (
+                <span
+                  key={idx}
+                  className="inline-flex items-center px-3 py-2 bg-white border border-indigo-200 text-indigo-700 rounded-lg font-medium text-sm hover:bg-indigo-50 transition-colors"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </Section>
         </div>
 
-        <div className="top-20">
-          {/* Horizontal Rule */}
-          <hr className="mt-[50px] w-full border border-black" />
-
-          {/* Edit Job Button */}
-          <div className="mt-10 flex w-full flex-col-reverse flex-wrap items-center gap-x-2 gap-y-3 md:flex-row md:justify-end">
-            {/* Bookmark - soft lavender tone for a non-primary action */}
-
-            {/* Apply - strong purple as primary CTA */}
+        {/* Action Buttons Section */}
+        <div className="border-t border-slate-200 bg-slate-50 p-4 sm:p-6">
+          <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 sm:justify-end">
             {USER_TYPE === UserType.APPLICANT ? (
               <>
+                {/* Mobile: Stack vertically, Desktop: Side by side */}
                 <button
                   onClick={() => handleBookmark && handleBookmark()}
                   type="button"
-                  className="text-md font-lato block w-full rounded-[15px] bg-[#E9D8FD] px-10 py-3 font-bold text-[#4B0082] transition hover:bg-[#D8B4FE] md:w-[225px]"
+                  className="flex items-center justify-center space-x-2 w-full sm:w-auto px-6 py-3 bg-white border-2 border-slate-300 text-slate-700 rounded-xl font-semibold hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
                 >
-                  Bookmark
+                  <Bookmark className="w-4 h-4" />
+                  <span>Bookmark</span>
                 </button>
+
                 <button
                   type="button"
-                  onClick={() => {
-                    openModal("refer-modal");
-                  }}
-                  className="text-md font-lato block w-full rounded-[15px] bg-[#C026D3] px-10 py-3 font-bold text-white transition hover:bg-[#A21CAF] md:w-[225px]"
+                  onClick={() => openModal("refer-modal")}
+                  className="flex items-center justify-center space-x-2 w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
                 >
-                  Refer
+                  <Share2 className="w-4 h-4" />
+                  <span>Refer Someone</span>
                 </button>
+
                 <button
                   type="button"
                   onClick={() => {
                     setJobToApply(job);
                     openModal("application-modal");
                   }}
-                  className="text-md font-lato block w-full rounded-[15px] bg-[#6438C2] px-10 py-3 font-bold text-white transition hover:bg-[#5126a9] md:w-[225px]"
+                  className="flex items-center justify-center space-x-2 w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-bold transition-all duration-200 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
-                  Apply
+                  <Send className="w-4 h-4" />
+                  <span>Apply Now</span>
                 </button>
               </>
             ) : (
               <button
                 type="button"
                 onClick={() => handleEditJob && handleEditJob()}
-                className="text-md font-lato block w-full rounded-[15px] bg-[#6438C2] px-10 py-3 font-bold text-white transition hover:bg-[#5126a9] md:w-[225px]"
+                className="flex items-center justify-center space-x-2 w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-bold transition-all duration-200 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
-                Edit
+                <Edit3 className="w-4 h-4" />
+                <span>Edit Job</span>
               </button>
             )}
           </div>

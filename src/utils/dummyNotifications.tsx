@@ -55,7 +55,7 @@ const dummyNotifications: NotificationTemplateProps[] = [
     message:
       "Your account has been flagged for fraud suspicion, which may affect your ability to post jobs like ‘Project Manager.’",
     messageContent:
-      "Contact our support team if you believe this was a mistake.",
+      "Contact our entity team if you believe this was a mistake.",
     timestamp: "1 day ago",
     type: NotificationType.Flagged,
   },

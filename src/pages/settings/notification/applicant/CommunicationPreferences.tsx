@@ -1,4 +1,7 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { debounce } from "lodash";
+import { toast } from "react-toastify";
+import { RiBriefcaseLine, RiGlobalLine, RiMailLine, RiNotification3Line, RiMessage3Line } from "react-icons/ri";
 import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
   CommunicationNotification,
@@ -6,8 +9,13 @@ import {
   NotificationType,
   useSettingsStore,
 } from "../../../../store/useSettingsStore.ts";
-import { debounce } from "lodash";
-import { toast } from "react-toastify";
+
+interface CommunicationConfig {
+  key: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description: string;
+}
 
 const CommunicationPreferences = () => {
   const {
@@ -16,154 +24,272 @@ const CommunicationPreferences = () => {
     setCommunication,
     updateCommunication,
   } = useSettingsStore();
-  const notificationTypes = ["all", "emailNotification", "pushNotification"];
-  const communicationNotificationState = ["promotionalOffers", "fromPlatform"];
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const communicationOptions: CommunicationConfig[] = useMemo(() => [
+    {
+      key: "promotionalOffers",
+      label: "Employer Promotions",
+      icon: RiBriefcaseLine,
+      description: "Promotional offers, job alerts, and marketing content from employers",
+    },
+    {
+      key: "fromPlatform",
+      label: "Platform Communications",
+      icon: RiGlobalLine,
+      description: "News, updates, and promotional content from our platform",
+    },
+  ], []);
+
+  const notificationTypeOptions = useMemo(() => [
+    {
+      key: "all",
+      label: "All Notifications",
+      description: "Enable all notification methods",
+      icon: RiNotification3Line,
+    },
+    {
+      key: "emailNotification",
+      label: "Email Notifications",
+      description: "Receive promotional content via email",
+      icon: RiMailLine,
+    },
+    {
+      key: "pushNotification",
+      label: "Push Notifications",
+      description: "Receive browser/app push notifications",
+      icon: RiNotification3Line,
+    },
+  ], []);
 
   useEffect(() => {
-    if (applicantSettings) {
+    if (applicantSettings?.notifications?.options?.communication) {
       setCommunication(applicantSettings.notifications.options.communication);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicantSettings]);
+  }, [applicantSettings, setCommunication]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedUpdate = useCallback(
     debounce(async (settings: CommunicationNotification) => {
-      const response = await updateCommunication(settings);
-      if (response) {
-        setCommunication(response);
-      } else {
-        toast.error(
-          "Failed to update application status notification settings",
-        );
+      setIsLoading(true);
+      try {
+        const response = await updateCommunication(settings);
+        if (response) {
+          setCommunication(response);
+          toast.success("Communication preferences updated");
+        } else {
+          toast.error("Failed to update communication preferences");
+        }
+      } catch (error) {
+        toast.error("An error occurred while updating settings");
+        console.error("Update error:", error);
+      } finally {
+        setIsLoading(false);
       }
-    }, 500),
-    [communication],
+    }, 800),
+    [updateCommunication, setCommunication]
   );
 
   useEffect(() => {
     return () => {
-      debouncedUpdate.cancel(); // prevent memory leak
+      debouncedUpdate.cancel();
     };
   }, [debouncedUpdate]);
 
-  const getCommunicationStateField = (item: string) => {
-    switch (item) {
-      case "promotionalOffers":
-        return "From employers";
-      default:
-        return "From platform";
-    }
-  };
+  const handleCommunicationToggle = useCallback((key: string) => {
+    if (!communication) return;
 
-  const getNotificationTypeStateField = (item: string) => {
-    switch (item) {
-      case "emailNotification":
-        return "Email Notification";
-      case "pushNotification":
-        return "Push Notification";
-      default:
-        return "All";
-    }
-  };
-
-  const handleNotificationTypeToggle = (item: string) => {
-    const updatedSettings = {
-      ...communication,
-      notificationType: {
-        ...communication.notificationType,
-        [item]: !communication.notificationType[item as keyof NotificationType],
-      },
-    };
-    setCommunication(updatedSettings);
-    debouncedUpdate(updatedSettings);
-  };
-
-  const handleCommunicationSettingsToggle = (item: string) => {
     const updatedSettings = {
       ...communication,
       option: {
         ...communication.option,
-        [item]:
-          !communication.option[item as keyof CommunicationNotificationOption],
+        [key]: !communication.option[key as keyof CommunicationNotificationOption],
       },
     };
     setCommunication(updatedSettings);
     debouncedUpdate(updatedSettings);
-  };
+  }, [communication, setCommunication, debouncedUpdate]);
 
-  return (
-    <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
-      <hr className="mb-4 w-full border-t border-[#E6E6E6]" />
+  const handleNotificationTypeToggle = useCallback((key: string) => {
+    if (!communication) return;
 
-      {/* Page Title */}
-      <h2 className="text-left text-xl text-[24px] font-bold text-black">
-        Communication Preferences
-      </h2>
+    const updatedSettings = {
+      ...communication,
+      notificationType: {
+        ...communication.notificationType,
+        [key]: !communication.notificationType[key as keyof NotificationType],
+      },
+    };
+    setCommunication(updatedSettings);
+    debouncedUpdate(updatedSettings);
+  }, [communication, setCommunication, debouncedUpdate]);
 
-      {/* White Box Container */}
-      <div className="mt-4 flex min-h-[200px] w-full flex-col items-start rounded-[16px] border border-[#E6E6E6] bg-white px-4 py-6 md:px-8">
-        {/* Header Titles */}
-        <div className="text-md grid w-full grid-cols-2 font-bold text-black">
-          <h3>Receive Promotional Offers</h3>
-          <h3>Notification Type</h3>
-        </div>
-
-        {/* Horizontal Rule */}
-        <hr className="my-3 w-full border-t border-[#E6E6E6]" />
-
-        {/* Two-Column Layout */}
-        <div className="grid w-full grid-cols-2 gap-x-8 px-2 py-8">
-          {/* Left Column - Promotional Offers */}
-          <div className="w-full">
-            <div className="mt-2 space-y-4">
-              {communicationNotificationState.map((item, index) => (
-                <label
-                  key={index}
-                  className="flex items-center justify-between"
-                >
-                  <span className="text-[16px] text-[#8E8E8E]">
-                    {getCommunicationStateField(item)}
-                  </span>
-                  <ToggleSwitch
-                    isOn={
-                      communication.option[
-                        item as keyof CommunicationNotificationOption
-                      ]
-                    }
-                    onToggle={() => handleCommunicationSettingsToggle(item)}
-                  />
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Column - Notification Type */}
-          <div className="w-full">
-            <div className="mt-2 space-y-4">
-              {notificationTypes.map((item, index) => (
-                <label
-                  key={index}
-                  className="flex items-center justify-between"
-                >
-                  <span className="text-[16px] text-[#8E8E8E]">
-                    {getNotificationTypeStateField(item)}
-                  </span>
-                  <ToggleSwitch
-                    isOn={
-                      communication.notificationType[
-                        item as keyof NotificationType
-                      ]
-                    }
-                    onToggle={() => handleNotificationTypeToggle(item)}
-                  />
-                </label>
-              ))}
-            </div>
-          </div>
+  if (!communication) {
+    return (
+      <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+        <div className="animate-pulse">
+          <div className="h-px bg-gray-200 mb-4"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
         </div>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <section className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+      {/* Section Divider */}
+      <hr className="mb-8 border-gray-200" />
+
+      {/* Section Header */}
+      <div className="mb-6">
+        <div className="flex items-center space-x-3 mb-2">
+          <div className="p-2 bg-pink-100 rounded-lg">
+            <RiMessage3Line className="h-6 w-6 text-pink-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Communication Preferences
+          </h2>
+        </div>
+        <p className="text-gray-600 text-sm">
+          Control what promotional and marketing communications you receive from employers and our platform.
+        </p>
+      </div>
+
+      {/* Main Content Card */}
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        {/* Card Header */}
+        <div className="bg-gradient-to-r from-pink-50 to-rose-50 px-6 py-4 border-b border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Promotional Content
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Choose what promotional content you want to receive
+              </p>
+            </div>
+            <div className="md:text-right">
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Notification Methods
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Select how you want to receive communications
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card Content */}
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column - Communication Options */}
+            <div className="space-y-4">
+              {communicationOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = communication.option[option.key as keyof CommunicationNotificationOption];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-pink-200 bg-pink-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-pink-100 text-pink-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleCommunicationToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Right Column - Notification Types */}
+            <div className="space-y-4">
+              {notificationTypeOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = communication.notificationType[option.key as keyof NotificationType];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-purple-200 bg-purple-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleNotificationTypeToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Loading Indicator */}
+        {isLoading && (
+          <div className="px-6 pb-4">
+            <div className="flex items-center justify-center space-x-2 text-gray-500">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-pink-500 border-t-transparent"></div>
+              <span className="text-sm">Saving preferences...</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
   );
 };
 

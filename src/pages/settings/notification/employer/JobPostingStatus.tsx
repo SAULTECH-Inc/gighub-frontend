@@ -1,12 +1,21 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { debounce } from "lodash";
+import { toast } from "react-toastify";
+import { RiDraftLine, RiRefreshLine, RiCheckboxCircleLine, RiErrorWarningLine, RiTimeLine, RiDeleteBinLine, RiMailLine, RiNotification3Line, RiArticleLine } from "react-icons/ri";
+import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
 import {
   JobPostingStatusNotification,
   JobPostingStatusNotificationOptions,
   NotificationType,
   useSettingsStore,
 } from "../../../../store/useSettingsStore.ts";
-import { useCallback, useEffect } from "react";
-import { debounce } from "lodash";
-import ToggleSwitch from "../../../../components/common/ToggleSwitch.tsx";
+
+interface JobPostingConfig {
+  key: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description: string;
+}
 
 const JobPostingStatus = () => {
   const {
@@ -15,164 +24,296 @@ const JobPostingStatus = () => {
     setJobPostingStatus,
     updateJobPostingStatus,
   } = useSettingsStore();
-  useEffect(() => {
-    if (employerSettings) {
-      setJobPostingStatus(
-        employerSettings?.notifications?.options?.jobPostingStatus,
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [employerSettings]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const [isLoading, setIsLoading] = useState(false);
+
+  const jobPostingOptions: JobPostingConfig[] = useMemo(() => [
+    {
+      key: "draftSaved",
+      label: "Draft Saved",
+      icon: RiDraftLine,
+      description: "When a job posting draft is saved for later completion",
+    },
+    {
+      key: "jobUpdated",
+      label: "Job Updated",
+      icon: RiRefreshLine,
+      description: "When details of an existing job posting are modified",
+    },
+    {
+      key: "jobPublished",
+      label: "Job Published",
+      icon: RiCheckboxCircleLine,
+      description: "When a job posting is successfully published and live",
+    },
+    {
+      key: "jobFailed",
+      label: "Publication Failed",
+      icon: RiErrorWarningLine,
+      description: "When a job posting fails to publish due to an error",
+    },
+    {
+      key: "jobExpired",
+      label: "Job Expired",
+      icon: RiTimeLine,
+      description: "When a job posting reaches its expiration date",
+    },
+    {
+      key: "jobDeleted",
+      label: "Job Deleted",
+      icon: RiDeleteBinLine,
+      description: "When a job posting is permanently removed",
+    },
+  ], []);
+
+  const notificationTypeOptions = useMemo(() => [
+    {
+      key: "all",
+      label: "All Notifications",
+      description: "Enable all notification methods",
+      icon: RiNotification3Line,
+    },
+    {
+      key: "emailNotification",
+      label: "Email Notifications",
+      description: "Receive job posting updates via email",
+      icon: RiMailLine,
+    },
+    {
+      key: "pushNotification",
+      label: "Push Notifications",
+      description: "Receive browser/app push notifications",
+      icon: RiNotification3Line,
+    },
+  ], []);
+
+  useEffect(() => {
+    if (employerSettings?.notifications?.options?.jobPostingStatus) {
+      setJobPostingStatus(employerSettings.notifications.options.jobPostingStatus);
+    }
+  }, [employerSettings, setJobPostingStatus]);
+
   const debouncedUpdate = useCallback(
     debounce(async (settings: JobPostingStatusNotification) => {
-      const response = await updateJobPostingStatus(settings);
-      if (response) {
-        setJobPostingStatus(response);
+      setIsLoading(true);
+      try {
+        const response = await updateJobPostingStatus(settings);
+        if (response) {
+          setJobPostingStatus(response);
+          toast.success("Job posting notification settings updated");
+        } else {
+          toast.error("Failed to update job posting notification settings");
+        }
+      } catch (error) {
+        toast.error("An error occurred while updating settings");
+        console.error("Update error:", error);
+      } finally {
+        setIsLoading(false);
       }
-    }, 500),
-    [jobPostingStatus],
+    }, 800),
+    [updateJobPostingStatus, setJobPostingStatus]
   );
 
   useEffect(() => {
     return () => {
-      debouncedUpdate.cancel(); // prevent memory leak
+      debouncedUpdate.cancel();
     };
   }, [debouncedUpdate]);
 
-  // Define application updates options
-  const applicationUpdates = [
-    "draftSaved",
-    "jobUpdated",
-    "jobPublished",
-    "jobFailed",
-    "jobExpired",
-    "jobDeleted",
-  ];
+  const handleJobPostingToggle = useCallback((key: string) => {
+    if (!jobPostingStatus) return;
 
-  // Define notification types options
-  const notificationTypes = ["all", "emailNotification", "pushNotification"];
-  const getNotificationTypeStateField = (item: string) => {
-    switch (item) {
-      case "emailNotification":
-        return "Email Notification";
-      case "pushNotification":
-        return "Push Notification";
-      default:
-        return "All";
-    }
-  };
-
-  const handleToggle = (item: string) => {
-    const updatedSettings = {
-      ...jobPostingStatus,
-      notificationType: {
-        ...jobPostingStatus.notificationType,
-        [item]:
-          !jobPostingStatus.notificationType[item as keyof NotificationType],
-      },
-    };
-    setJobPostingStatus(updatedSettings);
-    debouncedUpdate(updatedSettings);
-  };
-
-  // Helper function to get the field name dynamically
-  const getApplicationUpdateStateField = (item: string) => {
-    switch (item) {
-      case "draftSaved":
-        return "Job Posting draft is saved";
-      case "jobUpdated":
-        return "When job is updated";
-      case "jobPublished":
-        return "When job is published";
-      case "jobFailed":
-        return "When job fails";
-      case "jobExpired":
-        return "When job expires";
-      default:
-        return "When job is deleted";
-    }
-  };
-
-  // Function to get the application update state
-  const handleApplicationUpdateToggle = (item: string) => {
     const updatedSettings = {
       ...jobPostingStatus,
       option: {
         ...jobPostingStatus.option,
-        [item]:
-          !jobPostingStatus.option[
-            item as keyof JobPostingStatusNotificationOptions
-          ],
+        [key]: !jobPostingStatus.option[key as keyof JobPostingStatusNotificationOptions],
       },
     };
     setJobPostingStatus(updatedSettings);
     debouncedUpdate(updatedSettings);
-  };
+  }, [jobPostingStatus, setJobPostingStatus, debouncedUpdate]);
 
-  return (
-    <div className="flex w-[90%] flex-col self-center py-10">
-      {/* Title */}
-      <h2 className="text-left text-xl text-[24px] font-bold text-black">
-        Job Posting Status
-      </h2>
+  const handleNotificationTypeToggle = useCallback((key: string) => {
+    if (!jobPostingStatus) return;
 
-      {/* Privacy Box */}
-      <div className="mt-4 flex min-h-[265px] w-full flex-col items-start rounded-[16px] border border-[#E6E6E6] bg-white px-8 py-6">
-        {/* Two Column Headings */}
-        <div className="grid w-full grid-cols-2">
-          <h3 className="text-md font-bold text-black">Notify me when:</h3>
-          <h3 className="text-md text-right font-bold text-black">
-            Notification Type
-          </h3>
-        </div>
+    const updatedSettings = {
+      ...jobPostingStatus,
+      notificationType: {
+        ...jobPostingStatus.notificationType,
+        [key]: !jobPostingStatus.notificationType[key as keyof NotificationType],
+      },
+    };
+    setJobPostingStatus(updatedSettings);
+    debouncedUpdate(updatedSettings);
+  }, [jobPostingStatus, setJobPostingStatus, debouncedUpdate]);
 
-        {/* Horizontal Rule */}
-        <hr className="my-3 w-full border-t border-[#E6E6E6]" />
-
-        {/* Two-Column Layout */}
-        <div className="grid w-full grid-cols-2 gap-x-8 p-8">
-          {/* Left Column - Application Status */}
-          <div className="w-full space-y-4">
-            {applicationUpdates.map((item, index) => (
-              <label key={index} className="flex items-center justify-between">
-                <span className="text-[16px] font-bold text-[#8E8E8E]">
-                  {getApplicationUpdateStateField(item)}
-                </span>
-                <ToggleSwitch
-                  isOn={
-                    jobPostingStatus?.option[
-                      item as keyof JobPostingStatusNotificationOptions
-                    ]
-                  }
-                  onToggle={() => handleApplicationUpdateToggle(item)}
-                />
-              </label>
-            ))}
-          </div>
-
-          {/* Right Column - Notification Type */}
-          <div className="w-full space-y-4">
-            {notificationTypes.map((item, index) => (
-              <label key={index} className="flex items-center justify-between">
-                <span className="text-[16px] font-bold text-[#8E8E8E]">
-                  {getNotificationTypeStateField(item)}
-                </span>
-                <ToggleSwitch
-                  isOn={
-                    jobPostingStatus?.notificationType[
-                      item as keyof NotificationType
-                    ]
-                  }
-                  onToggle={() => handleToggle(item)}
-                />
-              </label>
-            ))}
-          </div>
+  if (!jobPostingStatus) {
+    return (
+      <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+        <div className="animate-pulse">
+          <div className="h-px bg-gray-200 mb-4"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
         </div>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <section className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
+      {/* Section Divider */}
+      <hr className="mb-8 border-gray-200" />
+
+      {/* Section Header */}
+      <div className="mb-6">
+        <div className="flex items-center space-x-3 mb-2">
+          <div className="p-2 bg-amber-100 rounded-lg">
+            <RiArticleLine className="h-6 w-6 text-amber-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Job Posting Status
+          </h2>
+        </div>
+        <p className="text-gray-600 text-sm">
+          Track the lifecycle of your job postings from draft to publication and beyond.
+        </p>
+      </div>
+
+      {/* Main Content Card */}
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        {/* Card Header */}
+        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 px-6 py-4 border-b border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Job Posting Events
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Choose which job posting events you want to be notified about
+              </p>
+            </div>
+            <div className="md:text-right">
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Notification Methods
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Select how you want to receive notifications
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card Content */}
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column - Job Posting Options */}
+            <div className="space-y-4">
+              {jobPostingOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = jobPostingStatus.option[option.key as keyof JobPostingStatusNotificationOptions];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-amber-200 bg-amber-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-amber-100 text-amber-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleJobPostingToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Right Column - Notification Types */}
+            <div className="space-y-4">
+              {notificationTypeOptions.map((option) => {
+                const IconComponent = option.icon;
+                const isActive = jobPostingStatus.notificationType[option.key as keyof NotificationType];
+
+                return (
+                  <div
+                    key={option.key}
+                    className={`
+                      p-4 rounded-xl border transition-all duration-200
+                      ${isActive
+                      ? 'border-purple-200 bg-purple-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }
+                    `}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`
+                          p-2 rounded-lg transition-colors duration-200
+                          ${isActive ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-500'}
+                        `}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <label className="block font-medium text-gray-900 cursor-pointer">
+                            {option.label}
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <ToggleSwitch
+                          isOn={isActive}
+                          onToggle={() => handleNotificationTypeToggle(option.key)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Loading Indicator */}
+        {isLoading && (
+          <div className="px-6 pb-4">
+            <div className="flex items-center justify-center space-x-2 text-gray-500">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-amber-500 border-t-transparent"></div>
+              <span className="text-sm">Saving preferences...</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
   );
 };
 
