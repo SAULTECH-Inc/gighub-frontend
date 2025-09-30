@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { toast } from "react-toastify";
 import { RiDraftLine, RiRefreshLine, RiCheckboxCircleLine, RiErrorWarningLine, RiTimeLine, RiDeleteBinLine, RiMailLine, RiNotification3Line, RiArticleLine } from "react-icons/ri";
@@ -20,10 +20,12 @@ interface JobPostingConfig {
 const JobPostingStatus = () => {
   const {
     employerSettings,
-    jobPostingStatus,
     setJobPostingStatus,
     updateJobPostingStatus,
   } = useSettingsStore();
+
+  // Get the actual data from employerSettings instead of the separate state
+  const actualJobPostingStatusData = employerSettings?.notifications?.options?.jobPostingStatus;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -87,11 +89,15 @@ const JobPostingStatus = () => {
     },
   ], []);
 
+  // Initialize state from backend data
   useEffect(() => {
-    if (employerSettings?.notifications?.options?.jobPostingStatus) {
-      setJobPostingStatus(employerSettings.notifications.options.jobPostingStatus);
+    const jobPostingStatusData = employerSettings?.notifications?.options?.jobPostingStatus;
+
+    if (jobPostingStatusData && (!actualJobPostingStatusData ||
+      JSON.stringify(actualJobPostingStatusData) !== JSON.stringify(jobPostingStatusData))) {
+      setJobPostingStatus(jobPostingStatusData);
     }
-  }, [employerSettings, setJobPostingStatus]);
+  }, [employerSettings, setJobPostingStatus, actualJobPostingStatusData]);
 
   const debouncedUpdate = useCallback(
     debounce(async (settings: JobPostingStatusNotification) => {
@@ -121,34 +127,34 @@ const JobPostingStatus = () => {
   }, [debouncedUpdate]);
 
   const handleJobPostingToggle = useCallback((key: string) => {
-    if (!jobPostingStatus) return;
+    if (!actualJobPostingStatusData) return;
 
     const updatedSettings = {
-      ...jobPostingStatus,
+      ...actualJobPostingStatusData,
       option: {
-        ...jobPostingStatus.option,
-        [key]: !jobPostingStatus.option[key as keyof JobPostingStatusNotificationOptions],
+        ...actualJobPostingStatusData.option,
+        [key]: !actualJobPostingStatusData.option[key as keyof JobPostingStatusNotificationOptions],
       },
     };
     setJobPostingStatus(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [jobPostingStatus, setJobPostingStatus, debouncedUpdate]);
+  }, [actualJobPostingStatusData, setJobPostingStatus, debouncedUpdate]);
 
   const handleNotificationTypeToggle = useCallback((key: string) => {
-    if (!jobPostingStatus) return;
+    if (!actualJobPostingStatusData) return;
 
     const updatedSettings = {
-      ...jobPostingStatus,
+      ...actualJobPostingStatusData,
       notificationType: {
-        ...jobPostingStatus.notificationType,
-        [key]: !jobPostingStatus.notificationType[key as keyof NotificationType],
+        ...actualJobPostingStatusData.notificationType,
+        [key]: !actualJobPostingStatusData.notificationType[key as keyof NotificationType],
       },
     };
     setJobPostingStatus(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [jobPostingStatus, setJobPostingStatus, debouncedUpdate]);
+  }, [actualJobPostingStatusData, setJobPostingStatus, debouncedUpdate]);
 
-  if (!jobPostingStatus) {
+  if (!actualJobPostingStatusData) {
     return (
       <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
         <div className="animate-pulse">
@@ -211,7 +217,7 @@ const JobPostingStatus = () => {
             <div className="space-y-4">
               {jobPostingOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = jobPostingStatus.option[option.key as keyof JobPostingStatusNotificationOptions];
+                const isActive = actualJobPostingStatusData?.option?.[option.key as keyof JobPostingStatusNotificationOptions] || false;
 
                 return (
                   <div
@@ -258,7 +264,7 @@ const JobPostingStatus = () => {
             <div className="space-y-4">
               {notificationTypeOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = jobPostingStatus.notificationType[option.key as keyof NotificationType];
+                const isActive = actualJobPostingStatusData?.notificationType?.[option.key as keyof NotificationType] || false;
 
                 return (
                   <div

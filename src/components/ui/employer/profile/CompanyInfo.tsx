@@ -8,8 +8,7 @@ import {
   Option,
 } from "../../../../utils/types";
 import CustomSelect from "../../../common/CustomSelect.tsx";
-import { Industries } from "../../../../utils/industries.ts";
-import { CompanySizes } from "../../../../utils/constants.ts";
+import { CompanySizes, Industries } from "../../../../utils/constants.ts";
 import { useAuth } from "../../../../store/useAuth.ts";
 import { useCountries } from "../../../../hooks/useCountries.ts";
 import { toast } from "react-toastify";

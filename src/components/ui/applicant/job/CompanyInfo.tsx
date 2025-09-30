@@ -2,19 +2,24 @@ import { Paystack } from "../../../../assets/icons.ts";
 import { FaLocationDot } from "react-icons/fa6";
 import { FaUser } from "react-icons/fa";
 import { IoBagSharp } from "react-icons/io5";
-import { useJobSearchSettings } from "../../../../store/useJobSearchSettings.ts";
 import DOMPurify from "dompurify";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { JobPostResponse } from "../../../../utils/types";
-import { fetchOtherJobPost } from "../../../../services/api";
+import { fetchOtherJobPost, followCompany } from "../../../../services/api";
 import moment from "moment";
 import { Link } from "react-router-dom";
+
 const limit = 10;
 const page = 1;
-const CompanyInfo = () => {
-  const { jobCurrentlyViewed } = useJobSearchSettings();
+interface CompanyInfoProps {
+  jobCurrentlyViewed: JobPostResponse;
+}
+const CompanyInfo: React.FC<CompanyInfoProps> = ({jobCurrentlyViewed}) => {
   const [otherJobPosts, setOtherJobPosts] = useState<JobPostResponse[]>();
   const [total, setTotal] = useState(0);
+  const [isFollowing, setIsFollowing] = useState(jobCurrentlyViewed?.employer?.isFollowed);
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     const doFetchOtherJobPost = async () => {
       return await fetchOtherJobPost(jobCurrentlyViewed?.id || 0, page, limit);
@@ -24,109 +29,173 @@ const CompanyInfo = () => {
       setTotal(res?.meta?.total || 0);
     });
   }, [jobCurrentlyViewed?.id]);
+
+  const handleFollow = async (job: JobPostResponse | null) => {
+    if (!job || isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const response = await followCompany(job.employer.id as number);
+      if (response?.statusCode === 200 || response?.statusCode === 201) {
+        setIsFollowing(!isFollowing);
+      }
+    } catch (error) {
+      console.error("Failed to follow company:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="relative mx-auto flex w-full flex-col rounded-r-[16px] bg-white p-4">
-      <div className="flex items-center gap-2">
-        <div className="flex h-[80px] w-[80px] items-center justify-center rounded-md bg-[#F7F8FA]">
+    <div className="relative mx-auto flex w-full flex-col bg-white p-6 h-full">
+      {/* Company Header */}
+      <div className="flex items-start gap-4 mb-6">
+        <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm border border-gray-200">
           <img
             src={jobCurrentlyViewed?.employer?.companyLogo || Paystack}
-            alt="paystack"
-            className="h-[30px] w-[30px] rounded-full"
+            alt="company logo"
+            className="h-10 w-10 rounded-lg object-cover"
           />
         </div>
-        <div className="flex flex-col">
-          <h2 className="text-[20px] font-medium text-black">
+        <div className="flex-1 min-w-0">
+          <h2 className="text-xl font-bold text-gray-900 mb-1 leading-tight">
             {jobCurrentlyViewed?.company}
           </h2>
-          <p className="text-gray mt-2 text-[18px]">
+          <p className="text-gray-600 font-medium">
             {jobCurrentlyViewed?.employer?.industry}
           </p>
         </div>
       </div>
-      <div className="mt-4 flex flex-col gap-y-4">
-        <div className="flex items-center gap-x-2">
-          <FaLocationDot className="text-gray text-[20px]" />
-          <span className="text-gray text-sm font-normal">
-            {jobCurrentlyViewed?.employer?.city},{" "}
-            {jobCurrentlyViewed?.employer?.country}
+
+      {/* Company Stats */}
+      <div className="space-y-4 mb-6">
+        {
+          jobCurrentlyViewed?.employer?.city && jobCurrentlyViewed?.employer?.country && (
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <FaLocationDot className="text-purple-500 text-lg flex-shrink-0" />
+              <span className="text-gray-700 text-sm font-medium">
+            {jobCurrentlyViewed?.employer?.city}, {jobCurrentlyViewed?.employer?.country}
           </span>
-        </div>
+            </div>)
+        }
+
         {jobCurrentlyViewed?.employer?.numberOfEmployees &&
           jobCurrentlyViewed?.employer?.numberOfEmployees > 0 && (
-            <div className="flex items-center gap-x-2">
-              <FaUser className="text-gray text-[20px]" />
-              <span className="text-gray text-sm font-normal">
-                {jobCurrentlyViewed?.employer?.numberOfEmployees} employees
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <FaUser className="text-blue-500 text-lg flex-shrink-0" />
+              <span className="text-gray-700 text-sm font-medium">
+                {jobCurrentlyViewed?.employer?.numberOfEmployees.toLocaleString()} employees
               </span>
             </div>
           )}
 
-        <div className="flex items-center gap-x-2">
-          <IoBagSharp className="text-gray text-[20px]" />
-          <span className="text-gray text-sm font-normal">
-            15 connection work here
-          </span>
-          <a href="" className="ml-16 text-[#6438C2]">
-            See All
-          </a>
-        </div>
+        {
+          jobCurrentlyViewed?.employer?.noMutualConnections !== undefined && jobCurrentlyViewed?.employer?.noMutualConnections > 0 ? (
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <IoBagSharp className="text-green-500 text-lg flex-shrink-0" />
+              <div className="flex-1 flex items-center justify-between">
+            <span className="text-gray-700 text-sm font-medium">
+              {jobCurrentlyViewed?.employer?.noMutualConnections} connections work here
+            </span>
+                <a href="" className="text-purple-600 hover:text-purple-700 text-sm font-medium">
+                  See All
+                </a>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <IoBagSharp className="text-green-500 text-lg flex-shrink-0" />
+              <span className="text-gray-700 text-sm font-medium">
+                No mutual connections
+              </span>
+            </div>
+          )
+        }
       </div>
-      <div className="mt-6">
+
+      {/* Company Description */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-3">About the Company</h3>
         <div
-          className="leading-6 text-[#8E8E8E]"
+          className="text-gray-600 leading-relaxed text-sm"
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(
               jobCurrentlyViewed?.employer?.companyDescription ||
-                jobCurrentlyViewed?.employer?.aboutCompany ||
-                "",
+              jobCurrentlyViewed?.employer?.aboutCompany ||
+              "No company description available.",
             ),
           }}
-        ></div>
-        <div className="mt-10 flex items-center justify-center">
-          <button className="w-full rounded-[10px] border-[1px] border-[#6438C2] bg-[#6438C2] px-4 py-2 text-white">
-            Follow
-          </button>
-        </div>
+        />
       </div>
-      <div className="mt-10 flex flex-col gap-y-4">
-        <div className="flex items-center justify-between border-b border-[#E6E6E6] pb-5">
-          <h5 className="text-base font-semibold text-black">Other Roles</h5>
+
+      {/* Follow Button */}
+      <div className="mb-8">
+        <button
+          onClick={async () => await handleFollow(jobCurrentlyViewed)}
+          disabled={isLoading}
+          className={`w-full rounded-xl px-4 py-3 font-medium transition-all duration-200 ${
+            isFollowing
+              ? "bg-gray-100 text-gray-700 border border-gray-300"
+              : "bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-lg"
+          } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+        >
+          {isLoading ? "Loading..." : isFollowing ? "Following" : "Follow Company"}
+        </button>
+      </div>
+
+      {/* Other Roles Section */}
+      <div className="flex-1">
+        <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Other Open Roles</h3>
           {total > 5 && (
             <a
               href="#"
-              className="text-primaryPurple text-sm font-medium hover:underline"
+              className="text-purple-600 hover:text-purple-700 text-sm font-medium"
             >
-              See All
+              View All ({total})
             </a>
           )}
         </div>
 
-        {otherJobPosts?.slice(0, 5).map((job, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between border-b border-[#E6E6E6] pb-5"
-          >
-            <div className="flex flex-col">
-              <Link
-                to={`/jobs/${job?.id}/details`}
-                className="text-sm font-medium text-[#111827] hover:underline md:text-base"
-              >
-                {job?.title}
-              </Link>
-              <span className="mt-1 text-xs text-gray-500">
-                <span className="text-green-600">●</span> Posted{" "}
-                <span className="font-medium text-gray-700">
-                  {moment(job.createdAt).fromNow()}
-                </span>
-              </span>
+        <div className="space-y-4">
+          {otherJobPosts?.slice(0, 5).map((job, index) => (
+            <div
+              key={index}
+              className="group p-4 bg-white border border-gray-200 rounded-lg hover:border-purple-300 hover:shadow-md transition-all duration-200"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <Link
+                    to={`/jobs/${job?.id}/details`}
+                    className="text-gray-900 font-medium hover:text-purple-600 transition-colors group-hover:text-purple-600 block mb-2"
+                  >
+                    {job?.title}
+                  </Link>
+                  <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                    <span className="inline-flex items-center gap-1">
+                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                      Posted {moment(job.createdAt).fromNow()}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg">
+                      {job?.employmentType}
+                    </span>
+                    <span className="inline-block px-2 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-lg">
+                      {job?.jobType}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="text-right text-xs font-medium text-gray-600 md:text-sm">
-              <span className="text-blue-600">{job?.employmentType}</span>
-              <br />
-              <span className="text-purple-600">{job?.jobType}</span>
+          ))}
+
+          {(!otherJobPosts || otherJobPosts.length === 0) && (
+            <div className="text-center py-8 text-gray-500">
+              <p className="text-sm">No other roles available at this time.</p>
             </div>
-          </div>
-        ))}
+          )}
+        </div>
       </div>
     </div>
   );

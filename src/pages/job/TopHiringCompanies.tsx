@@ -84,9 +84,9 @@ const TopHiringCompanies: React.FC<TopHiringCompaniesProps> = ({
                           }}
                           className="cursor-pointer font-semibold text-slate-800 hover:text-indigo-600 transition-colors text-sm sm:text-base line-clamp-2 group-hover:text-indigo-700"
                         >
-                          <span className="font-bold">{data?.employer?.companyName}</span>
+                          <Link to={`/employers/${data?.employer.id}/${data?.employer.companyName}/profile`} className="font-bold">{data?.employer?.companyName}</Link>
                           <span className="font-normal text-slate-600"> • hiring </span>
-                          <span className="font-medium text-indigo-600">{data?.job?.title}</span>
+                          <Link to={`/employer/jobs/job-details/${data?.job.id}`} className="font-medium text-indigo-600">{data?.job?.title}</Link>
                         </h3>
 
                         <div className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm text-slate-500">

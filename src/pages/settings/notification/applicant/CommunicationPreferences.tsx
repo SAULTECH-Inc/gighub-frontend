@@ -20,10 +20,12 @@ interface CommunicationConfig {
 const CommunicationPreferences = () => {
   const {
     applicantSettings,
-    communication,
     setCommunication,
     updateCommunication,
   } = useSettingsStore();
+
+  // Get the actual data from applicantSettings instead of the separate state
+  const actualCommunicationData = applicantSettings?.notifications?.options?.communication;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -63,11 +65,15 @@ const CommunicationPreferences = () => {
     },
   ], []);
 
+  // Initialize state from backend data
   useEffect(() => {
-    if (applicantSettings?.notifications?.options?.communication) {
-      setCommunication(applicantSettings.notifications.options.communication);
+    const communicationData = applicantSettings?.notifications?.options?.communication;
+
+    if (communicationData && (!actualCommunicationData ||
+      JSON.stringify(actualCommunicationData) !== JSON.stringify(communicationData))) {
+      setCommunication(communicationData);
     }
-  }, [applicantSettings, setCommunication]);
+  }, [applicantSettings, setCommunication, actualCommunicationData]);
 
   const debouncedUpdate = useCallback(
     debounce(async (settings: CommunicationNotification) => {
@@ -97,34 +103,34 @@ const CommunicationPreferences = () => {
   }, [debouncedUpdate]);
 
   const handleCommunicationToggle = useCallback((key: string) => {
-    if (!communication) return;
+    if (!actualCommunicationData) return;
 
     const updatedSettings = {
-      ...communication,
+      ...actualCommunicationData,
       option: {
-        ...communication.option,
-        [key]: !communication.option[key as keyof CommunicationNotificationOption],
+        ...actualCommunicationData.option,
+        [key]: !actualCommunicationData.option[key as keyof CommunicationNotificationOption],
       },
     };
     setCommunication(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [communication, setCommunication, debouncedUpdate]);
+  }, [actualCommunicationData, setCommunication, debouncedUpdate]);
 
   const handleNotificationTypeToggle = useCallback((key: string) => {
-    if (!communication) return;
+    if (!actualCommunicationData) return;
 
     const updatedSettings = {
-      ...communication,
+      ...actualCommunicationData,
       notificationType: {
-        ...communication.notificationType,
-        [key]: !communication.notificationType[key as keyof NotificationType],
+        ...actualCommunicationData.notificationType,
+        [key]: !actualCommunicationData.notificationType[key as keyof NotificationType],
       },
     };
     setCommunication(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [communication, setCommunication, debouncedUpdate]);
+  }, [actualCommunicationData, setCommunication, debouncedUpdate]);
 
-  if (!communication) {
+  if (!actualCommunicationData) {
     return (
       <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
         <div className="animate-pulse">
@@ -187,7 +193,7 @@ const CommunicationPreferences = () => {
             <div className="space-y-4">
               {communicationOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = communication.option[option.key as keyof CommunicationNotificationOption];
+                const isActive = actualCommunicationData?.option?.[option.key as keyof CommunicationNotificationOption] || false;
 
                 return (
                   <div
@@ -234,7 +240,7 @@ const CommunicationPreferences = () => {
             <div className="space-y-4">
               {notificationTypeOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = communication.notificationType[option.key as keyof NotificationType];
+                const isActive = actualCommunicationData?.notificationType?.[option.key as keyof NotificationType] || false;
 
                 return (
                   <div

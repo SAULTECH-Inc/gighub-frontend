@@ -7,14 +7,15 @@ import {
   UseJobSearchSettings,
   useJobSearchSettings,
 } from "../../store/useJobSearchSettings.ts";
-import { currencies } from "../../utils/Countries.ts";
 import {
+  currencies,
   DEFAULT_MAX,
   DEFAULT_MIN,
   employmentTypeMap,
-  employmentTypeOptions,
+  employmentTypeOptions
 } from "../../utils/constants.ts";
-import { EmploymentType } from "../../utils/employmentTypes.ts";
+
+import { EmploymentType } from "../../utils/enums.ts";
 
 interface Props {
   toggleSidebar: () => void;

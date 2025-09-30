@@ -3,10 +3,10 @@ import ApplicationCard from "./ApplicationCard.tsx";
 import recentApplicationLogo from "../../assets/images/recentApplicationLogo.png";
 import { ApplicationResponse, SortBy } from "../../utils/types";
 import { getMyApplications, getRecentApplications } from "../../services/api";
-import { ApplicationStatus } from "../../utils/dummyApplications.ts";
 import { USER_TYPE } from "../../utils/helpers.ts";
-import { UserType } from "../../utils/enums.ts";
+import { ApplicationStatus, UserType } from "../../utils/enums.ts";
 import { Clock, FileText, Users, CheckCircle, XCircle, Eye, Calendar, MoreHorizontal } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const ApplicantRecentApplications: FC = () => {
     const [myApplications, setMyApplications] = useState<ApplicationResponse[]>();
@@ -66,7 +66,7 @@ const ApplicantRecentApplications: FC = () => {
                 return "#D32F2F";
             case ApplicationStatus.SHORTLISTED:
                 return "#1abc9c";
-            case ApplicationStatus.WITHDRAW:
+            case ApplicationStatus.WITHDRAWN:
                 return "#95a5a6";
             default:
                 return "#7f8c8d";
@@ -214,9 +214,9 @@ const ApplicantRecentApplications: FC = () => {
                         <p className="text-sm text-slate-500 max-w-sm mb-4 sm:mb-6 leading-relaxed">
                             Start applying to jobs that match your skills and experience. Your applications will appear here.
                         </p>
-                        <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-2.5 sm:px-6 sm:py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 text-sm sm:text-base">
+                        <Link to="/applicant/find-jobs" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-2.5 sm:px-6 sm:py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 text-sm sm:text-base">
                             Browse Jobs
-                        </button>
+                        </Link>
                     </div>
                 )}
             </div>

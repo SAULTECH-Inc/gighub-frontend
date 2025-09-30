@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { toast } from "react-toastify";
 import { RiUser3Line, RiBookmarkLine, RiSearchLine, RiTimeLine, RiMailLine, RiNotification3Line } from "react-icons/ri";
@@ -28,10 +28,12 @@ interface FrequencyConfig {
 const JobRecommendation = () => {
   const {
     applicantSettings,
-    jobRecommendations,
     setJobRecommendationsNotification,
     updateJobRecommendationsNotification,
   } = useSettingsStore();
+
+  // Get the actual data from applicantSettings instead of the separate state
+  const actualJobRecommendationsData = applicantSettings?.notifications?.options?.jobRecommendations;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -98,13 +100,15 @@ const JobRecommendation = () => {
     },
   ], []);
 
+  // Initialize state from backend data
   useEffect(() => {
-    if (applicantSettings?.notifications?.options?.jobRecommendations) {
-      setJobRecommendationsNotification(
-        applicantSettings.notifications.options.jobRecommendations
-      );
+    const jobRecommendationsData = applicantSettings?.notifications?.options?.jobRecommendations;
+
+    if (jobRecommendationsData && (!actualJobRecommendationsData ||
+      JSON.stringify(actualJobRecommendationsData) !== JSON.stringify(jobRecommendationsData))) {
+      setJobRecommendationsNotification(jobRecommendationsData);
     }
-  }, [applicantSettings, setJobRecommendationsNotification]);
+  }, [applicantSettings, setJobRecommendationsNotification, actualJobRecommendationsData]);
 
   const debouncedUpdate = useCallback(
     debounce(async (settings: JobRecommendationsNotification) => {
@@ -134,48 +138,48 @@ const JobRecommendation = () => {
   }, [debouncedUpdate]);
 
   const handleRecommendationToggle = useCallback((key: string) => {
-    if (!jobRecommendations) return;
+    if (!actualJobRecommendationsData) return;
 
     const updatedSettings = {
-      ...jobRecommendations,
+      ...actualJobRecommendationsData,
       option: {
-        ...jobRecommendations.option,
-        [key]: !jobRecommendations.option[key as keyof JobRecommendations],
+        ...actualJobRecommendationsData.option,
+        [key]: !actualJobRecommendationsData.option[key as keyof JobRecommendations],
       },
     };
     setJobRecommendationsNotification(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [jobRecommendations, setJobRecommendationsNotification, debouncedUpdate]);
+  }, [actualJobRecommendationsData, setJobRecommendationsNotification, debouncedUpdate]);
 
   const handleFrequencyToggle = useCallback((key: string) => {
-    if (!jobRecommendations) return;
+    if (!actualJobRecommendationsData) return;
 
     const updatedSettings = {
-      ...jobRecommendations,
+      ...actualJobRecommendationsData,
       frequency: {
-        ...jobRecommendations.frequency,
-        [key]: !jobRecommendations.frequency[key as keyof NotificationFrequency],
+        ...actualJobRecommendationsData.frequency,
+        [key]: !actualJobRecommendationsData.frequency[key as keyof NotificationFrequency],
       },
     };
     setJobRecommendationsNotification(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [jobRecommendations, setJobRecommendationsNotification, debouncedUpdate]);
+  }, [actualJobRecommendationsData, setJobRecommendationsNotification, debouncedUpdate]);
 
   const handleNotificationTypeToggle = useCallback((key: string) => {
-    if (!jobRecommendations) return;
+    if (!actualJobRecommendationsData) return;
 
     const updatedSettings = {
-      ...jobRecommendations,
+      ...actualJobRecommendationsData,
       notificationType: {
-        ...jobRecommendations.notificationType,
-        [key]: !jobRecommendations.notificationType[key as keyof NotificationType],
+        ...actualJobRecommendationsData.notificationType,
+        [key]: !actualJobRecommendationsData.notificationType[key as keyof NotificationType],
       },
     };
     setJobRecommendationsNotification(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [jobRecommendations, setJobRecommendationsNotification, debouncedUpdate]);
+  }, [actualJobRecommendationsData, setJobRecommendationsNotification, debouncedUpdate]);
 
-  if (!jobRecommendations) {
+  if (!actualJobRecommendationsData) {
     return (
       <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
         <div className="animate-pulse">
@@ -234,7 +238,7 @@ const JobRecommendation = () => {
             <div className="space-y-4">
               {recommendationOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = jobRecommendations.option[option.key as keyof JobRecommendations];
+                const isActive = actualJobRecommendationsData?.option?.[option.key as keyof JobRecommendations] || false;
 
                 return (
                   <div
@@ -281,7 +285,7 @@ const JobRecommendation = () => {
             <div className="space-y-4">
               {frequencyOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = jobRecommendations.frequency[option.key as keyof NotificationFrequency];
+                const isActive = actualJobRecommendationsData?.frequency?.[option.key as keyof NotificationFrequency] || false;
 
                 return (
                   <div
@@ -339,7 +343,7 @@ const JobRecommendation = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {notificationTypeOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = jobRecommendations.notificationType[option.key as keyof NotificationType];
+                const isActive = actualJobRecommendationsData?.notificationType?.[option.key as keyof NotificationType] || false;
 
                 return (
                   <div

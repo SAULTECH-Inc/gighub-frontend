@@ -4,6 +4,7 @@ import { MdOutlinePrivacyTip } from "react-icons/md";
 import { RiNotification2Line } from "react-icons/ri";
 import { TbUserEdit } from "react-icons/tb";
 import { MdOutlineUnsubscribe } from "react-icons/md";
+import { MdAutoMode } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../store/useAuth.ts";
 import { UserType } from "../../../../utils/enums.ts";
@@ -13,6 +14,7 @@ interface MenuItem {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   isActive: boolean;
+  userTypes?: UserType[]; // Optional: restrict to certain user types
 }
 
 const NotificationSidebar = () => {
@@ -24,7 +26,7 @@ const NotificationSidebar = () => {
     return userType === UserType.EMPLOYER ? "/employer/dashboard" : "/applicant/dashboard";
   };
 
-  const menuItems: MenuItem[] = [
+  const allMenuItems: MenuItem[] = [
     {
       key: "account",
       label: "Account",
@@ -36,6 +38,13 @@ const NotificationSidebar = () => {
       label: "Notification",
       icon: RiNotification2Line,
       isActive: settings.notification,
+    },
+    {
+      key: "autoApply",
+      label: "Auto Apply",
+      icon: MdAutoMode,
+      isActive: settings.autoApply,
+      userTypes: [UserType.APPLICANT], // Only show for applicants
     },
     {
       key: "privacy",
@@ -50,6 +59,11 @@ const NotificationSidebar = () => {
       isActive: settings.subscription,
     },
   ];
+
+  // Filter menu items based on user type
+  const menuItems = allMenuItems.filter(item =>
+    !item.userTypes || item.userTypes.includes(userType as UserType)
+  );
 
   const handleMenuItemClick = (key: string) => {
     toggleSetting(key as keyof typeof settings);
@@ -105,12 +119,32 @@ const NotificationSidebar = () => {
                     `}
                   />
                   <span className="font-medium">{item.label}</span>
+                  {item.key === "autoApply" && (
+                    <span className="ml-auto rounded-full bg-purple-100 px-2 py-1 text-xs font-medium text-purple-600">
+                      New
+                    </span>
+                  )}
                 </button>
               </li>
             );
           })}
         </ul>
       </nav>
+
+      {/* Auto Apply Status Indicator (for applicants only) */}
+      {userType === UserType.APPLICANT && (
+        <div className="mt-6 pt-4 border-t border-gray-200">
+          <div className="rounded-lg bg-blue-50 p-3">
+            <div className="flex items-center">
+              <MdAutoMode className="h-4 w-4 text-blue-600 mr-2" />
+              <span className="text-sm font-medium text-blue-900">Auto Apply</span>
+            </div>
+            <p className="text-xs text-blue-700 mt-1">
+              Status: Active • 3 applications today
+            </p>
+          </div>
+        </div>
+      )}
     </aside>
   );
 };

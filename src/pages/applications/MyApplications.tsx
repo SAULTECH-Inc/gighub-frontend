@@ -58,7 +58,7 @@ const MyApplications: React.FC = memo(() => {
         companyName || undefined
       );
       setAllApplications(response.data || []);
-      setTotalCount(response.total || response.data?.length || 0);
+      setTotalCount(response?.meta?.total || response.data?.length || 0);
     } catch (error: any) {
       const errorMessage = error?.response?.data?.message || "Failed to load applications";
       setError(errorMessage);
@@ -69,7 +69,7 @@ const MyApplications: React.FC = memo(() => {
   }, [applicationStatus, sort, currentPage, pageSize]);
 
   useEffect(() => {
-    fetchApplications();
+    fetchApplications().then(r=>r);
   }, [fetchApplications]);
 
   const handlePageChange = useCallback((page: number, size?: number) => {
@@ -88,7 +88,7 @@ const MyApplications: React.FC = memo(() => {
   const clearSearch = useCallback(() => {
     setSearchQuery({ jobTitle: "", companyName: "" });
     setCurrentPage(1);
-    fetchApplications(1, pageSize);
+    fetchApplications(1, pageSize).then(r=>r);
   }, [pageSize, fetchApplications]);
 
   const handleViewApplication = useCallback((application: ApplicationResponse) => {

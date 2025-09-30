@@ -3,9 +3,9 @@ import { useAuth } from "../../store/useAuth.ts";
 import ChatWindow from "../../chat-module/component/ChatWindow.tsx";
 import { NetworkDetails } from "../../utils/types";
 import { searchMyConnection } from "../../services/api";
-import useConnections from "../../hooks/useConnections.tsx";
 import { NetworkHeader } from "../network/NetworkHeader.tsx";
-import NetworkCard from "../network/NetworkCard.tsx";
+import UserCard from "../network/UserCard.tsx";
+import useGetMyConnections from "../../hooks/useGetMyConnections.ts";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -20,7 +20,7 @@ export const EmployerNetwork: React.FC = () => {
     profession: "",
   });
 
-  const { data, isError } = useConnections(
+  const { data, isError } = useGetMyConnections(
     employer?.id as number,
     currentPage,
     ITEMS_PER_PAGE,
@@ -83,7 +83,7 @@ export const EmployerNetwork: React.FC = () => {
       <div className="flex w-auto flex-wrap gap-4 rounded-[16px] bg-white p-4">
         {connections.length > 0 ? (
           connections.map((user) => (
-            <NetworkCard
+            <UserCard
               setChatWindowOpened={setIsChatWindowOpened}
               userDetails={user}
               key={user.id}

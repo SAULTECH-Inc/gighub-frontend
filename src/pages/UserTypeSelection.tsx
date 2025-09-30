@@ -15,6 +15,7 @@ import {
   CheckCircle,
   Sparkles
 } from "lucide-react";
+import { NODE_ENV } from "../utils/constants.ts";
 
 const UserTypeSelection: React.FC = () => {
   const { isAuthenticated, userType, setUserType } = useAuth();
@@ -39,7 +40,7 @@ const UserTypeSelection: React.FC = () => {
   };
 
   const handleBack = async () => {
-    await removeFromLocalStorage();
+    await removeFromLocalStorage(NODE_ENV);
     navigator("/login");
   };
 

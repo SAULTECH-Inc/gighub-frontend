@@ -1,16 +1,16 @@
 import React, { memo, useEffect, useState } from "react";
 import { Users, ChevronLeft, ChevronRight, Search } from "lucide-react";
-import NetworkCard from "./NetworkCard.tsx";
 import { NetworkHeader } from "./NetworkHeader.tsx";
 import { useAuth } from "../../store/useAuth.ts";
 import ChatWindow from "../../chat-module/component/ChatWindow.tsx";
 import { NetworkDetails } from "../../utils/types";
 import { searchMyConnection } from "../../services/api";
 import useConnections from "../../hooks/useConnections.tsx";
+import UserCard from "./UserCard.tsx";
 
 const ITEMS_PER_PAGE = 12;
 
-const MyNetwork: React.FC = () => {
+const FindConnections: React.FC = () => {
   const { applicant, employer } = useAuth();
   const [isChatWindowOpened, setIsChatWindowOpened] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -109,11 +109,11 @@ const MyNetwork: React.FC = () => {
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
         {connections.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {connections.map((user) => (
-              <NetworkCard
+            {connections.map((user, key: number) => (
+              <UserCard
                 setChatWindowOpened={setIsChatWindowOpened}
                 userDetails={user}
-                key={user.id}
+                key={`${user.id}-${key}`}
               />
             ))}
           </div>
@@ -178,4 +178,4 @@ const MyNetwork: React.FC = () => {
   );
 };
 
-export default memo(MyNetwork);
+export default memo(FindConnections);

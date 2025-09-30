@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { toast } from "react-toastify";
 import { RiFileList3Line, RiCheckboxCircleLine, RiCloseLine, RiCalendarEventLine, RiMailLine, RiNotification3Line, RiFileTextLine } from "react-icons/ri";
@@ -19,11 +19,13 @@ interface OptionConfig {
 
 const JobApplicationUpdate = () => {
   const {
-    applicationStatusNotification,
     applicantSettings,
     setApplicationStatusNotification,
     updateApplicationStatusNotification,
   } = useSettingsStore();
+
+  // Get the actual data from applicantSettings instead of the separate state
+  const actualApplicationStatusData = applicantSettings?.notifications?.options?.applicationStatus;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -82,13 +84,15 @@ const JobApplicationUpdate = () => {
     },
   ], []);
 
+  // Initialize state from backend data
   useEffect(() => {
-    if (applicantSettings?.notifications?.options?.applicationStatus) {
-      setApplicationStatusNotification(
-        applicantSettings.notifications.options.applicationStatus
-      );
+    const applicationStatusData = applicantSettings?.notifications?.options?.applicationStatus;
+
+    if (applicationStatusData && (!actualApplicationStatusData ||
+      JSON.stringify(actualApplicationStatusData) !== JSON.stringify(applicationStatusData))) {
+      setApplicationStatusNotification(applicationStatusData);
     }
-  }, [applicantSettings, setApplicationStatusNotification]);
+  }, [applicantSettings, setApplicationStatusNotification, actualApplicationStatusData]);
 
   const debouncedUpdate = useCallback(
     debounce(async (settings: ApplicationStatusNotification) => {
@@ -118,34 +122,36 @@ const JobApplicationUpdate = () => {
   }, [debouncedUpdate]);
 
   const handleApplicationStatusToggle = useCallback((key: string) => {
-    if (!applicationStatusNotification) return;
+    if (!actualApplicationStatusData) return;
 
     const updatedSettings = {
-      ...applicationStatusNotification,
+      ...actualApplicationStatusData,
       option: {
-        ...applicationStatusNotification.option,
-        [key]: !applicationStatusNotification.option[key as keyof ApplicationStatus],
+        ...actualApplicationStatusData.option,
+        [key]: !actualApplicationStatusData.option[key as keyof ApplicationStatus],
       },
     };
+
     setApplicationStatusNotification(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [applicationStatusNotification, setApplicationStatusNotification, debouncedUpdate]);
+  }, [actualApplicationStatusData, setApplicationStatusNotification, debouncedUpdate]);
 
   const handleNotificationTypeToggle = useCallback((key: string) => {
-    if (!applicationStatusNotification) return;
+    if (!actualApplicationStatusData) return;
 
     const updatedSettings = {
-      ...applicationStatusNotification,
+      ...actualApplicationStatusData,
       notificationType: {
-        ...applicationStatusNotification.notificationType,
-        [key]: !applicationStatusNotification.notificationType[key as keyof NotificationType],
+        ...actualApplicationStatusData.notificationType,
+        [key]: !actualApplicationStatusData.notificationType[key as keyof NotificationType],
       },
     };
+
     setApplicationStatusNotification(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [applicationStatusNotification, setApplicationStatusNotification, debouncedUpdate]);
+  }, [actualApplicationStatusData, setApplicationStatusNotification, debouncedUpdate]);
 
-  if (!applicationStatusNotification) {
+  if (!actualApplicationStatusData) {
     return (
       <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
         <div className="animate-pulse">
@@ -204,7 +210,7 @@ const JobApplicationUpdate = () => {
             <div className="space-y-4">
               {applicationStatusOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = applicationStatusNotification.option[option.key as keyof ApplicationStatus];
+                const isActive = actualApplicationStatusData?.option?.[option.key as keyof ApplicationStatus] || false;
 
                 return (
                   <div
@@ -251,7 +257,7 @@ const JobApplicationUpdate = () => {
             <div className="space-y-4">
               {notificationTypeOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = applicationStatusNotification.notificationType[option.key as keyof NotificationType];
+                const isActive = actualApplicationStatusData?.notificationType?.[option.key as keyof NotificationType] || false;
 
                 return (
                   <div

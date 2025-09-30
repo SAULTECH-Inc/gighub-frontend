@@ -1,0 +1,141 @@
+name: Build, Package, and Deploy
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    name: Build, Package and Deploy Application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create deployment package
+        run: |
+          # Create a deployment directory
+          mkdir -p deployment-package
+          
+          # Copy necessary files
+          cp docker-compose.yml deployment-package/
+          cp -r coreapi deployment-package/
+          cp -r nginx deployment-package/
+          cp -r jitsi-api deployment-package/
+          cp -r referral-api deployment-package/
+          
+          # Copy any additional config files if they exist
+          if [ -f "init.sql" ]; then cp init.sql deployment-package/; fi
+          if [ -f ".env" ]; then cp .env deployment-package/; fi
+          
+          # Create deployment script
+          cat > deployment-package/deploy.sh << 'EOF'
+          #!/bin/bash
+          set -e
+          
+          echo "Starting deployment..."
+          
+          # Stop existing services
+          echo "Stopping existing services..."
+          docker-compose down || true
+          
+          # Remove old images to force rebuild
+          echo "Cleaning up old images..."
+          docker image prune -f
+          
+          # Build and start services
+          echo "Building and starting services..."
+          docker-compose build --no-cache
+          docker-compose up -d
+          
+          # Wait for services to be ready
+          echo "Waiting for services to start..."
+          sleep 30
+          
+          # Health check
+          echo "Performing health checks..."
+          docker-compose ps
+          
+          # Check if main services are running
+          if docker-compose ps | grep -q "Up"; then
+            echo "✅ Deployment successful!"
+          else
+            echo "❌ Deployment failed - some services are not running"
+            docker-compose logs
+            exit 1
+          fi
+          EOF
+          
+          chmod +x deployment-package/deploy.sh
+
+      - name: Security Scan (Optional)
+        run: |
+          # Build images locally for scanning
+          cd deployment-package
+          docker-compose build
+          
+          # Install Trivy
+          sudo apt-get install -y wget
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.61.0/trivy_0.61.0_Linux-64bit.tar.gz
+          tar -xf trivy_0.61.0_Linux-64bit.tar.gz
+          sudo mv trivy /usr/local/bin/
+          
+          # Scan built images
+          echo "Scanning Docker images for vulnerabilities..."
+          for service in javaapi callapi referralapi nginx; do
+            image_name=$(docker-compose config | grep "image:" | grep $service | head -1 | awk '{print $2}' || echo "deployment-package_${service}")
+            if docker images | grep -q $image_name; then
+              echo "===== Scanning $service =====" >> ../trivy_report.txt
+              trivy image --exit-code 0 --severity CRITICAL,HIGH $image_name >> ../trivy_report.txt || true
+              echo -e "\n" >> ../trivy_report.txt
+            fi
+          done
+
+      - name: Create deployment archive
+        run: |
+          # Create zip file with timestamp
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          zip -r "handypros-deployment-${TIMESTAMP}.zip" deployment-package/
+          echo "DEPLOYMENT_ARCHIVE=handypros-deployment-${TIMESTAMP}.zip" >> $GITHUB_ENV
+
+      - name: Upload deployment package
+        uses: actions/upload-artifact@v4
+        with:
+          name: handypros-deployment-package
+          path: ${{ env.DEPLOYMENT_ARCHIVE }}
+
+      - name: Upload security scan report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-report
+          path: trivy_report.txt
+        if: always()
+
+      - name: Copy deployment package to server
+        if: github.ref == 'refs/heads/main'
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: ${{ env.DEPLOYMENT_ARCHIVE }}
+          target: /tmp/
+
+      - name: Execute deployment on server
+        if: github.ref == 'refs/heads/main'
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # Create deployment directory if it doesn't exist
+            sudo mkdir -p /opt/handypros
+            cd /opt/handypros
+            
+            # Extract new deployment
+            sudo unzip -o /tmp/${{ env.DEPLOYMENT_ARCHIVE }}
+            cd deployment-package
+            
+            # Make deploy script executable and run it
+            sudo chmod +x deploy.sh
+            sudo ./deploy.sh

@@ -2,8 +2,8 @@ import { NODE_ENV } from "./constants.ts";
 import secureLocalStorage from "react-secure-storage";
 import moment from "moment";
 import logger from "../log-config";
-import { ApplicationStatus } from "./dummyApplications.ts";
 import { UserSubscriptionResponse } from "./types";
+import { ApplicationStatus } from "./enums.ts";
 
 export const calculatePasswordStrength = (password: string): number => {
   let strength = 0;
@@ -170,8 +170,13 @@ const statusColorMap: Record<ApplicationStatus, string> = {
   [ApplicationStatus.INTERVIEWED]: "#8B5CF6", // Purple
   [ApplicationStatus.HIRED]: "#10B981", // Green
   [ApplicationStatus.REJECTED]: "#EF4444", // Red
-  [ApplicationStatus.WITHDRAW]: "#6B7280", // Gray
+  [ApplicationStatus.WITHDRAWN]: "#6B7280", // Gray
   [ApplicationStatus.VIEWED]: "#60A5FA", // Light Blue
+  [ApplicationStatus.ACCEPTED]: "#22C55E", // Green
+  [ApplicationStatus.OFFER_ACCEPTED]: "#16A34A", // Darker Green
+  [ApplicationStatus.OFFER_DECLINED]: "#DC2626", // Darker Red
+  [ApplicationStatus.OFFER_EXTENDED]: "#2563EB", // Darker Blue
+  [ApplicationStatus.ALL]: "#9CA3AF", // Neutral Gray
 };
 
 export const getStatusColor = (status: ApplicationStatus): string => {

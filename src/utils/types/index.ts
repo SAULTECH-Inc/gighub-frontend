@@ -1,16 +1,16 @@
 import React, { ButtonHTMLAttributes, ChangeEvent } from "react";
 import {
   Action,
+  ApplicationStatus,
   ConnectionStatus,
-  ConnectionType,
+  ConnectionType, EmploymentType,
   InterviewStatus,
   InterviewType,
   Priority,
-  RateeType,
-  UserType,
+  RateeType, ScreeningQuestionType,
+  UserStatus,
+  UserType
 } from "../enums.ts";
-import { EmploymentType } from "../employmentTypes.ts";
-import { ApplicationStatus } from "../dummyApplications.ts";
 import { UserChatStatus } from "../../chat-module/types";
 
 export type User = {
@@ -48,7 +48,7 @@ export interface APIResponse<D> {
   message?: string;
   path?: string;
   error?: string;
-  statusCode?: number;
+  statusCode: number;
 }
 
 export interface TextInputProps {
@@ -131,6 +131,15 @@ export interface Role {
 }
 
 export interface EmployerData {
+  lastUpdated: any;
+  isRemote: any;
+  salaryRange: any;
+  reviewCount: any;
+  foundedYear: any;
+  isHiring: any;
+  isTrending: any;
+  openPositions : number;
+  rating: any;
   companyName: string;
   companyDescription: string;
   email: string;
@@ -170,6 +179,8 @@ export interface EmployerData {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   registrationNumber?: string;
+  isFollowed?: boolean;
+  noMutualConnections?: number;
 }
 
 export interface ApplicantPersonalInfo {
@@ -198,10 +209,11 @@ export interface ApplicantData {
   isActive: boolean;
   isBlocked: boolean;
   role: Partial<Role>;
-  userType: Partial<UserType>;
+  userType: UserType | null;
   cv: CvResponseDto;
   rating: number;
   token: string | null;
+  status: UserStatus | null;
   profilePicture: string | null;
   coverLetterLink: string | null;
   governmentIdentificationNumber: string | null;
@@ -592,6 +604,8 @@ export enum JobStatus {
   SHORTLISTING = "ShortListing",
   WITHDRAWN = "Withdrawn",
   DRAFT = "Draft",
+  DELETED="Deleted",
+  ALL="All",
 }
 
 export enum JobLevel {
@@ -623,7 +637,23 @@ export interface SalaryRangeDto {
   maximumAmount: number;
 }
 
+export interface ScreeningQuestion {
+  question: string;
+  type: ScreeningQuestionType;
+  required: boolean;
+  options?: string[];
+  jobId?: number;
+}
+export interface ScreeningAnswer {
+  questionId: number;
+  answerText?: string;
+  answerBoolean?: boolean;
+  answerOptions?: string[];
+}
+
+
 export interface JobPostResponse {
+  recommendationScore: number;
   id: number;
   createdAt: Date;
   updatedAt: Date;
@@ -652,9 +682,11 @@ export interface JobPostResponse {
   employer: EmployerData;
   applicationMethod: ApplicationMethod;
   rating?: UserRatingResponse;
-  applied?: boolean;
   requirements?: string;
   hiringManager?: string;
+  isBookmarked?: boolean;
+  screeningQuestions?: ScreeningQuestion[];
+  applied?: boolean;
 }
 
 export interface FetchMyJobParam {
@@ -667,6 +699,8 @@ export interface FetchMyJobParam {
   title?: string;
   companyName?: string;
   location?: string;
+  sortBy?: string,
+  sortOrder?: string,
 }
 
 export interface BulkSearchParams {
@@ -859,6 +893,7 @@ export enum EventType {
   // System/Marketing Events
   SYSTEM_ALERT = "system_alert",
   MARKETING_PROMOTION = "marketing_promotion",
+  MAINTENANCE = "maintenance",
 
   SAVED_JOB_EXPIRED = "saved_job_expired",
   SAVED_JOB_CLOSED = "saved_job_closed",
@@ -905,6 +940,7 @@ export enum BillingCycle {
 }
 
 export interface SubscriptionResponse {
+  id: string;
   type: SubscriptionType;
   billingCycle: BillingCycle;
   name: string;
@@ -915,6 +951,12 @@ export interface SubscriptionResponse {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+
+  features: string[];           // ["Feature 1", "Feature 2", ...]
+  originalPrice?: number;       // 2500 (for ₦2,500)
+  savings?: string;            // "Save 25%" or null
+  dailyLimit: string;          // "200" or "Unlimited"
+  volume: string;              // "6,000" or "Unlimited"
 }
 
 export interface UserSubscriptionResponse {
@@ -1001,3 +1043,63 @@ export const CURRENCIES: Currency[] = [
 export const getCurrencyBySymbol = (symbol: string): Currency | undefined => {
   return CURRENCIES.find((currency) => currency.symbol === symbol);
 };
+
+
+export interface FeatureJob {
+  id: number;
+  title: string;
+  company: string;
+  logo?: string;
+  location: string;
+  salary?: string;
+  type: string;
+  posted: string;
+  skills: string[];
+  isRemote: boolean;
+  applicants: number;
+  match: number;
+}
+
+
+export interface CategoryInfo{
+  id: number;
+  name: string;
+  count: number;
+  icon: string;
+  color: string;
+}
+
+
+
+export interface Customer {
+  email: string;
+  name: string;
+}
+
+export interface Card {
+  nonce?: string;
+  encrypted_card_number: string;
+  encrypted_cvv: string;
+  encrypted_expiry_month: string;
+  encrypted_expiry_year: string;
+}
+
+export interface PaymentMethod {
+  type: string;
+  card: Card;
+}
+
+export interface Metadata {
+  userId: string;
+  subscriptionId: string;
+  planName: string;
+}
+
+export interface CreatePayment {
+  amount: number;
+  currency: string;
+  reference: string;
+  customer: Customer;
+  payment_method: PaymentMethod;
+  metadata: Metadata;
+}

@@ -20,10 +20,12 @@ interface EmployerActionConfig {
 const EmployerAction = () => {
   const {
     applicantSettings,
-    employerAction,
     setEmployerAction,
     updateEmployerAction,
   } = useSettingsStore();
+
+  // Get the actual data from applicantSettings instead of the separate state
+  const actualEmployerActionData = applicantSettings?.notifications?.options?.employerAction;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -69,11 +71,15 @@ const EmployerAction = () => {
     },
   ], []);
 
+  // Initialize state from backend data
   useEffect(() => {
-    if (applicantSettings?.notifications?.options?.employerAction) {
-      setEmployerAction(applicantSettings.notifications.options.employerAction);
+    const employerActionData = applicantSettings?.notifications?.options?.employerAction;
+
+    if (employerActionData && (!actualEmployerActionData ||
+      JSON.stringify(actualEmployerActionData) !== JSON.stringify(employerActionData))) {
+      setEmployerAction(employerActionData);
     }
-  }, [applicantSettings, setEmployerAction]);
+  }, [applicantSettings, setEmployerAction, actualEmployerActionData]);
 
   const debouncedUpdate = useCallback(
     debounce(async (settings: EmployerActionNotification) => {
@@ -103,34 +109,34 @@ const EmployerAction = () => {
   }, [debouncedUpdate]);
 
   const handleEmployerActionToggle = useCallback((key: string) => {
-    if (!employerAction) return;
+    if (!actualEmployerActionData) return;
 
     const updatedSettings = {
-      ...employerAction,
+      ...actualEmployerActionData,
       option: {
-        ...employerAction.option,
-        [key]: !employerAction.option[key as keyof EmployerActionOption],
+        ...actualEmployerActionData.option,
+        [key]: !actualEmployerActionData.option[key as keyof EmployerActionOption],
       },
     };
     setEmployerAction(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [employerAction, setEmployerAction, debouncedUpdate]);
+  }, [actualEmployerActionData, setEmployerAction, debouncedUpdate]);
 
   const handleNotificationTypeToggle = useCallback((key: string) => {
-    if (!employerAction) return;
+    if (!actualEmployerActionData) return;
 
     const updatedSettings = {
-      ...employerAction,
+      ...actualEmployerActionData,
       notificationType: {
-        ...employerAction.notificationType,
-        [key]: !employerAction.notificationType[key as keyof NotificationType],
+        ...actualEmployerActionData.notificationType,
+        [key]: !actualEmployerActionData.notificationType[key as keyof NotificationType],
       },
     };
     setEmployerAction(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [employerAction, setEmployerAction, debouncedUpdate]);
+  }, [actualEmployerActionData, setEmployerAction, debouncedUpdate]);
 
-  if (!employerAction) {
+  if (!actualEmployerActionData) {
     return (
       <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
         <div className="animate-pulse">
@@ -193,7 +199,7 @@ const EmployerAction = () => {
             <div className="space-y-4">
               {employerActionOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = employerAction.option[option.key as keyof EmployerActionOption];
+                const isActive = actualEmployerActionData?.option?.[option.key as keyof EmployerActionOption] || false;
 
                 return (
                   <div
@@ -240,7 +246,7 @@ const EmployerAction = () => {
             <div className="space-y-4">
               {notificationTypeOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = employerAction.notificationType[option.key as keyof NotificationType];
+                const isActive = actualEmployerActionData?.notificationType?.[option.key as keyof NotificationType] || false;
 
                 return (
                   <div

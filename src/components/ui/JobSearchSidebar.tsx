@@ -7,14 +7,14 @@ import {
   UseJobSearchSettings,
   useJobSearchSettings,
 } from "../../store/useJobSearchSettings.ts";
-import { currencies } from "../../utils/Countries.ts";
-import { EmploymentType } from "../../utils/employmentTypes.ts";
 import {
+  currencies,
   DEFAULT_MAX,
   DEFAULT_MIN,
   employmentTypeMap,
-  employmentTypeOptions,
+  employmentTypeOptions
 } from "../../utils/constants.ts";
+import { EmploymentType } from "../../utils/enums.ts";
 
 interface JobSearchSidebar {
   jobType: string[];
@@ -41,7 +41,7 @@ const JobSearchSidebar: React.FC<JobSearchSidebar> = ({
   };
 
   return (
-    <div className="grid max-h-[1360px] w-full grid-cols-1 gap-y-6 border-2 border-[#F5F5F5] bg-white px-4 py-8">
+    <div className="rounded-2xl grid max-h-[1360px] w-full grid-cols-1 gap-y-6 border-2 border-[#F5F5F5] bg-white px-4 py-8 h-screen overflow-y-auto lg:sticky">
       {/* Filter Header */}
       <div className="flex items-center justify-between">
         <div className="flex gap-x-4">

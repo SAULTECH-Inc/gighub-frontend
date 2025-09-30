@@ -233,7 +233,8 @@ const InterviewStepFour: React.FC = () => {
           files: updatedFiles,
         } as InterviewScheduleDetails);
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error);
       setErrors(prev => ({ ...prev, general: "Failed to remove file" }));
     }
   }, [employer?.id, interviewDetails, setInterviewDetails]);
@@ -299,8 +300,8 @@ const InterviewStepFour: React.FC = () => {
       } else {
         setErrors({ general: "Failed to schedule interview. Please try again." });
       }
-    } catch (error) {
-      setErrors({ general: "An error occurred. Please try again." });
+    } catch (error: any) {
+      setErrors({ general: error?.response?.data?.message });
     } finally {
       setIsSubmitting(false);
     }

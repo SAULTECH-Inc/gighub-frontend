@@ -4,7 +4,7 @@ import CustomDropdown from "../../../common/CustomDropdown.tsx";
 import { ExperienceResponseDto, Option } from "../../../../utils/types";
 import { useApplicantJobProfile } from "../../../../store/useApplicantJobProfile.ts";
 import CustomSelect from "../../../common/CustomSelect.tsx";
-import { jobLocation } from "../../../../utils/constants.ts";
+import { JobLocations } from "../../../../utils/constants.ts";
 import { useCities } from "../../../../hooks/useCities.ts";
 import { useJobRoles } from "../../../../hooks/useJobRoles.ts";
 
@@ -85,12 +85,12 @@ const ExperienceUpdateForm: React.FC<ExperienceUpdateFormProps> = ({
           <label>Employment Type</label>
           <CustomSelect
             placeholder={experienceData.location}
-            options={jobLocation}
+            options={JobLocations}
             disabled={!isEditable}
             onChange={(option: Option) => {
               setExperience({
                 ...experience,
-                location: option.value,
+                location: option.label,
               });
             }}
             className="w-full rounded-[10px] border-[1px] border-[#E3E6F3] bg-[#F7F8FA] bg-transparent p-2 text-start text-sm focus:border-[1px] focus:border-[#E6E6E6] focus:ring-0 focus:outline-none md:p-3"

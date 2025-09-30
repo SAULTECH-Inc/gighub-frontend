@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { toast } from "react-toastify";
 import { RiCalendarEventLine, RiCalendarCheckLine, RiCloseLine, RiTimeLine, RiMailLine, RiNotification3Line, RiCalendarLine } from "react-icons/ri";
@@ -23,13 +23,17 @@ const InterviewInvitation = () => {
   const {
     applicantSettings,
     employerSettings,
-    interviewInvitation,
     setInterviewInvitation,
     updateInterviewInvitation,
   } = useSettingsStore();
 
   const { userType } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+
+  // Get the actual data from applicantSettings/employerSettings instead of the separate state
+  const actualInterviewInvitationData = userType === UserType.APPLICANT
+    ? applicantSettings?.notifications?.options?.interviewInvitation
+    : employerSettings?.notifications?.options?.interviewInvitation;
 
   const interviewOptions: InterviewConfig[] = useMemo(() => [
     {
@@ -79,15 +83,17 @@ const InterviewInvitation = () => {
     },
   ], []);
 
+  // Initialize state from backend data
   useEffect(() => {
     const settings = userType === UserType.APPLICANT
       ? applicantSettings?.notifications?.options?.interviewInvitation
       : employerSettings?.notifications?.options?.interviewInvitation;
 
-    if (settings) {
+    if (settings && (!actualInterviewInvitationData ||
+      JSON.stringify(actualInterviewInvitationData) !== JSON.stringify(settings))) {
       setInterviewInvitation(settings);
     }
-  }, [applicantSettings, employerSettings, userType, setInterviewInvitation]);
+  }, [applicantSettings, employerSettings, userType, setInterviewInvitation, actualInterviewInvitationData]);
 
   const debouncedUpdate = useCallback(
     debounce(async (settings: InterviewInvitationNotification) => {
@@ -117,34 +123,34 @@ const InterviewInvitation = () => {
   }, [debouncedUpdate]);
 
   const handleInterviewOptionToggle = useCallback((key: string) => {
-    if (!interviewInvitation) return;
+    if (!actualInterviewInvitationData) return;
 
     const updatedSettings = {
-      ...interviewInvitation,
+      ...actualInterviewInvitationData,
       option: {
-        ...interviewInvitation.option,
-        [key]: !interviewInvitation.option[key as keyof InterviewInvitationState],
+        ...actualInterviewInvitationData.option,
+        [key]: !actualInterviewInvitationData.option[key as keyof InterviewInvitationState],
       },
     };
     setInterviewInvitation(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [interviewInvitation, setInterviewInvitation, debouncedUpdate]);
+  }, [actualInterviewInvitationData, setInterviewInvitation, debouncedUpdate]);
 
   const handleNotificationTypeToggle = useCallback((key: string) => {
-    if (!interviewInvitation) return;
+    if (!actualInterviewInvitationData) return;
 
     const updatedSettings = {
-      ...interviewInvitation,
+      ...actualInterviewInvitationData,
       notificationType: {
-        ...interviewInvitation.notificationType,
-        [key]: !interviewInvitation.notificationType[key as keyof NotificationType],
+        ...actualInterviewInvitationData.notificationType,
+        [key]: !actualInterviewInvitationData.notificationType[key as keyof NotificationType],
       },
     };
     setInterviewInvitation(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [interviewInvitation, setInterviewInvitation, debouncedUpdate]);
+  }, [actualInterviewInvitationData, setInterviewInvitation, debouncedUpdate]);
 
-  if (!interviewInvitation) {
+  if (!actualInterviewInvitationData) {
     return (
       <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
         <div className="animate-pulse">
@@ -207,7 +213,7 @@ const InterviewInvitation = () => {
             <div className="space-y-4">
               {interviewOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = interviewInvitation.option[option.key as keyof InterviewInvitationState];
+                const isActive = actualInterviewInvitationData?.option?.[option.key as keyof InterviewInvitationState] || false;
 
                 return (
                   <div
@@ -254,7 +260,7 @@ const InterviewInvitation = () => {
             <div className="space-y-4">
               {notificationTypeOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = interviewInvitation.notificationType[option.key as keyof NotificationType];
+                const isActive = actualInterviewInvitationData?.notificationType?.[option.key as keyof NotificationType] || false;
 
                 return (
                   <div

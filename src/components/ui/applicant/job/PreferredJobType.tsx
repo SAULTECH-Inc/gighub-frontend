@@ -4,8 +4,8 @@ import { useApplicantJobProfile } from "../../../../store/useApplicantJobProfile
 import { useSectionEditable } from "../../../../store/useEditable.ts";
 import CustomSelect from "../../../common/CustomSelect.tsx";
 import { Option } from "../../../../utils/types";
-import { JobTypes } from "../../../../utils/employmentTypes.ts";
 import { X } from "lucide-react";
+import { JobTypes } from "../../../../utils/constants.ts";
 
 export const PreferredJobType: React.FC = () => {
   const { applicant } = useAuth();

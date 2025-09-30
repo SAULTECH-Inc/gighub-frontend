@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { toast } from "react-toastify";
 import { RiShieldCheckLine, RiLockPasswordLine, RiRefreshLine, RiSmartphoneLine, RiLoginBoxLine, RiMailLine, RiNotification3Line, RiSecurePaymentLine } from "react-icons/ri";
@@ -9,6 +9,8 @@ import {
   NotificationType,
   useSettingsStore,
 } from "../../../../store/useSettingsStore.ts";
+import { USER_TYPE } from "../../../../utils/helpers.ts";
+import { UserType } from "../../../../utils/enums.ts";
 
 interface GeneralSettingsConfig {
   key: string;
@@ -20,10 +22,15 @@ interface GeneralSettingsConfig {
 const GeneralSettings = () => {
   const {
     applicantSettings,
-    generalSettings,
+    employerSettings,
     setGeneralSettings,
     updateGeneralSettings,
   } = useSettingsStore();
+
+  // Get the actual data from applicantSettings/employerSettings based on user type
+  const actualGeneralSettingsData = USER_TYPE === UserType.APPLICANT
+    ? applicantSettings?.notifications?.options?.generalSettings
+    : employerSettings?.notifications?.options?.generalSettings;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -81,11 +88,17 @@ const GeneralSettings = () => {
     },
   ], []);
 
+  // Initialize state from backend data
   useEffect(() => {
-    if (applicantSettings?.notifications?.options?.generalSettings) {
-      setGeneralSettings(applicantSettings.notifications.options.generalSettings);
+    const generalSettingsData = USER_TYPE === UserType.APPLICANT
+      ? applicantSettings?.notifications?.options?.generalSettings
+      : employerSettings?.notifications?.options?.generalSettings;
+
+    if (generalSettingsData && (!actualGeneralSettingsData ||
+      JSON.stringify(actualGeneralSettingsData) !== JSON.stringify(generalSettingsData))) {
+      setGeneralSettings(generalSettingsData);
     }
-  }, [applicantSettings, setGeneralSettings]);
+  }, [applicantSettings, employerSettings, setGeneralSettings, actualGeneralSettingsData]);
 
   const debouncedUpdate = useCallback(
     debounce(async (settings: GeneralSettingsNotification) => {
@@ -115,34 +128,34 @@ const GeneralSettings = () => {
   }, [debouncedUpdate]);
 
   const handleGeneralSettingsToggle = useCallback((key: string) => {
-    if (!generalSettings) return;
+    if (!actualGeneralSettingsData) return;
 
     const updatedSettings = {
-      ...generalSettings,
+      ...actualGeneralSettingsData,
       option: {
-        ...generalSettings.option,
-        [key]: !generalSettings.option[key as keyof GeneralSettingsNotificationOptions],
+        ...actualGeneralSettingsData.option,
+        [key]: !actualGeneralSettingsData.option[key as keyof GeneralSettingsNotificationOptions],
       },
     };
     setGeneralSettings(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [generalSettings, setGeneralSettings, debouncedUpdate]);
+  }, [actualGeneralSettingsData, setGeneralSettings, debouncedUpdate]);
 
   const handleNotificationTypeToggle = useCallback((key: string) => {
-    if (!generalSettings) return;
+    if (!actualGeneralSettingsData) return;
 
     const updatedSettings = {
-      ...generalSettings,
+      ...actualGeneralSettingsData,
       notificationType: {
-        ...generalSettings.notificationType,
-        [key]: !generalSettings.notificationType[key as keyof NotificationType],
+        ...actualGeneralSettingsData.notificationType,
+        [key]: !actualGeneralSettingsData.notificationType[key as keyof NotificationType],
       },
     };
     setGeneralSettings(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [generalSettings, setGeneralSettings, debouncedUpdate]);
+  }, [actualGeneralSettingsData, setGeneralSettings, debouncedUpdate]);
 
-  if (!generalSettings) {
+  if (!actualGeneralSettingsData) {
     return (
       <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
         <div className="animate-pulse">
@@ -205,7 +218,7 @@ const GeneralSettings = () => {
             <div className="space-y-4">
               {generalSettingsOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = generalSettings.option[option.key as keyof GeneralSettingsNotificationOptions];
+                const isActive = actualGeneralSettingsData?.option?.[option.key as keyof GeneralSettingsNotificationOptions] || false;
 
                 return (
                   <div
@@ -252,7 +265,7 @@ const GeneralSettings = () => {
             <div className="space-y-4">
               {notificationTypeOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = generalSettings.notificationType[option.key as keyof NotificationType];
+                const isActive = actualGeneralSettingsData?.notificationType?.[option.key as keyof NotificationType] || false;
 
                 return (
                   <div

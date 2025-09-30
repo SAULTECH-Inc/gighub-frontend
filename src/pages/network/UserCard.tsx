@@ -122,7 +122,7 @@ const UserCard: React.FC<NetworkCardProps> = ({
         {/* Action Buttons */}
         <div className="flex space-x-3">
           <Link
-            to={`/applicant/public-profile-view/${userDetails?.id}`}
+            to={`/applicant/public-profile-view/${userDetails?.applicant?.id}`}
             className="flex-1 py-2.5 px-4 bg-gray-100 text-gray-700 text-center text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
           >
             View Profile

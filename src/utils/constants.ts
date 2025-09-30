@@ -1,7 +1,6 @@
 import { EventType, Option } from "./types";
 import { StateStorage } from "zustand/middleware";
 import secureLocalStorage from "react-secure-storage";
-import { EmploymentType } from "./employmentTypes.ts";
 import {
   FaBan,
   FaBell,
@@ -28,14 +27,17 @@ import {
   FaSyncAlt,
   FaThumbsUp,
   FaTimes,
+  FaTools,
   FaUndo,
   FaUserCheck,
   FaUserClock,
   FaUserFriends,
-  FaUserTie,
+  FaUserTie
 } from "react-icons/fa";
 import { IconType } from "react-icons";
-import { InterviewStatus, InterviewType } from "./enums.ts";
+import { EmploymentType, InterviewStatus, InterviewType } from "./enums.ts";
+import React from "react";
+import { FileText, MapPin, Monitor, Phone, Users, Video } from "lucide-react";
 
 export const emojiList = [
   "😀",
@@ -175,6 +177,9 @@ export const SUBSCRIPTION_SERVICE_HOST =
 export const FRONTEND_BASE_URL =
   import.meta.env.VITE_API_FRONTEND_BASE_URL || "http://localhost:5173";
 
+export const NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_API_NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "";
+export const NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY = import.meta.env.VITE_API_FLUTTERWAVE_PUBLIC_KEY || "";
+
 export const NOTIFICATION_API_URL =
   import.meta.env.VITE_API_NOTIFICATION_SERVICE || "http://localhost:3009";
 
@@ -184,6 +189,7 @@ export const NODE_ENV = import.meta.env.NODE_ENV || "development";
 export const applicantNavBarItemMap = new Map<string, string>([]);
 applicantNavBarItemMap.set("Dashboard", "/applicant/dashboard");
 applicantNavBarItemMap.set("Find Jobs", "/applicant/find-jobs");
+applicantNavBarItemMap.set("Companies", "/companies");
 applicantNavBarItemMap.set("Applications", "/applicant/my-applications");
 applicantNavBarItemMap.set("My Networks", "/applicant/network");
 applicantNavBarItemMap.set("My Schedules", "/applicant/my-schedules");
@@ -198,7 +204,7 @@ employerNavBarItemMap.set("Manage Applicants", "/employer/manage-applicants");
 employerNavBarItemMap.set("My Networks", "/employer/network");
 employerNavBarItemMap.set("Profile", "/employer/profile");
 employerNavBarItemMap.set("Settings", "/settings");
-employerNavBarItemMap.set("Job List", "/employer/manage-jobs");
+employerNavBarItemMap.set("Manage Jobs", "/employer/manage-jobs");
 employerNavBarItemMap.set("My Schedules", "/employer/my-schedules");
 employerNavBarItemMap.set("Help & Support", "/help-and-support");
 employerNavBarItemMap.set("Logout", "/logout");
@@ -206,6 +212,7 @@ employerNavBarItemMap.set("Logout", "/logout");
 export const applicantNavItems = [
   "Dashboard",
   "Find Jobs",
+  "Companies",
   "Applications",
   "My Networks",
   "My Schedules",
@@ -213,6 +220,7 @@ export const applicantNavItems = [
 export const applicantNavItemsMobile = [
   "Dashboard",
   "Find Jobs",
+  "Companies",
   "Applications",
   "My Networks",
   "My Schedules",
@@ -225,13 +233,14 @@ export const employerNavItems = [
   "Dashboard",
   "Manage Applicants",
   "My Networks",
-  "Job List",
+  "Manage Jobs",
   "My Schedules",
 ];
 export const employerNavItemsMobile = [
   "Dashboard",
   "Manage Applicants",
   "My Networks",
+  "Manage Jobs",
   "My Schedules",
   "Profile",
   "Settings",
@@ -432,6 +441,9 @@ export const notificationIconMap: Record<EventType, IconType> = {
   [EventType.SUBSCRIPTION_SUCCESS]: FaCreditCard,
   [EventType.SUBSCRIPTION_SUCCESSFUL]: FaCreditCard,
   [EventType.SUBSCRIPTION_CANCELLED]: FaMoneyBillWave,
+
+  //platform
+  [EventType.MAINTENANCE]: FaTools,
 };
 
 export const eventTypeColorMap: Record<EventType, string> = {
@@ -500,6 +512,8 @@ export const eventTypeColorMap: Record<EventType, string> = {
   [EventType.SUBSCRIPTION_SUCCESS]: "#00B894",
   [EventType.SUBSCRIPTION_SUCCESSFUL]: "#00B894",
   [EventType.SUBSCRIPTION_CANCELLED]: "#D63031",
+  //platform
+  [EventType.MAINTENANCE]: "#6C5CE7",
 };
 
 export const getTypeColor = (type: InterviewType) => {
@@ -530,3 +544,1542 @@ export const signingSignupRouteMap: Record<string, string> = {
   outlook: "http://localhost:3005/auth/outlook?state=",
   linkedin: "http://localhost:3005/auth/linkedin?state="
 };
+// Interview type configuration with enhanced metadata
+export const INTERVIEW_TYPES: Array<Option & {
+  icon: React.ComponentType<any>;
+  description: string;
+  color: string;
+}> = [
+  {
+    label: "Virtual Meeting",
+    value: "virtual-meeting",
+    icon: Video,
+    description: "Online video conference",
+    color: "bg-blue-50 border-blue-200 text-blue-700"
+  },
+  {
+    label: "Phone Call",
+    value: "phone-call",
+    icon: Phone,
+    description: "Voice-only interview",
+    color: "bg-green-50 border-green-200 text-green-700"
+  },
+  {
+    label: "In-Person",
+    value: "in-person",
+    icon: MapPin,
+    description: "Face-to-face meeting",
+    color: "bg-purple-50 border-purple-200 text-purple-700"
+  },
+  {
+    label: "Hybrid",
+    value: "hybrid",
+    icon: Monitor,
+    description: "Combined virtual and in-person",
+    color: "bg-orange-50 border-orange-200 text-orange-700"
+  },
+  {
+    label: "Assessment",
+    value: "assessment",
+    icon: FileText,
+    description: "Skill-based evaluation",
+    color: "bg-indigo-50 border-indigo-200 text-indigo-700"
+  },
+  {
+    label: "Group Interview",
+    value: "group-interview",
+    icon: Users,
+    description: "Multiple candidates together",
+    color: "bg-pink-50 border-pink-200 text-pink-700"
+  }
+];
+// Platform options with metadata
+export const PLATFORM_OPTIONS: Option[] = [
+  { label: "Zoom", value: "zoom" },
+  { label: "Google Meet", value: "google-meet" },
+  { label: "Microsoft Teams", value: "microsoft-teams" },
+  { label: "Skype", value: "skype" },
+  { label: "WebEx", value: "webex" },
+  { label: "Other", value: "other" }
+];
+export const skills: Option[] = [
+  // Programming Languages
+  { label: "Java", value: "Java" },
+  { label: "Python", value: "Python" },
+  { label: "JavaScript", value: "JavaScript" },
+  { label: "TypeScript", value: "TypeScript" },
+  { label: "C++", value: "C++" },
+  { label: "C#", value: "C#" },
+  { label: "Go", value: "Go" },
+  { label: "Rust", value: "Rust" },
+  { label: "Ruby", value: "Ruby" },
+  { label: "PHP", value: "PHP" },
+  { label: "Swift", value: "Swift" },
+  { label: "Kotlin", value: "Kotlin" },
+  { label: "Dart", value: "Dart" },
+
+  // Frontend Frameworks & Libraries
+  { label: "React", value: "React" },
+  { label: "Angular", value: "Angular" },
+  { label: "Vue.js", value: "Vue.js" },
+  { label: "Next.js", value: "Next.js" },
+  { label: "Svelte", value: "Svelte" },
+  { label: "Tailwind CSS", value: "Tailwind CSS" },
+  { label: "Bootstrap", value: "Bootstrap" },
+  { label: "HTML", value: "HTML" },
+  { label: "CSS", value: "CSS" },
+  { label: "SASS", value: "SASS" },
+  { label: "Webpack", value: "Webpack" },
+  { label: "Babel", value: "Babel" },
+  { label: "Gulp", value: "Gulp" },
+  { label: "Grunt", value: "Grunt" },
+
+  // Backend Frameworks
+  { label: "Node.js", value: "Node.js" },
+  { label: "Express.js", value: "Express.js" },
+  { label: "NestJS", value: "NestJS" },
+  { label: "Spring Boot", value: "Spring Boot" },
+  { label: "Laravel", value: "Laravel" },
+  { label: "Django", value: "Django" },
+  { label: "Flask", value: "Flask" },
+  { label: "ASP.NET", value: "ASP.NET" },
+
+  // Databases
+  { label: "PostgreSQL", value: "PostgreSQL" },
+  { label: "MySQL", value: "MySQL" },
+  { label: "MongoDB", value: "MongoDB" },
+  { label: "Oracle DB", value: "Oracle DB" },
+  { label: "Cassandra", value: "Cassandra" },
+  { label: "Redis", value: "Redis" },
+  { label: "Elasticsearch", value: "Elasticsearch" },
+  { label: "InfluxDB", value: "InfluxDB" },
+  { label: "SQL", value: "SQL" },
+
+  // DevOps & CI/CD
+  { label: "Docker", value: "Docker" },
+  { label: "Kubernetes", value: "Kubernetes" },
+  { label: "Jenkins", value: "Jenkins" },
+  { label: "GitLab CI", value: "GitLab CI" },
+  { label: "CircleCI", value: "CircleCI" },
+  { label: "Travis CI", value: "Travis CI" },
+  { label: "Terraform", value: "Terraform" },
+  { label: "Ansible", value: "Ansible" },
+  { label: "Puppet", value: "Puppet" },
+  { label: "Chef", value: "Chef" },
+  { label: "OpenShift", value: "OpenShift" },
+  { label: "CloudFormation", value: "CloudFormation" },
+  { label: "CI/CD", value: "CI/CD" },
+  { label: "Linux", value: "Linux" },
+  { label: "Bash", value: "Bash" },
+  { label: "Shell Scripting", value: "Shell Scripting" },
+
+  // Cloud Platforms
+  { label: "AWS", value: "AWS" },
+  { label: "Azure", value: "Azure" },
+  { label: "Google Cloud", value: "Google Cloud" },
+  { label: "DigitalOcean", value: "DigitalOcean" },
+  { label: "Heroku", value: "Heroku" },
+  { label: "Netlify", value: "Netlify" },
+  { label: "Vercel", value: "Vercel" },
+
+  // Messaging & Streaming
+  { label: "Kafka", value: "Kafka" },
+  { label: "RabbitMQ", value: "RabbitMQ" },
+
+  // Testing Tools
+  { label: "Jest", value: "Jest" },
+  { label: "Mocha", value: "Mocha" },
+  { label: "Chai", value: "Chai" },
+  { label: "Cypress", value: "Cypress" },
+  { label: "Selenium", value: "Selenium" },
+  { label: "JUnit", value: "JUnit" },
+  { label: "Testing", value: "Testing" },
+
+  // Project Management & Methodologies
+  { label: "Agile", value: "Agile" },
+  { label: "Scrum", value: "Scrum" },
+  { label: "Kanban", value: "Kanban" },
+  { label: "Jira", value: "Jira" },
+  { label: "Confluence", value: "Confluence" },
+  { label: "Trello", value: "Trello" },
+  { label: "Asana", value: "Asana" },
+  { label: "Slack", value: "Slack" },
+
+  // UI/UX & Design
+  { label: "Figma", value: "Figma" },
+  { label: "Adobe XD", value: "Adobe XD" },
+  { label: "Sketch", value: "Sketch" },
+
+  // Data Science & Big Data
+  { label: "Hadoop", value: "Hadoop" },
+  { label: "Spark", value: "Spark" },
+  { label: "Apache Hive", value: "Apache Hive" },
+  { label: "Apache Flink", value: "Apache Flink" },
+  { label: "Pandas", value: "Pandas" },
+  { label: "NumPy", value: "NumPy" },
+  { label: "SciPy", value: "SciPy" },
+  { label: "Matplotlib", value: "Matplotlib" },
+  { label: "Seaborn", value: "Seaborn" },
+  { label: "Big Data", value: "Big Data" },
+  { label: "Data Analysis", value: "Data Analysis" },
+  { label: "Data Visualization", value: "Data Visualization" },
+  { label: "Tableau", value: "Tableau" },
+  { label: "Power BI", value: "Power BI" },
+  { label: "Excel", value: "Excel" },
+  { label: "Google Sheets", value: "Google Sheets" },
+
+  // AI / Machine Learning
+  { label: "Machine Learning", value: "Machine Learning" },
+  { label: "Deep Learning", value: "Deep Learning" },
+  { label: "TensorFlow", value: "TensorFlow" },
+  { label: "PyTorch", value: "PyTorch" },
+  { label: "AWS SageMaker", value: "AWS SageMaker" },
+  { label: "Google AI Platform", value: "Google AI Platform" },
+
+  // Blockchain & Crypto
+  { label: "Blockchain", value: "Blockchain" },
+  { label: "Ethereum", value: "Ethereum" },
+  { label: "Bitcoin", value: "Bitcoin" },
+  { label: "Solidity", value: "Solidity" },
+  { label: "Smart Contracts", value: "Smart Contracts" },
+  { label: "Cryptography", value: "Cryptography" },
+
+  // Mobile Development
+  { label: "Flutter", value: "Flutter" },
+  { label: "React Native", value: "React Native" },
+  { label: "Xamarin", value: "Xamarin" },
+  { label: "Ionic", value: "Ionic" },
+  { label: "Cordova", value: "Cordova" },
+
+  // CMS & E-commerce
+  { label: "WordPress", value: "WordPress" },
+  { label: "Magento", value: "Magento" },
+  { label: "Shopify", value: "Shopify" },
+
+  // Security
+  { label: "DevOps", value: "DevOps" },
+  { label: "Security", value: "Security" },
+  { label: "Penetration Testing", value: "Penetration Testing" },
+  { label: "OWASP", value: "OWASP" },
+  { label: "SSL/TLS", value: "SSL/TLS" },
+  { label: "OAuth", value: "OAuth" },
+  { label: "JWT", value: "JWT" },
+
+  // Game Development & 3D
+  { label: "Unity", value: "Unity" },
+  { label: "Unreal Engine", value: "Unreal Engine" },
+  { label: "Blender", value: "Blender" },
+  { label: "3D Modeling", value: "3D Modeling" },
+  { label: "AR/VR", value: "AR/VR" },
+
+  // Other Tools
+  { label: "Git", value: "Git" },
+  { label: "GitHub", value: "GitHub" },
+  { label: "GitLab", value: "GitLab" },
+  { label: "Firebase", value: "Firebase" },
+  { label: "GraphQL", value: "GraphQL" },
+  { label: "REST API", value: "REST API" },
+  { label: "Microservices", value: "Microservices" },
+  { label: "Serverless", value: "Serverless" },
+  { label: "Lambda", value: "Lambda" },
+  { label: "Prettier", value: "Prettier" },
+  { label: "ESLint", value: "ESLint" }
+];
+export const JobRoles: Option[] = [
+  // Tech Industry - Developers & Engineers Variations
+  { label: "Software Engineer", value: "Software Engineer" },
+  { label: "Software Developer", value: "Software Developer" },
+  { label: "Developer", value: "Developer" },
+  { label: "Application Developer", value: "Application Developer" },
+  { label: "Frontend Developer", value: "Frontend Developer" },
+  { label: "Frontend Engineer", value: "Frontend Engineer" },
+  { label: "Backend Developer", value: "Backend Developer" },
+  { label: "Backend Engineer", value: "Backend Engineer" },
+  { label: "Full Stack Developer", value: "Full Stack Developer" },
+  { label: "Full Stack Engineer", value: "Full Stack Engineer" },
+  { label: "Web Developer", value: "Web Developer" },
+  { label: "Mobile Developer", value: "Mobile Developer" },
+  { label: "iOS Developer", value: "iOS Developer" },
+  { label: "Android Developer", value: "Android Developer" },
+  { label: "DevOps Engineer", value: "DevOps Engineer" },
+  { label: "Site Reliability Engineer", value: "Site Reliability Engineer" },
+  { label: "Cloud Engineer", value: "Cloud Engineer" },
+  { label: "Cloud Architect", value: "Cloud Architect" },
+  { label: "Data Scientist", value: "Data Scientist" },
+  { label: "Data Engineer", value: "Data Engineer" },
+  { label: "Data Analyst", value: "Data Analyst" },
+  { label: "Machine Learning Engineer", value: "Machine Learning Engineer" },
+  { label: "AI Engineer", value: "AI Engineer" },
+  { label: "ML Engineer", value: "ML Engineer" },
+  { label: "Cybersecurity Analyst", value: "Cybersecurity Analyst" },
+  { label: "Cybersecurity Engineer", value: "Cybersecurity Engineer" },
+  { label: "Security Analyst", value: "Security Analyst" },
+  { label: "Security Engineer", value: "Security Engineer" },
+  { label: "Blockchain Developer", value: "Blockchain Developer" },
+  { label: "Blockchain Engineer", value: "Blockchain Engineer" },
+  { label: "Game Developer", value: "Game Developer" },
+  { label: "Game Engineer", value: "Game Engineer" },
+
+  // QA & Testing Variations
+  { label: "QA Engineer", value: "QA Engineer" },
+  { label: "Quality Assurance Engineer", value: "Quality Assurance Engineer" },
+  { label: "Test Engineer", value: "Test Engineer" },
+  { label: "Test Automation Engineer", value: "Test Automation Engineer" },
+  { label: "Software Tester", value: "Software Tester" },
+
+  // UI/UX & Design Variations
+  { label: "UI Designer", value: "UI Designer" },
+  { label: "UX Designer", value: "UX Designer" },
+  { label: "UI/UX Designer", value: "UI/UX Designer" },
+  { label: "Product Designer", value: "Product Designer" },
+  { label: "Graphic Designer", value: "Graphic Designer" },
+  { label: "Visual Designer", value: "Visual Designer" },
+
+  // Product & Project Management
+  { label: "Product Manager", value: "Product Manager" },
+  { label: "Technical Product Manager", value: "Technical Product Manager" },
+  { label: "Project Manager", value: "Project Manager" },
+  { label: "Technical Project Manager", value: "Technical Project Manager" },
+  { label: "Scrum Master", value: "Scrum Master" },
+  { label: "Agile Coach", value: "Agile Coach" },
+
+  // System, Network & Support Variations
+  { label: "System Administrator", value: "System Administrator" },
+  { label: "SysAdmin", value: "SysAdmin" },
+  { label: "Network Engineer", value: "Network Engineer" },
+  { label: "Network Administrator", value: "Network Administrator" },
+  { label: "IT Support Specialist", value: "IT Support Specialist" },
+  { label: "Technical Support Engineer", value: "Technical Support Engineer" },
+  { label: "Help Desk Technician", value: "Help Desk Technician" },
+
+  // Business & Analysis
+  { label: "Business Analyst", value: "Business Analyst" },
+  { label: "Technical Business Analyst", value: "Technical Business Analyst" },
+  { label: "Solutions Architect", value: "Solutions Architect" },
+  { label: "Enterprise Architect", value: "Enterprise Architect" },
+
+  // Content & Writing
+  { label: "Technical Writer", value: "Technical Writer" },
+  { label: "Content Writer", value: "Content Writer" },
+  { label: "Copywriter", value: "Copywriter" },
+
+  // ---- Other Industries with Variations ----
+
+  // Marketing Variations
+  { label: "Digital Marketer", value: "Digital Marketer" },
+  {
+    label: "Digital Marketing Specialist",
+    value: "Digital Marketing Specialist"
+  },
+  { label: "SEO Specialist", value: "SEO Specialist" },
+  { label: "Social Media Manager", value: "Social Media Manager" },
+  { label: "Content Marketer", value: "Content Marketer" },
+  { label: "Brand Manager", value: "Brand Manager" },
+
+  // Finance Variations
+  { label: "Accountant", value: "Accountant" },
+  { label: "Chartered Accountant", value: "Chartered Accountant" },
+  { label: "Financial Analyst", value: "Financial Analyst" },
+  { label: "Investment Analyst", value: "Investment Analyst" },
+  { label: "Auditor", value: "Auditor" },
+
+  // HR Variations
+  { label: "HR Manager", value: "HR Manager" },
+  { label: "Human Resources Specialist", value: "Human Resources Specialist" },
+  { label: "Recruiter", value: "Recruiter" },
+  {
+    label: "Talent Acquisition Specialist",
+    value: "Talent Acquisition Specialist"
+  },
+
+  // Legal Variations
+  { label: "Lawyer", value: "Lawyer" },
+  { label: "Attorney", value: "Attorney" },
+  { label: "Legal Advisor", value: "Legal Advisor" },
+  { label: "Paralegal", value: "Paralegal" },
+
+  // Customer Service Variations
+  { label: "Customer Support", value: "Customer Support" },
+  {
+    label: "Customer Service Representative",
+    value: "Customer Service Representative"
+  },
+  { label: "Client Success Manager", value: "Client Success Manager" },
+
+  // Sales Variations
+  { label: "Sales Executive", value: "Sales Executive" },
+  { label: "Sales Representative", value: "Sales Representative" },
+  { label: "Account Manager", value: "Account Manager" },
+  {
+    label: "Business Development Manager",
+    value: "Business Development Manager"
+  },
+
+  // Healthcare Variations
+  { label: "Medical Doctor", value: "Medical Doctor" },
+  { label: "Doctor", value: "Doctor" },
+  { label: "Registered Nurse", value: "Registered Nurse" },
+  { label: "Nurse", value: "Nurse" },
+  { label: "Pharmacist", value: "Pharmacist" },
+
+  // Education Variations
+  { label: "Teacher", value: "Teacher" },
+  { label: "Tutor", value: "Tutor" },
+  { label: "Lecturer", value: "Lecturer" },
+  { label: "Professor", value: "Professor" },
+
+  // Miscellaneous
+  { label: "Entrepreneur", value: "Entrepreneur" },
+  { label: "Consultant", value: "Consultant" },
+  { label: "Freelancer", value: "Freelancer" }
+];
+export const jobTypes: string[] = [
+  EmploymentType.FULL_TIME,
+  EmploymentType.PART_TIME,
+  EmploymentType.CONTRACT,
+  EmploymentType.FREELANCE,
+  EmploymentType.REMOTE,
+  EmploymentType.INTERNSHIP,
+  EmploymentType.TEMPORARY,
+  EmploymentType.VOLUNTEER,
+  EmploymentType.SEASONAL,
+  EmploymentType.PER_DIEM,
+  EmploymentType.CONSULTANT,
+  EmploymentType.APPRENTICESHIP
+];
+export const JobTypes: Option[] = [
+  { label: EmploymentType.FULL_TIME, value: EmploymentType.FULL_TIME },
+  { label: EmploymentType.PART_TIME, value: EmploymentType.PART_TIME },
+  { label: EmploymentType.CONTRACT, value: EmploymentType.CONTRACT },
+  { label: EmploymentType.FREELANCE, value: EmploymentType.FREELANCE },
+  { label: EmploymentType.REMOTE, value: EmploymentType.REMOTE },
+  { label: EmploymentType.INTERNSHIP, value: EmploymentType.INTERNSHIP },
+  { label: EmploymentType.TEMPORARY, value: EmploymentType.TEMPORARY },
+  { label: EmploymentType.VOLUNTEER, value: EmploymentType.VOLUNTEER },
+  { label: EmploymentType.SEASONAL, value: EmploymentType.SEASONAL },
+  { label: EmploymentType.PER_DIEM, value: EmploymentType.PER_DIEM },
+  { label: EmploymentType.CONSULTANT, value: EmploymentType.CONSULTANT },
+  {
+    label: EmploymentType.APPRENTICESHIP,
+    value: EmploymentType.APPRENTICESHIP
+  }
+];
+export const Industries: Option[] = [
+  { value: "Accounting", label: "Accounting" },
+  { value: "Advertising", label: "Advertising" },
+  { value: "Aerospace", label: "Aerospace" },
+  { value: "Agriculture", label: "Agriculture" },
+  { value: "Apparel & Fashion", label: "Apparel & Fashion" },
+  { value: "Architecture & Planning", label: "Architecture & Planning" },
+  { value: "Automotive", label: "Automotive" },
+  { value: "Aviation & Aerospace", label: "Aviation & Aerospace" },
+  { value: "Banking", label: "Banking" },
+  { value: "Biotechnology", label: "Biotechnology" },
+  { value: "Broadcast Media", label: "Broadcast Media" },
+  { value: "Building Materials", label: "Building Materials" },
+  {
+    value: "Business Supplies & Equipment",
+    label: "Business Supplies & Equipment"
+  },
+  { value: "Chemicals", label: "Chemicals" },
+  { value: "Civil Engineering", label: "Civil Engineering" },
+  { value: "Commercial Real Estate", label: "Commercial Real Estate" },
+  {
+    value: "Computer & Network Security",
+    label: "Computer & Network Security"
+  },
+  { value: "Computer Games", label: "Computer Games" },
+  { value: "Computer Hardware", label: "Computer Hardware" },
+  { value: "Computer Software", label: "Computer Software" },
+  { value: "Construction", label: "Construction" },
+  { value: "Consulting", label: "Consulting" },
+  { value: "Consumer Electronics", label: "Consumer Electronics" },
+  { value: "Consumer Goods", label: "Consumer Goods" },
+  { value: "Consumer Services", label: "Consumer Services" },
+  { value: "Cosmetics", label: "Cosmetics" },
+  { value: "Defense & Space", label: "Defense & Space" },
+  { value: "Design", label: "Design" },
+  { value: "Education", label: "Education" },
+  {
+    value: "Electrical & Electronic Manufacturing",
+    label: "Electrical & Electronic Manufacturing"
+  },
+  { value: "Entertainment", label: "Entertainment" },
+  { value: "Environmental Services", label: "Environmental Services" },
+  { value: "Events Services", label: "Events Services" },
+  { value: "Farming", label: "Farming" },
+  { value: "Financial Services", label: "Financial Services" },
+  { value: "Fine Art", label: "Fine Art" },
+  { value: "Food & Beverages", label: "Food & Beverages" },
+  { value: "Food Production", label: "Food Production" },
+  { value: "Fundraising", label: "Fundraising" },
+  { value: "Furniture", label: "Furniture" },
+  { value: "Gambling & Casinos", label: "Gambling & Casinos" },
+  { value: "Glass, Ceramics & Concrete", label: "Glass, Ceramics & Concrete" },
+  { value: "Government Administration", label: "Government Administration" },
+  { value: "Graphic Design", label: "Graphic Design" },
+  { value: "Healthcare", label: "Healthcare" },
+  { value: "Hospital & Health Care", label: "Hospital & Health Care" },
+  { value: "Hospitality", label: "Hospitality" },
+  { value: "Human Resources", label: "Human Resources" },
+  { value: "Import & Export", label: "Import & Export" },
+  {
+    value: "Individual & Family Services",
+    label: "Individual & Family Services"
+  },
+  { value: "Industrial Automation", label: "Industrial Automation" },
+  { value: "Information Services", label: "Information Services" },
+  {
+    value: "Information Technology & Services",
+    label: "Information Technology & Services"
+  },
+  { value: "Insurance", label: "Insurance" },
+  {
+    value: "International Trade & Development",
+    label: "International Trade & Development"
+  },
+  { value: "Internet", label: "Internet" },
+  { value: "Investment Banking", label: "Investment Banking" },
+  { value: "Investment Management", label: "Investment Management" },
+  { value: "Judiciary", label: "Judiciary" },
+  { value: "Law Enforcement", label: "Law Enforcement" },
+  { value: "Legal", label: "Legal" },
+  { value: "Legislative Office", label: "Legislative Office" },
+  { value: "Leisure & Travel", label: "Leisure & Travel" },
+  { value: "Logistics & Supply Chain", label: "Logistics & Supply Chain" },
+  { value: "Luxury Goods & Jewelry", label: "Luxury Goods & Jewelry" },
+  { value: "Machinery", label: "Machinery" },
+  { value: "Management Consulting", label: "Management Consulting" },
+  { value: "Maritime", label: "Maritime" },
+  { value: "Marketing & Advertising", label: "Marketing & Advertising" },
+  {
+    value: "Mechanical or Industrial Engineering",
+    label: "Mechanical or Industrial Engineering"
+  },
+  { value: "Media Production", label: "Media Production" },
+  { value: "Medical Devices", label: "Medical Devices" },
+  { value: "Medical Practice", label: "Medical Practice" },
+  { value: "Mental Health Care", label: "Mental Health Care" },
+  { value: "Mining & Metals", label: "Mining & Metals" },
+  { value: "Motion Pictures & Film", label: "Motion Pictures & Film" },
+  { value: "Museums & Institutions", label: "Museums & Institutions" },
+  { value: "Music", label: "Music" },
+  { value: "Nanotechnology", label: "Nanotechnology" },
+  { value: "Newspapers", label: "Newspapers" },
+  {
+    value: "Non-Profit Organization Management",
+    label: "Non-Profit Organization Management"
+  },
+  { value: "Oil & Energy", label: "Oil & Energy" },
+  { value: "Online Media", label: "Online Media" },
+  { value: "Outsourcing/Offshoring", label: "Outsourcing/Offshoring" },
+  { value: "Package/Freight Delivery", label: "Package/Freight Delivery" },
+  { value: "Packaging & Containers", label: "Packaging & Containers" },
+  { value: "Paper & Forest Products", label: "Paper & Forest Products" },
+  { value: "Performing Arts", label: "Performing Arts" },
+  { value: "Pharmaceuticals", label: "Pharmaceuticals" },
+  { value: "Photography", label: "Photography" },
+  { value: "Plastics", label: "Plastics" },
+  { value: "Political Organization", label: "Political Organization" },
+  {
+    value: "Primary/Secondary Education",
+    label: "Primary/Secondary Education"
+  },
+  { value: "Printing", label: "Printing" },
+  {
+    value: "Professional Training & Coaching",
+    label: "Professional Training & Coaching"
+  },
+  { value: "Program Development", label: "Program Development" },
+  { value: "Public Policy", label: "Public Policy" },
+  {
+    value: "Public Relations & Communications",
+    label: "Public Relations & Communications"
+  },
+  { value: "Public Safety", label: "Public Safety" },
+  { value: "Publishing", label: "Publishing" },
+  { value: "Real Estate", label: "Real Estate" },
+  { value: "Religious Institutions", label: "Religious Institutions" },
+  { value: "Renewables & Environment", label: "Renewables & Environment" },
+  { value: "Research", label: "Research" },
+  { value: "Restaurants", label: "Restaurants" },
+  { value: "Retail", label: "Retail" },
+  { value: "Security & Investigations", label: "Security & Investigations" },
+  { value: "Semiconductors", label: "Semiconductors" },
+  { value: "Shipbuilding", label: "Shipbuilding" },
+  { value: "Sports", label: "Sports" },
+  { value: "Staffing & Recruiting", label: "Staffing & Recruiting" },
+  { value: "Telecommunications", label: "Telecommunications" },
+  { value: "Textiles", label: "Textiles" },
+  { value: "Think Tanks", label: "Think Tanks" },
+  { value: "Tobacco", label: "Tobacco" },
+  { value: "Translation & Localization", label: "Translation & Localization" },
+  {
+    value: "Transportation/Trucking/Railroad",
+    label: "Transportation/Trucking/Railroad"
+  },
+  { value: "Utilities", label: "Utilities" },
+  {
+    value: "Venture Capital & Private Equity",
+    label: "Venture Capital & Private Equity"
+  },
+  { value: "Veterinary", label: "Veterinary" },
+  { value: "Warehousing", label: "Warehousing" },
+  { value: "Wholesale", label: "Wholesale" },
+  { value: "Wine & Spirits", label: "Wine & Spirits" },
+  { value: "Wireless", label: "Wireless" },
+  { value: "Writing & Editing", label: "Writing & Editing" }
+];
+export const countries: Option[] = [
+  { label: "Afghanistan", value: "Afghanistan" },
+  { label: "Albania", value: "Albania" },
+  { label: "Algeria", value: "Algeria" },
+  { label: "Andorra", value: "Andorra" },
+  { label: "Angola", value: "Angola" },
+  { label: "Antigua and Barbuda", value: "Antigua and Barbuda" },
+  { label: "Argentina", value: "Argentina" },
+  { label: "Armenia", value: "Armenia" },
+  { label: "Australia", value: "Australia" },
+  { label: "Austria", value: "Austria" },
+  { label: "Azerbaijan", value: "Azerbaijan" },
+  { label: "Bahamas", value: "Bahamas" },
+  { label: "Bahrain", value: "Bahrain" },
+  { label: "Bangladesh", value: "Bangladesh" },
+  { label: "Barbados", value: "Barbados" },
+  { label: "Belarus", value: "Belarus" },
+  { label: "Belgium", value: "Belgium" },
+  { label: "Belize", value: "Belize" },
+  { label: "Benin", value: "Benin" },
+  { label: "Bhutan", value: "Bhutan" },
+  { label: "Bolivia", value: "Bolivia" },
+  { label: "Bosnia and Herzegovina", value: "Bosnia and Herzegovina" },
+  { label: "Botswana", value: "Botswana" },
+  { label: "Brazil", value: "Brazil" },
+  { label: "Brunei", value: "Brunei" },
+  { label: "Bulgaria", value: "Bulgaria" },
+  { label: "Burkina Faso", value: "Burkina Faso" },
+  { label: "Burundi", value: "Burundi" },
+  { label: "Cabo Verde", value: "Cabo Verde" },
+  { label: "Cambodia", value: "Cambodia" },
+  { label: "Cameroon", value: "Cameroon" },
+  { label: "Canada", value: "Canada" },
+  { label: "Central African Republic", value: "Central African Republic" },
+  { label: "Chad", value: "Chad" },
+  { label: "Chile", value: "Chile" },
+  { label: "China", value: "China" },
+  { label: "Colombia", value: "Colombia" },
+  { label: "Comoros", value: "Comoros" },
+  { label: "Congo (Congo-Brazzaville)", value: "Congo (Congo-Brazzaville)" },
+  { label: "Costa Rica", value: "Costa Rica" },
+  { label: "Croatia", value: "Croatia" },
+  { label: "Cuba", value: "Cuba" },
+  { label: "Cyprus", value: "Cyprus" },
+  { label: "Czechia (Czech Republic)", value: "Czechia (Czech Republic)" },
+  {
+    label: "Democratic Republic of the Congo",
+    value: "Democratic Republic of the Congo"
+  },
+  { label: "Denmark", value: "Denmark" },
+  { label: "Djibouti", value: "Djibouti" },
+  { label: "Dominica", value: "Dominica" },
+  { label: "Dominican Republic", value: "Dominican Republic" },
+  { label: "Ecuador", value: "Ecuador" },
+  { label: "Egypt", value: "Egypt" },
+  { label: "El Salvador", value: "El Salvador" },
+  { label: "Equatorial Guinea", value: "Equatorial Guinea" },
+  { label: "Eritrea", value: "Eritrea" },
+  { label: "Estonia", value: "Estonia" },
+  { label: "Eswatini", value: "Eswatini" },
+  { label: "Ethiopia", value: "Ethiopia" },
+  { label: "Fiji", value: "Fiji" },
+  { label: "Finland", value: "Finland" },
+  { label: "France", value: "France" },
+  { label: "Gabon", value: "Gabon" },
+  { label: "Gambia", value: "Gambia" },
+  { label: "Georgia", value: "Georgia" },
+  { label: "Germany", value: "Germany" },
+  { label: "Ghana", value: "Ghana" },
+  { label: "Greece", value: "Greece" },
+  { label: "Grenada", value: "Grenada" },
+  { label: "Guatemala", value: "Guatemala" },
+  { label: "Guinea", value: "Guinea" },
+  { label: "Guinea-Bissau", value: "Guinea-Bissau" },
+  { label: "Guyana", value: "Guyana" },
+  { label: "Haiti", value: "Haiti" },
+  { label: "Honduras", value: "Honduras" },
+  { label: "Hungary", value: "Hungary" },
+  { label: "Iceland", value: "Iceland" },
+  { label: "India", value: "India" },
+  { label: "Indonesia", value: "Indonesia" },
+  { label: "Iran", value: "Iran" },
+  { label: "Iraq", value: "Iraq" },
+  { label: "Ireland", value: "Ireland" },
+  { label: "Israel", value: "Israel" },
+  { label: "Italy", value: "Italy" },
+  { label: "Jamaica", value: "Jamaica" },
+  { label: "Japan", value: "Japan" },
+  { label: "Jordan", value: "Jordan" },
+  { label: "Kazakhstan", value: "Kazakhstan" },
+  { label: "Kenya", value: "Kenya" },
+  { label: "Kiribati", value: "Kiribati" },
+  { label: "Korea, North", value: "Korea, North" },
+  { label: "Korea, South", value: "Korea, South" },
+  { label: "Kosovo", value: "Kosovo" },
+  { label: "Kuwait", value: "Kuwait" },
+  { label: "Kyrgyzstan", value: "Kyrgyzstan" },
+  { label: "Laos", value: "Laos" },
+  { label: "Latvia", value: "Latvia" },
+  { label: "Lebanon", value: "Lebanon" },
+  { label: "Lesotho", value: "Lesotho" },
+  { label: "Liberia", value: "Liberia" },
+  { label: "Libya", value: "Libya" },
+  { label: "Liechtenstein", value: "Liechtenstein" },
+  { label: "Lithuania", value: "Lithuania" },
+  { label: "Luxembourg", value: "Luxembourg" },
+  { label: "Madagascar", value: "Madagascar" },
+  { label: "Malawi", value: "Malawi" },
+  { label: "Malaysia", value: "Malaysia" },
+  { label: "Maldives", value: "Maldives" },
+  { label: "Mali", value: "Mali" },
+  { label: "Malta", value: "Malta" },
+  { label: "Marshall Islands", value: "Marshall Islands" },
+  { label: "Mauritania", value: "Mauritania" },
+  { label: "Mauritius", value: "Mauritius" },
+  { label: "Mexico", value: "Mexico" },
+  { label: "Micronesia", value: "Micronesia" },
+  { label: "Moldova", value: "Moldova" },
+  { label: "Monaco", value: "Monaco" },
+  { label: "Mongolia", value: "Mongolia" },
+  { label: "Montenegro", value: "Montenegro" },
+  { label: "Morocco", value: "Morocco" },
+  { label: "Mozambique", value: "Mozambique" },
+  { label: "Myanmar (Burma)", value: "Myanmar (Burma)" },
+  { label: "Namibia", value: "Namibia" },
+  { label: "Nauru", value: "Nauru" },
+  { label: "Nepal", value: "Nepal" },
+  { label: "Netherlands", value: "Netherlands" },
+  { label: "New Zealand", value: "New Zealand" },
+  { label: "Nicaragua", value: "Nicaragua" },
+  { label: "Niger", value: "Niger" },
+  { label: "Nigeria", value: "Nigeria" },
+  { label: "North Macedonia", value: "North Macedonia" },
+  { label: "Norway", value: "Norway" },
+  { label: "Oman", value: "Oman" },
+  { label: "Pakistan", value: "Pakistan" },
+  { label: "Palau", value: "Palau" },
+  { label: "Palestine", value: "Palestine" },
+  { label: "Panama", value: "Panama" },
+  { label: "Papua New Guinea", value: "Papua New Guinea" },
+  { label: "Paraguay", value: "Paraguay" },
+  { label: "Peru", value: "Peru" },
+  { label: "Philippines", value: "Philippines" },
+  { label: "Poland", value: "Poland" },
+  { label: "Portugal", value: "Portugal" },
+  { label: "Qatar", value: "Qatar" },
+  { label: "Romania", value: "Romania" },
+  { label: "Russia", value: "Russia" },
+  { label: "Rwanda", value: "Rwanda" },
+  { label: "Saint Kitts and Nevis", value: "Saint Kitts and Nevis" },
+  { label: "Saint Lucia", value: "Saint Lucia" },
+  {
+    label: "Saint Vincent and the Grenadines",
+    value: "Saint Vincent and the Grenadines"
+  },
+  { label: "Samoa", value: "Samoa" },
+  { label: "San Marino", value: "San Marino" },
+  { label: "Sao Tome and Principe", value: "Sao Tome and Principe" },
+  { label: "Saudi Arabia", value: "Saudi Arabia" },
+  { label: "Senegal", value: "Senegal" },
+  { label: "Serbia", value: "Serbia" },
+  { label: "Seychelles", value: "Seychelles" },
+  { label: "Sierra Leone", value: "Sierra Leone" },
+  { label: "Singapore", value: "Singapore" },
+  { label: "Slovakia", value: "Slovakia" },
+  { label: "Slovenia", value: "Slovenia" },
+  { label: "Solomon Islands", value: "Solomon Islands" },
+  { label: "Somalia", value: "Somalia" },
+  { label: "South Africa", value: "South Africa" },
+  { label: "South Sudan", value: "South Sudan" },
+  { label: "Spain", value: "Spain" },
+  { label: "Sri Lanka", value: "Sri Lanka" },
+  { label: "Sudan", value: "Sudan" },
+  { label: "Suriname", value: "Suriname" },
+  { label: "Sweden", value: "Sweden" },
+  { label: "Switzerland", value: "Switzerland" },
+  { label: "Syria", value: "Syria" },
+  { label: "Taiwan", value: "Taiwan" },
+  { label: "Tajikistan", value: "Tajikistan" },
+  { label: "Tanzania", value: "Tanzania" },
+  { label: "Thailand", value: "Thailand" },
+  { label: "Timor-Leste", value: "Timor-Leste" },
+  { label: "Togo", value: "Togo" },
+  { label: "Tonga", value: "Tonga" },
+  { label: "Trinidad and Tobago", value: "Trinidad and Tobago" },
+  { label: "Tunisia", value: "Tunisia" },
+  { label: "Turkey", value: "Turkey" },
+  { label: "Turkmenistan", value: "Turkmenistan" },
+  { label: "Tuvalu", value: "Tuvalu" },
+  { label: "Uganda", value: "Uganda" },
+  { label: "Ukraine", value: "Ukraine" },
+  { label: "United Arab Emirates", value: "United Arab Emirates" },
+  { label: "United Kingdom", value: "United Kingdom" },
+  { label: "United States", value: "United States" },
+  { label: "Uruguay", value: "Uruguay" },
+  { label: "Uzbekistan", value: "Uzbekistan" },
+  { label: "Vanuatu", value: "Vanuatu" },
+  { label: "Vatican City", value: "Vatican City" },
+  { label: "Venezuela", value: "Venezuela" },
+  { label: "Vietnam", value: "Vietnam" },
+  { label: "Yemen", value: "Yemen" },
+  { label: "Zambia", value: "Zambia" },
+  { label: "Zimbabwe", value: "Zimbabwe" }
+];
+export const PreferredCompanies: Option[] = [
+  { label: "Dangote Group", value: "Dangote Group" },
+  { label: "MTN Nigeria", value: "MTN Nigeria" },
+  { label: "Globacom", value: "Globacom" },
+  { label: "Zenith Bank", value: "Zenith Bank" },
+  { label: "Access Bank", value: "Access Bank" },
+  {
+    label: "Guaranty Trust Bank (GTBank)",
+    value: "Guaranty Trust Bank (GTBank)"
+  },
+  { label: "First Bank of Nigeria", value: "First Bank of Nigeria" },
+  {
+    label: "United Bank for Africa (UBA)",
+    value: "United Bank for Africa (UBA)"
+  },
+  { label: "Airtel Nigeria", value: "Airtel Nigeria" },
+  { label: "Nestlé Nigeria", value: "Nestlé Nigeria" },
+  { label: "Shell Nigeria", value: "Shell Nigeria" },
+  { label: "Chevron Nigeria", value: "Chevron Nigeria" },
+  { label: "Total Nigeria", value: "Total Nigeria" },
+  {
+    label: "NNPC (Nigerian National Petroleum Corporation)",
+    value: "NNPC (Nigerian National Petroleum Corporation)"
+  },
+  { label: "Lafarge Africa", value: "Lafarge Africa" },
+  { label: "Julius Berger Nigeria", value: "Julius Berger Nigeria" },
+  { label: "Cadbury Nigeria", value: "Cadbury Nigeria" },
+  { label: "Unilever Nigeria", value: "Unilever Nigeria" },
+  { label: "Interswitch", value: "Interswitch" },
+  { label: "Andela", value: "Andela" },
+  { label: "Flutterwave", value: "Flutterwave" },
+  { label: "Paystack", value: "Paystack" },
+  { label: "Konga", value: "Konga" },
+  { label: "Jumia Nigeria", value: "Jumia Nigeria" },
+  { label: "Microsoft Nigeria", value: "Microsoft Nigeria" },
+  { label: "Google Nigeria", value: "Google Nigeria" },
+  { label: "Amazon Nigeria", value: "Amazon Nigeria" },
+  { label: "Apple Nigeria", value: "Apple Nigeria" },
+  { label: "Facebook Nigeria", value: "Facebook Nigeria" },
+  { label: "Twitter Nigeria", value: "Twitter Nigeria" },
+  { label: "Tesla Nigeria", value: "Tesla Nigeria" },
+  { label: "SpaceX Nigeria", value: "SpaceX Nigeria" },
+  { label: "IBM Nigeria", value: "IBM Nigeria" },
+  { label: "Oracle Nigeria", value: "Oracle Nigeria" },
+  { label: "SAP Nigeria", value: "SAP Nigeria" },
+  { label: "Intel Nigeria", value: "Intel Nigeria" },
+  { label: "Samsung Nigeria", value: "Samsung Nigeria" },
+  { label: "Sony Nigeria", value: "Sony Nigeria" },
+  { label: "LG Nigeria", value: "LG Nigeria" },
+  { label: "Panasonic Nigeria", value: "Panasonic Nigeria" },
+  { label: "Toyota Nigeria", value: "Toyota Nigeria" },
+  { label: "Honda Nigeria", value: "Honda Nigeria" },
+  { label: "Ford Nigeria", value: "Ford Nigeria" },
+  { label: "General Motors Nigeria", value: "General Motors Nigeria" },
+  { label: "Volkswagen Nigeria", value: "Volkswagen Nigeria" },
+  { label: "BMW Nigeria", value: "BMW Nigeria" },
+  { label: "Mercedes-Benz Nigeria", value: "Mercedes-Benz Nigeria" },
+  { label: "Audi Nigeria", value: "Audi Nigeria" },
+  { label: "Porsche Nigeria", value: "Porsche Nigeria" },
+  { label: "Ferrari Nigeria", value: "Ferrari Nigeria" },
+  { label: "Lamborghini Nigeria", value: "Lamborghini Nigeria" },
+  { label: "Rolls-Royce Nigeria", value: "Rolls-Royce Nigeria" },
+  { label: "Bentley Nigeria", value: "Bentley Nigeria" },
+  { label: "McLaren Nigeria", value: "McLaren Nigeria" },
+  { label: "Aston Martin Nigeria", value: "Aston Martin Nigeria" },
+  { label: "Jaguar Nigeria", value: "Jaguar Nigeria" },
+  { label: "Land Rover Nigeria", value: "Land Rover Nigeria" },
+  { label: "Volvo Nigeria", value: "Volvo Nigeria" },
+  { label: "Hyundai Nigeria", value: "Hyundai Nigeria" },
+  { label: "Kia Nigeria", value: "Kia Nigeria" },
+  { label: "Nissan Nigeria", value: "Nissan Nigeria" },
+  { label: "Mitsubishi Nigeria", value: "Mitsubishi Nigeria" },
+  { label: "Subaru Nigeria", value: "Subaru Nigeria" },
+  { label: "Mazda Nigeria", value: "Mazda Nigeria" },
+  { label: "Peugeot Nigeria", value: "Peugeot Nigeria" },
+  { label: "Renault Nigeria", value: "Renault Nigeria" },
+  { label: "Citroën Nigeria", value: "Citroën Nigeria" },
+  { label: "Fiat Nigeria", value: "Fiat Nigeria" },
+  { label: "Alfa Romeo Nigeria", value: "Alfa Romeo Nigeria" },
+  { label: "Maserati Nigeria", value: "Maserati Nigeria" },
+  { label: "Bugatti Nigeria", value: "Bugatti Nigeria" },
+  { label: "Koenigsegg Nigeria", value: "Koenigsegg Nigeria" },
+  { label: "Pagani Nigeria", value: "Pagani Nigeria" },
+  { label: "Rimac Nigeria", value: "Rimac Nigeria" },
+  { label: "Lotus Nigeria", value: "Lotus Nigeria" },
+  { label: "Tata Nigeria", value: "Tata Nigeria" },
+  { label: "Mahindra Nigeria", value: "Mahindra Nigeria" },
+  { label: "Maruti Suzuki Nigeria", value: "Maruti Suzuki Nigeria" },
+  { label: "Hindustan Motors Nigeria", value: "Hindustan Motors Nigeria" },
+  { label: "Premier Nigeria", value: "Premier Nigeria" },
+  { label: "Force Motors Nigeria", value: "Force Motors Nigeria" },
+  { label: "Bajaj Nigeria", value: "Bajaj Nigeria" },
+  { label: "TVS Nigeria", value: "TVS Nigeria" },
+  { label: "Hero MotoCorp Nigeria", value: "Hero MotoCorp Nigeria" },
+  { label: "Royal Enfield Nigeria", value: "Royal Enfield Nigeria" },
+  { label: "Yamaha Nigeria", value: "Yamaha Nigeria" },
+  { label: "Suzuki Nigeria", value: "Suzuki Nigeria" },
+  { label: "Kawasaki Nigeria", value: "Kawasaki Nigeria" },
+  { label: "Ducati Nigeria", value: "Ducati Nigeria" },
+  { label: "Harley-Davidson Nigeria", value: "Harley-Davidson Nigeria" },
+  { label: "Triumph Nigeria", value: "Triumph Nigeria" },
+  { label: "KTM Nigeria", value: "KTM Nigeria" },
+  { label: "Aprilia Nigeria", value: "Aprilia Nigeria" },
+  { label: "Moto Guzzi Nigeria", value: "Moto Guzzi Nigeria" },
+  { label: "MV Agusta Nigeria", value: "MV Agusta Nigeria" },
+  { label: "Benelli Nigeria", value: "Benelli Nigeria" },
+  { label: "Piaggio Nigeria", value: "Piaggio Nigeria" },
+  { label: "Vespa Nigeria", value: "Vespa Nigeria" },
+  { label: "Lambretta Nigeria", value: "Lambretta Nigeria" },
+  { label: "Sym Nigeria", value: "Sym Nigeria" },
+  { label: "Keeway Nigeria", value: "Keeway Nigeria" },
+  { label: "Zontes Nigeria", value: "Zontes Nigeria" },
+  { label: "CFMoto Nigeria", value: "CFMoto Nigeria" },
+  { label: "QJ Motor Nigeria", value: "QJ Motor Nigeria" },
+  { label: "Brixton Nigeria", value: "Brixton Nigeria" },
+  { label: "Fantic Nigeria", value: "Fantic Nigeria" },
+  { label: "GasGas Nigeria", value: "GasGas Nigeria" },
+  { label: "Husqvarna Nigeria", value: "Husqvarna Nigeria" },
+  { label: "Sherco Nigeria", value: "Sherco Nigeria" },
+  { label: "Beta Nigeria", value: "Beta Nigeria" },
+  { label: "Montesa Nigeria", value: "Montesa Nigeria" },
+  { label: "Scorpa Nigeria", value: "Scorpa Nigeria" },
+  { label: "Vertigo Nigeria", value: "Vertigo Nigeria" },
+  { label: "TM Racing Nigeria", value: "TM Racing Nigeria" },
+  { label: "Rieju Nigeria", value: "Rieju Nigeria" },
+  { label: "Bultaco Nigeria", value: "Bultaco Nigeria" },
+  { label: "Ossa Nigeria", value: "Ossa Nigeria" },
+  { label: "Derbi Nigeria", value: "Derbi Nigeria" },
+  { label: "Bimota Nigeria", value: "Bimota Nigeria" },
+  { label: "Cagiva Nigeria", value: "Cagiva Nigeria" },
+  { label: "Gilera Nigeria", value: "Gilera Nigeria" },
+  { label: "Italjet Nigeria", value: "Italjet Nigeria" },
+  { label: "Laverda Nigeria", value: "Laverda Nigeria" },
+  { label: "Morini Nigeria", value: "Morini Nigeria" },
+  { label: "Morbidelli Nigeria", value: "Morbidelli Nigeria" },
+  { label: "Paton Nigeria", value: "Paton Nigeria" },
+  { label: "Vyrus Nigeria", value: "Vyrus Nigeria" },
+  { label: "Zongshen Nigeria", value: "Zongshen Nigeria" },
+  { label: "Lifan Nigeria", value: "Lifan Nigeria" },
+  { label: "Loncin Nigeria", value: "Loncin Nigeria" },
+  { label: "Qingqi Nigeria", value: "Qingqi Nigeria" },
+  { label: "Shineray Nigeria", value: "Shineray Nigeria" },
+  { label: "Skyteam Nigeria", value: "Skyteam Nigeria" },
+  { label: "Wuyang Nigeria", value: "Wuyang Nigeria" },
+  { label: "Xingyue Nigeria", value: "Xingyue Nigeria" },
+  { label: "Yinxiang Nigeria", value: "Yinxiang Nigeria" },
+  { label: "Zhongyu Nigeria", value: "Zhongyu Nigeria" },
+  { label: "Znen Nigeria", value: "Znen Nigeria" },
+  { label: "Zontes Nigeria", value: "Zontes Nigeria" },
+  { label: "Zuum Nigeria", value: "Zuum Nigeria" },
+  { label: "Zongshen Nigeria", value: "Zongshen Nigeria" },
+  { label: "Lifan Nigeria", value: "Lifan Nigeria" },
+  { label: "Loncin Nigeria", value: "Loncin Nigeria" },
+  { label: "Qingqi Nigeria", value: "Qingqi Nigeria" },
+  { label: "Shineray Nigeria", value: "Shineray Nigeria" },
+  { label: "Skyteam Nigeria", value: "Skyteam Nigeria" },
+  { label: "Wuyang Nigeria", value: "Wuyang Nigeria" },
+  { label: "Xingyue Nigeria", value: "Xingyue Nigeria" },
+  { label: "Yinxiang Nigeria", value: "Yinxiang Nigeria" },
+  { label: "Zhongyu Nigeria", value: "Zhongyu Nigeria" },
+  { label: "Znen Nigeria", value: "Znen Nigeria" },
+  { label: "Zontes Nigeria", value: "Zontes Nigeria" },
+  { label: "Zuum Nigeria", value: "Zuum Nigeria" },
+  { label: "Zongshen Nigeria", value: "Zongshen Nigeria" },
+  { label: "Lifan Nigeria", value: "Lifan Nigeria" },
+  { label: "Loncin Nigeria", value: "Loncin Nigeria" },
+  { label: "Qingqi Nigeria", value: "Qingqi Nigeria" },
+  { label: "Shineray Nigeria", value: "Shineray Nigeria" },
+  { label: "Skyteam Nigeria", value: "Skyteam Nigeria" },
+  { label: "Wuyang Nigeria", value: "Wuyang Nigeria" },
+  { label: "Xingyue Nigeria", value: "Xingyue Nigeria" },
+  { label: "Yinxiang Nigeria", value: "Yinxiang Nigeria" },
+  { label: "Zhongyu Nigeria", value: "Zhongyu Nigeria" },
+  { label: "Znen Nigeria", value: "Znen Nigeria" },
+  { label: "Zontes Nigeria", value: "Zontes Nigeria" },
+  { label: "Zuum Nigeria", value: "Zuum Nigeria" },
+  { label: "Zongshen Nigeria", value: "Zongshen Nigeria" },
+  { label: "Lifan Nigeria", value: "Lifan Nigeria" },
+  { label: "Loncin Nigeria", value: "Loncin Nigeria" },
+  { label: "Qingqi Nigeria", value: "Qingqi Nigeria" },
+  { label: "Shineray Nigeria", value: "Shineray Nigeria" },
+  { label: "Skyteam Nigeria", value: "Skyteam Nigeria" },
+  { label: "Wuyang Nigeria", value: "Wuyang Nigeria" },
+  { label: "Xingyue Nigeria", value: "Xingyue Nigeria" },
+  { label: "Yinxiang Nigeria", value: "Yinxiang Nigeria" },
+  { label: "Zhongyu Nigeria", value: "Zhongyu Nigeria" },
+  { label: "Znen Nigeria", value: "Znen Nigeria" },
+  { label: "Zontes Nigeria", value: "Zontes Nigeria" },
+  { label: "Zuum Nigeria", value: "Zuum Nigeria" },
+  { label: "Zongshen Nigeria", value: "Zongshen Nigeria" },
+  { label: "Lifan Nigeria", value: "Lifan Nigeria" },
+  { label: "Loncin Nigeria", value: "Loncin Nigeria" },
+  { label: "Qingqi Nigeria", value: "Qingqi Nigeria" },
+  { label: "Shineray Nigeria", value: "Shineray Nigeria" },
+  { label: "Skyteam Nigeria", value: "Skyteam Nigeria" },
+  { label: "Wuyang Nigeria", value: "Wuyang Nigeria" },
+  { label: "Xingyue Nigeria", value: "Xingyue Nigeria" },
+  { label: "Yinxiang Nigeria", value: "Yinxiang Nigeria" },
+  { label: "Zhongyu Nigeria", value: "Zhongyu Nigeria" },
+  { label: "Znen Nigeria", value: "Znen Nigeria" },
+  { label: "Zontes Nigeria", value: "Zontes Nigeria" },
+  { label: "Zuum Nigeria", value: "Zuum Nigeria" },
+  { label: "Zongshen Nigeria", value: "Zongshen Nigeria" },
+  { label: "Lifan Nigeria", value: "Lifan Nigeria" },
+  { label: "Loncin Nigeria", value: "Loncin Nigeria" },
+  { label: "Qingqi Nigeria", value: "Qingqi Nigeria" },
+  { label: "Shineray Nigeria", value: "Shineray Nigeria" },
+  { label: "Skyteam Nigeria", value: "Skyteam Nigeria" },
+  { label: "Wuyang Nigeria", value: "Wuyang Nigeria" },
+  { label: "Xingyue Nigeria", value: "Xingyue Nigeria" },
+  { label: "Yinxiang Nigeria", value: "Yinxiang Nigeria" },
+  { label: "Zhongyu Nigeria", value: "Zhongyu Nigeria" },
+  { label: "Znen Nigeria", value: "Znen Nigeria" },
+  { label: "Zontes Nigeria", value: "Zontes Nigeria" },
+  { label: "Zuum Nigeria", value: "Zuum Nigeria" },
+  { label: "Zongshen Nigeria", value: "Zongshen Nigeria" },
+  { label: "Lifan Nigeria", value: "Lifan Nigeria" },
+  { label: "Loncin Nigeria", value: "Loncin Nigeria" },
+  { label: "Qingqi Nigeria", value: "Qingqi Nigeria" },
+  { label: "Shineray Nigeria", value: "Shineray Nigeria" },
+  { label: "Skyteam Nigeria", value: "Skyteam Nigeria" },
+  { label: "Wuyang Nigeria", value: "Wuyang Nigeria" },
+  { label: "Xingyue Nigeria", value: "Xingyue Nigeria" },
+  { label: "Yinxiang Nigeria", value: "Yinxiang Nigeria" },
+  { label: "Zhongyu Nigeria", value: "Zhongyu Nigeria" },
+  { label: "Znen Nigeria", value: "Znen Nigeria" },
+  { label: "Zontes Nigeria", value: "Zontes Nigeria" },
+  { label: "Zuum Nigeria", value: "Zuum Nigeria" },
+  { label: "Zongshen Nigeria", value: "Zongshen Nigeria" },
+  { label: "Lifan Nigeria", value: "Lifan Nigeria" }
+];
+export const universities: Option[] = [
+  { label: "Harvard University", value: "Harvard University" },
+  { label: "Stanford University", value: "Stanford University" },
+  {
+    label: "Massachusetts Institute of Technology (MIT)",
+    value: "Massachusetts Institute of Technology (MIT)"
+  },
+  { label: "University of Oxford", value: "University of Oxford" },
+  { label: "University of Cambridge", value: "University of Cambridge" },
+  {
+    label: "California Institute of Technology (Caltech)",
+    value: "California Institute of Technology (Caltech)"
+  },
+  { label: "Princeton University", value: "Princeton University" },
+  { label: "University of Chicago", value: "University of Chicago" },
+  { label: "Columbia University", value: "Columbia University" },
+  { label: "Yale University", value: "Yale University" },
+  { label: "University of Pennsylvania", value: "University of Pennsylvania" },
+  { label: "Imperial College London", value: "Imperial College London" },
+  { label: "ETH Zurich", value: "ETH Zurich" },
+  {
+    label: "University of California, Berkeley",
+    value: "University of California, Berkeley"
+  },
+  { label: "University of Toronto", value: "University of Toronto" },
+  { label: "Johns Hopkins University", value: "Johns Hopkins University" },
+  {
+    label: "University of California, Los Angeles (UCLA)",
+    value: "University of California, Los Angeles (UCLA)"
+  },
+  {
+    label: "UCL (University College London)",
+    value: "UCL (University College London)"
+  },
+  {
+    label: "National University of Singapore (NUS)",
+    value: "National University of Singapore (NUS)"
+  },
+  { label: "Peking University", value: "Peking University" },
+  { label: "University of Michigan", value: "University of Michigan" },
+  { label: "Tsinghua University", value: "Tsinghua University" },
+  { label: "Cornell University", value: "Cornell University" },
+  { label: "Northwestern University", value: "Northwestern University" },
+  { label: "University of Tokyo", value: "University of Tokyo" },
+  { label: "New York University (NYU)", value: "New York University (NYU)" },
+  { label: "Carnegie Mellon University", value: "Carnegie Mellon University" },
+  { label: "University of Hong Kong", value: "University of Hong Kong" },
+  { label: "University of Edinburgh", value: "University of Edinburgh" },
+  { label: "University of Sydney", value: "University of Sydney" },
+  { label: "University of Melbourne", value: "University of Melbourne" },
+  { label: "Duke University", value: "Duke University" },
+  {
+    label: "University of British Columbia",
+    value: "University of British Columbia"
+  },
+  {
+    label: "University of Texas at Austin",
+    value: "University of Texas at Austin"
+  },
+  { label: "University of Washington", value: "University of Washington" },
+  {
+    label: "University of California, San Diego (UCSD)",
+    value: "University of California, San Diego (UCSD)"
+  },
+  {
+    label: "Australian National University (ANU)",
+    value: "Australian National University (ANU)"
+  },
+  { label: "University of Queensland", value: "University of Queensland" },
+  {
+    label: "University of Wisconsin-Madison",
+    value: "University of Wisconsin-Madison"
+  },
+  { label: "KU Leuven", value: "KU Leuven" },
+  { label: "University of Copenhagen", value: "University of Copenhagen" },
+  { label: "Seoul National University", value: "Seoul National University" },
+  {
+    label: "Shanghai Jiao Tong University",
+    value: "Shanghai Jiao Tong University"
+  },
+  {
+    label: "Ludwig Maximilian University of Munich",
+    value: "Ludwig Maximilian University of Munich"
+  },
+  { label: "Heidelberg University", value: "Heidelberg University" },
+  {
+    label: "Ecole Polytechnique Fédérale de Lausanne (EPFL)",
+    value: "Ecole Polytechnique Fédérale de Lausanne (EPFL)"
+  },
+  { label: "University of Amsterdam", value: "University of Amsterdam" },
+  {
+    label: "Hong Kong University of Science and Technology",
+    value: "Hong Kong University of Science and Technology"
+  },
+  {
+    label: "University of Southern California",
+    value: "University of Southern California"
+  },
+  {
+    label: "University of Illinois Urbana-Champaign",
+    value: "University of Illinois Urbana-Champaign"
+  },
+  { label: "University of Zurich", value: "University of Zurich" },
+  { label: "McGill University", value: "McGill University" },
+  { label: "Sorbonne University", value: "Sorbonne University" },
+  { label: "Monash University", value: "Monash University" },
+  {
+    label: "Technical University of Munich",
+    value: "Technical University of Munich"
+  },
+  {
+    label: "Washington University in St. Louis",
+    value: "Washington University in St. Louis"
+  },
+  {
+    label: "University of California, Davis",
+    value: "University of California, Davis"
+  },
+  { label: "Purdue University", value: "Purdue University" },
+  {
+    label: "University of North Carolina at Chapel Hill",
+    value: "University of North Carolina at Chapel Hill"
+  },
+  { label: "Boston University", value: "Boston University" },
+  { label: "University of Minnesota", value: "University of Minnesota" },
+  {
+    label: "University of Maryland, College Park",
+    value: "University of Maryland, College Park"
+  },
+  { label: "King's College London", value: "King's College London" },
+  {
+    label: "Pennsylvania State University",
+    value: "Pennsylvania State University"
+  },
+  { label: "The Ohio State University", value: "The Ohio State University" },
+  { label: "University of Geneva", value: "University of Geneva" },
+  { label: "Osaka University", value: "Osaka University" },
+  {
+    label: "Tokyo Institute of Technology",
+    value: "Tokyo Institute of Technology"
+  },
+  { label: "University of Groningen", value: "University of Groningen" },
+  { label: "University of Bristol", value: "University of Bristol" },
+  { label: "University of Glasgow", value: "University of Glasgow" },
+  {
+    label: "Vrije Universiteit Amsterdam",
+    value: "Vrije Universiteit Amsterdam"
+  },
+  { label: "University of Helsinki", value: "University of Helsinki" },
+  { label: "University of Auckland", value: "University of Auckland" },
+  { label: "Kyoto University", value: "Kyoto University" },
+  { label: "Rice University", value: "Rice University" },
+  { label: "University of Alberta", value: "University of Alberta" },
+  {
+    label: "Delft University of Technology",
+    value: "Delft University of Technology"
+  },
+  { label: "Université de Montréal", value: "Université de Montréal" },
+  { label: "Stockholm University", value: "Stockholm University" },
+  { label: "RWTH Aachen University", value: "RWTH Aachen University" },
+  {
+    label: "Indian Institute of Science (IISc)",
+    value: "Indian Institute of Science (IISc)"
+  },
+  { label: "University of Oslo", value: "University of Oslo" },
+  { label: "National Taiwan University", value: "National Taiwan University" },
+  { label: "University of St Andrews", value: "University of St Andrews" }
+];
+export const currencies: Option[] = [
+  { label: "USD", value: "$" }, // United States Dollar
+  { label: "EUR", value: "€" }, // Euro
+  { label: "GBP", value: "£" }, // British Pound Sterling
+  { label: "JPY", value: "¥" }, // Japanese Yen
+  { label: "AUD", value: "$" }, // Australian Dollar
+  { label: "CAD", value: "$" }, // Canadian Dollar
+  { label: "CHF", value: "CHF" }, // Swiss Franc
+  { label: "CNY", value: "¥" }, // Chinese Yuan
+  { label: "SEK", value: "kr" }, // Swedish Krona
+  { label: "NZD", value: "$" }, // New Zealand Dollar
+  { label: "MXN", value: "$" }, // Mexican Peso
+  { label: "SGD", value: "$" }, // Singapore Dollar
+  { label: "HKD", value: "$" }, // Hong Kong Dollar
+  { label: "NOK", value: "kr" }, // Norwegian Krone
+  { label: "KRW", value: "₩" }, // South Korean Won
+  { label: "TRY", value: "₺" }, // Turkish Lira
+  { label: "INR", value: "₹" }, // Indian Rupee
+  { label: "BRL", value: "R$" }, // Brazilian Real
+  { label: "ZAR", value: "R" }, // South African Rand
+  { label: "PHP", value: "₱" }, // Philippine Peso
+  { label: "CZK", value: "Kč" }, // Czech Koruna
+  { label: "IDR", value: "Rp" }, // Indonesian Rupiah
+  { label: "MYR", value: "RM" }, // Malaysian Ringgit
+  { label: "HUF", value: "Ft" }, // Hungarian Forint
+  { label: "ISK", value: "kr" }, // Icelandic Krona
+  { label: "DKK", value: "kr" }, // Danish Krone
+  { label: "THB", value: "฿" }, // Thai Baht
+  { label: "PLN", value: "zł" }, // Polish Zloty
+  { label: "ARS", value: "$" }, // Argentine Peso
+  { label: "COP", value: "$" }, // Colombian Peso
+  { label: "CLP", value: "$" }, // Chilean Peso
+  { label: "SAR", value: "﷼" }, // Saudi Riyal
+  { label: "AED", value: "د.إ" }, // United Arab Emirates Dirham
+  { label: "ILS", value: "₪" }, // Israeli New Shekel
+  { label: "VND", value: "₫" }, // Vietnamese Dong
+  { label: "EGP", value: "£" }, // Egyptian Pound
+  { label: "NGN", value: "₦" }, // Nigerian Naira
+  { label: "PKR", value: "₨" }, // Pakistani Rupee
+  { label: "PEN", value: "S/." } // Peruvian Sol
+];
+export const DepartmentType: Option[] = [
+  { value: "Engineering", label: "Engineering" },
+  { value: "Software_Development", label: "Software Development" },
+  { value: "Data_Science", label: "Data Science" },
+  { value: "Product_Management", label: "Product Management" },
+  { value: "Marketing", label: "Marketing" },
+  { value: "Sales", label: "Sales" },
+  { value: "Human_Resources", label: "Human Resources" },
+  { value: "Finance", label: "Finance" },
+  { value: "Accounting", label: "Accounting" },
+  { value: "Customer_Support", label: "Customer Support" },
+  { value: "Information_Technology", label: "Information Technology" },
+  { value: "Design", label: "Design" },
+  { value: "UX_UI", label: "UX/UI" },
+  { value: "Operations", label: "Operations" },
+  { value: "Supply_Chain", label: "Supply Chain" },
+  { value: "Logistics", label: "Logistics" },
+  { value: "Research_Development", label: "Research & Development" },
+  { value: "Legal", label: "Legal" },
+  { value: "Compliance", label: "Compliance" },
+  { value: "Risk_Management", label: "Risk Management" },
+  { value: "Corporate_Communications", label: "Corporate Communications" },
+  { value: "Business_Development", label: "Business Development" },
+  { value: "Strategy", label: "Strategy" },
+  { value: "Quality_Assurance", label: "Quality Assurance" },
+  { value: "Security", label: "Security" },
+  { value: "Facilities_Management", label: "Facilities Management" },
+  { value: "Training_Development", label: "Training & Development" },
+  { value: "Procurement", label: "Procurement" },
+  { value: "Technical_Support", label: "Technical Support" },
+  { value: "Investor_Relations", label: "Investor Relations" },
+  { value: "Public_Relations", label: "Public Relations" },
+  { value: "Medical", label: "Medical" },
+  { value: "Healthcare", label: "Healthcare" },
+  { value: "Content_Creation", label: "Content Creation" },
+  { value: "Editorial", label: "Editorial" },
+  { value: "Animation", label: "Animation" },
+  { value: "Game_Development", label: "Game Development" },
+  { value: "Customer_Success", label: "Customer Success" },
+  { value: "Data_Engineering", label: "Data Engineering" },
+  { value: "DevOps", label: "DevOps" },
+  { value: "Cloud_Infrastructure", label: "Cloud Infrastructure" },
+  { value: "Analytics", label: "Analytics" },
+  { value: "Machine_Learning", label: "Machine Learning" },
+  { value: "AI_Research", label: "AI Research" },
+  { value: "Education", label: "Education" },
+  { value: "Administration", label: "Administration" },
+  { value: "Event_Management", label: "Event Management" }
+];
+export const JobType: Option[] = [
+  { value: "Full Time", label: "Full Time" },
+  { value: "Part Time", label: "Part Time" },
+  { value: "Contract", label: "Contract" },
+  { value: "Freelance", label: "Freelance" },
+  { value: "Internship", label: "Internship" },
+  { value: "Apprenticeship", label: "Apprenticeship" },
+  { value: "Consultant", label: "Consultant" },
+  { value: "Temporary", label: "Temporary" },
+  { value: "Volunteer", label: "Volunteer" }
+];
+export const JobLocations: Option[] = [
+  { value: "Abu_Dhabi", label: "Abu Dhabi, UAE" },
+  { value: "Amsterdam", label: "Amsterdam, Netherlands" },
+  { value: "Atlanta", label: "Atlanta, USA" },
+  { value: "Bangalore", label: "Bangalore, India" },
+  { value: "Barcelona", label: "Barcelona, Spain" },
+  { value: "Beijing", label: "Beijing, China" },
+  { value: "Berlin", label: "Berlin, Germany" },
+  { value: "Birmingham", label: "Birmingham, UK" },
+  { value: "Boston", label: "Boston, USA" },
+  { value: "Brussels", label: "Brussels, Belgium" },
+  { value: "Budapest", label: "Budapest, Hungary" },
+  { value: "Buenos_Aires", label: "Buenos Aires, Argentina" },
+  { value: "Cape_Town", label: "Cape Town, South Africa" },
+  { value: "Chicago", label: "Chicago, USA" },
+  { value: "Copenhagen", label: "Copenhagen, Denmark" },
+  { value: "Dallas", label: "Dallas, USA" },
+  { value: "Delhi", label: "Delhi, India" },
+  { value: "Dubai", label: "Dubai, UAE" },
+  { value: "Dublin", label: "Dublin, Ireland" },
+  { value: "Edinburgh", label: "Edinburgh, UK" },
+  { value: "Helsinki", label: "Helsinki, Finland" },
+  { value: "Hong_Kong", label: "Hong Kong" },
+  { value: "Houston", label: "Houston, USA" },
+  { value: "Istanbul", label: "Istanbul, Turkey" },
+  { value: "Johannesburg", label: "Johannesburg, South Africa" },
+  { value: "Lagos", label: "Lagos, Nigeria" },
+  { value: "London", label: "London, UK" },
+  { value: "Los_Angeles", label: "Los Angeles, USA" },
+  { value: "Madrid", label: "Madrid, Spain" },
+  { value: "Manchester", label: "Manchester, UK" },
+  { value: "Melbourne", label: "Melbourne, Australia" },
+  { value: "Mexico_City", label: "Mexico City, Mexico" },
+  { value: "Miami", label: "Miami, USA" },
+  { value: "Milan", label: "Milan, Italy" },
+  { value: "Montreal", label: "Montreal, Canada" },
+  { value: "Moscow", label: "Moscow, Russia" },
+  { value: "Mumbai", label: "Mumbai, India" },
+  { value: "Munich", label: "Munich, Germany" },
+  { value: "Nairobi", label: "Nairobi, Kenya" },
+  { value: "New_York", label: "New York, USA" },
+  { value: "Oslo", label: "Oslo, Norway" },
+  { value: "Paris", label: "Paris, France" },
+  { value: "Prague", label: "Prague, Czech Republic" },
+  { value: "Rome", label: "Rome, Italy" },
+  { value: "San_Francisco", label: "San Francisco, USA" },
+  { value: "Sao_Paulo", label: "São Paulo, Brazil" },
+  { value: "Seattle", label: "Seattle, USA" },
+  { value: "Shanghai", label: "Shanghai, China" },
+  { value: "Singapore", label: "Singapore" },
+  { value: "Stockholm", label: "Stockholm, Sweden" },
+  { value: "Sydney", label: "Sydney, Australia" },
+  { value: "Tokyo", label: "Tokyo, Japan" },
+  { value: "Toronto", label: "Toronto, Canada" },
+  { value: "Vancouver", label: "Vancouver, Canada" },
+  { value: "Vienna", label: "Vienna, Austria" },
+  { value: "Warsaw", label: "Warsaw, Poland" },
+  { value: "Zurich", label: "Zurich, Switzerland" }
+];
+export const jobSkills: string[] = [
+  "Active Listening",
+  "Adaptability & Flexibility",
+  "Analytical Thinking",
+  "Attention to Detail",
+  "Brainstorming",
+  "Change Management",
+  "Collaboration",
+  "Communication (Written & Verbal)",
+  "Conflict Resolution",
+  "Creative Problem Solving",
+  "Critical Thinking",
+  "Customer Service",
+  "Decision-Making",
+  "Dependability & Work Ethic",
+  "Emotional Intelligence",
+  "Empathy",
+  "Goal Setting",
+  "Initiative",
+  "Interpersonal Skills",
+  "Leadership",
+  "Lifelong Learning",
+  "Mentoring & Coaching",
+  "Motivation",
+  "Negotiation",
+  "Organizational Skills",
+  "Patience",
+  "Persuasion",
+  "Planning & Prioritization",
+  "Presentation Skills",
+  "Public Speaking",
+  "Project Management (General)",
+  "Problem-Solving",
+  "Relationship Building",
+  "Resilience",
+  "Research & Information Synthesis",
+  "Resourcefulness",
+  "Self-Management",
+  "Strategic Thinking",
+  "Teamwork",
+  "Time Management",
+  "Training & Development",
+  "Troubleshooting",
+  "A/B Testing",
+  "API Development (REST, GraphQL)",
+  "B2B Sales",
+  "B2C Sales",
+  "Business Analysis",
+  "Business Intelligence (BI)",
+  "Cloud Computing (AWS, Azure, GCP)",
+  "Command Line Interface (CLI)",
+  "Competitive Analysis",
+  "Computer Vision",
+  "Content Management Systems (CMS)",
+  "Content Marketing",
+  "Conversion Rate Optimization (CRO)",
+  "Copywriting",
+  "CRM Management",
+  "Data Analysis",
+  "Data Governance",
+  "Data Mining",
+  "Data Modeling",
+  "Data Processing",
+  "Data Visualization (Tableau, Power BI, Matplotlib)",
+  "Database Management (SQL, NoSQL, MongoDB, PostgreSQL, MySQL)",
+  "Deep Learning",
+  "DevOps",
+  "Digital Marketing",
+  "Docker",
+  "E-commerce Operations",
+  "Email Marketing",
+  "Embedded Systems",
+  "Feasibility Studies",
+  "Financial Forecasting",
+  "Financial Modeling",
+  "Figma",
+  "Firewall Configuration",
+  "Git/GitHub",
+  "Google Ads (PPC)",
+  "Google Analytics",
+  "Graphic Design (Adobe Suite, Canva)",
+  "Human Resources Information Systems (HRIS)",
+  "Influencer Marketing",
+  "Inventory Management",
+  "IT Support",
+  "Jira & Trello",
+  "Kubernetes",
+  "Lean Six Sigma",
+  "Lead Generation",
+  "Linux/Windows Server Administration",
+  "Logistics",
+  "Machine Learning",
+  "Market Research",
+  "Marketing Automation",
+  "Microservices Architecture",
+  "Motion Graphics",
+  "Natural Language Processing (NLP)",
+  "Network Administration",
+  "Onboarding Processes",
+  "Organizational Development",
+  "Payroll Management",
+  "Performance Management",
+  "Predictive Modeling",
+  "Procurement",
+  "Product Management (General)",
+  "Product Strategy",
+  "Proposal Writing",
+  "Prototyping",
+  "Recruitment & Talent Acquisition",
+  "Risk Management",
+  "Robotics",
+  "Roadmap Planning",
+  "Sales Forecasting",
+  "Salesforce",
+  "Scrum & Agile Methodologies",
+  "SEO (Search Engine Optimization)",
+  "Social Media Marketing & Management",
+  "Statistical Analysis",
+  "Supply Chain Management",
+  "Systems Engineering",
+  "Tax Compliance",
+  "Technical Support",
+  "Time Series Forecasting",
+  "User Research",
+  "User Testing",
+  "UX/UI Design",
+  "Vendor Management",
+  "VPN Configuration",
+  "Warehouse Management",
+  "Wireframing",
+  ".NET Core",
+  "Angular",
+  "C#",
+  "C++",
+  "Django",
+  "Flask",
+  "Go",
+  "Java",
+  "JavaScript",
+  "Kotlin",
+  "MATLAB",
+  "Next.js",
+  "Node.js",
+  "Python (Pandas, NumPy, Scikit-Learn)",
+  "PyTorch",
+  "R Programming",
+  "React",
+  "Ruby on Rails",
+  "Rust",
+  "Swift",
+  "TensorFlow",
+  "TypeScript",
+  "Vue.js",
+  "Adobe XD",
+  "AutoCAD",
+  "Docker",
+  "Firebase",
+  "Freshdesk",
+  "Hadoop",
+  "HubSpot",
+  "Kafka",
+  "Marketo",
+  "MongoDB",
+  "MS Excel (Advanced)",
+  "MS Office Suite",
+  "MySQL",
+  "Power BI",
+  "PostgreSQL",
+  "Salesforce",
+  "Sketch",
+  "SolidWorks",
+  "Spark",
+  "Tableau",
+  "Zendesk"
+];
+
+export const employmentTypOptions: Option[] = [
+  // { label: "Full-time", value: "Full-time" },
+  // { label: "Part-time", value: "Part-time" },
+  // { label: "Contract", value: "Contract" },
+  // { label: "Temporary", value: "Temporary" },
+  // { label: "Internship", value: "Internship" },
+  // { label: "Freelance", value: "Freelance" },
+  // { label: "Apprenticeship", value: "Apprenticeship" },
+  // { label: "Seasonal", value: "Seasonal" },
+  // { label: "Volunteer", value: "Volunteer" },
+  { label: "Remote", value: "Remote" },
+  { label: "On-site", value: "On-site" },
+  { label: "Hybrid", value: "Hybrid" }
+];

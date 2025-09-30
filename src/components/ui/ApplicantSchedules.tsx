@@ -122,7 +122,7 @@ const ApplicantSchedules: React.FC = memo(() => {
     }, [startOfWeek, today]);
 
     return (
-        <div className="h-auto lg:h-[66%] hover:shadow-xl transition-all duration-300">
+        <div className="h-auto hover:shadow-xl transition-all duration-300">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
