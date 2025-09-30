@@ -1,7 +1,9 @@
 import { useNavMenuStore } from "../../store/useNavMenuStore.ts";
 import { TbUserEdit } from "react-icons/tb";
 import { RiNotification2Line } from "react-icons/ri";
-import { MdOutlinePrivacyTip, MdOutlineUnsubscribe } from "react-icons/md";
+import { MdOutlinePrivacyTip, MdOutlineUnsubscribe, MdAutoMode } from "react-icons/md";
+import { useAuth } from "../../store/useAuth.ts";
+import { UserType } from "../../utils/enums.ts";
 import React, { useEffect } from "react";
 
 interface MenuStateProp {
@@ -14,6 +16,7 @@ interface MenuItem {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   isActive: boolean;
+  userTypes?: UserType[]; // Optional: restrict to certain user types
 }
 
 const NotificationSidebarAsMenu: React.FC<MenuStateProp> = ({
@@ -21,6 +24,7 @@ const NotificationSidebarAsMenu: React.FC<MenuStateProp> = ({
                                                               toggle,
                                                             }) => {
   const { settings, toggleSetting } = useNavMenuStore();
+  const { userType } = useAuth();
 
   // Close menu when clicking outside (if needed)
   useEffect(() => {
@@ -54,7 +58,7 @@ const NotificationSidebarAsMenu: React.FC<MenuStateProp> = ({
     };
   }, [open]);
 
-  const menuItems: MenuItem[] = [
+  const allMenuItems: MenuItem[] = [
     {
       key: "account",
       label: "Account",
@@ -66,6 +70,13 @@ const NotificationSidebarAsMenu: React.FC<MenuStateProp> = ({
       label: "Notification",
       icon: RiNotification2Line,
       isActive: settings.notification,
+    },
+    {
+      key: "autoApply",
+      label: "Auto Apply",
+      icon: MdAutoMode,
+      isActive: settings.autoApply,
+      userTypes: [UserType.APPLICANT], // Only show for applicants
     },
     {
       key: "privacy",
@@ -80,6 +91,11 @@ const NotificationSidebarAsMenu: React.FC<MenuStateProp> = ({
       isActive: settings.subscription,
     },
   ];
+
+  // Filter menu items based on user type
+  const menuItems = allMenuItems.filter(item =>
+    !item.userTypes || item.userTypes.includes(userType as UserType)
+  );
 
   const handleMenuItemClick = (key: string) => {
     toggleSetting(key as keyof typeof settings);
@@ -151,6 +167,13 @@ const NotificationSidebarAsMenu: React.FC<MenuStateProp> = ({
                     />
                     <span className="font-semibold text-lg">{item.label}</span>
 
+                    {/* New badge for auto apply */}
+                    {item.key === "autoApply" && (
+                      <span className="ml-2 rounded-full bg-purple-100 px-2 py-1 text-xs font-medium text-purple-600">
+                        New
+                      </span>
+                    )}
+
                     {/* Active indicator */}
                     {item.isActive && (
                       <div className="ml-auto h-2 w-2 rounded-full bg-[#6438C2]" />
@@ -161,6 +184,21 @@ const NotificationSidebarAsMenu: React.FC<MenuStateProp> = ({
             })}
           </ul>
         </nav>
+
+        {/* Auto Apply Status (for applicants only) */}
+        {userType === UserType.APPLICANT && (
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <div className="rounded-lg bg-blue-50 p-3">
+              <div className="flex items-center">
+                <MdAutoMode className="h-4 w-4 text-blue-600 mr-2" />
+                <span className="text-sm font-medium text-blue-900">Auto Apply</span>
+              </div>
+              <p className="text-xs text-blue-700 mt-1">
+                Status: Active • 3 applications today
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Footer spacing */}
         <div className="h-6" />

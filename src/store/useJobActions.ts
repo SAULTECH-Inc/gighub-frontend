@@ -1,7 +1,7 @@
 // store/useJobActions.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { ApplicationMethod } from "../utils/types";
+import { ApplicationMethod, ScreeningAnswer } from "../utils/types";
 import { applyForJob, rateJob, referJobToSomeone } from "../services/api";
 import { RateeType } from "../utils/enums.ts";
 
@@ -10,6 +10,7 @@ interface JobActionState {
   applyToJob: (
     jobId: number,
     applicationMethod: ApplicationMethod,
+    screeningAnswers?: ScreeningAnswer[]
   ) => Promise<any>;
   rateSomeone: (
     rating: number,

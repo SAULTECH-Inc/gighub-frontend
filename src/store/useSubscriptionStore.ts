@@ -4,8 +4,7 @@ import { immer } from "zustand/middleware/immer";
 import { privateApiClient } from "../client/axios.ts";
 import {
   APIResponse,
-  SubscriptionResponse,
-  UserSubscriptionResponse,
+  UserSubscriptionResponse
 } from "../utils/types";
 import {
   NODE_ENV,
@@ -17,14 +16,12 @@ interface SubscriptionStateStore {
   isSubscribed: boolean;
   subscription: UserSubscriptionResponse | null;
   history: UserSubscriptionResponse[] | [];
-  subscriptionPlans: SubscriptionResponse[];
   isLoading: boolean;
   isError: boolean;
   isSuccess: boolean;
 
   setIsSubscribed: (isSubscribed: boolean) => void;
   setSubscription: (sub: UserSubscriptionResponse) => void;
-  setSubscriptionPlans: (plans: SubscriptionResponse[]) => void;
   setIsLoading: (loading: boolean) => void;
   setIsError: (error: boolean) => void;
   setIsSuccess: (success: boolean) => void;
@@ -35,11 +32,10 @@ interface SubscriptionStateStore {
   getUserSubscriptionHistory: (
     userId: number,
   ) => Promise<APIResponse<UserSubscriptionResponse[] | []>>;
-  getSubscriptionPlans: () => Promise<APIResponse<SubscriptionResponse[] | []>>;
   cancelSubscription: (userId: number) => Promise<APIResponse<void>>;
   subscribe: (
     userId: number,
-    planId: number,
+    planId: string,
   ) => Promise<APIResponse<UserSubscriptionResponse | null>>;
   resubscribe: (
     userId: number,
@@ -67,11 +63,6 @@ export const useSubscriptionStore = create<SubscriptionStateStore>()(
       setSubscription: (sub) =>
         set((state) => {
           state.subscription = sub;
-        }),
-
-      setSubscriptionPlans: (plans) =>
-        set((state) => {
-          state.subscriptionPlans = plans;
         }),
 
       setIsLoading: (loading) =>
@@ -159,44 +150,10 @@ export const useSubscriptionStore = create<SubscriptionStateStore>()(
         }
       },
 
-      getSubscriptionPlans: async () => {
-        try {
-          set((state) => {
-            state.isLoading = true;
-            state.isError = false;
-          });
-
-          const response = await privateApiClient.get<
-            APIResponse<SubscriptionResponse[]>
-          >(`/api/subscription/plans`);
-          const rawResponse = response.data;
-          const plans = rawResponse.data;
-
-          set((state) => {
-            state.subscriptionPlans = plans;
-            state.isLoading = false;
-          });
-
-          return rawResponse;
-        } catch (error: any) {
-          console.error("Error fetching subscription plans:", error);
-          set((state) => {
-            state.isError = true;
-            state.isLoading = false;
-          });
-
-          return {
-            message: "Error fetching plans",
-            data: [],
-            statusCode: 500,
-          } as APIResponse<SubscriptionResponse[]>;
-        }
-      },
-
       cancelSubscription: async (userId) => {
         try {
           const response = await privateApiClient.post<APIResponse<void>>(
-            `/api/subscription/cancel`,
+            `${SUBSCRIPTION_SERVICE_HOST}/subscriptions/cancel`,
             { userId },
           );
 
@@ -224,7 +181,7 @@ export const useSubscriptionStore = create<SubscriptionStateStore>()(
         try {
           const response = await privateApiClient.post<
             APIResponse<UserSubscriptionResponse>
-          >(`/api/subscription/subscribe`, { userId, planId });
+          >(`${SUBSCRIPTION_SERVICE_HOST}/subscriptions/subscribe`, { userId, planId });
           const rawResponse = response.data;
           const data = rawResponse.data;
 
@@ -251,7 +208,7 @@ export const useSubscriptionStore = create<SubscriptionStateStore>()(
         try {
           const response = await privateApiClient.post<
             APIResponse<UserSubscriptionResponse>
-          >(`/api/subscription/resubscribe`, { userId, planId });
+          >(`${SUBSCRIPTION_SERVICE_HOST}/subscriptions/resubscribe`, { userId, planId });
           const rawResponse = response.data;
           const data = rawResponse.data;
 
@@ -277,7 +234,6 @@ export const useSubscriptionStore = create<SubscriptionStateStore>()(
       resetSubscription: () => {
         set((state) => {
           state.subscription = null;
-          state.subscriptionPlans = [];
           state.isSubscribed = false;
           state.isLoading = false;
           state.isError = false;
@@ -299,7 +255,6 @@ export const useSubscriptionStore = create<SubscriptionStateStore>()(
       partialize: (state) => ({
         isSubscribed: state.isSubscribed,
         subscription: state.subscription,
-        subscriptionPlans: state.subscriptionPlans,
         isLoading: state.isLoading,
         isError: state.isError,
         isSuccess: state.isSuccess,

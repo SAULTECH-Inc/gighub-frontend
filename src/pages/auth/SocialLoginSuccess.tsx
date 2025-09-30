@@ -8,6 +8,7 @@ import { useSubscriptionStore } from "../../store/useSubscriptionStore.ts";
 import { CheckCircle, User, Briefcase, Loader2, LogIn } from "lucide-react";
 import { motion } from "framer-motion";
 import { storage } from "../../utils/helpers.ts";
+import { NODE_ENV } from "../../utils/constants.ts";
 
 const SocialLoginSuccess: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -47,7 +48,7 @@ const SocialLoginSuccess: React.FC = () => {
       if (!token || !email || !userType) {
         console.log("Missing required params, redirecting to login");
         await new Promise(resolve => setTimeout(resolve, 1000));
-        await removeFromLocalStorage();
+        await removeFromLocalStorage(NODE_ENV);
         navigate("/login");
         return;
       }
@@ -112,7 +113,7 @@ const SocialLoginSuccess: React.FC = () => {
       } catch (error) {
         console.error("Login failed:", error);
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await removeFromLocalStorage();
+        await removeFromLocalStorage(NODE_ENV);
         navigate("/login");
       }
     };

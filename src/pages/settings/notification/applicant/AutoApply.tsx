@@ -20,10 +20,12 @@ interface AutoApplyConfig {
 const AutoApply = () => {
   const {
     applicantSettings,
-    autoApply,
     setAutoApply,
     updateAutoApply
   } = useSettingsStore();
+
+  // Get the actual data from applicantSettings instead of the separate state
+  const actualAutoApplyData = applicantSettings?.notifications?.options?.autoApply;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -69,11 +71,15 @@ const AutoApply = () => {
     },
   ], []);
 
+  // Initialize state from backend data
   useEffect(() => {
-    if (applicantSettings?.notifications?.options?.autoApply) {
-      setAutoApply(applicantSettings.notifications.options.autoApply);
+    const autoApplyData = applicantSettings?.notifications?.options?.autoApply;
+
+    if (autoApplyData && (!actualAutoApplyData ||
+      JSON.stringify(actualAutoApplyData) !== JSON.stringify(autoApplyData))) {
+      setAutoApply(autoApplyData);
     }
-  }, [applicantSettings, setAutoApply]);
+  }, [applicantSettings, setAutoApply, actualAutoApplyData]);
 
   const debouncedUpdate = useCallback(
     debounce(async (settings: AutoApplyNotification) => {
@@ -103,34 +109,34 @@ const AutoApply = () => {
   }, [debouncedUpdate]);
 
   const handleAutoApplyToggle = useCallback((key: string) => {
-    if (!autoApply) return;
+    if (!actualAutoApplyData) return;
 
     const updatedSettings = {
-      ...autoApply,
+      ...actualAutoApplyData,
       option: {
-        ...autoApply.option,
-        [key]: !autoApply.option[key as keyof AutoApplyState],
+        ...actualAutoApplyData.option,
+        [key]: !actualAutoApplyData.option[key as keyof AutoApplyState],
       },
     };
     setAutoApply(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [autoApply, setAutoApply, debouncedUpdate]);
+  }, [actualAutoApplyData, setAutoApply, debouncedUpdate]);
 
   const handleNotificationTypeToggle = useCallback((key: string) => {
-    if (!autoApply) return;
+    if (!actualAutoApplyData) return;
 
     const updatedSettings = {
-      ...autoApply,
+      ...actualAutoApplyData,
       notificationType: {
-        ...autoApply.notificationType,
-        [key]: !autoApply.notificationType[key as keyof NotificationType],
+        ...actualAutoApplyData.notificationType,
+        [key]: !actualAutoApplyData.notificationType[key as keyof NotificationType],
       },
     };
     setAutoApply(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [autoApply, setAutoApply, debouncedUpdate]);
+  }, [actualAutoApplyData, setAutoApply, debouncedUpdate]);
 
-  if (!autoApply) {
+  if (!actualAutoApplyData) {
     return (
       <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
         <div className="animate-pulse">
@@ -193,7 +199,7 @@ const AutoApply = () => {
             <div className="space-y-4">
               {autoApplyOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = autoApply.option[option.key as keyof AutoApplyState];
+                const isActive = actualAutoApplyData?.option?.[option.key as keyof AutoApplyState] || false;
 
                 return (
                   <div
@@ -240,7 +246,7 @@ const AutoApply = () => {
             <div className="space-y-4">
               {notificationTypeOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = autoApply.notificationType[option.key as keyof NotificationType];
+                const isActive = actualAutoApplyData?.notificationType?.[option.key as keyof NotificationType] || false;
 
                 return (
                   <div

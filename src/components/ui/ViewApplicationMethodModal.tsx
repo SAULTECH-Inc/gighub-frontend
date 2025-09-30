@@ -9,14 +9,13 @@ import {
   User,
   Briefcase,
   ExternalLink,
-  AlertTriangle
+  AlertTriangle, RotateCcw, XCircle
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import useModalStore from "../../store/modalStateStores.ts";
 import { ApplicationResponse } from "../../utils/types";
-import { withdrawApplication } from "../../services/api";
-import { ApplicationStatus } from "../../utils/dummyApplications.ts";
-import { UserType } from "../../utils/enums.ts";
+import { reApply, withdrawApplication } from "../../services/api";
+import { ApplicationStatus, UserType } from "../../utils/enums.ts";
 import { USER_TYPE } from "../../utils/helpers.ts";
 
 interface ModalProps {
@@ -29,27 +28,38 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = memo(({
                                                                  application,
                                                                }) => {
   const { modals, closeModal } = useModalStore();
+  const [myApplication, setMyApplication] = React.useState<ApplicationResponse>(application);
   const isOpen = modals[modalId];
 
   const handleWithdrawApplication = useCallback(async (jobId: number) => {
     try {
       const response = await withdrawApplication(jobId);
-      if (response) {
-        closeModal(modalId);
-        // Optionally trigger a refresh of the applications list
+      if(response.statusCode === 200) {
+        setMyApplication(response.data);
       }
     } catch (error) {
       console.error("Failed to withdraw application:", error);
     }
   }, [closeModal, modalId]);
 
+  const handleReApply = useCallback(async(jobId: number) => {
+    try {
+      const response = await reApply(jobId);
+      if(response.statusCode === 200) {
+        setMyApplication(response.data);
+      }
+    }catch (error) {
+      console.error("Failed to re-apply:", error);
+    }
+  },[closeModal, modalId]);
+
   const handleClose = useCallback(() => {
     closeModal(modalId);
   }, [closeModal, modalId]);
 
   const profilePath = USER_TYPE === UserType.EMPLOYER
-    ? `/applicant/public-profile-view/${application?.applicant?.id}`
-    : `/employers/${application?.job?.employer?.id}/${application?.job?.employer?.companyName}/profile`;
+    ? `/applicant/public-profile-view/${myApplication?.applicant?.id}`
+    : `/employers/${myApplication?.job?.employer?.id}/${myApplication?.job?.employer?.companyName}/profile`;
 
   const getStatusVariant = (status: string) => {
     const statusLower = status.toLowerCase();
@@ -60,7 +70,7 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = memo(({
     return 'default';
   };
 
-  const statusVariant = getStatusVariant(application.status);
+  const statusVariant = getStatusVariant(myApplication.status);
   const statusStyles = {
     warning: 'bg-amber-50 text-amber-700 border-amber-200',
     success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -71,35 +81,35 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = memo(({
 
   const applicationMethods = [
     {
-      key: 'byCv' as keyof typeof application.job.applicationMethod,
+      key: 'byCv' as keyof typeof myApplication.job.applicationMethod,
       icon: FileText,
       label: 'CV/Resume',
       filename: 'Aliyu_CV.pdf',
       color: 'bg-blue-100 text-blue-600'
     },
     {
-      key: 'byVideo' as keyof typeof application.job.applicationMethod,
+      key: 'byVideo' as keyof typeof myApplication.job.applicationMethod,
       icon: Video,
       label: 'Video Interview',
       filename: 'Video Response',
       color: 'bg-purple-100 text-purple-600'
     },
     {
-      key: 'byProfile' as keyof typeof application.job.applicationMethod,
+      key: 'byProfile' as keyof typeof myApplication.job.applicationMethod,
       icon: User,
       label: 'Profile',
       filename: 'Complete Profile',
       color: 'bg-green-100 text-green-600'
     },
     {
-      key: 'byCoverLetter' as keyof typeof application.job.applicationMethod,
+      key: 'byCoverLetter' as keyof typeof myApplication.job.applicationMethod,
       icon: FileText,
       label: 'Cover Letter',
       filename: 'Cover Letter',
       color: 'bg-orange-100 text-orange-600'
     },
     {
-      key: 'byPortfolio' as keyof typeof application.job.applicationMethod,
+      key: 'byPortfolio' as keyof typeof myApplication.job.applicationMethod,
       icon: Briefcase,
       label: 'Portfolio',
       filename: 'Portfolio Submission',
@@ -108,7 +118,7 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = memo(({
   ] as const;
 
   const activeApplicationMethods = applicationMethods.filter(
-    method => application?.job?.applicationMethod?.[method.key] === true
+    method => myApplication?.job?.applicationMethod?.[method.key] === true
   );
 
   if (!isOpen) return null;
@@ -147,10 +157,10 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = memo(({
               <div className="flex items-end space-x-4">
                 {/* Company Logo */}
                 <div className="h-16 w-16 overflow-hidden rounded-xl bg-white p-1 shadow-lg">
-                  {application?.job?.employer?.companyLogo ? (
+                  {myApplication?.job?.employer?.companyLogo ? (
                     <img
-                      src={application.job.employer.companyLogo}
-                      alt={`${application.job.company} logo`}
+                      src={myApplication.job.employer.companyLogo}
+                      alt={`${myApplication.job.company} logo`}
                       className="h-full w-full rounded-lg object-cover"
                     />
                   ) : (
@@ -163,18 +173,18 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = memo(({
                 {/* Company Details */}
                 <div className="flex-1 text-white">
                   <h2 className="text-lg font-bold truncate">
-                    {application?.job?.employer?.companyName || application?.job?.company}
+                    {myApplication?.job?.employer?.companyName || myApplication?.job?.company}
                   </h2>
                   <div className="flex items-center space-x-1 text-sm text-white/80">
                     <MapPin className="h-4 w-4" />
-                    <span className="truncate">{application?.job?.location}</span>
+                    <span className="truncate">{myApplication?.job?.location}</span>
                   </div>
                 </div>
 
                 {/* Job Type Badge */}
-                {application?.job?.jobType && (
+                {myApplication?.job?.jobType && (
                   <div className="rounded-lg bg-white/20 backdrop-blur-sm px-3 py-1 text-sm font-medium text-white">
-                    {application.job.jobType}
+                    {myApplication.job.jobType}
                   </div>
                 )}
               </div>
@@ -187,7 +197,7 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = memo(({
             <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className={`inline-flex items-center rounded-lg border px-4 py-2 text-sm font-medium ${statusStyles[statusVariant]}`}>
                 <div className={`mr-2 h-2 w-2 rounded-full ${statusVariant === 'warning' ? 'bg-amber-500' : statusVariant === 'success' ? 'bg-emerald-500' : statusVariant === 'error' ? 'bg-red-500' : statusVariant === 'info' ? 'bg-blue-500' : 'bg-slate-500'}`} />
-                {application?.status}
+                {myApplication?.status}
               </div>
 
               <Link
@@ -202,11 +212,11 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = memo(({
             {/* Job Title */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-slate-900 mb-1">
-                {application?.job?.title}
+                {myApplication?.job?.title}
               </h3>
               <p className="text-sm text-slate-600">
                 Application submitted on{" "}
-                {new Date(application?.createdAt).toLocaleDateString("en-US", {
+                {new Date(myApplication?.createdAt).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -265,7 +275,7 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = memo(({
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => handleWithdrawApplication(application.job.id)}
+                  onClick={() => handleWithdrawApplication(myApplication.job.id)}
                   className="flex items-center justify-center space-x-2 rounded-lg bg-red-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                 >
                   <AlertTriangle className="h-4 w-4" />
@@ -282,19 +292,29 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = memo(({
                     Close
                   </motion.button>
 
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleWithdrawApplication(application.job.id)}
-                    className="flex-1 sm:flex-none flex items-center justify-center space-x-2 rounded-lg bg-red-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                  >
-                    <AlertTriangle className="h-4 w-4" />
-                    <span>
-                      {application?.status === ApplicationStatus.WITHDRAW
-                        ? "Re-Apply"
-                        : "Withdraw Application"}
-                    </span>
-                  </motion.button>
+                  {
+                    myApplication?.status === ApplicationStatus.PENDING ? (
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleWithdrawApplication(myApplication.job.id)}
+                        className="flex-1 sm:flex-none flex items-center justify-center space-x-2 rounded-lg bg-orange-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                      >
+                        <XCircle className="h-4 w-4" />
+                        <span>Withdraw Application</span>
+                      </motion.button>
+                    ) : (
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={()=>handleReApply(myApplication.job.id)}
+                        className="flex-1 sm:flex-none flex items-center justify-center space-x-2 rounded-lg bg-blue-400 px-6 py-3 text-sm font-medium text-white shadow-sm"
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                        <span>Re-Apply</span>
+                      </motion.button>
+                    )
+                  }
                 </>
               )}
             </div>

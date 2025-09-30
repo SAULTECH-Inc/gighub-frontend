@@ -1,23 +1,34 @@
 import { useNavMenuStore } from "../../../../store/useNavMenuStore.ts";
 import { RiNotification2Line, RiAccountCircleLine } from "react-icons/ri";
-import { MdOutlinePrivacyTip, MdOutlineUnsubscribe } from "react-icons/md";
+import { MdOutlinePrivacyTip, MdOutlineUnsubscribe, MdAutoMode } from "react-icons/md";
+import { useAuth } from "../../../../store/useAuth.ts";
+import { UserType } from "../../../../utils/enums.ts";
 
 interface SettingConfig {
   key: string;
   title: string;
   icon: React.ComponentType<{ className?: string }>;
   description: string;
+  userTypes?: UserType[]; // Optional: restrict to certain user types
 }
 
 const NotificationSettingsHeader = () => {
   const { settings } = useNavMenuStore();
+  const { userType } = useAuth();
 
-  const settingsConfig: SettingConfig[] = [
+  const allSettingsConfig: SettingConfig[] = [
     {
       key: "notification",
       title: "Notification Settings",
       icon: RiNotification2Line,
       description: "Manage your notification preferences and alerts",
+    },
+    {
+      key: "autoApply",
+      title: "Auto Apply Settings",
+      icon: MdAutoMode,
+      description: "Configure automatic job application preferences and criteria",
+      userTypes: [UserType.APPLICANT], // Only show for applicants
     },
     {
       key: "subscription",
@@ -38,6 +49,11 @@ const NotificationSettingsHeader = () => {
       description: "Control your privacy and data sharing preferences",
     },
   ];
+
+  // Filter settings config based on user type
+  const settingsConfig = allSettingsConfig.filter(setting =>
+    !setting.userTypes || setting.userTypes.includes(userType as UserType)
+  );
 
   const getCurrentSetting = (): SettingConfig | undefined => {
     return settingsConfig.find((setting) => settings[setting.key as keyof typeof settings]);
@@ -64,14 +80,40 @@ const NotificationSettingsHeader = () => {
           <p className="text-purple-100 text-sm font-medium mt-1">
             {currentSetting.description}
           </p>
+          {/* Auto apply status indicator */}
+          {currentSetting.key === "autoApply" && (
+            <div className="flex items-center mt-2 space-x-2">
+              <div className="flex items-center space-x-1">
+                <div className="h-2 w-2 rounded-full bg-purple-300 animate-pulse"></div>
+                <span className="text-xs text-purple-100 font-medium">Auto Apply Active</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Decorative element */}
+      {/* Status indicator for auto apply or decorative element for others */}
       <div className="hidden lg:flex items-center space-x-2">
-        <div className="h-2 w-2 rounded-full bg-white/30"></div>
-        <div className="h-2 w-2 rounded-full bg-white/50"></div>
-        <div className="h-2 w-2 rounded-full bg-white/70"></div>
+        {currentSetting.key === "autoApply" ? (
+          <div className="flex flex-col items-end">
+            <div className="flex items-center space-x-2 text-purple-100">
+              <div className="text-right">
+                <p className="text-xs font-medium">Match Threshold</p>
+                <p className="text-sm font-bold">75%</p>
+              </div>
+              <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center">
+                <span className="text-xs font-bold text-white">75</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Default decorative elements */
+          <>
+            <div className="h-2 w-2 rounded-full bg-white/30"></div>
+            <div className="h-2 w-2 rounded-full bg-white/50"></div>
+            <div className="h-2 w-2 rounded-full bg-white/70"></div>
+          </>
+        )}
       </div>
     </header>
   );

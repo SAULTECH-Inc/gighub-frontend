@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
-import { API_BASE_URL, storage } from "../utils/constants.ts";
+import { API_BASE_URL, NODE_ENV, storage } from "../utils/constants.ts";
 import { removeFromLocalStorage, useAuth } from "../store/useAuth.ts";
 
 const baseURL = API_BASE_URL || "http://localhost:3005";
@@ -48,7 +48,7 @@ privateApiClient.interceptors.response.use(
         }
       } catch (refreshError) {
         storage.removeItem("authToken");
-        await removeFromLocalStorage();
+        await removeFromLocalStorage(NODE_ENV);
         window.location.href = "/login";
         throw refreshError;
       }

@@ -836,6 +836,12 @@ export const useAuth = create<AuthData>()(
         }catch (e) {
           handleError(e);
         }
+        return {
+          statusCode: 500,
+          message: "Update failed",
+          data: null,
+          meta: null
+        } as APIResponse<any>;
       }
     })),
     {

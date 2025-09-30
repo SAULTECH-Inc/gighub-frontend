@@ -7,12 +7,8 @@ import {
 import React, { useEffect, useState } from "react";
 import DatePicker from "../../../common/DatePicker";
 import SearchableSelectWithAdd from "../../../common/SearchableSelectWithAdd";
-import { JobLocations } from "../../../../utils/JobType";
-import { EmploymentType } from "../../../../utils/DepartmentType";
-import { JobType } from "../../../../utils/JobType";
 import CustomSelect from "../../../common/CustomSelect";
 import CustomRadioButton from "../../../common/CustomRadioButton";
-import { currencies } from "../../../../utils/Countries";
 import { FaAsterisk } from "react-icons/fa";
 import { jobLevels, Option } from "../../../../utils/types";
 import { useDepartments } from "../../../../hooks/useDepartments.ts";
@@ -28,6 +24,7 @@ import {
   RiTimeLine,
   RiTrophyLine
 } from "react-icons/ri";
+import { currencies, employmentTypOptions, JobLocations, JobType } from "../../../../utils/constants.ts";
 
 const CreateJobStepTwo: React.FC = () => {
   const departments = useDepartments();
@@ -654,7 +651,7 @@ const CreateJobStepTwo: React.FC = () => {
                   <div className="relative z-[60]">
                     <CustomSelect
                       placeholder={job.employmentType || "Choose ..."}
-                      options={EmploymentType}
+                      options={employmentTypOptions}
                       className="h-10 sm:h-12 w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 text-xs sm:text-sm focus:border-blue-500 transition-colors duration-200"
                       onChange={handleEmploymentSelect}
                     />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useModalStore from "../../store/modalStateStores.ts";
 import PaymentModal from "../../components/ui/PaymentModal.tsx";
 import { UserType } from "../../utils/enums.ts";
@@ -9,16 +9,43 @@ import {
   applicantNavItemsMobile,
   employerNavBarItemMap,
   employerNavItems,
-  employerNavItemsMobile,
+  employerNavItemsMobile
 } from "../../utils/constants.ts";
 import { USER_TYPE } from "../../utils/helpers.ts";
 import MainFooter from "../../components/layouts/MainFooter.tsx";
+import { BillingCycle, SubscriptionResponse, SubscriptionType } from "../../utils/types";
+import { useSubscriptionStore } from "../../store/useSubscriptionStore.ts";
+import { useFetchSubscriptionPlans } from "../../hooks/useFetchSubscriptionPlans.ts";
+import { useAuth } from "../../store/useAuth.ts";
+
+interface PlanUI {
+  id: string;
+  name: string;
+  period: string;
+  price: string;
+  originalPrice: string;
+  dailyLimit: string;
+  volume: string;
+  icon: string;
+  gradient: string;
+  badge?: string;
+  badgeColor?: string;
+  features: string[];
+  savings?: string;
+  apiPlan: SubscriptionResponse;
+}
 
 const SubscriptionPlansView: React.FC = () => {
+  const { isAuthenticated, applicant, employer, } = useAuth();
+  const [user,] = useState<any>(USER_TYPE === UserType.APPLICANT ? applicant : employer);
   const { openModal, isModalOpen } = useModalStore();
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const { subscription: userSubscription, isLoading: subscriptionLoading } = useSubscriptionStore();
+  const { data: subscriptionPlans, isLoading: plansLoading } = useFetchSubscriptionPlans(
+    USER_TYPE === UserType.APPLICANT ? SubscriptionType.PROFESSIONAL : SubscriptionType.ENTERPRISE);
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionResponse | null>(null);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [animatedStats, setAnimatedStats] = useState({
-    applications: 0,
+    primary: 0,
     users: 0,
     success: 0,
   });
@@ -49,9 +76,17 @@ const SubscriptionPlansView: React.FC = () => {
         animate();
       };
 
-      animateValue(0, 2500000, (val) =>
-        setAnimatedStats((prev) => ({ ...prev, applications: val })),
-      );
+      // Different stats based on user type
+      if (USER_TYPE === UserType.APPLICANT) {
+        animateValue(0, 2500000, (val) =>
+          setAnimatedStats((prev) => ({ ...prev, primary: val })),
+        );
+      } else {
+        animateValue(0, 150000, (val) =>
+          setAnimatedStats((prev) => ({ ...prev, primary: val })),
+        );
+      }
+
       animateValue(0, 15000, (val) =>
         setAnimatedStats((prev) => ({ ...prev, users: val })),
       );
@@ -61,128 +96,256 @@ const SubscriptionPlansView: React.FC = () => {
     }, 500);
   }, []);
 
-  const handleSubscription = (planType?: string) => {
-    if (planType) setSelectedPlan(planType);
-    openModal("payment-modal");
+  const handleSubscription = async (planType?: string, apiPlan?: SubscriptionResponse) => {
+    if (planType) setSelectedPlan(apiPlan as SubscriptionResponse);
+
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true);
+      // Redirect to login with return URL
+      window.location.href = `/login?redirect=/subscriptions&plan=${planType || 'default'}`;
+      return;
+    }
+
+    // If we have an API plan and user info, attempt to subscribe
+    if (apiPlan && user?.id) {
+      try {
+        // await subscribe(user.id, apiPlan.id);
+        // On success, show payment modal or redirect to payment
+        openModal("payment-modal");
+      } catch (error) {
+        console.error("Subscription failed:", error);
+        // Handle error - show error message to user
+      }
+    } else {
+      // Just open payment modal for plan selection
+      openModal("payment-modal");
+    }
   };
 
-  const plans = [
-    {
-      id: "monthly",
-      name: "Starter",
-      period: "Monthly",
-      price: 29,
-      originalPrice: 39,
-      applications: "6,000",
-      icon: "⭐",
-      gradient: "from-[#6438C2] to-[#FA4E09]",
-      features: [
-        "Up to 6,000 automated applications",
+  // Helper function to determine if user can subscribe to plan
+  const canSubscribeToPlan = (plan: SubscriptionResponse): boolean => {
+    if (!isAuthenticated) return true; // Show all plans to non-authenticated users
+
+    // Check if user already has this subscription
+    return !(userSubscription?.subscriptionId === plan.id && userSubscription.isActive);
+
+
+  };
+
+  // Helper function to get button text based on user state
+  const getButtonText = (plan: SubscriptionResponse, isPopular: boolean): string => {
+    if (!isAuthenticated) {
+      return isPopular ? "🚀 Sign Up & Start Free Trial" : "Get Started";
+    }
+
+    if (userSubscription?.subscriptionId === plan.id && userSubscription.isActive) {
+      return "Current Plan";
+    }
+
+    if (userSubscription?.subscriptionId && userSubscription.isActive) {
+      // User has different active subscription
+      return isPopular ? "🚀 Upgrade Plan" : "Switch Plan";
+    }
+
+    return isPopular ? "🚀 Start Free Trial" : "Subscribe Now";
+  };
+
+  // Helper function to map API plans to UI structure
+  const mapApiPlansToUI = (apiPlans: SubscriptionResponse[]): PlanUI[] => {
+    const getFeaturesByPlan = (plan: SubscriptionResponse): string[] => {
+      const baseFeatures = USER_TYPE === UserType.APPLICANT ? [
+        `Up to ${plan.billingCycle === BillingCycle.MONTHLY ? "6,000" : plan.billingCycle === BillingCycle.QUARTERLY ? "18,000" : "73,000"} automated applications`,
         "AI-powered job matching",
         "Personalized cover letters",
-        "Basic analytics dashboard",
-        "Email entity",
-      ],
-    },
-    {
-      id: "quarterly",
-      name: "Professional",
-      period: "Quarterly",
-      price: 69,
-      originalPrice: 117,
-      applications: "18,000",
-      icon: "💎",
-      gradient: "from-[#6438C2] to-[#65FF81]",
-      badge: "MOST POPULAR",
-      badgeColor: "bg-[#FACC15]",
-      features: [
-        "Up to 18,000 automated applications",
-        "Priority job matching",
-        "Advanced filtering options",
-        "Detailed analytics & insights",
-        "Priority email entity",
-        "Custom application templates",
-      ],
-    },
-    {
-      id: "annual",
-      name: "Enterprise",
-      period: "Annual",
-      price: 199,
-      originalPrice: 468,
-      applications: "73,000",
-      icon: "🏆",
-      gradient: "from-[#6438C2] to-[#FA4E09]",
-      badge: "BEST VALUE",
-      badgeColor: "bg-green-400",
-      features: [
-        "Up to 73,000 automated applications",
-        "Premium job matching algorithm",
-        "Exclusive job opportunities",
-        "Advanced analytics & reporting",
-        "Dedicated account manager",
-        "Custom integrations",
-        "White-glove onboarding",
-      ],
-    },
-  ];
+        "Analytics dashboard",
+        "Email notifications"
+      ] : [
+        "Unlimited candidate matches",
+        "AI-powered screening and matching",
+        "Detailed candidate profiles",
+        "Hiring analytics dashboard",
+        "Email notifications"
+      ];
 
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Software Engineer",
-      company: "Tech Corp",
-      text: "Auto Apply helped me land my dream job in just 3 weeks! The automated applications saved me countless hours.",
-      rating: 5,
-    },
-    {
-      name: "Michael Chen",
-      role: "Marketing Manager",
-      company: "StartupXYZ",
-      text: "Incredible results! I got 40% more interview requests compared to manual applications.",
-      rating: 5,
-    },
-    {
-      name: "Emily Rodriguez",
-      role: "Product Designer",
-      company: "Design Studio",
-      text: "The personalized cover letters and smart matching made all the difference in my job search.",
-      rating: 5,
-    },
-  ];
+      if (plan.type === SubscriptionType.ENTERPRISE) {
+        return [...baseFeatures,
+          "Dedicated account manager",
+          "Custom integrations",
+          "White-glove onboarding",
+          "Priority support"
+        ];
+      }
 
-  const features = [
-    {
-      icon: "🤖",
-      title: "AI-Powered Matching",
-      desc: "Smart algorithms find the perfect job matches for your skills",
-    },
-    {
-      icon: "✍️",
-      title: "Personalized Applications",
-      desc: "Custom cover letters and applications for each opportunity",
-    },
-    {
-      icon: "📊",
-      title: "Advanced Analytics",
-      desc: "Track your success rate and optimize your job search strategy",
-    },
-    {
-      icon: "🎯",
-      title: "Targeted Outreach",
-      desc: "Focus on companies and roles that match your career goals",
-    },
-    {
-      icon: "⚡",
-      title: "Lightning Fast",
-      desc: "Apply to hundreds of jobs in minutes, not hours",
-    },
-    {
-      icon: "🔒",
-      title: "Secure & Private",
-      desc: "Your data is encrypted and protected with enterprise-grade security",
-    },
-  ];
+      return baseFeatures;
+    };
+
+    return apiPlans
+      .filter(plan => plan.isActive)
+      .map(plan => ({
+        id: plan.billingCycle.toLowerCase(),
+        name: plan.name,
+        period: plan.billingCycle,
+        price: `₦${plan.price.toLocaleString()}`,
+        originalPrice: `₦${Math.round(plan.price * 1.4).toLocaleString()}`,
+        dailyLimit: plan.type === SubscriptionType.ENTERPRISE ? "Unlimited" : "200",
+        volume: plan.billingCycle === BillingCycle.MONTHLY ? "6,000" :
+          plan.billingCycle === BillingCycle.QUARTERLY ? "18,000" : "73,000",
+        icon: plan.billingCycle === BillingCycle.MONTHLY ? "⭐" :
+          plan.billingCycle === BillingCycle.QUARTERLY ? "💎" : "🏆",
+        gradient: plan.billingCycle === BillingCycle.QUARTERLY ? "from-[#6438C2] to-[#65FF81]" : "from-[#6438C2] to-[#FA4E09]",
+        badge: plan.billingCycle === BillingCycle.QUARTERLY ? "MOST POPULAR" :
+          plan.billingCycle === BillingCycle.ANNUALLY ? "BEST VALUE" : undefined,
+        badgeColor: plan.billingCycle === BillingCycle.QUARTERLY ? "bg-[#FACC15]" : "bg-green-400",
+        features: getFeaturesByPlan(plan),
+        savings: plan.billingCycle === BillingCycle.QUARTERLY ? "Save 17%" :
+          plan.billingCycle === BillingCycle.ANNUALLY ? "Save 25%" : undefined,
+        apiPlan: plan
+      }));
+  };
+
+  // Dynamic content based on user type with API-driven pricing
+  const getServiceContent = () => {
+    const mappedPlans = mapApiPlansToUI(subscriptionPlans?.data || []);
+
+    if (USER_TYPE === UserType.APPLICANT) {
+      return {
+        serviceTitle: "Auto Apply",
+        heroTitle: "Supercharge Your Job Search",
+        heroSubtitle: "Let AI do the heavy lifting while you focus on what matters - landing your dream job",
+        primaryStat: "Applications Sent",
+        secondaryStat: "Happy Job Seekers",
+        plans: mappedPlans,
+        features: [
+          {
+            icon: "🤖",
+            title: "AI-Powered Job Matching",
+            desc: "Smart algorithms find the perfect job matches for your skills and experience"
+          },
+          {
+            icon: "✍️",
+            title: "Personalized Applications",
+            desc: "Custom cover letters optimized for each employer and company culture"
+          },
+          {
+            icon: "📊",
+            title: "Market Analytics",
+            desc: "Track success rates and get insights into job market trends and opportunities"
+          },
+          {
+            icon: "🎯",
+            title: "Multi-Platform Coverage",
+            desc: "Apply across LinkedIn, Indeed, company websites and major job boards"
+          },
+          {
+            icon: "⚡",
+            title: "Lightning Fast Applications",
+            desc: "Apply to 200 jobs daily across all major job platforms automatically"
+          },
+          {
+            icon: "🔒",
+            title: "Secure & Compliant",
+            desc: "Your data is encrypted and protected with enterprise-grade security"
+          },
+        ],
+        testimonials: [
+          {
+            name: "Adebayo Okafor",
+            role: "Software Developer",
+            company: "Flutterwave",
+            text: "Auto Apply helped me land my fintech role in Lagos within 2 weeks! Got 5x more interviews than manual applications.",
+            rating: 5,
+          },
+          {
+            name: "Funmi Adeyemi",
+            role: "Digital Marketing Manager",
+            company: "Paystack",
+            text: "As a busy professional, this saved me 10+ hours weekly. The AI understood the job market perfectly!",
+            rating: 5,
+          },
+          {
+            name: "Chidi Okwu",
+            role: "Product Manager",
+            company: "Konga",
+            text: "Increased my application success rate by 40%. The personalized cover letters made all the difference.",
+            rating: 5,
+          },
+        ],
+        ctaTitle: "Ready to Transform Your Career?",
+        ctaSubtitle: "Join thousands of professionals who've accelerated their careers with Auto Apply",
+        questionTitle: "Why Job Seekers Choose Auto Apply"
+      };
+    } else {
+      return {
+        serviceTitle: "Smart Match",
+        heroTitle: "Transform Your Hiring Process",
+        heroSubtitle: "Find top talent faster with AI-powered matching while saving on recruitment costs",
+        primaryStat: "Candidates Matched",
+        secondaryStat: "Happy Employers",
+        plans: mappedPlans,
+        features: [
+          {
+            icon: "🤖",
+            title: "Advanced Matching",
+            desc: "AI trained on hiring patterns, skill requirements, and cultural fit"
+          },
+          {
+            icon: "📋",
+            title: "Automated Talent Sourcing",
+            desc: "Get pre-screened candidates from universities, bootcamps, and professional networks"
+          },
+          {
+            icon: "📊",
+            title: "Hiring ROI Analytics",
+            desc: "Track time-to-hire, cost-per-hire, and success rates vs traditional methods"
+          },
+          {
+            icon: "🎯",
+            title: "Skills-Based Matching",
+            desc: "Find candidates with specific technical skills, certifications, and experience"
+          },
+          {
+            icon: "⚡",
+            title: "Rapid Candidate Delivery",
+            desc: "Get qualified candidates within 24 hours instead of weeks"
+          },
+          {
+            icon: "🔒",
+            title: "Compliant Screening",
+            desc: "All candidate screening follows data protection regulations and best practices"
+          },
+        ],
+        testimonials: [
+          {
+            name: "Kemi Adesola",
+            role: "HR Director",
+            company: "GTBank",
+            text: "Smart Match reduced our time-to-hire by 70%. We've filled 15 tech roles within a month!",
+            rating: 5,
+          },
+          {
+            name: "James Okonkwo",
+            role: "Startup Founder",
+            company: "FinTech Lagos",
+            text: "As a startup, we couldn't afford traditional recruitment. Smart Match gave us access to top talent at 60% lower cost.",
+            rating: 5,
+          },
+          {
+            name: "Aisha Abdullahi",
+            role: "Talent Manager",
+            company: "Interswitch",
+            text: "The quality of candidates is exceptional. 90% of our interviews now result in offers vs 20% before.",
+            rating: 5,
+          },
+        ],
+        ctaTitle: "Ready to Transform Your Hiring?",
+        ctaSubtitle: "Join leading companies who've streamlined recruitment with Smart Match",
+        questionTitle: "Why Companies Choose Smart Match"
+      };
+    }
+  };
+
+  const content = getServiceContent();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F7F7F7] to-[#E8E8FF]">
@@ -201,173 +364,315 @@ const SubscriptionPlansView: React.FC = () => {
       )}
 
       {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#6438C2] to-[#FA4E09]"></div>
-        <div className="relative container mx-auto px-4 py-16">
+      <div className="relative overflow-hidden bg-gradient-to-r from-[#6438C2] to-[#FA4E09]">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative container mx-auto px-4 py-12">
           <div
-            className={`mb-12 text-center transition-all duration-1000 ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}
+            className={`mb-8 text-center transition-all duration-1000 ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}
           >
-            <h1 className="mb-4 bg-gradient-to-r from-[#6438C2] to-[#FA4E09] bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
-              Supercharge Your Job Search
-            </h1>
-            <p className="mx-auto mb-8 max-w-3xl text-xl text-white md:text-2xl">
-              Let AI do the heavy lifting while you focus on what matters -
-              landing your dream job
-            </p>
-            <div className="mb-12 flex flex-wrap justify-center gap-8">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[#6438C2] md:text-4xl">
-                  {animatedStats.applications.toLocaleString()}+
+            {/* Show current subscription status for authenticated users */}
+            {isAuthenticated && userSubscription?.isActive && (
+              <div className="mb-6 mx-auto max-w-md rounded-lg bg-green-100 border border-green-300 px-4 py-3 text-green-800">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-green-600">✓</span>
+                  <span className="text-sm font-medium">
+                    Current Plan: {userSubscription.subscription?.name || 'Active Subscription'}
+                  </span>
                 </div>
-                <div className="text-white">Applications Sent</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[#FA4E09] md:text-4xl">
+            )}
+
+            <h1 className="mb-4 text-4xl font-bold text-white md:text-5xl">
+              {content.heroTitle}
+            </h1>
+            <p className="mx-auto mb-6 max-w-3xl text-lg text-white/90 md:text-xl">
+              {content.heroSubtitle}
+            </p>
+
+            {/* Stats */}
+            <div className="mb-8 flex flex-wrap justify-center gap-6">
+              <div className="rounded-lg bg-white/10 px-4 py-3 text-center backdrop-blur-sm">
+                <div className="text-2xl font-bold text-white md:text-3xl">
+                  {animatedStats.primary.toLocaleString()}+
+                </div>
+                <div className="text-sm text-white/80">{content.primaryStat}</div>
+              </div>
+              <div className="rounded-lg bg-white/10 px-4 py-3 text-center backdrop-blur-sm">
+                <div className="text-2xl font-bold text-white md:text-3xl">
                   {animatedStats.users.toLocaleString()}+
                 </div>
-                <div className="text-white">Happy Users</div>
+                <div className="text-sm text-white/80">{content.secondaryStat}</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[#65FF81] md:text-4xl">
+              <div className="rounded-lg bg-white/10 px-4 py-3 text-center backdrop-blur-sm">
+                <div className="text-2xl font-bold text-white md:text-3xl">
                   {animatedStats.success}%
                 </div>
-                <div className="text-white">Success Rate</div>
+                <div className="text-sm text-white/80">Success Rate</div>
               </div>
             </div>
+
+            {/* Hero CTA - Different for auth vs non-auth users */}
+            <button
+              onClick={() => handleSubscription()}
+              className="mb-3 rounded-lg bg-white px-6 py-3 text-base font-bold text-[#6438C2] transition-all duration-300 hover:bg-gray-100 hover:shadow-lg md:px-8 md:py-4 md:text-lg"
+            >
+              {isAuthenticated ? "🚀 Start Your 7-Day Free Trial" : "🚀 Sign Up & Start Free Trial"}
+            </button>
+            <p className="text-sm text-white/75">
+              {isAuthenticated ? "No credit card required • Cancel anytime" : "Create account • No credit card required • Cancel anytime"}
+            </p>
           </div>
         </div>
       </div>
 
+      {/* Login Prompt Banner for Non-Authenticated Users */}
+      {!isAuthenticated && (
+        <div className="bg-blue-50 border-b border-blue-200 px-4 py-3">
+          <div className="container mx-auto text-center">
+            <p className="text-blue-800 text-sm">
+              <span className="font-semibold">Want to subscribe?</span>
+              <a href="/login" className="ml-2 underline hover:no-underline text-blue-600 font-medium">
+                Sign in
+              </a>
+              <span className="mx-2">or</span>
+              <a href="/signup" className="underline hover:no-underline text-blue-600 font-medium">
+                create an account
+              </a>
+              <span className="ml-2">to get started with your free trial</span>
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Pricing Section */}
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-12">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold text-gray-800 md:text-4xl">
             Choose Your Success Plan
           </h2>
-          <p className="mx-auto max-w-2xl text-xl text-gray-600">
-            Start with our 7-day free trial. No credit card required.
+          <p className="mx-auto max-w-2xl text-lg text-gray-600 md:text-xl">
+            Transparent pricing. Start free, scale as you grow.
+            {!isAuthenticated && (
+              <span className="block mt-2 text-blue-600 font-medium">
+                Sign up to unlock exclusive features and start your free trial
+              </span>
+            )}
           </p>
         </div>
 
-        <div className="mx-auto mb-16 grid max-w-6xl gap-8 md:grid-cols-3">
-          {plans.map((plan, index) => (
-            <div
-              key={plan.id}
-              className={`relative transform rounded-2xl bg-white shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${
-                selectedPlan === plan.id ? "ring-4 ring-[#6438C2]" : ""
-              } ${index === 1 ? "md:scale-105" : ""}`}
-            >
-              {plan.badge && (
+        <div className="mx-auto mb-16 grid max-w-6xl gap-6 lg:grid-cols-3">
+          {plansLoading ? (
+            // Loading state
+            Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="rounded-2xl bg-white shadow-lg animate-pulse">
+                <div className="p-6 md:p-8">
+                  <div className="mb-6 text-center">
+                    <div className="mb-3 h-12 w-12 bg-gray-200 rounded-full mx-auto"></div>
+                    <div className="mb-1 h-6 bg-gray-200 rounded w-3/4 mx-auto"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+                  </div>
+                  <div className="mb-6 text-center">
+                    <div className="mb-2 h-10 bg-gray-200 rounded w-2/3 mx-auto"></div>
+                    <div className="mb-3 h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+                    <div className="h-12 bg-gray-200 rounded"></div>
+                  </div>
+                  <div className="mb-6 space-y-3">
+                    {Array.from({ length: 4 }).map((_, idx) => (
+                      <div key={idx} className="h-4 bg-gray-200 rounded"></div>
+                    ))}
+                  </div>
+                  <div className="h-12 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+            ))
+          ) : content.plans.length === 0 ? (
+            // Empty state
+            <div className="col-span-3 text-center py-12">
+              <div className="text-6xl mb-4">📦</div>
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">No Plans Available</h3>
+              <p className="text-gray-500">Subscription plans are being configured. Please check back later.</p>
+            </div>
+          ) : (
+            // Plans loaded successfully
+            content.plans.map((plan, index) => {
+              const isCurrentPlan = isAuthenticated && userSubscription?.subscriptionId === plan.apiPlan.id && userSubscription.isActive;
+              const canSubscribe = canSubscribeToPlan(plan.apiPlan);
+              const isPopularPlan = index === 1;
+
+              return (
                 <div
-                  className={`absolute -top-3 left-1/2 -translate-x-1/2 transform ${plan.badgeColor} rounded-full px-4 py-1 text-xs font-bold text-black`}
-                >
-                  {plan.badge}
-                </div>
-              )}
-
-              <div className="p-8">
-                <div className="mb-6 text-center">
-                  <div className="mb-2 text-4xl">{plan.icon}</div>
-                  <h3 className="text-2xl font-bold text-gray-800">
-                    {plan.name}
-                  </h3>
-                  <p className="text-gray-600">{plan.period}</p>
-                </div>
-
-                <div className="mb-6 text-center">
-                  <div className="mb-2 flex items-center justify-center gap-2">
-                    <span className="text-4xl font-bold text-[#6438C2]">
-                      ${plan.price}
-                    </span>
-                    <span className="text-gray-500">
-                      /{plan.period.toLowerCase()}
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    <span className="mr-2 line-through">
-                      ${plan.originalPrice}
-                    </span>
-                    <span className="font-semibold text-green-600">
-                      Save ${plan.originalPrice - plan.price}
-                    </span>
-                  </div>
-                  <div className="mt-2 text-sm text-gray-600">
-                    {plan.applications} applications included
-                  </div>
-                </div>
-
-                <div className="mb-8 space-y-3">
-                  {plan.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-start gap-3">
-                      <div className="mt-0.5 text-lg text-green-500">✓</div>
-                      <span className="text-sm text-gray-700">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => handleSubscription(plan.id)}
-                  className={`w-full rounded-lg px-6 py-3 font-semibold transition-all duration-300 ${
-                    index === 1
-                      ? "transform bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white hover:scale-105 hover:shadow-lg"
-                      : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                  key={plan.id}
+                  className={`relative transform rounded-2xl bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+                    selectedPlan?.id === plan.id ? "ring-4 ring-[#6438C2]" : ""
+                  } ${isPopularPlan ? "border-2 border-[#FACC15] lg:scale-102" : ""} ${
+                    isCurrentPlan ? "ring-2 ring-green-400" : ""
                   }`}
                 >
-                  {index === 1 ? "Start Free Trial" : "Choose Plan"}
-                </button>
-              </div>
-            </div>
-          ))}
+                  {plan.badge && (
+                    <div
+                      className={`absolute -top-3 left-1/2 -translate-x-1/2 transform ${plan.badgeColor} rounded-full px-4 py-1 text-sm font-bold text-black shadow-md`}
+                    >
+                      {plan.badge}
+                    </div>
+                  )}
+
+                  {isCurrentPlan && (
+                    <div className="absolute -top-3 right-4 bg-green-400 rounded-full px-3 py-1 text-xs font-bold text-black shadow-md">
+                      CURRENT
+                    </div>
+                  )}
+
+                  <div className="p-6 md:p-8">
+                    <div className="mb-6 text-center">
+                      <div className="mb-3 text-4xl">{plan.icon}</div>
+                      <h3 className="mb-1 text-xl font-bold text-gray-800 md:text-2xl">
+                        {plan.name}
+                      </h3>
+                      <p className="text-base text-gray-600">{plan.period}</p>
+                    </div>
+
+                    <div className="mb-6 text-center">
+                      <div className="mb-2 flex items-center justify-center gap-2">
+                        <span className="text-3xl font-bold text-[#6438C2] md:text-4xl">
+                          {plan.price}
+                        </span>
+                        <span className="text-base text-gray-500">
+                          /{plan.period.toLowerCase()}
+                        </span>
+                      </div>
+                      <div className="mb-3 text-sm text-gray-500">
+                        <span className="mr-2 line-through">
+                          {plan.originalPrice}
+                        </span>
+                        {plan.savings && (
+                          <span className="font-semibold text-green-600">
+                            {plan.savings}
+                          </span>
+                        )}
+                      </div>
+                      <div className="rounded-lg bg-gray-50 p-3">
+                        <div className="text-sm font-medium text-gray-800">
+                          {plan.dailyLimit} {USER_TYPE === UserType.APPLICANT ? 'applications daily' : 'candidate matches'}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Enhanced features for authenticated users */}
+                    <div className="mb-6 space-y-3">
+                      {plan.features.map((feature, idx) => (
+                        <div key={idx} className="flex items-start gap-3">
+                          <div className="mt-0.5 text-lg text-green-500">✓</div>
+                          <span className="text-sm text-gray-700">{feature}</span>
+                        </div>
+                      ))}
+
+                      {/* Show additional authenticated user benefits */}
+                      {isAuthenticated && (
+                        <>
+                          <div className="flex items-start gap-3">
+                            <div className="mt-0.5 text-lg text-blue-500">⭐</div>
+                            <span className="text-sm text-blue-700 font-medium">
+                              Personalized recommendations based on your profile
+                            </span>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <div className="mt-0.5 text-lg text-blue-500">📈</div>
+                            <span className="text-sm text-blue-700 font-medium">
+                              Advanced analytics and usage insights
+                            </span>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => handleSubscription(plan.id, plan.apiPlan)}
+                      disabled={plansLoading || subscriptionLoading || !canSubscribe}
+                      className={`w-full rounded-lg px-4 py-3 text-base font-semibold transition-all duration-300 ${
+                        isCurrentPlan
+                          ? "bg-green-100 text-green-800 cursor-not-allowed"
+                          : isPopularPlan
+                            ? "transform bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white hover:scale-105 hover:shadow-lg disabled:opacity-50"
+                            : "bg-gray-100 text-gray-800 hover:bg-gray-200 disabled:opacity-50"
+                      }`}
+                    >
+                      {plansLoading || subscriptionLoading ? "Loading..." : getButtonText(plan.apiPlan, isPopularPlan)}
+                    </button>
+
+                    {/* Show coupon input for authenticated users */}
+                    {isAuthenticated && canSubscribe && !isCurrentPlan && (
+                      <div className="mt-3">
+                        <input
+                          type="text"
+                          placeholder="Have a coupon code?"
+                          className="w-full text-sm px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6438C2]"
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              // Handle coupon validation
+                              console.log('Validate coupon:', e.currentTarget.value);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
 
-        {/* Feature Grid */}
-        <div className="mb-16">
-          <h3 className="mb-12 text-center text-3xl font-bold text-gray-800">
-            Why Choose Auto Apply?
+        {/* Feature Grid - Same for all users */}
+        <div className="mb-12">
+          <h3 className="mb-8 text-center text-2xl font-bold text-gray-800 md:text-3xl">
+            {content.questionTitle}
           </h3>
-          <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-3">
-            {features.map((feature, index) => (
+          <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {content.features.map((feature, index) => (
               <div
                 key={index}
                 className="transform rounded-xl bg-white p-6 text-center shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
-                <div className="mb-4 text-4xl">{feature.icon}</div>
-                <h4 className="mb-2 text-xl font-semibold text-gray-800">
+                <div className="mb-4 text-3xl">{feature.icon}</div>
+                <h4 className="mb-3 text-lg font-semibold text-gray-800">
                   {feature.title}
                 </h4>
-                <p className="text-gray-600">{feature.desc}</p>
+                <p className="text-sm text-gray-600">{feature.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Testimonials */}
-        <div className="mb-16">
-          <h3 className="mb-12 text-center text-3xl font-bold text-gray-800">
+        {/* Testimonials - Same for all users */}
+        <div className="mb-12">
+          <h3 className="mb-8 text-center text-2xl font-bold text-gray-800 md:text-3xl">
             Success Stories
           </h3>
-          <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-3">
-            {testimonials.map((testimonial, index) => (
+          <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-3">
+            {content.testimonials.map((testimonial, index) => (
               <div
                 key={index}
                 className="rounded-xl bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl"
               >
-                <div className="mb-4 flex">
+                <div className="mb-4 flex justify-center">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <span key={i} className="text-lg text-yellow-400">
                       ★
                     </span>
                   ))}
                 </div>
-                <p className="mb-4 text-gray-700 italic">
+                <p className="mb-4 text-sm text-gray-700 italic">
                   "{testimonial.text}"
                 </p>
                 <div className="border-t pt-4">
-                  <div className="font-semibold text-gray-800">
+                  <div className="text-base font-semibold text-gray-800">
                     {testimonial.name}
                   </div>
                   <div className="text-sm text-gray-600">
-                    {testimonial.role} at {testimonial.company}
+                    {testimonial.role}
+                  </div>
+                  <div className="text-sm font-medium text-[#6438C2]">
+                    {testimonial.company}
                   </div>
                 </div>
               </div>
@@ -375,28 +680,92 @@ const SubscriptionPlansView: React.FC = () => {
           </div>
         </div>
 
-        {/* CTA Section */}
-        <div className="rounded-2xl bg-gradient-to-r from-[#6438C2] to-[#FA4E09] p-12 text-center text-white">
-          <h3 className="mb-4 text-3xl font-bold">
-            Ready to Transform Your Job Search?
+        {/* Final CTA Section - Enhanced based on auth status */}
+        <div className="rounded-2xl bg-gradient-to-r from-[#6438C2] to-[#FA4E09] p-8 text-center text-white shadow-xl">
+          <h3 className="mb-4 text-2xl font-bold md:text-3xl">
+            {content.ctaTitle}
           </h3>
-          <p className="mb-8 text-xl opacity-90">
-            Join thousands of professionals who've accelerated their careers
-            with Auto Apply
+          <p className="mb-6 text-lg opacity-90">
+            {content.ctaSubtitle}
           </p>
-          <button
-            onClick={() => handleSubscription()}
-            className="rounded-lg bg-white px-8 py-4 text-lg font-bold text-[#6438C2] transition-colors duration-300 hover:bg-gray-100"
-          >
-            Start Your 7-Day Free Trial
-          </button>
-          <p className="mt-4 text-sm opacity-75">
-            No credit card required • Cancel anytime
-          </p>
+
+          {isAuthenticated ? (
+            <div>
+              <button
+                onClick={() => handleSubscription()}
+                className="mb-3 rounded-lg bg-white px-6 py-3 text-lg font-bold text-[#6438C2] transition-all duration-300 hover:bg-gray-100 hover:shadow-lg"
+              >
+                {userSubscription?.isActive ? "🚀 Upgrade Your Plan" : "🚀 Start Your 7-Day Free Trial"}
+              </button>
+              <p className="text-sm opacity-75">
+                {userSubscription?.isActive ? "Switch plans anytime • Full refund within 30 days" : "No credit card required • Cancel anytime"}
+              </p>
+            </div>
+          ) : (
+            <div>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-4">
+                <button
+                  onClick={() => window.location.href = '/signup?redirect=/subscriptions'}
+                  className="rounded-lg bg-white px-6 py-3 text-lg font-bold text-[#6438C2] transition-all duration-300 hover:bg-gray-100 hover:shadow-lg"
+                >
+                  🚀 Create Account & Start Free Trial
+                </button>
+                <span className="text-white/70 text-sm">or</span>
+                <button
+                  onClick={() => window.location.href = '/login?redirect=/subscriptions'}
+                  className="rounded-lg bg-transparent border-2 border-white px-6 py-3 text-lg font-bold text-white transition-all duration-300 hover:bg-white hover:text-[#6438C2]"
+                >
+                  Sign In
+                </button>
+              </div>
+              <p className="text-sm opacity-75">
+                Join thousands of users • No credit card required • Cancel anytime
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
-      {isModalOpen("payment-modal") && <PaymentModal modalId="payment-modal" />}
+      {/* Enhanced Payment Modal - passes more context */}
+      {isModalOpen("payment-modal") && (
+        <PaymentModal
+          modalId="payment-modal"
+          selectedPlan={selectedPlan as SubscriptionResponse}
+          user={user}
+        />
+      )}
+
+      {/* Login Prompt Modal for non-authenticated users */}
+      {showLoginPrompt && !isAuthenticated && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+            <h3 className="text-xl font-bold mb-4 text-gray-800">Sign Up Required</h3>
+            <p className="text-gray-600 mb-6">
+              Create an account or sign in to subscribe to our plans and start your free trial.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => window.location.href = '/signup?redirect=/subscriptions'}
+                className="flex-1 bg-[#6438C2] text-white px-4 py-2 rounded-lg hover:bg-[#5329a0] transition-colors"
+              >
+                Create Account
+              </button>
+              <button
+                onClick={() => window.location.href = '/login?redirect=/subscriptions'}
+                className="flex-1 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Sign In
+              </button>
+            </div>
+            <button
+              onClick={() => setShowLoginPrompt(false)}
+              className="w-full mt-3 text-gray-500 hover:text-gray-700 text-sm"
+            >
+              Continue browsing
+            </button>
+          </div>
+        </div>
+      )}
 
       <MainFooter />
     </div>

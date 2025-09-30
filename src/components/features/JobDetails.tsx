@@ -1,4 +1,4 @@
-// Completely redesigned JobDetails.tsx - Mobile-first with guaranteed horizontal skills
+// Fixed JobDetails.tsx - Individual job view state
 import React, { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import {
   MapPin,
@@ -35,6 +35,7 @@ import { FRONTEND_BASE_URL } from "../../utils/constants.ts";
 import { useJobActions } from "../../store/useJobActions.ts";
 import { showErrorToast, showSuccessToast } from "../../utils/toastConfig.tsx";
 import JobDetailsMegaModal from "../ui/JobDetailsMegaModal.tsx";
+import { bookmarkJob, removeJobBookmark } from "../../services/api";
 
 export interface JobRatingRequest {
   score: number;
@@ -46,6 +47,10 @@ export interface JobRatingRequest {
 export interface JobMatchCardProps {
   updateJobRating: (jobId: number, ratingValue: number) => void;
   job?: JobPostResponse;
+  setJobId: React.Dispatch<React.SetStateAction<number|null>>;
+  setViewingJob: React.Dispatch<React.SetStateAction<boolean>>;
+  viewingJob: boolean;
+  viewingJobId: number | null; // Add this to track which specific job is being viewed
   title: string;
   company: string;
   tags: string[];
@@ -59,7 +64,7 @@ export interface JobMatchCardProps {
   index?: number;
 }
 
-//
+// SkillTag component remains the same
 const SkillTag = React.memo(({ skill }: { skill: string }) => (
   <div className="inline-flex items-center justify-center bg-purple-50 text-purple-700 rounded-full px-2.5 py-1.5 text-xs font-medium border border-purple-200 whitespace-nowrap flex-shrink-0">
     {skill}
@@ -68,36 +73,30 @@ const SkillTag = React.memo(({ skill }: { skill: string }) => (
 
 SkillTag.displayName = 'SkillTag';
 
-// Redesigned expandable skills section
+// SkillsSection component remains the same
 const SkillsSection = React.memo(({ tags }: { tags: string[] }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const maxVisibleSkills = 2; // Reduced for mobile
+  const maxVisibleSkills = 2;
 
   const visibleSkills = isExpanded ? tags : tags.slice(0, maxVisibleSkills);
   const hasMoreSkills = tags.length > maxVisibleSkills;
 
   return (
     <div className="w-full">
-      {/* Skills container with guaranteed horizontal layout */}
       <div className="flex flex-wrap items-center gap-1.5 w-full">
         {visibleSkills.map((skill, index) => (
           <SkillTag key={index} skill={skill} />
         ))}
 
-        {/* More/Less button */}
         {hasMoreSkills && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 rounded-full px-2.5 py-1.5 text-xs font-medium border border-gray-300 hover:border-gray-400 transition-all duration-200 whitespace-nowrap flex-shrink-0"
           >
             {isExpanded ? (
-              <>
-                Less <ChevronUp size={12} className="ml-1" />
-              </>
+              <>Less <ChevronUp size={12} className="ml-1" /></>
             ) : (
-              <>
-                +{tags.length - maxVisibleSkills} <ChevronDown size={12} className="ml-1" />
-              </>
+              <>+{tags.length - maxVisibleSkills} <ChevronDown size={12} className="ml-1" /></>
             )}
           </button>
         )}
@@ -108,7 +107,7 @@ const SkillsSection = React.memo(({ tags }: { tags: string[] }) => {
 
 SkillsSection.displayName = 'SkillsSection';
 
-// Compact info badge
+// InfoBadge component remains the same
 const InfoBadge = React.memo(({
                                 icon: Icon,
                                 text,
@@ -131,9 +130,13 @@ const InfoBadge = React.memo(({
 
 InfoBadge.displayName = 'InfoBadge';
 
-// Main redesigned component
+// Main component with the fix
 export const JobDetails: React.FC<JobMatchCardProps> = React.memo(({
                                                                      job = {} as JobPostResponse,
+                                                                     setJobId,
+
+                                                                     setViewingJob,
+                                                                     viewingJobId, // Add this prop
                                                                      updateJobRating,
                                                                      title,
                                                                      company,
@@ -149,16 +152,12 @@ export const JobDetails: React.FC<JobMatchCardProps> = React.memo(({
   const { openModal, isModalOpen } = useModalStore();
   const { rateSomeone } = useJobActions();
   const {
-    viewingJob,
-    jobCurrentlyViewed,
-    setCurrentlyViewed,
-    setViewingJob,
     setJobToApply,
     jobToApply,
   } = useJobSearchSettings();
 
   // States
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(job.isBookmarked || false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isRatingLoading, setIsRatingLoading] = useState(false);
   const [optimisticRating, setOptimisticRating] = useState(job?.rating?.averageScore || 0);
@@ -168,6 +167,9 @@ export const JobDetails: React.FC<JobMatchCardProps> = React.memo(({
   const rating = optimisticRating;
   const url = useMemo(() => `${FRONTEND_BASE_URL}/jobs/${job?.id}/details`, [job?.id]);
   const postedDaysAgo = useMemo(() => (job?.id || 1) % 7 + 1, [job?.id]);
+
+  // Check if THIS specific job is being viewed
+  const isThisJobViewing = viewingJobId === job?.id;
 
   const { truncatedDescription, shouldShowReadMore } = useMemo(() => {
     const cleanText = DOMPurify.sanitize(description?.trim() || "", { ALLOWED_TAGS: [] });
@@ -221,22 +223,43 @@ export const JobDetails: React.FC<JobMatchCardProps> = React.memo(({
   }, [isRatingLoading, job?.id, job?.rating?.averageScore, rateSomeone, updateJobRating]);
 
   const handleRefer = useCallback(() => openModal("refer-modal"), [openModal]);
-  const handleBookmark = useCallback(() => {
-    setIsBookmarked(!isBookmarked);
-    showSuccessToast(isBookmarked ? "Removed from bookmarks" : "Bookmarked!");
+
+  const handleBookmark = useCallback(async (isBookmarked: boolean) => {
+    if (isBookmarked){
+      const response = await removeJobBookmark(job?.id);
+      if (response.statusCode === 200){
+        setIsBookmarked((prev) => !prev);
+        showSuccessToast(isBookmarked ? "Removed from bookmarks" : "Bookmarked!");
+      }
+    }else {
+      const response = await bookmarkJob(job?.id);
+      if (response.statusCode === 201) {
+        setIsBookmarked((prev) => !prev);
+        showSuccessToast(isBookmarked ? "Removed from bookmarks" : "Bookmarked!");
+      } else {
+        showErrorToast("Failed to update bookmark");
+      }
+    }
   }, [isBookmarked]);
 
   const handleViewToggle = useCallback(() => {
     if (dashboard || window.innerWidth < 1024) {
-      setCurrentlyViewed(job);
+      setJobId(job.id);
       setJobToApply(job);
       openModal("job-mega-modal");
     } else {
-      setCurrentlyViewed(job);
-      setJobToApply(job);
-      setViewingJob(!viewingJob);
+      if (isThisJobViewing) {
+        // If this job is currently being viewed, hide it
+        setJobId(null);
+        setViewingJob(false);
+      } else {
+        // If this job is not being viewed, show it (and hide any other job)
+        setJobId(job.id);
+        setJobToApply(job);
+        setViewingJob(true);
+      }
     }
-  }, [dashboard, job, setCurrentlyViewed, setJobToApply, openModal, setViewingJob, viewingJob]);
+  }, [dashboard, job, setJobToApply, openModal, setJobId, setViewingJob, isThisJobViewing]);
 
   return (
     <div
@@ -314,8 +337,9 @@ export const JobDetails: React.FC<JobMatchCardProps> = React.memo(({
                       onClick={() => { handleViewToggle(); setShowMoreActions(false); }}
                       className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center gap-2"
                     >
-                      {viewingJob ? <EyeOff size={14} /> : <Eye size={14} />}
-                      {viewingJob ? "Hide details" : "View details"}
+                      {/* Use isThisJobViewing instead of viewingJob */}
+                      {isThisJobViewing ? <EyeOff size={14} /> : <Eye size={14} />}
+                      {isThisJobViewing ? "Hide details" : "View details"}
                     </button>
                     <button
                       onClick={() => { openModal("share"); setShowMoreActions(false); }}
@@ -325,7 +349,7 @@ export const JobDetails: React.FC<JobMatchCardProps> = React.memo(({
                       Share job
                     </button>
                     <button
-                      onClick={() => { handleBookmark(); setShowMoreActions(false); }}
+                      onClick={async() => { await handleBookmark(isBookmarked).then(r => r); setShowMoreActions(false); }}
                       className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center gap-2"
                     >
                       {isBookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
@@ -438,7 +462,7 @@ export const JobDetails: React.FC<JobMatchCardProps> = React.memo(({
       )}
       {isModalOpen("job-mega-modal") && (
         <JobDetailsMegaModal
-          job={jobCurrentlyViewed as JobPostResponse}
+          job={job}
           modalId="job-mega-modal"
         />
       )}

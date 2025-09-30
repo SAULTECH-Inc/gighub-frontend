@@ -37,6 +37,7 @@ import PaymentAndSubscription from "./settings/notification/employer/PaymentAndS
 import { IoArrowBackOutline } from "react-icons/io5";
 import NotificationSidebarAsMenu from "../components/ui/NotificationSidebarAsMenu.tsx";
 import { useSubscriptionStore } from "../store/useSubscriptionStore.ts";
+import AutoApplyConfiguration from "./settings/AutoApplyConfiguration.tsx";
 const UserSettings: FC = () => {
   const { settings } = useNavMenuStore();
   const { applicant, employer, userType } = useAuth();
@@ -109,6 +110,7 @@ const UserSettings: FC = () => {
             </div>
             <h1 className="text-lg font-bold">
               {settings.notification && "Notification"}
+              {settings.autoApply && "Auto Apply"}
               {settings.subscription && "Subscription"}
               {settings.account && "Account"}
               {settings.privacy && "Privacy"}
@@ -132,12 +134,21 @@ const UserSettings: FC = () => {
             </div>
           )}
 
+          {/*Auto Apply */}
+          {settings.autoApply && userType === UserType.APPLICANT && (
+            <div className="flex max-h-screen w-full flex-col items-center overflow-y-auto">
+              <AutoApplyConfiguration />
+            </div>
+          )}
+
           {settings.notification && userType === UserType.EMPLOYER && (
             <div className="flex max-h-screen w-full flex-col items-center overflow-y-auto">
               <ManageJobNotification />
               <JobPostingStatus />
               <InterviewInvitation />
               <PaymentAndSubscription />
+              <GeneralSettings />
+              <PlatformNotification />
             </div>
           )}
           {/*Subscription */}

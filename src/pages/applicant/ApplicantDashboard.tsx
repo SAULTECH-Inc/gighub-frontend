@@ -4,7 +4,6 @@ import ApplicationStats from "../../components/ui/ApplicationStats.tsx";
 import BelowApplicationStats from "../../components/ui/BelowApplicationStats.tsx";
 import ApplicantRecentApplications from "../../components/ui/ApplicantRecentApplications.tsx";
 import ApplicantMessages from "../../components/ui/ApplicantMessages.tsx";
-import ApplicantSchedules from "../../components/ui/ApplicantSchedules.tsx";
 import {
   applicantNavBarItemMap,
   applicantNavItems,
@@ -16,6 +15,8 @@ import { fetchMetrics } from "../../services/api";
 import { useMetrics } from "../../store/useMetrics.ts";
 import MainFooter from "../../components/layouts/MainFooter.tsx";
 import { Briefcase, TrendingUp } from "lucide-react";
+import ApplicantDashboardSchedules from "../../components/ui/ApplicantDashboardSchedules.tsx";
+import { Link } from "react-router-dom";
 export const SHADOWS = {
   sm: 'shadow-sm',
   md: 'shadow-md shadow-slate-200/50',
@@ -125,7 +126,7 @@ export const ApplicantDashboard = () => {
 
             {/* Sidebar */}
             <div className={LAYOUT.sectionGap}>
-              <ApplicantSchedules />
+              <ApplicantDashboardSchedules />
               <ApplicantMessages />
             </div>
           </div>
@@ -142,12 +143,12 @@ export const ApplicantDashboard = () => {
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <button className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 px-8 py-3 rounded-xl font-semibold text-lg transition-all duration-200 transform hover:scale-105 hover:shadow-lg hover:shadow-indigo-500/25">
+                  <Link to="/applicant/find-jobs" className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 px-8 py-3 rounded-xl font-semibold text-lg transition-all duration-200 transform hover:scale-105 hover:shadow-lg hover:shadow-indigo-500/25">
                     Browse Jobs
-                  </button>
-                  <button className="bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 px-8 py-3 rounded-xl font-semibold text-lg transition-all duration-200 transform hover:scale-105 backdrop-blur-sm">
+                  </Link>
+                  <Link to="/applicant/profile" className="bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 px-8 py-3 rounded-xl font-semibold text-lg transition-all duration-200 transform hover:scale-105 backdrop-blur-sm">
                     Update Profile
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>

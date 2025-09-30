@@ -9,6 +9,8 @@ import {
   PlatformNotifications,
   useSettingsStore,
 } from "../../../../store/useSettingsStore.ts";
+import { USER_TYPE } from "../../../../utils/helpers.ts";
+import { UserType } from "../../../../utils/enums.ts";
 
 interface PlatformConfig {
   key: string;
@@ -20,10 +22,15 @@ interface PlatformConfig {
 const PlatformNotification = () => {
   const {
     applicantSettings,
-    platform,
+    employerSettings,
     setPlatform,
     updatePlatform
   } = useSettingsStore();
+
+  // Get the actual data from applicantSettings/employerSettings based on user type
+  const actualPlatformData = USER_TYPE === UserType.APPLICANT
+    ? applicantSettings?.notifications?.options?.platform
+    : employerSettings?.notifications?.options?.platform;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -63,11 +70,17 @@ const PlatformNotification = () => {
     },
   ], []);
 
+  // Initialize state from backend data
   useEffect(() => {
-    if (applicantSettings?.notifications?.options?.platform) {
-      setPlatform(applicantSettings.notifications.options.platform);
+    const platformData = USER_TYPE === UserType.APPLICANT
+      ? applicantSettings?.notifications?.options?.platform
+      : employerSettings?.notifications?.options?.platform;
+
+    if (platformData && (!actualPlatformData ||
+      JSON.stringify(actualPlatformData) !== JSON.stringify(platformData))) {
+      setPlatform(platformData);
     }
-  }, [applicantSettings, setPlatform]);
+  }, [applicantSettings, employerSettings, setPlatform, actualPlatformData]);
 
   const debouncedUpdate = useCallback(
     debounce(async (settings: PlatformNotifications) => {
@@ -97,34 +110,34 @@ const PlatformNotification = () => {
   }, [debouncedUpdate]);
 
   const handlePlatformToggle = useCallback((key: string) => {
-    if (!platform) return;
+    if (!actualPlatformData) return;
 
     const updatedSettings = {
-      ...platform,
+      ...actualPlatformData,
       option: {
-        ...platform.option,
-        [key]: !platform.option[key as keyof PlatformNotificationOption],
+        ...actualPlatformData.option,
+        [key]: !actualPlatformData.option[key as keyof PlatformNotificationOption],
       },
     };
     setPlatform(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [platform, setPlatform, debouncedUpdate]);
+  }, [actualPlatformData, setPlatform, debouncedUpdate]);
 
   const handleNotificationTypeToggle = useCallback((key: string) => {
-    if (!platform) return;
+    if (!actualPlatformData) return;
 
     const updatedSettings = {
-      ...platform,
+      ...actualPlatformData,
       notificationType: {
-        ...platform.notificationType,
-        [key]: !platform.notificationType[key as keyof NotificationType],
+        ...actualPlatformData.notificationType,
+        [key]: !actualPlatformData.notificationType[key as keyof NotificationType],
       },
     };
     setPlatform(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [platform, setPlatform, debouncedUpdate]);
+  }, [actualPlatformData, setPlatform, debouncedUpdate]);
 
-  if (!platform) {
+  if (!actualPlatformData) {
     return (
       <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
         <div className="animate-pulse">
@@ -187,7 +200,7 @@ const PlatformNotification = () => {
             <div className="space-y-4">
               {platformOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = platform.option[option.key as keyof PlatformNotificationOption];
+                const isActive = actualPlatformData?.option?.[option.key as keyof PlatformNotificationOption] || false;
 
                 return (
                   <div
@@ -234,7 +247,7 @@ const PlatformNotification = () => {
             <div className="space-y-4">
               {notificationTypeOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = platform.notificationType[option.key as keyof NotificationType];
+                const isActive = actualPlatformData?.notificationType?.[option.key as keyof NotificationType] || false;
 
                 return (
                   <div

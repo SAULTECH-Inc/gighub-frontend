@@ -137,10 +137,18 @@ const JobDetailsBody: React.FC<JobDetailsBodyProp> = ({
                 <button
                   onClick={() => handleBookmark && handleBookmark()}
                   type="button"
+                  disabled={job.isBookmarked}
                   className="flex items-center justify-center space-x-2 w-full sm:w-auto px-6 py-3 bg-white border-2 border-slate-300 text-slate-700 rounded-xl font-semibold hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
                 >
-                  <Bookmark className="w-4 h-4" />
-                  <span>Bookmark</span>
+                  {
+                    job.isBookmarked ? (
+                      <><Bookmark className="w-4 h-4 text-indigo-600" />
+                        <span className="hidden sm:inline text-indigo-600">Bookmarked</span></>
+                    ) : (
+                      <><Bookmark className="w-4 h-4" />
+                        <span className="hidden sm:inline">Bookmark</span></>
+                    )
+                  }
                 </button>
 
                 <button
@@ -158,10 +166,22 @@ const JobDetailsBody: React.FC<JobDetailsBodyProp> = ({
                     setJobToApply(job);
                     openModal("application-modal");
                   }}
+                  disabled={job.applied}
                   className="flex items-center justify-center space-x-2 w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-bold transition-all duration-200 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>Apply Now</span>
+                  {
+                    job.applied ? (
+                      <>
+                        <CheckCircle className="w-4 h-4" />
+                        <span>Applied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>Apply Now</span>
+                      </>
+                    )
+                  }
                 </button>
               </>
             ) : (

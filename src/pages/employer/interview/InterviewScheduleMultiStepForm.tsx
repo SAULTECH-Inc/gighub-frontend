@@ -75,7 +75,7 @@ const InterviewScheduleMultiStepForm: React.FC<
   if (!isOpen) return null;
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50 p-2"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-2"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"

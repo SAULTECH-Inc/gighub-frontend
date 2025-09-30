@@ -69,7 +69,7 @@ const EmployerPublicProfile: FC = () => {
 
   useEffect(() => {
     if (employerId) {
-      fetchEmployerData(Number(employerId));
+      fetchEmployerData(Number(employerId)).then(r=>r);
     }
   }, [employerId, fetchEmployerData]);
 

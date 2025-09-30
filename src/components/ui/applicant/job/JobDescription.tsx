@@ -4,7 +4,7 @@ import numeral from "numeral";
 import DOMPurify from "dompurify";
 import moment from "moment";
 import ApplicationModal from "../../ApplicationModal.tsx";
-import { ApplicationMethod } from "../../../../utils/types";
+import { ApplicationMethod, JobPostResponse } from "../../../../utils/types";
 import useModalStore from "../../../../store/modalStateStores.ts";
 import ReferModal from "../../ReferModal.tsx";
 import {
@@ -12,10 +12,13 @@ import {
   showSuccessToast,
 } from "../../../../utils/toastConfig.tsx";
 import { useJobActions } from "../../../../store/useJobActions.ts";
-const JobDescription = () => {
+import React from "react";
+interface JobDescriptionProps {
+  jobCurrentlyViewed: JobPostResponse;
+}
+const JobDescription: React.FC<JobDescriptionProps> = ({jobCurrentlyViewed}) => {
   const { isModalOpen, openModal, closeModal } = useModalStore();
-  const { jobCurrentlyViewed, jobToApply, setJobToApply } =
-    useJobSearchSettings();
+  const { setJobToApply } = useJobSearchSettings();
   const salaryExist =
     jobCurrentlyViewed?.salaryRange?.minimumAmount != null &&
     jobCurrentlyViewed?.salaryRange?.maximumAmount != null &&
@@ -41,154 +44,191 @@ const JobDescription = () => {
         closeModal("refer-modal");
       });
   };
+
   return (
-    <div className="border-top relative mx-auto flex w-full flex-col border-[#E6E6E6] bg-white p-2 sm:p-4 md:rounded-l-[16px] md:border-r md:border-r-[#E6E6E6]">
-      <div className="flex items-center gap-2">
-        <div className="flex h-12 w-12 items-center justify-center rounded-md bg-[#F7F8FA] sm:h-20 sm:w-20">
+    <div className="relative mx-auto flex w-full flex-col bg-white p-4 sm:p-6 lg:p-8 overflow-y-auto h-screen">
+      {/* Header Section */}
+      <div className="flex items-start gap-4 mb-6">
+        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm sm:h-20 sm:w-20">
           <img
             src={jobCurrentlyViewed?.employer?.companyLogo || paystack}
-            alt="jumia"
-            className="h-10 w-10 object-cover sm:h-16 sm:w-16"
+            alt="company logo"
+            className="h-10 w-10 object-cover rounded-lg sm:h-16 sm:w-16"
           />
         </div>
-        <div className="hidden flex-col sm:flex">
-          <h2 className="font-lato text-[20px] font-medium text-black">
-            {jobCurrentlyViewed?.title}
-          </h2>
-          <div className="flex gap-10">
-            <span className="text-gray text-sm font-bold">
+
+        <div className="flex-1 min-w-0">
+          <div className="hidden sm:block">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">
+              {jobCurrentlyViewed?.title}
+            </h1>
+            <div className="flex flex-wrap items-center gap-6 mb-3">
+              <span className="text-gray-600 font-medium">
+                {jobCurrentlyViewed?.company}
+              </span>
+              <span className="text-gray-500 text-sm">
+                {jobCurrentlyViewed?.applicantsCount &&
+                jobCurrentlyViewed?.applicantsCount > 1
+                  ? `${jobCurrentlyViewed?.applicantsCount} people have applied`
+                  : "No applicants yet"}
+              </span>
+            </div>
+            {
+              (jobCurrentlyViewed?.noMutualConnections &&
+                jobCurrentlyViewed.noMutualConnections > 0) ? (
+                <p className="text-gray-600 text-sm">
+                  {jobCurrentlyViewed.noMutualConnections} people from your network work here,{" "}
+                  <a href="" className="text-purple-600 hover:text-purple-700 font-medium">
+                    see connections
+                  </a>
+                </p>
+              ) : (
+                <p className="text-gray-600 text-sm">
+                  No mutual connections
+                </p>
+              )
+            }
+          </div>
+
+          <div className="block sm:hidden">
+            <h1 className="text-xl font-bold text-gray-900 mb-1">
+              {jobCurrentlyViewed?.title}
+            </h1>
+            <span className="text-gray-600 font-medium">
               {jobCurrentlyViewed?.company}
             </span>
-            <span className="text-gray text-sm font-bold">
-              {jobCurrentlyViewed?.applicantsCount &&
-              jobCurrentlyViewed?.applicantsCount > 1
-                ? jobCurrentlyViewed?.applicantsCount +
-                  " people have applied to this job"
-                : "no applicants yet"}{" "}
-            </span>
           </div>
-          <p className="text-gray mt-3 text-sm font-bold">
-            3 people from your network work in this company, or once worked
-            here,{" "}
-            <span className="text-[#6438C2]">
-              <a href="">see connections</a>
-            </span>
-          </p>
         </div>
-        <div className="block flex-col sm:hidden">
-          <h2 className="font-lato text-[18px] font-medium text-black sm:text-[20px]">
-            {jobCurrentlyViewed?.title}
-          </h2>
-          <span className="text-gray text-sm font-bold">
-            {jobCurrentlyViewed?.company}
-          </span>
-        </div>
-      </div>
-      <p className="text-gray mt-3 block text-sm font-bold sm:hidden">
-        3 people from your network work in this company, or once worked here,{" "}
-        <span className="text-[#6438C2]">
-          <a href="">see connections</a>
-        </span>
-      </p>
-      <hr className="mt-16 h-[1px] w-full text-[#E6E6E6]" />
-      <div
-        className={`flex items-center ${salaryExist ? "justify-between" : "justify-evenly"} mt-4 gap-4`}
-      >
-        <div className="flex h-[74px] w-[94px] flex-col items-center justify-center rounded-[10px] bg-[#6438C230] sm:h-[84px] sm:w-[176px]">
-          <span className="text-[16px] font-normal text-black">Job Type</span>
-          <span className="text-sm font-normal text-black">
-            {jobCurrentlyViewed?.jobType}
-          </span>
-        </div>
-        <div className="flex h-[74px] w-[94px] flex-col items-center justify-center rounded-[10px] bg-[#6438C230] sm:h-[84px] sm:w-[176px]">
-          <span className="text-[16px] font-normal text-black">Experience</span>
-          <span className="text-sm font-normal text-black">
-            Min. {jobCurrentlyViewed?.experienceYears} years
-          </span>
-        </div>
-        {salaryExist && (
-          <div className="flex h-[74px] w-[150px] flex-col items-center justify-center rounded-[10px] bg-[#6438C230] sm:h-[84px] sm:w-[196px]">
-            <span className="text-[16px] font-normal text-black">Salary</span>
-            <span className="text-sm font-normal text-black">
-              {jobCurrentlyViewed?.salaryRange?.currency}
-              {numeral(jobCurrentlyViewed?.salaryRange?.minimumAmount).format(
-                "0.[00]a",
-              )}
-              {" - "}
-              {jobCurrentlyViewed.salaryRange.currency}
-              {numeral(jobCurrentlyViewed?.salaryRange?.maximumAmount).format(
-                "0.[00]a",
-              )}
-              {"/"}
-              {jobCurrentlyViewed?.salaryRange?.frequency?.split(" ")[1] ||
-                jobCurrentlyViewed?.salaryRange?.frequency}
-            </span>
-          </div>
-        )}
-      </div>
-      <div className="mt-4 flex w-full flex-col items-start p-4">
-        <h1 className="font-bold text-black">About</h1>
-        <div
-          className="prose max-w-none text-base leading-relaxed whitespace-pre-wrap text-gray-700"
-          dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(jobCurrentlyViewed?.description || ""),
-          }}
-        ></div>
-      </div>
-      <div className="w-full p-4">
-        <h1 className="font-bold text-black">Responsibilities</h1>
-        <div
-          className="prose max-w-none text-base leading-relaxed whitespace-pre-wrap text-gray-700"
-          dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(
-              jobCurrentlyViewed?.responsibility || "",
-            ),
-          }}
-        ></div>
       </div>
 
-      {jobCurrentlyViewed?.requirements && (
-        <div className="w-full p-4">
-          <h1 className="font-bold text-black">Requirements</h1>
+      {/* Mobile network info */}
+
+      {
+        (jobCurrentlyViewed?.noMutualConnections && jobCurrentlyViewed.noMutualConnections > 0) ? (
+          (<p className="text-gray-600 text-sm mb-6 block sm:hidden">
+            {jobCurrentlyViewed.noMutualConnections} people from your network work here,{" "}
+            <a href="" className="text-purple-600 hover:text-purple-700 font-medium">
+              see connections
+            </a>
+          </p>)
+        ) : (
+          <p className="text-gray-600 text-sm mb-6 block sm:hidden">
+            No mutual connections
+          </p>
+        )
+      }
+
+      {/* Job Stats Cards */}
+      <div className="border-t border-gray-200 pt-6 mb-8">
+        <div className={`grid gap-4 ${salaryExist ? "grid-cols-3" : "grid-cols-2"} sm:gap-6`}>
           <div
-            className="prose max-w-none text-base leading-relaxed whitespace-pre-wrap text-gray-700"
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(
-                jobCurrentlyViewed?.requirements || "",
-              ),
-            }}
-          ></div>
-        </div>
-      )}
-      <hr className="mt-16 h-[1px] w-full text-[#E6E6E6]" />
-      <div className="mt-5 items-center justify-between sm:flex">
-        <span className="text-gray hidden text-sm sm:block">
-          Posted {moment(jobCurrentlyViewed?.createdAt as Date).fromNow()}
-        </span>
-        <div className="flex items-center justify-between sm:space-x-4">
-          <button
-            onClick={() => {
-              openModal("refer-modal");
-            }}
-            className="rounded-[10px] border-[1px] border-[#E6E6E6] px-4 py-2 text-black"
-          >
-            Refer
-          </button>
-          <button
-            onClick={handleApply}
-            disabled={jobToApply?.applied || false}
-            className="rounded-[10px] border-[1px] border-[#6438C2] bg-[#6438C2] px-4 py-2 text-white"
-          >
-            {!jobToApply?.applied ? "Quick Apply" : "Applied"}
-          </button>
+            className="flex flex-col items-center justify-center rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 p-4 text-center border border-purple-200 sm:p-6">
+            <span className="text-sm font-medium text-gray-700 mb-1">Job Type</span>
+            <span className="text-lg font-semibold text-gray-900">
+              {jobCurrentlyViewed?.jobType}
+            </span>
+          </div>
+
+          <div className="flex flex-col items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 p-4 text-center border border-blue-200 sm:p-6">
+            <span className="text-sm font-medium text-gray-700 mb-1">Experience</span>
+            <span className="text-lg font-semibold text-gray-900">
+              {jobCurrentlyViewed?.experienceYears}+ years
+            </span>
+          </div>
+
+          {salaryExist && (
+            <div className="flex flex-col items-center justify-center rounded-xl bg-gradient-to-br from-green-50 to-green-100 p-4 text-center border border-green-200 sm:p-6 col-span-2 sm:col-span-1">
+              <span className="text-sm font-medium text-gray-700 mb-1">Salary</span>
+              <span className="text-lg font-semibold text-gray-900 text-center">
+                {jobCurrentlyViewed?.salaryRange?.currency}
+                {numeral(jobCurrentlyViewed?.salaryRange?.minimumAmount).format("0.[00]a")}
+                {" - "}
+                {jobCurrentlyViewed.salaryRange.currency}
+                {numeral(jobCurrentlyViewed?.salaryRange?.maximumAmount).format("0.[00]a")}
+                <span className="text-sm text-gray-600 block">
+                  /{jobCurrentlyViewed?.salaryRange?.frequency?.split(" ")[1] || jobCurrentlyViewed?.salaryRange?.frequency}
+                </span>
+              </span>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Content Sections */}
+      <div className="space-y-8">
+        <section>
+          <h2 className="text-xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+            About the Role
+          </h2>
+          <div
+            className="prose prose-gray max-w-none text-gray-700 leading-relaxed"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(jobCurrentlyViewed?.description || ""),
+            }}
+          />
+        </section>
+
+        <section>
+          <h2 className="text-xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+            Key Responsibilities
+          </h2>
+          <div
+            className="prose prose-gray max-w-none text-gray-700 leading-relaxed"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(jobCurrentlyViewed?.responsibility || ""),
+            }}
+          />
+        </section>
+
+        {jobCurrentlyViewed?.requirements && (
+          <section>
+            <h2 className="text-xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+              Requirements
+            </h2>
+            <div
+              className="prose prose-gray max-w-none text-gray-700 leading-relaxed"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(jobCurrentlyViewed?.requirements || ""),
+              }}
+            />
+          </section>
+        )}
+      </div>
+
+      {/* Footer Actions */}
+      <div className="border-t border-gray-200 pt-6 mt-12">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <span className="text-gray-500 text-sm">
+            Posted {moment(jobCurrentlyViewed?.createdAt as Date).fromNow()}
+          </span>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => openModal("refer-modal")}
+              className="px-6 py-3 border border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex-1 sm:flex-none"
+            >
+              Refer Someone
+            </button>
+            <button
+              onClick={handleApply}
+              disabled={jobCurrentlyViewed?.applied || false}
+              className={`px-8 py-3 rounded-xl font-medium transition-all duration-200 flex-1 sm:flex-none ${
+                jobCurrentlyViewed?.applied
+                  ? "bg-green-500 text-white cursor-default"
+                  : "bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-lg"
+              }`}
+            >
+              {!jobCurrentlyViewed?.applied ? "Quick Apply" : "Applied ✓"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Modals */}
       {isModalOpen("application-modal") && (
         <ApplicationModal
-          applicationMethod={
-            jobCurrentlyViewed?.applicationMethod as ApplicationMethod
-          }
-          modalId={"application-modal"}
+          applicationMethod={jobCurrentlyViewed?.applicationMethod as ApplicationMethod}
+          modalId="application-modal"
         />
       )}
 

@@ -6,8 +6,10 @@ import { NODE_ENV, secureStorageWrapper } from "../utils/constants.ts";
 interface ISettingsNavItems {
   account: boolean;
   notification: boolean;
+  autoApply: boolean; // Add this
   privacy: boolean;
   subscription: boolean;
+
 }
 
 interface NavMenuStore {
@@ -22,6 +24,7 @@ export const useNavMenuStore = create<NavMenuStore>()(
         settings: {
           account: true,
           notification: false,
+          autoApply: false,
           privacy: false,
           subscription: false,
         },

@@ -15,7 +15,7 @@ import MyNetwork from "./MyNetwork.tsx";
 import FindConnections from "./FindConnections.tsx";
 import { Users, UserPlus } from "lucide-react";
 
-const Network: React.FC = () => {
+const NetworkCard: React.FC = () => {
   const { activeTab, setActiveTab } = useNetworkTab();
 
   return (
@@ -78,4 +78,4 @@ const Network: React.FC = () => {
   );
 };
 
-export default memo(Network);
+export default memo(NetworkCard);

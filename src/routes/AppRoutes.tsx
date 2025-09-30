@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import { NotFound } from "../pages/auth/NotFound.tsx";
-import { Home } from "../pages/Home.tsx";
 import { ApplicantDashboard } from "../pages/applicant/ApplicantDashboard.tsx";
 import UserTypeSelection from "../pages/UserTypeSelection.tsx";
 import EmployerProfile from "../pages/employer/EmployerProfile.tsx";
@@ -9,7 +8,7 @@ import ApplicantMultistepForm from "../pages/applicant/ApplicantMultistepForm.ts
 import EmployerMultistepForm from "../pages/employer/EmployerMultistepForm.tsx";
 import EmployerPublicProfile from "../pages/employer/EmployerPublicProfile.tsx";
 import ManageApplicant from "../pages/employer/ManageApplicant.tsx";
-import JobSelection from "../pages/applicant/JobSelection.tsx";
+import ManageJobsAndApplicants from "../pages/applicant/ManageJobsAndApplicants.tsx";
 import Notification from "../pages/Notification.tsx";
 import UserSettings from "../pages/UserSettings.tsx";
 import JobDetails from "../pages/job/JobDetails.tsx";
@@ -40,11 +39,12 @@ import ApplicantJobDetails from "../pages/applicant/ApplicantJobDetails.tsx";
 import SocialSignupSuccess from "../pages/auth/SocialSignupSuccess.tsx";
 import SignupOption from "../pages/SignupOption.tsx";
 import SocialLoginSuccess from "../pages/auth/SocialLoginSuccess.tsx";
+import HomeComponent from "../pages/Home.tsx";
 
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<HomeComponent />} />
       <Route path="/not-authorized" element={<NotAuthorized />} />
       <Route path="*" element={<NotFound />} />
       <Route path="/login" element={<Login />} />
@@ -119,7 +119,7 @@ const AppRoutes = () => {
       <Route
         path="/employer/jobs/job-details/:id"
         element={
-          <PrivateRoute allowedRoles={[UserType.EMPLOYER]}>
+          <PrivateRoute allowedRoles={[UserType.EMPLOYER,UserType.APPLICANT]}>
             <JobDetails />
           </PrivateRoute>
         }
@@ -129,7 +129,7 @@ const AppRoutes = () => {
         path="/employer/manage-jobs"
         element={
           <PrivateRoute allowedRoles={[UserType.EMPLOYER]}>
-            <JobSelection />
+            <ManageJobsAndApplicants />
           </PrivateRoute>
         }
       />
@@ -158,7 +158,7 @@ const AppRoutes = () => {
       <Route path="/employer/network" element={<Network />} />
       <Route
         path="/applicant/dashboard/jobselection"
-        element={<JobSelection />}
+        element={<ManageJobsAndApplicants />}
       />
       <Route path="/companies" element={<CompanyList />} />
       <Route

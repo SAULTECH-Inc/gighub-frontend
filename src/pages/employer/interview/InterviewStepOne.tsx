@@ -476,7 +476,7 @@ const InterviewStepOne: React.FC = () => {
 
             <CustomSelect
               options={InterviewNatures}
-              placeholder="Select Interview Nature"
+              placeholder={interviewDetails?.title || "Select Interview Nature"}
               onChange={(option) => {
                 setInterviewDetails({
                   ...interviewDetails,
@@ -488,6 +488,7 @@ const InterviewStepOne: React.FC = () => {
                   setErrors(prev => ({ ...prev, title: "" }));
                 }
               }}
+              value={interviewDetails?.title}
               className="w-full rounded-[10px] border border-[#E6E6E6] bg-white px-4 py-3 text-sm transition-colors focus:border-[#6438C2]"
             />
 

@@ -12,8 +12,8 @@ import {
 } from "../../../../store/useApplicantJobProfile.ts";
 import { useSectionEditable } from "../../../../store/useEditable.ts";
 import { toast } from "react-toastify";
-import { jobSkills } from "../../../../utils/JobType.ts";
 import { Zap, Edit3, Save, CheckCircle2 } from "lucide-react";
+import { jobSkills } from "../../../../utils/constants.ts";
 
 export interface CertParams {
   id?: number;

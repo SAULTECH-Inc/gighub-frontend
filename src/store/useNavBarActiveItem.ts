@@ -2,14 +2,14 @@ import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
-interface IntialState {
+interface InitialState {
   activeItem: string;
   setActiveItem: (item: string) => void;
 }
-export const useNavBarActiveItem = create<IntialState>()(
+export const useNavBarActiveItem = create<InitialState>()(
   devtools(
     persist(
-      immer<IntialState>((set) => ({
+      immer<InitialState>((set) => ({
         activeItem: "Dashboard",
         setActiveItem: (item) => {
           set((state) => {

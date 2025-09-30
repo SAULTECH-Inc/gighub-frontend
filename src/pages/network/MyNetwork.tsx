@@ -1,12 +1,12 @@
 import React, { memo, useEffect, useState } from "react";
 import { Users, ChevronLeft, ChevronRight, Search } from "lucide-react";
-import NetworkCard from "./NetworkCard.tsx";
 import { NetworkHeader } from "./NetworkHeader.tsx";
 import { useAuth } from "../../store/useAuth.ts";
 import ChatWindow from "../../chat-module/component/ChatWindow.tsx";
 import { NetworkDetails } from "../../utils/types";
 import { searchMyConnection } from "../../services/api";
-import useConnections from "../../hooks/useConnections.tsx";
+import UserCard from "./UserCard.tsx";
+import useGetMyConnections from "../../hooks/useGetMyConnections.ts";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -20,7 +20,7 @@ const MyNetwork: React.FC = () => {
     profession: "",
   });
 
-  const { data, isError } = useConnections(
+  const { data, isError } = useGetMyConnections(
     applicant.id || employer?.id as number,
     currentPage,
     ITEMS_PER_PAGE,
@@ -110,7 +110,7 @@ const MyNetwork: React.FC = () => {
         {connections.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {connections.map((user) => (
-              <NetworkCard
+              <UserCard
                 setChatWindowOpened={setIsChatWindowOpened}
                 userDetails={user}
                 key={user.id}

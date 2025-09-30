@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { toast } from "react-toastify";
 import { RiUserAddLine, RiRefreshLine, RiCalendarEventLine, RiMailLine, RiNotification3Line, RiFolderUserLine } from "react-icons/ri";
@@ -20,10 +20,12 @@ interface ManageJobConfig {
 const ManageJobNotification = () => {
   const {
     employerSettings,
-    manageJobApplications,
     setManageJobApplications,
     updateManageJobApplications,
   } = useSettingsStore();
+
+  // Get the actual data from employerSettings instead of the separate state
+  const actualManageJobApplicationsData = employerSettings?.notifications?.options?.manageJobApplications;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -69,11 +71,15 @@ const ManageJobNotification = () => {
     },
   ], []);
 
+  // Initialize state from backend data
   useEffect(() => {
-    if (employerSettings?.notifications?.options?.manageJobApplications) {
-      setManageJobApplications(employerSettings.notifications.options.manageJobApplications);
+    const manageJobApplicationsData = employerSettings?.notifications?.options?.manageJobApplications;
+
+    if (manageJobApplicationsData && (!actualManageJobApplicationsData ||
+      JSON.stringify(actualManageJobApplicationsData) !== JSON.stringify(manageJobApplicationsData))) {
+      setManageJobApplications(manageJobApplicationsData);
     }
-  }, [employerSettings, setManageJobApplications]);
+  }, [employerSettings, setManageJobApplications, actualManageJobApplicationsData]);
 
   const debouncedUpdate = useCallback(
     debounce(async (settings: ManageJobApplicationsNotifications) => {
@@ -103,34 +109,34 @@ const ManageJobNotification = () => {
   }, [debouncedUpdate]);
 
   const handleManageJobToggle = useCallback((key: string) => {
-    if (!manageJobApplications) return;
+    if (!actualManageJobApplicationsData) return;
 
     const updatedSettings = {
-      ...manageJobApplications,
+      ...actualManageJobApplicationsData,
       option: {
-        ...manageJobApplications.option,
-        [key]: !manageJobApplications.option[key as keyof ManageJobNotificationState],
+        ...actualManageJobApplicationsData.option,
+        [key]: !actualManageJobApplicationsData.option[key as keyof ManageJobNotificationState],
       },
     };
     setManageJobApplications(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [manageJobApplications, setManageJobApplications, debouncedUpdate]);
+  }, [actualManageJobApplicationsData, setManageJobApplications, debouncedUpdate]);
 
   const handleNotificationTypeToggle = useCallback((key: string) => {
-    if (!manageJobApplications) return;
+    if (!actualManageJobApplicationsData) return;
 
     const updatedSettings = {
-      ...manageJobApplications,
+      ...actualManageJobApplicationsData,
       notificationType: {
-        ...manageJobApplications.notificationType,
-        [key]: !manageJobApplications.notificationType[key as keyof NotificationType],
+        ...actualManageJobApplicationsData.notificationType,
+        [key]: !actualManageJobApplicationsData.notificationType[key as keyof NotificationType],
       },
     };
     setManageJobApplications(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [manageJobApplications, setManageJobApplications, debouncedUpdate]);
+  }, [actualManageJobApplicationsData, setManageJobApplications, debouncedUpdate]);
 
-  if (!manageJobApplications) {
+  if (!actualManageJobApplicationsData) {
     return (
       <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
         <div className="animate-pulse">
@@ -168,6 +174,14 @@ const ManageJobNotification = () => {
                 Application Events
               </h3>
               <p className="text-sm text-gray-600 mt-1">
+                Choose which application events you want to be notified about
+              </p>
+            </div>
+            <div className="md:text-right">
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Notification Methods
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
                 Select how you want to receive notifications
               </p>
             </div>
@@ -181,7 +195,7 @@ const ManageJobNotification = () => {
             <div className="space-y-4">
               {manageJobOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = manageJobApplications.option[option.key as keyof ManageJobNotificationState];
+                const isActive = actualManageJobApplicationsData?.option?.[option.key as keyof ManageJobNotificationState] || false;
 
                 return (
                   <div
@@ -228,7 +242,7 @@ const ManageJobNotification = () => {
             <div className="space-y-4">
               {notificationTypeOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = manageJobApplications.notificationType[option.key as keyof NotificationType];
+                const isActive = actualManageJobApplicationsData?.notificationType?.[option.key as keyof NotificationType] || false;
 
                 return (
                   <div

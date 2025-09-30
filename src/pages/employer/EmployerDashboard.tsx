@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
+// EmployerDashboard.tsx - Updated with API Integration
+
+import React, { useState, useMemo } from "react";
 import {
   Users,
   Calendar,
@@ -24,6 +26,7 @@ import {
   Clock3,
   Sparkles,
   Lightbulb,
+  AlertCircle,
 } from "lucide-react";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import {
@@ -31,71 +34,66 @@ import {
   employerNavItems,
   employerNavItemsMobile,
 } from "../../utils/constants.ts";
-import { useMetrics } from "../../store/useMetrics.ts";
-import { fetchMetrics } from "../../services/api";
-import { ApplicationMetrics } from "../../utils/types";
 import useModalStore from "../../store/modalStateStores.ts";
 import EmployerJobMultistepForm from "./EmployerJobMultistepForm.tsx";
 import InterviewScheduleMultiStepForm from "./interview/InterviewScheduleMultiStepForm.tsx";
+import { useDashboardData } from "../../hooks/useDashboardData";
 
-// Types for the new dashboard
+import { DashboardFilters } from "../../utils/types/dashboard.ts";
+
+// Icon mapping for dynamic icon rendering
+const iconMap = {
+  Users,
+  Briefcase,
+  Calendar,
+  UserCheck,
+  Target,
+  Timer,
+};
+
+// Types for the dashboard components
 interface MetricCard {
   id: string;
   title: string;
   value: string | number;
   change: number;
   trend: 'up' | 'down' | 'neutral';
-  icon: React.ComponentType<any>;
+  icon: string;
   color: string;
   bgColor: string;
   description: string;
 }
 
-interface CandidateProfile {
-  id: string;
-  name: string;
-  position: string;
-  avatar: string;
-  skills: string[];
-  experience: string;
-  location: string;
-  status: 'new' | 'reviewing' | 'interviewing' | 'hired' | 'rejected';
-  matchScore: number;
-  salary: string;
-  availability: string;
-}
+// Error Display Component
+const ErrorDisplay: React.FC<{ message: string; onRetry?: () => void }> = ({
+                                                                             message,
+                                                                             onRetry
+                                                                           }) => (
+  <div className="rounded-xl bg-red-50 border border-red-200 p-4">
+    <div className="flex items-start gap-3">
+      <AlertCircle className="h-5 w-5 text-red-600 mt-0.5" />
+      <div className="flex-1">
+        <p className="text-sm font-medium text-red-800">Error Loading Data</p>
+        <p className="text-sm text-red-700 mt-1">{message}</p>
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            className="text-sm text-red-600 hover:text-red-800 font-medium mt-2"
+          >
+            Try Again
+          </button>
+        )}
+      </div>
+    </div>
+  </div>
+);
 
-interface Interview {
-  id: string;
-  candidateName: string;
-  position: string;
-  date: string;
-  time: string;
-  type: 'video' | 'phone' | 'in-person';
-  status: 'scheduled' | 'completed' | 'cancelled';
-  interviewer: string;
-  avatar: string;
-}
-
-interface JobPosting {
-  id: string;
-  title: string;
-  department: string;
-  applications: number;
-  views: number;
-  posted: string;
-  status: 'active' | 'paused' | 'closed';
-  urgency: 'high' | 'medium' | 'low';
-  type: 'full-time' | 'part-time' | 'contract';
-  remote: boolean;
-}
-
-// Modern Metric Card Component
+// Updated Modern Metric Card Component
 const ModernMetricCard: React.FC<{ metric: MetricCard; isLoading?: boolean }> = ({
                                                                                    metric,
                                                                                    isLoading = false
                                                                                  }) => {
-  const Icon = metric.icon;
+  const IconComponent = iconMap[metric.icon as keyof typeof iconMap] || Users;
 
   if (isLoading) {
     return (
@@ -116,7 +114,6 @@ const ModernMetricCard: React.FC<{ metric: MetricCard; isLoading?: boolean }> = 
 
   return (
     <div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-white to-gray-50 p-6 shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl hover:scale-105 hover:-translate-y-1">
-      {/* Gradient overlay on hover */}
       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-blue-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div className="relative flex items-start justify-between">
@@ -146,15 +143,15 @@ const ModernMetricCard: React.FC<{ metric: MetricCard; isLoading?: boolean }> = 
         </div>
 
         <div className={`rounded-2xl p-4 ${metric.bgColor} group-hover:scale-110 transition-transform duration-300`}>
-          <Icon className={`h-6 w-6 ${metric.color}`} />
+          <IconComponent className={`h-6 w-6 ${metric.color}`} />
         </div>
       </div>
     </div>
   );
 };
 
-// Candidate Card Component
-const CandidateCard: React.FC<{ candidate: CandidateProfile }> = ({ candidate }) => {
+// Updated Candidate Card Component
+const CandidateCard: React.FC<{ candidate: any }> = ({ candidate }) => {
   const getStatusColor = (status: string) => {
     const colors = {
       new: 'bg-blue-100 text-blue-700 border-blue-200',
@@ -171,7 +168,7 @@ const CandidateCard: React.FC<{ candidate: CandidateProfile }> = ({ candidate })
       <div className="flex items-start gap-4">
         <div className="relative">
           <img
-            src={candidate.avatar}
+            src={candidate.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(candidate.name)}&background=random`}
             alt={candidate.name}
             className="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow-sm"
           />
@@ -211,12 +208,12 @@ const CandidateCard: React.FC<{ candidate: CandidateProfile }> = ({ candidate })
           </div>
 
           <div className="mt-3 flex flex-wrap gap-1">
-            {candidate.skills.slice(0, 3).map((skill, index) => (
+            {candidate.skills?.slice(0, 3).map((skill: string, index: number) => (
               <span key={index} className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-700">
                 {skill}
               </span>
             ))}
-            {candidate.skills.length > 3 && (
+            {candidate.skills?.length > 3 && (
               <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-700">
                 +{candidate.skills.length - 3} more
               </span>
@@ -228,8 +225,8 @@ const CandidateCard: React.FC<{ candidate: CandidateProfile }> = ({ candidate })
   );
 };
 
-// Interview Card Component
-const InterviewCard: React.FC<{ interview: Interview }> = ({ interview }) => {
+// Updated Interview Card Component
+const InterviewCard: React.FC<{ interview: any }> = ({ interview }) => {
   const getTypeIcon = (type: string) => {
     const icons = {
       video: Video,
@@ -245,7 +242,7 @@ const InterviewCard: React.FC<{ interview: Interview }> = ({ interview }) => {
     <div className="rounded-xl bg-white p-4 border border-gray-100 hover:border-blue-200 transition-colors">
       <div className="flex items-start gap-3">
         <img
-          src={interview.avatar}
+          src={interview.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(interview.candidateName)}&background=random`}
           alt={interview.candidateName}
           className="h-10 w-10 rounded-full object-cover"
         />
@@ -281,8 +278,8 @@ const InterviewCard: React.FC<{ interview: Interview }> = ({ interview }) => {
   );
 };
 
-// Job Posting Card Component
-const JobPostingCard: React.FC<{ job: JobPosting }> = ({ job }) => {
+// Updated Job Posting Card Component
+const JobPostingCard: React.FC<{ job: any }> = ({ job }) => {
   const getUrgencyColor = (urgency: string) => {
     const colors = {
       high: 'bg-red-100 text-red-700 border-red-200',
@@ -360,232 +357,35 @@ const QuickActionButton: React.FC<{
 
 // Main Dashboard Component
 const EmployerDashboard: React.FC = () => {
-  const { setMetrics, metric } = useMetrics();
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedPeriod, setSelectedPeriod] = useState('This Month');
-  const {openModal, closeModal, isModalOpen} = useModalStore();
+  const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'quarter' | 'year'>('month');
+  const { openModal, isModalOpen } = useModalStore();
 
-  // Mock data for the new dashboard
-  const dashboardMetrics: MetricCard[] = [
-    {
-      id: 'total-applications',
-      title: 'Total Applications',
-      value: '2,847',
-      change: 12,
-      trend: 'up',
-      icon: Users,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
-      description: 'vs last month'
-    },
-    {
-      id: 'active-positions',
-      title: 'Active Positions',
-      value: '24',
-      change: 8,
-      trend: 'up',
-      icon: Briefcase,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
-      description: 'currently hiring'
-    },
-    {
-      id: 'interviews-scheduled',
-      title: 'Interviews Scheduled',
-      value: '156',
-      change: 15,
-      trend: 'up',
-      icon: Calendar,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      description: 'this week'
-    },
-    {
-      id: 'offers-sent',
-      title: 'Offers Sent',
-      value: '43',
-      change: 5,
-      trend: 'down',
-      icon: UserCheck,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
-      description: 'pending response'
-    },
-    {
-      id: 'hire-rate',
-      title: 'Hire Rate',
-      value: '78%',
-      change: 3,
-      trend: 'up',
-      icon: Target,
-      color: 'text-indigo-600',
-      bgColor: 'bg-indigo-50',
-      description: 'vs last quarter'
-    },
-    {
-      id: 'avg-time-to-hire',
-      title: 'Avg. Time to Hire',
-      value: '18 days',
-      change: 2,
-      trend: 'down',
-      icon: Timer,
-      color: 'text-teal-600',
-      bgColor: 'bg-teal-50',
-      description: 'improvement'
-    }
-  ];
+  // Dashboard filters
+  const dashboardFilters: DashboardFilters = useMemo(() => ({
+    period: selectedPeriod,
+    limit: 10,
+  }), [selectedPeriod]);
 
-  const topCandidates: CandidateProfile[] = [
-    {
-      id: '1',
-      name: 'Sarah Johnson',
-      position: 'Senior Frontend Developer',
-      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b9e5b3e0?w=150&h=150&fit=crop&crop=face',
-      skills: ['React', 'TypeScript', 'Next.js', 'GraphQL'],
-      experience: '5+ years',
-      location: 'San Francisco, CA',
-      status: 'interviewing',
-      matchScore: 95,
-      salary: '$120k-140k',
-      availability: 'Immediate'
-    },
-    {
-      id: '2',
-      name: 'Michael Chen',
-      position: 'Product Manager',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-      skills: ['Product Strategy', 'Analytics', 'Agile', 'Leadership'],
-      experience: '7+ years',
-      location: 'New York, NY',
-      status: 'new',
-      matchScore: 92,
-      salary: '$130k-150k',
-      availability: '2 weeks'
-    },
-    {
-      id: '3',
-      name: 'Emily Rodriguez',
-      position: 'UX Designer',
-      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-      skills: ['Figma', 'User Research', 'Prototyping', 'Design Systems'],
-      experience: '4+ years',
-      location: 'Austin, TX',
-      status: 'reviewing',
-      matchScore: 88,
-      salary: '$90k-110k',
-      availability: '1 month'
-    }
-  ];
+  // Use the dashboard hook with single API call approach
+  const {
+    data,
+    transformedMetrics,
+    loading,
+    errors,
+    loadDashboard,
+    refreshMetrics,
+    refreshCandidates,
+    refreshInterviews,
+    refreshJobs,
+  } = useDashboardData('single', dashboardFilters);
 
-  const upcomingInterviews: Interview[] = [
-    {
-      id: '1',
-      candidateName: 'Alex Thompson',
-      position: 'Backend Developer',
-      date: 'Today',
-      time: '2:00 PM',
-      type: 'video',
-      status: 'scheduled',
-      interviewer: 'John Smith',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
-    },
-    {
-      id: '2',
-      candidateName: 'Maria Garcia',
-      position: 'Data Scientist',
-      date: 'Tomorrow',
-      time: '10:30 AM',
-      type: 'video',
-      status: 'scheduled',
-      interviewer: 'Lisa Chen',
-      avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face'
-    },
-    {
-      id: '3',
-      candidateName: 'David Kim',
-      position: 'DevOps Engineer',
-      date: 'Friday',
-      time: '3:00 PM',
-      type: 'in-person',
-      status: 'scheduled',
-      interviewer: 'Tom Wilson',
-      avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face'
-    }
-  ];
+  const handlePeriodChange = (newPeriod: 'week' | 'month' | 'quarter' | 'year') => {
+    setSelectedPeriod(newPeriod);
+  };
 
-  const recentJobs: JobPosting[] = [
-    {
-      id: '1',
-      title: 'Senior Full Stack Developer',
-      department: 'Engineering',
-      applications: 127,
-      views: 1243,
-      posted: '3 days ago',
-      status: 'active',
-      urgency: 'high',
-      type: 'full-time',
-      remote: true
-    },
-    {
-      id: '2',
-      title: 'Marketing Manager',
-      department: 'Marketing',
-      applications: 89,
-      views: 756,
-      posted: '1 week ago',
-      status: 'active',
-      urgency: 'medium',
-      type: 'full-time',
-      remote: false
-    },
-    {
-      id: '3',
-      title: 'UI/UX Designer',
-      department: 'Design',
-      applications: 64,
-      views: 432,
-      posted: '5 days ago',
-      status: 'active',
-      urgency: 'low',
-      type: 'contract',
-      remote: true
-    }
-  ];
-
-  // Fetch metrics
-  const fetchDashboardMetrics = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetchMetrics();
-      const raw = response.data;
-
-      const mapped: ApplicationMetrics = {
-        jobsApplied: parseInt(raw.jobsapplied || "0"),
-        shortlisted: parseInt(raw.shortlisted || "0"),
-        pending: parseInt(raw.pending || "0"),
-        clicked: parseInt(raw.clicked || "0"),
-        viewed: parseInt(raw.viewed || "0"),
-        applied: parseInt(raw.applied || "0"),
-        withdrawn: parseInt(raw.withdrawn || "0"),
-        interviewed: parseInt(raw.interviewed || "0"),
-        hired: parseInt(raw.hired || "0"),
-        rejected: parseInt(raw.rejected || "0"),
-        remote: parseInt(raw.remote || "0"),
-        onsite: parseInt(raw.onsite || "0"),
-        hybrid: parseInt(raw.hybrid || "0"),
-      };
-
-      setMetrics(mapped);
-    } catch (error) {
-      console.error("Error fetching metrics:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [setMetrics]);
-
-  useEffect(() => {
-    fetchDashboardMetrics();
-  }, [fetchDashboardMetrics]);
+  const handleRefresh = () => {
+    loadDashboard().then(r=>r);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
@@ -598,7 +398,6 @@ const EmployerDashboard: React.FC = () => {
 
       {/* Hero Header */}
       <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
-        {/* Animated Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent" />
           <div
@@ -609,7 +408,6 @@ const EmployerDashboard: React.FC = () => {
             }}
           />
         </div>
-        {/* Floating geometric shapes */}
         <div className="absolute top-10 left-10 h-20 w-20 rounded-full bg-white/5 animate-pulse" />
         <div className="absolute top-32 right-20 h-16 w-16 rounded-lg bg-white/5 animate-bounce" style={{ animationDelay: '1s' }} />
         <div className="absolute bottom-20 left-32 h-12 w-12 rounded-full bg-white/5 animate-pulse" style={{ animationDelay: '2s' }} />
@@ -620,7 +418,10 @@ const EmployerDashboard: React.FC = () => {
                 Good morning! 👋
               </h1>
               <p className="mt-2 text-xl text-blue-100">
-                You have 23 new applications and 5 interviews scheduled today
+                {data.upcomingInterviews.length > 0
+                  ? `You have ${data.topCandidates.length} new applications and ${data.upcomingInterviews.length} interviews scheduled today`
+                  : 'Your dashboard is ready with the latest updates'
+                }
               </p>
               <div className="mt-4 flex items-center gap-6 text-blue-100">
                 <div className="flex items-center gap-2">
@@ -642,11 +443,12 @@ const EmployerDashboard: React.FC = () => {
                 </div>
               </button>
               <button
-                onClick={fetchDashboardMetrics}
-                className="rounded-2xl bg-white/20 backdrop-blur-sm px-6 py-3 text-white transition-colors hover:bg-white/30"
+                onClick={handleRefresh}
+                disabled={loading.isLoading}
+                className="rounded-2xl bg-white/20 backdrop-blur-sm px-6 py-3 text-white transition-colors hover:bg-white/30 disabled:opacity-50"
               >
                 <div className="flex items-center gap-2">
-                  <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`h-4 w-4 ${loading.isLoading ? 'animate-spin' : ''}`} />
                   <span>Refresh</span>
                 </div>
               </button>
@@ -657,6 +459,12 @@ const EmployerDashboard: React.FC = () => {
 
       {/* Main Content */}
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Error Display */}
+        {errors.error && (
+          <div className="mb-6">
+            <ErrorDisplay message={errors.error} onRetry={handleRefresh} />
+          </div>
+        )}
 
         {/* Quick Actions */}
         <div className="mb-8">
@@ -665,18 +473,14 @@ const EmployerDashboard: React.FC = () => {
             <QuickActionButton
               icon={Plus}
               label="Post New Job"
-              onClick={()=>{
-                  openModal("post-job-modal");
-              }}
+              onClick={() => openModal("post-job-modal")}
               description="Create and publish a new position"
               color="bg-gradient-to-r from-blue-500 to-blue-600"
             />
             <QuickActionButton
               icon={Calendar}
               label="Schedule Interview"
-              onClick={()=>{
-                  openModal("schedule-interview-modal");
-              }}
+              onClick={() => openModal("schedule-interview-modal")}
               description="Book interviews with candidates"
               color="bg-gradient-to-r from-green-500 to-green-600"
             />
@@ -701,28 +505,37 @@ const EmployerDashboard: React.FC = () => {
             <h2 className="text-2xl font-bold text-gray-900">Key Metrics</h2>
             <select
               value={selectedPeriod}
-              onChange={(e) => setSelectedPeriod(e.target.value)}
+              onChange={(e) => handlePeriodChange(e.target.value as 'week' | 'month' | 'quarter' | 'year')}
               className="rounded-xl border border-gray-200 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
             >
-              <option>This Week</option>
-              <option>This Month</option>
-              <option>This Quarter</option>
-              <option>This Year</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="quarter">This Quarter</option>
+              <option value="year">This Year</option>
             </select>
           </div>
+
+          {errors.metricsError && (
+            <div className="mb-4">
+              <ErrorDisplay message={errors.metricsError} onRetry={refreshMetrics} />
+            </div>
+          )}
+
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-            {dashboardMetrics.map((metric) => (
-              <ModernMetricCard key={metric.id} metric={metric} isLoading={isLoading} />
+            {transformedMetrics.map((metric) => (
+              <ModernMetricCard
+                key={metric.id}
+                metric={metric}
+                isLoading={loading.metricsLoading}
+              />
             ))}
           </div>
         </div>
 
         {/* Main Dashboard Grid */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-8">
-
             {/* Top Candidates */}
             <div className="rounded-3xl bg-white p-8 shadow-lg border border-gray-100">
               <div className="flex items-center justify-between mb-6">
@@ -732,21 +545,46 @@ const EmployerDashboard: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-gray-900">Top Candidates</h3>
-                    <p className="text-sm text-gray-600">Highest-rated candidates this week</p>
+                    <p className="text-sm text-gray-600">
+                      {data.topCandidates.length > 0
+                        ? `${data.topCandidates.length} highest-rated candidates this ${selectedPeriod}`
+                        : 'Loading candidates...'
+                      }
+                    </p>
                   </div>
                 </div>
-                <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                  View All Candidates
+                <button
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  onClick={refreshCandidates}
+                >
+                  {loading.candidatesLoading ? 'Loading...' : 'View All Candidates'}
                 </button>
               </div>
+
+              {errors.candidatesError && (
+                <ErrorDisplay message={errors.candidatesError} onRetry={refreshCandidates} />
+              )}
+
               <div className="space-y-4">
-                {topCandidates.map((candidate) => (
-                  <CandidateCard key={candidate.id} candidate={candidate} />
-                ))}
+                {loading.candidatesLoading ? (
+                  Array.from({ length: 3 }).map((_, index) => (
+                    <div key={index} className="animate-pulse">
+                      <div className="rounded-2xl bg-gray-100 h-32" />
+                    </div>
+                  ))
+                ) : data.topCandidates.length > 0 ? (
+                  data.topCandidates.map((candidate) => (
+                    <CandidateCard key={candidate.id} candidate={candidate} />
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    No candidates available
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Performance Analytics */}
+            {/* Hiring Funnel */}
             <div className="rounded-3xl bg-white p-8 shadow-lg border border-gray-100">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
@@ -764,62 +602,26 @@ const EmployerDashboard: React.FC = () => {
               </div>
 
               {/* Funnel Visualization */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 rounded-xl bg-blue-50 border border-blue-100">
-                  <div className="flex items-center gap-3">
-                    <div className="h-3 w-3 rounded-full bg-blue-500" />
-                    <span className="font-medium text-gray-900">Applications</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-2xl font-bold text-gray-900">2,847</span>
-                    <span className="block text-sm text-gray-600">100%</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-4 rounded-xl bg-green-50 border border-green-100">
-                  <div className="flex items-center gap-3">
-                    <div className="h-3 w-3 rounded-full bg-green-500" />
-                    <span className="font-medium text-gray-900">Screening</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-2xl font-bold text-gray-900">1,423</span>
-                    <span className="block text-sm text-gray-600">50%</span>
+              {data.hiringFunnel ? (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-blue-50 border border-blue-100">
+                    <div className="flex items-center gap-3">
+                      <div className="h-3 w-3 rounded-full bg-blue-500" />
+                      <span className="font-medium text-gray-900">Hired</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-2xl font-bold text-gray-900">{data.hiringFunnel.hired.toLocaleString()}</span>
+                      <span className="block text-sm text-gray-600">
+                        {Math.round((data.hiringFunnel.hired / data.hiringFunnel.applications) * 100)}%
+                      </span>
+                    </div>
                   </div>
                 </div>
-
-                <div className="flex items-center justify-between p-4 rounded-xl bg-yellow-50 border border-yellow-100">
-                  <div className="flex items-center gap-3">
-                    <div className="h-3 w-3 rounded-full bg-yellow-500" />
-                    <span className="font-medium text-gray-900">Interviews</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-2xl font-bold text-gray-900">456</span>
-                    <span className="block text-sm text-gray-600">16%</span>
-                  </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  {loading.funnelLoading ? 'Loading funnel data...' : 'No funnel data available'}
                 </div>
-
-                <div className="flex items-center justify-between p-4 rounded-xl bg-purple-50 border border-purple-100">
-                  <div className="flex items-center gap-3">
-                    <div className="h-3 w-3 rounded-full bg-purple-500" />
-                    <span className="font-medium text-gray-900">Offers</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-2xl font-bold text-gray-900">89</span>
-                    <span className="block text-sm text-gray-600">3.1%</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-4 rounded-xl bg-emerald-50 border border-emerald-100">
-                  <div className="flex items-center gap-3">
-                    <div className="h-3 w-3 rounded-full bg-emerald-500" />
-                    <span className="font-medium text-gray-900">Hired</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-2xl font-bold text-gray-900">67</span>
-                    <span className="block text-sm text-gray-600">2.4%</span>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Recent Activity Feed */}
@@ -834,58 +636,62 @@ const EmployerDashboard: React.FC = () => {
                     <p className="text-sm text-gray-600">Latest updates from your team</p>
                   </div>
                 </div>
-                <button className="text-sm text-orange-600 hover:text-orange-700 font-medium">
+                <button
+                  className="text-sm text-orange-600 hover:text-orange-700 font-medium"
+                  onClick={refreshJobs}
+                >
                   View All Activity
                 </button>
               </div>
 
+              {errors.activityError && (
+                <ErrorDisplay message={errors.activityError} />
+              )}
+
               <div className="space-y-4">
-                <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                  <div className="rounded-full bg-green-100 p-2">
-                    <UserCheck className="h-4 w-4 text-green-600" />
+                {loading.activityLoading ? (
+                  Array.from({ length: 4 }).map((_, index) => (
+                    <div key={index} className="animate-pulse">
+                      <div className="flex items-start gap-4 p-4">
+                        <div className="rounded-full bg-gray-200 h-8 w-8" />
+                        <div className="flex-1 space-y-2">
+                          <div className="h-4 bg-gray-200 rounded w-3/4" />
+                          <div className="h-3 bg-gray-200 rounded w-1/2" />
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : data.recentActivity.length > 0 ? (
+                  data.recentActivity.map((activity) => (
+                    <div key={activity.id} className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
+                      <div className={`rounded-full p-2 ${
+                        activity.type === 'hire' ? 'bg-green-100' :
+                          activity.type === 'interview_scheduled' ? 'bg-blue-100' :
+                            activity.type === 'application_received' ? 'bg-purple-100' :
+                              'bg-yellow-100'
+                      }`}>
+                        {activity.type === 'hire' && <UserCheck className="h-4 w-4 text-green-600" />}
+                        {activity.type === 'interview_scheduled' && <Calendar className="h-4 w-4 text-blue-600" />}
+                        {activity.type === 'application_received' && <Users className="h-4 w-4 text-purple-600" />}
+                        {activity.type === 'job_posted' && <Briefcase className="h-4 w-4 text-yellow-600" />}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900">{activity.title}</p>
+                        <p className="text-sm text-gray-600">{activity.description}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    No recent activity
                   </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">Sarah Johnson was hired for Senior Frontend Developer</p>
-                    <p className="text-sm text-gray-600">by John Smith • 2 hours ago</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                  <div className="rounded-full bg-blue-100 p-2">
-                    <Calendar className="h-4 w-4 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">Interview scheduled with Michael Chen</p>
-                    <p className="text-sm text-gray-600">for Product Manager position • 4 hours ago</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                  <div className="rounded-full bg-purple-100 p-2">
-                    <Users className="h-4 w-4 text-purple-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">15 new applications received</p>
-                    <p className="text-sm text-gray-600">for UX Designer position • 6 hours ago</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                  <div className="rounded-full bg-yellow-100 p-2">
-                    <Briefcase className="h-4 w-4 text-yellow-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">New job posting published</p>
-                    <p className="text-sm text-gray-600">Backend Developer position • 8 hours ago</p>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
 
           {/* Right Column */}
           <div className="space-y-6">
-
             {/* Today's Interviews */}
             <div className="rounded-3xl bg-white p-6 shadow-lg border border-gray-100">
               <div className="flex items-center justify-between mb-6">
@@ -895,17 +701,39 @@ const EmployerDashboard: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-gray-900">Today's Interviews</h3>
-                    <p className="text-sm text-gray-600">5 scheduled</p>
+                    <p className="text-sm text-gray-600">
+                      {data.upcomingInterviews.length} scheduled
+                    </p>
                   </div>
                 </div>
-                <button className="text-sm text-green-600 hover:text-green-700 font-medium">
+                <button
+                  className="text-sm text-green-600 hover:text-green-700 font-medium"
+                  onClick={() => openModal("schedule-interview-modal")}
+                >
                   Schedule More
                 </button>
               </div>
+
+              {errors.interviewsError && (
+                <ErrorDisplay message={errors.interviewsError} onRetry={refreshInterviews} />
+              )}
+
               <div className="space-y-3">
-                {upcomingInterviews.map((interview) => (
-                  <InterviewCard key={interview.id} interview={interview} />
-                ))}
+                {loading.interviewsLoading ? (
+                  Array.from({ length: 3 }).map((_, index) => (
+                    <div key={index} className="animate-pulse">
+                      <div className="rounded-xl bg-gray-100 h-20" />
+                    </div>
+                  ))
+                ) : data.upcomingInterviews.length > 0 ? (
+                  data.upcomingInterviews.map((interview) => (
+                    <InterviewCard key={interview.id} interview={interview} />
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    No interviews scheduled
+                  </div>
+                )}
               </div>
             </div>
 
@@ -918,21 +746,43 @@ const EmployerDashboard: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-gray-900">Active Jobs</h3>
-                    <p className="text-sm text-gray-600">24 open positions</p>
+                    <p className="text-sm text-gray-600">
+                      {data.activeJobs.length} open positions
+                    </p>
                   </div>
                 </div>
-                <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                <button
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  onClick={refreshJobs}
+                >
                   Manage All
                 </button>
               </div>
+
+              {errors.jobsError && (
+                <ErrorDisplay message={errors.jobsError} onRetry={refreshJobs} />
+              )}
+
               <div className="space-y-4">
-                {recentJobs.map((job) => (
-                  <JobPostingCard key={job.id} job={job} />
-                ))}
+                {loading.jobsLoading ? (
+                  Array.from({ length: 3 }).map((_, index) => (
+                    <div key={index} className="animate-pulse">
+                      <div className="rounded-xl bg-gray-100 h-32" />
+                    </div>
+                  ))
+                ) : data.activeJobs.length > 0 ? (
+                  data.activeJobs.map((job) => (
+                    <JobPostingCard key={job.id} job={job} />
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    No active jobs
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Quick Stats */}
+            {/* Weekly Goals */}
             <div className="rounded-3xl bg-gradient-to-br from-indigo-500 to-purple-600 p-6 text-white shadow-lg">
               <div className="flex items-center gap-3 mb-4">
                 <div className="rounded-xl bg-white/20 p-2">
@@ -941,40 +791,67 @@ const EmployerDashboard: React.FC = () => {
                 <h3 className="text-lg font-bold">This Week's Goals</h3>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm">Interview 15 candidates</span>
-                    <span className="text-sm font-medium">12/15</span>
+              {data.weeklyGoals ? (
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm">Interview candidates</span>
+                      <span className="text-sm font-medium">
+                        {data.weeklyGoals.interviewsCompleted}/{data.weeklyGoals.interviewsTarget}
+                      </span>
+                    </div>
+                    <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-white rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.min(100, (data.weeklyGoals.interviewsCompleted / data.weeklyGoals.interviewsTarget) * 100)}%`
+                        }}
+                      />
+                    </div>
                   </div>
-                  <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                    <div className="h-full bg-white rounded-full" style={{ width: '80%' }} />
-                  </div>
-                </div>
 
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm">Send 8 job offers</span>
-                    <span className="text-sm font-medium">5/8</span>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm">Send job offers</span>
+                      <span className="text-sm font-medium">
+                        {data.weeklyGoals.offersCompleted}/{data.weeklyGoals.offersTarget}
+                      </span>
+                    </div>
+                    <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-white rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.min(100, (data.weeklyGoals.offersCompleted / data.weeklyGoals.offersTarget) * 100)}%`
+                        }}
+                      />
+                    </div>
                   </div>
-                  <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                    <div className="h-full bg-white rounded-full" style={{ width: '62%' }} />
-                  </div>
-                </div>
 
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm">Review 50 applications</span>
-                    <span className="text-sm font-medium">43/50</span>
-                  </div>
-                  <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                    <div className="h-full bg-white rounded-full" style={{ width: '86%' }} />
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm">Review applications</span>
+                      <span className="text-sm font-medium">
+                        {data.weeklyGoals.applicationsReviewCompleted}/{data.weeklyGoals.applicationsReviewTarget}
+                      </span>
+                    </div>
+                    <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-white rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.min(100, (data.weeklyGoals.applicationsReviewCompleted / data.weeklyGoals.applicationsReviewTarget) * 100)}%`
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="text-center py-4 text-white/70">
+                  {loading.goalsLoading ? 'Loading goals...' : 'No goals set for this week'}
+                </div>
+              )}
             </div>
 
-            {/* Personal Insights */}
+            {/* AI Insights */}
             <div className="rounded-3xl bg-white p-6 shadow-lg border border-gray-100">
               <div className="flex items-center gap-3 mb-6">
                 <div className="rounded-xl bg-teal-50 p-2">
@@ -987,52 +864,67 @@ const EmployerDashboard: React.FC = () => {
               </div>
 
               <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-blue-50 border border-blue-100">
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-blue-500 p-1 mt-1">
-                      <Sparkles className="h-3 w-3 text-white" />
+                {loading.insightsLoading ? (
+                  Array.from({ length: 3 }).map((_, index) => (
+                    <div key={index} className="animate-pulse">
+                      <div className="p-4 rounded-xl bg-gray-100 h-20" />
                     </div>
-                    <div>
-                      <p className="font-medium text-blue-900 mb-1">Optimize Your Job Posts</p>
-                      <p className="text-sm text-blue-700">Your "Senior Developer" posting could get 40% more applications with better keywords.</p>
+                  ))
+                ) : data.aiInsights.length > 0 ? (
+                  data.aiInsights.map((insight) => (
+                    <div
+                      key={insight.id}
+                      className={`p-4 rounded-xl border ${
+                        insight.type === 'optimization' ? 'bg-blue-50 border-blue-100' :
+                          insight.type === 'performance' ? 'bg-green-50 border-green-100' :
+                            insight.type === 'alert' ? 'bg-red-50 border-red-100' :
+                              'bg-purple-50 border-purple-100'
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className={`rounded-full p-1 mt-1 ${
+                          insight.type === 'optimization' ? 'bg-blue-500' :
+                            insight.type === 'performance' ? 'bg-green-500' :
+                              insight.type === 'alert' ? 'bg-red-500' :
+                                'bg-purple-500'
+                        }`}>
+                          <Sparkles className="h-3 w-3 text-white" />
+                        </div>
+                        <div>
+                          <p className={`font-medium mb-1 ${
+                            insight.type === 'optimization' ? 'text-blue-900' :
+                              insight.type === 'performance' ? 'text-green-900' :
+                                insight.type === 'alert' ? 'text-red-900' :
+                                  'text-purple-900'
+                          }`}>
+                            {insight.title}
+                          </p>
+                          <p className={`text-sm ${
+                            insight.type === 'optimization' ? 'text-blue-700' :
+                              insight.type === 'performance' ? 'text-green-700' :
+                                insight.type === 'alert' ? 'text-red-700' :
+                                  'text-purple-700'
+                          }`}>
+                            {insight.description}
+                          </p>
+                        </div>
+                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    No insights available
                   </div>
-                </div>
-
-                <div className="p-4 rounded-xl bg-green-50 border border-green-100">
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-green-500 p-1 mt-1">
-                      <Target className="h-3 w-3 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-green-900 mb-1">Great Hiring Pace</p>
-                      <p className="text-sm text-green-700">You're hiring 23% faster than industry average. Keep up the momentum!</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-xl bg-purple-50 border border-purple-100">
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-purple-500 p-1 mt-1">
-                      <Users className="h-3 w-3 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-purple-900 mb-1">Top Candidate Alert</p>
-                      <p className="text-sm text-purple-700">3 candidates with 95%+ match scores are waiting for your review.</p>
-                    </div>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
-        {
-            isModalOpen("post-job-modal") && <EmployerJobMultistepForm modalId="post-job-modal"/>
-        }
-        {
-            isModalOpen("schedule-interview-modal") && <InterviewScheduleMultiStepForm modalId="schedule-interview-modal"/>
-        }
+
+      {/* Modals */}
+      {isModalOpen("post-job-modal") && <EmployerJobMultistepForm modalId="post-job-modal" />}
+      {isModalOpen("schedule-interview-modal") && <InterviewScheduleMultiStepForm modalId="schedule-interview-modal" />}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { toast } from "react-toastify";
 import { RiShieldCheckLine, RiGlobalLine, RiTeamLine, RiLockLine, RiEyeLine } from "react-icons/ri";
@@ -17,7 +17,11 @@ interface PrivacyConfig {
 }
 
 const Privacy = () => {
-  const { applicantSettings, privacy, setPrivacy, updatePrivacy } = useSettingsStore();
+  const { applicantSettings, setPrivacy, updatePrivacy } = useSettingsStore();
+
+  // Get the actual data from applicantSettings instead of the separate state
+  const actualPrivacyData = applicantSettings?.privacy;
+
   const [isLoading, setIsLoading] = useState(false);
 
   const privacyOptions: PrivacyConfig[] = useMemo(() => [
@@ -51,11 +55,15 @@ const Privacy = () => {
     },
   ], []);
 
+  // Initialize state from backend data
   useEffect(() => {
-    if (applicantSettings?.privacy) {
-      setPrivacy(applicantSettings.privacy);
+    const privacyData = applicantSettings?.privacy;
+
+    if (privacyData && (!actualPrivacyData ||
+      JSON.stringify(actualPrivacyData) !== JSON.stringify(privacyData))) {
+      setPrivacy(privacyData);
     }
-  }, [applicantSettings, setPrivacy]);
+  }, [applicantSettings, setPrivacy, actualPrivacyData]);
 
   const debouncedUpdate = useCallback(
     debounce(async (settings: PrivacyOptions) => {
@@ -85,15 +93,15 @@ const Privacy = () => {
   }, [debouncedUpdate]);
 
   const handlePrivacyToggle = useCallback((key: string) => {
-    if (!privacy) return;
+    if (!actualPrivacyData) return;
 
     const updatedSettings = {
-      ...privacy,
-      [key]: !privacy[key as keyof PrivacyOptions],
+      ...actualPrivacyData,
+      [key]: !actualPrivacyData[key as keyof PrivacyOptions],
     };
     setPrivacy(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [privacy, setPrivacy, debouncedUpdate]);
+  }, [actualPrivacyData, setPrivacy, debouncedUpdate]);
 
   const getRiskColor = (risk: string) => {
     switch (risk) {
@@ -136,7 +144,7 @@ const Privacy = () => {
     }
   };
 
-  if (!privacy) {
+  if (!actualPrivacyData) {
     return (
       <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
         <div className="animate-pulse">
@@ -194,7 +202,7 @@ const Privacy = () => {
           <div className="space-y-4">
             {privacyOptions.map((option) => {
               const IconComponent = option.icon;
-              const isActive = privacy[option.key as keyof PrivacyOptions];
+              const isActive = actualPrivacyData?.[option.key as keyof PrivacyOptions] || false;
 
               return (
                 <div

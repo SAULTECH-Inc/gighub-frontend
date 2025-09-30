@@ -30,13 +30,15 @@ const JobSearch: React.FC = () => {
     page: 1,
     limit: 20,
   });
+  const [jobId, setJobId] = useState<number | null>(null);
+  const [viewingJob, setViewingJob] = useState<boolean>(false);
 
   const [totalPages, setTotalPages] = useState(1);
 
   const { data } = useFetchJobs(pagination.page, pagination.limit);
   const [jobs, setJobs] = useState<JobPostResponse[]>([]);
   const [showSideBarMenu, setShowSideBarMenu] = useState(false);
-  const { settings, viewingJob, jobCurrentlyViewed } = useJobSearchSettings();
+  const { settings } = useJobSearchSettings();
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const [topHiringCompanies, setTopHiringCompanies] = useState<
@@ -86,9 +88,9 @@ const JobSearch: React.FC = () => {
       prev.map((job) =>
         job.id === jobId
           ? ({
-              ...job,
-              rating: { ...job.rating, averageScore: newRating },
-            } as JobPostResponse)
+            ...job,
+            rating: { ...job.rating, averageScore: newRating },
+          } as JobPostResponse)
           : job,
       ),
     );
@@ -170,12 +172,16 @@ const JobSearch: React.FC = () => {
         )}
 
         <div
-          className={`w-full ${viewingJob ? "h-full" : "h-[1360px]"} flex flex-col gap-y-8 overflow-y-auto rounded-[16px] bg-white p-2 md:gap-y-4 md:p-4`}
+          className={`w-full h-auto flex flex-col gap-y-8 overflow-y-auto rounded-[16px] md:gap-y-4`}
         >
           {jobs.map((job, index) => (
             <JobDetails
               updateJobRating={updateJobRating}
               job={job}
+              setJobId={setJobId}
+              viewingJob={viewingJob}
+              setViewingJob={setViewingJob}
+              viewingJobId={jobId} // Pass the specific job ID being viewed
               key={`${job.id}-${index}-${job.rating?.averageScore || 0}`}
               title={job.title}
               company={job.company}
@@ -224,10 +230,10 @@ const JobSearch: React.FC = () => {
           </div>
         </div>
 
-        {viewingJob && jobCurrentlyViewed && <JobAndCompanyDetails />}
+        {viewingJob && jobId && <JobAndCompanyDetails jobId={jobId}/>}
 
         {!viewingJob && (
-          <div className="col-span-2 flex w-full flex-col gap-y-4 md:flex md:flex-row lg:w-full xl:col-span-1 xl:flex-col">
+          <div className="col-span-2 flex w-full flex-col gap-y-4 md:flex md:flex-row lg:w-full xl:col-span-1 xl:flex-col h-screen lg:overflow-y-auto">
             <ApplicantSchedules />
             <TopHiringCompanies topHiringCompanies={topHiringCompanies} />
           </div>

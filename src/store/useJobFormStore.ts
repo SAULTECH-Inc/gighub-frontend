@@ -15,6 +15,44 @@ import {
 import { privateApiClient } from "../client/axios.ts";
 import { handleError } from "../utils/helpers.ts";
 
+export interface AutoRejectReason {
+  value: string;
+  label: string;
+}
+
+export interface JobAiSettings {
+  minimumMatchPercentage: number;
+  enableAiScreening: boolean;
+  autoRejectThreshold?: number;
+  autoAcceptApplications: boolean;
+  strictSkillMatching: boolean;
+  criticalSkills: string[];
+  minimumExperienceStrict?: number;
+  requiredEducationLevels?: string[];
+  matchPriority: ["skills", "experience"];
+  autoRejectSettings: {
+    enableAutoReject: boolean;
+    rejectReasons: AutoRejectReason[];
+    sendRejectionEmail: boolean;
+    customRejectionMessage?: string;
+  };
+  resumeAnalysis: {
+    checkEmploymentGaps: boolean;
+    analyzeCareerProgression: boolean;
+  };
+}
+
+export interface ScreeningQuestion {
+  id: string;
+  question: string;
+  type: "short_text" | "long_text" | "yes_no" | "options" | "dropdown";
+  required: boolean;
+  options?: string[];
+  expectedAnswer?: string | string[]; // Expected answer(s) for AI scoring
+  aiWeight?: number; // Weight of this question in AI scoring (1-10)
+  scoringCriteria?: string; // How to evaluate text answers
+}
+
 export interface JobFormData {
   title: string;
   endDate: string;
@@ -38,6 +76,8 @@ export interface JobFormData {
   preferredCandidatePreviousCompany: string[];
   preferredCandidateUniversity: string[];
   applicationMethod: ApplicationMethod;
+  aiSettings?: JobAiSettings;
+  screeningQuestions?: ScreeningQuestion[];
 }
 
 interface JobFormStore {
@@ -85,6 +125,28 @@ export const useJobFormStore = create<JobFormStore>()(
           byProfile: false,
           byCoverLetter: false,
         },
+        aiSettings: {
+          minimumMatchPercentage: 60,
+          enableAiScreening: false,
+          autoRejectThreshold: 30,
+          autoAcceptApplications: false,
+          strictSkillMatching: false,
+          criticalSkills: [],
+          minimumExperienceStrict: undefined,
+          requiredEducationLevels: [],
+          matchPriority: ["skills", "experience"],
+          autoRejectSettings: {
+            enableAutoReject: false,
+            rejectReasons: [],
+            sendRejectionEmail: true,
+            customRejectionMessage: ""
+          },
+          resumeAnalysis: {
+            checkEmploymentGaps: false,
+            analyzeCareerProgression: false
+          }
+        },
+        screeningQuestions: []
       },
       setStep: (step) => {
         set((state) => {
@@ -154,6 +216,28 @@ export const useJobFormStore = create<JobFormStore>()(
               byProfile: false,
               byCoverLetter: false,
             },
+            aiSettings: {
+              minimumMatchPercentage: 60,
+              enableAiScreening: false,
+              autoRejectThreshold: 30,
+              autoAcceptApplications: false,
+              strictSkillMatching: false,
+              criticalSkills: [],
+              minimumExperienceStrict: undefined,
+              requiredEducationLevels: [],
+              matchPriority: ["skills", "experience"],
+              autoRejectSettings: {
+                enableAutoReject: false,
+                rejectReasons: [],
+                sendRejectionEmail: true,
+                customRejectionMessage: ""
+              },
+              resumeAnalysis: {
+                checkEmploymentGaps: false,
+                analyzeCareerProgression: false
+              }
+            },
+            screeningQuestions: []
           };
           state.step = 1;
         });

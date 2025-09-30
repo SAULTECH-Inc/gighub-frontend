@@ -3,7 +3,8 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { NODE_ENV, secureStorageWrapper } from "../utils/constants.ts";
 import { JobPostResponse } from "../utils/types";
-import { EmploymentType } from "../utils/employmentTypes.ts";
+
+import { EmploymentType } from "../utils/enums.ts";
 
 // function isValidCurrency(curr: string): curr is CurrencyType {
 //     return currencies.map(c=>c.label).includes(curr as CurrencyType);

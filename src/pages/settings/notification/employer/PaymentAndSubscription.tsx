@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { toast } from "react-toastify";
 import { RiAlarmWarningLine, RiCloseLine, RiTimeLine, RiCheckboxCircleLine, RiMailLine, RiNotification3Line, RiSecurePaymentLine } from "react-icons/ri";
@@ -23,12 +23,17 @@ const PaymentAndSubscription = () => {
   const {
     applicantSettings,
     employerSettings,
-    paymentAndBilling,
     setPaymentAndBilling,
     updatePaymentAndBilling,
   } = useSettingsStore();
 
   const { userType } = useAuth();
+
+  // Get the actual data from applicantSettings/employerSettings instead of the separate state
+  const actualPaymentAndBillingData = userType === UserType.APPLICANT
+    ? applicantSettings?.notifications?.options?.paymentAndBilling
+    : employerSettings?.notifications?.options?.paymentAndBilling;
+
   const [isLoading, setIsLoading] = useState(false);
 
   const paymentOptions: PaymentConfig[] = useMemo(() => [
@@ -79,15 +84,17 @@ const PaymentAndSubscription = () => {
     },
   ], []);
 
+  // Initialize state from backend data
   useEffect(() => {
     const settings = userType === UserType.APPLICANT
       ? applicantSettings?.notifications?.options?.paymentAndBilling
       : employerSettings?.notifications?.options?.paymentAndBilling;
 
-    if (settings) {
+    if (settings && (!actualPaymentAndBillingData ||
+      JSON.stringify(actualPaymentAndBillingData) !== JSON.stringify(settings))) {
       setPaymentAndBilling(settings);
     }
-  }, [applicantSettings, employerSettings, userType, setPaymentAndBilling]);
+  }, [applicantSettings, employerSettings, userType, setPaymentAndBilling, actualPaymentAndBillingData]);
 
   const debouncedUpdate = useCallback(
     debounce(async (settings: PaymentAndBillingNotification) => {
@@ -117,34 +124,34 @@ const PaymentAndSubscription = () => {
   }, [debouncedUpdate]);
 
   const handlePaymentToggle = useCallback((key: string) => {
-    if (!paymentAndBilling) return;
+    if (!actualPaymentAndBillingData) return;
 
     const updatedSettings = {
-      ...paymentAndBilling,
+      ...actualPaymentAndBillingData,
       option: {
-        ...paymentAndBilling.option,
-        [key]: !paymentAndBilling.option[key as keyof PaymentAndBillingNotificationOptions],
+        ...actualPaymentAndBillingData.option,
+        [key]: !actualPaymentAndBillingData.option[key as keyof PaymentAndBillingNotificationOptions],
       },
     };
     setPaymentAndBilling(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [paymentAndBilling, setPaymentAndBilling, debouncedUpdate]);
+  }, [actualPaymentAndBillingData, setPaymentAndBilling, debouncedUpdate]);
 
   const handleNotificationTypeToggle = useCallback((key: string) => {
-    if (!paymentAndBilling) return;
+    if (!actualPaymentAndBillingData) return;
 
     const updatedSettings = {
-      ...paymentAndBilling,
+      ...actualPaymentAndBillingData,
       notificationType: {
-        ...paymentAndBilling.notificationType,
-        [key]: !paymentAndBilling.notificationType[key as keyof NotificationType],
+        ...actualPaymentAndBillingData.notificationType,
+        [key]: !actualPaymentAndBillingData.notificationType[key as keyof NotificationType],
       },
     };
     setPaymentAndBilling(updatedSettings);
     debouncedUpdate(updatedSettings);
-  }, [paymentAndBilling, setPaymentAndBilling, debouncedUpdate]);
+  }, [actualPaymentAndBillingData, setPaymentAndBilling, debouncedUpdate]);
 
-  if (!paymentAndBilling) {
+  if (!actualPaymentAndBillingData) {
     return (
       <div className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
         <div className="animate-pulse">
@@ -207,7 +214,7 @@ const PaymentAndSubscription = () => {
             <div className="space-y-4">
               {paymentOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = paymentAndBilling.option[option.key as keyof PaymentAndBillingNotificationOptions];
+                const isActive = actualPaymentAndBillingData?.option?.[option.key as keyof PaymentAndBillingNotificationOptions] || false;
 
                 return (
                   <div
@@ -254,7 +261,7 @@ const PaymentAndSubscription = () => {
             <div className="space-y-4">
               {notificationTypeOptions.map((option) => {
                 const IconComponent = option.icon;
-                const isActive = paymentAndBilling.notificationType[option.key as keyof NotificationType];
+                const isActive = actualPaymentAndBillingData?.notificationType?.[option.key as keyof NotificationType] || false;
 
                 return (
                   <div

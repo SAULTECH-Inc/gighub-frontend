@@ -4,28 +4,29 @@ import {
   ApplicationMetrics,
   ApplicationRequest,
   ApplicationResponse,
-  BulkSearchParams,
-  EmployerData,
+  BulkSearchParams, CategoryInfo,
+  EmployerData, FeatureJob,
   FetchMyJobParam,
   FileUploadResponse,
   InterviewScheduleDetails,
   InterviewScheduleDetailsResponse,
-  JobPostResponse,
+  JobPostResponse, JobStatus,
   NetworkDetails,
   RatingResponseDTO,
-  SortBy,
-  TopHiringCompanyDto,
+  SortBy, SubscriptionResponse, SubscriptionType,
+  TopHiringCompanyDto
 } from "../../utils/types";
-import { privateApiClient } from "../../client/axios.ts";
+import { privateApiClient, publicApiClient } from "../../client/axios.ts";
 import {
   API_BASE_URL,
   CHAT_API_BASE_URL,
-  NOTIFICATION_API_URL,
-  VITE_API_FILE_SERVICE,
+  NOTIFICATION_API_URL, SUBSCRIPTION_SERVICE_HOST,
+  VITE_API_FILE_SERVICE
 } from "../../utils/constants.ts";
 import { Action, UserType } from "../../utils/enums.ts";
 import { PaginationParams } from "../../pages/company list/CompanyList.tsx";
 import { JobRatingRequest } from "../../components/features/JobDetails.tsx";
+import { JobMatchResult } from "../../components/ui/MatchDetailsModal.tsx";
 
 export async function fetchPrivateMessages(user: string, otherUser: string) {
   try {
@@ -503,13 +504,21 @@ export const fetchMyInterviews = async (
 
 export const withdrawApplication = async (
   jobId: number,
-): Promise<APIResponse<any>> => {
+): Promise<APIResponse<ApplicationResponse>> => {
   console.log(`Withdrawing application with ID: ${jobId}`);
-  const response = await privateApiClient.patch<APIResponse<any>>(
+  const response = await privateApiClient.patch<APIResponse<ApplicationResponse>>(
     `${API_BASE_URL}/applications/withdraw/jobs/${jobId}`,
   );
   return response?.data;
 };
+
+export const reApply = async(jobId: number): Promise<APIResponse<ApplicationResponse>> => {
+  console.log(`Re-applying for job with ID: ${jobId}`);
+  const response = await privateApiClient.patch<APIResponse<ApplicationResponse>>(
+    `${API_BASE_URL}/applications/reapply/jobs/${jobId}`,
+  );
+  return response?.data;
+}
 
 //':interviewId/applicants/:applicantId/reject'
 export const rejectInterview = async (
@@ -705,3 +714,142 @@ export const deleteMessage = async (
   );
   return response?.data;
 };
+
+
+export const fetchJobApplicants = async(jobId: number, page: number, limit: number)=>{
+  const response = await privateApiClient.get<APIResponse<ApplicantData[]>>(`${API_BASE_URL}/jobs/${jobId}/applicants?page=${page}&limit=${limit}`);
+  return response?.data;
+}
+
+export const fetchJobApplications = async(jobId: number, page: number, limit: number, params:     {
+  search: string,
+  status: string,
+  sortBy: string,
+  sortOrder: string
+})=>{
+  const response = await privateApiClient.post<APIResponse<ApplicationResponse[]>>(`${API_BASE_URL}/jobs/${jobId}/applications?page=${page}&limit=${limit}`, params);
+  return response?.data;
+}
+
+export const updateApplicationStatus = async(applicationId: number, status: string)=>{
+  const response = await privateApiClient.patch<APIResponse<ApplicationResponse>>(`${API_BASE_URL}/applications/${applicationId}/status?status=${status}`);
+  return response?.data;
+}
+
+export const updateJobStatus = async(jobId: number, updatedRequest: {status: JobStatus, reason?: string})=>{
+  const response = await privateApiClient.patch<APIResponse<JobPostResponse>>(`${API_BASE_URL}/jobs/${jobId}/status`, updatedRequest);
+  return response?.data;
+}
+
+export const updateJob = async(jobId: number, updatedRequest: Partial<JobPostResponse>)=>{
+  const response = await privateApiClient.put<APIResponse<JobPostResponse>>(`${API_BASE_URL}/jobs/${jobId}`, updatedRequest);
+  return response?.data;
+}
+
+
+export const bookmarkJob = async (jobId: number): Promise<APIResponse<any>> => {
+  console.log(`Bookmarking job with ID: ${jobId}`);
+  const response = await privateApiClient.post<APIResponse<any>>(
+    `${API_BASE_URL}/bookmarks`,{ jobId }
+  );
+  return response?.data;
+}
+
+export const removeJobBookmark = async (jobId: number): Promise<APIResponse<any>> => {
+  console.log(`Removing bookmark with Job ID: ${jobId}`);
+  const response = await privateApiClient.delete<APIResponse<any>>(
+    `${API_BASE_URL}/bookmarks/${jobId}`
+  );
+  return response?.data;
+}
+
+export const followCompany = async(companyId: number)=>{
+  console.log(`Following company for Job ID: ${companyId}`);
+  const response = await privateApiClient.get<APIResponse<any>>(
+    `${API_BASE_URL}/users/followers/${companyId}/follow`
+  );
+  return response?.data;
+}
+
+export const unfollowCompany = async (companyId: number)=>{
+  console.log(`Following company for Job ID: ${companyId}`);
+  const response = await privateApiClient.get<APIResponse<any>>(
+    `${API_BASE_URL}/users/followers/${companyId}/unfollow`
+  );
+  return response?.data;
+}
+
+export const fetchJobDetailsRelativeToMe = async(jobId: number)=>{
+  console.log(`Fetching job details relative to me for Job ID: ${jobId}`);
+  const response = await privateApiClient.get<APIResponse<JobPostResponse>>(
+    `${API_BASE_URL}/jobs/${jobId}/details/relative-to-me`
+  );
+  return response?.data;
+}
+
+export const fetchTopRecommendedJob = async()=>{
+  console.log(`Fetching top recommended jobs`);
+  const response = await privateApiClient.get<APIResponse<JobPostResponse>>(
+    `${API_BASE_URL}/jobs/recommended-job/top`
+  );
+  return response?.data;
+}
+
+export const getJobsCount = async()=>{
+  const response = await publicApiClient.get<APIResponse<number>>(`${API_BASE_URL}/jobs/all/count`);
+  return response.data;
+}
+
+export const getUserCount = async()=>{
+  const response = await publicApiClient.get<APIResponse<number>>(`${API_BASE_URL}/users/all/count`);
+  return response?.data;
+}
+
+export const getAllActiveCompanies = async()=>{
+  const response = await publicApiClient.get<APIResponse<number>>(`${API_BASE_URL}/users/companies/active/count`);
+  return response.data;
+}
+
+export const getAllCategories = async()=>{
+  const response = await publicApiClient.get<APIResponse<number>>(`${API_BASE_URL}/jobs/categories/all`);
+  return response.data;
+}
+
+export const fetchFeaturedJobs = async(limit: number)=>{
+  console.log("Fetching featured jobs")
+  const response = await publicApiClient.get<APIResponse<FeatureJob[]>>(`${API_BASE_URL}/jobs/featured-jobs/all?limit=${limit}`);
+  return response.data;
+}
+
+export const fetchCategories = async()=>{
+  console.log("Fetching categories")
+  const response = await publicApiClient.get<APIResponse<CategoryInfo[]>>(`${API_BASE_URL}/jobs/categories/all`);
+  return response.data;
+}
+
+export const  getSubscriptionPlans = async (subscriptionType: SubscriptionType): Promise<APIResponse<SubscriptionResponse[]>> => {
+    const response = await privateApiClient.get<
+      APIResponse<SubscriptionResponse[]>
+    >(`${SUBSCRIPTION_SERVICE_HOST}/subscriptions/by-type?type=${subscriptionType}`);
+    return  response.data;
+}
+
+
+export const fetchFlutterwaveEncryptionKey = async()=>{
+  const response = await privateApiClient.get<
+    APIResponse<string>
+  >(`${SUBSCRIPTION_SERVICE_HOST}/crypto/flutterwave/encryption-key`);
+  return  response.data;
+}
+
+export const makePaymentForSub = async (payload: any)=>{
+  const response = await privateApiClient.post<
+    APIResponse<any>
+  >(`${SUBSCRIPTION_SERVICE_HOST}/subscriptions/payments/pay`,payload);
+  return  response.data;
+}
+
+export const fetchJobMatchResult = async (applicantId: number, jobId: number)=>{
+  const response = await publicApiClient.get<APIResponse<JobMatchResult>>(`${API_BASE_URL}/jobs/job-match/applicant?applicantId=${applicantId}&jobId=${jobId}`);
+  return response.data;
+}

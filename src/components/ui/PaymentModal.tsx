@@ -1,10 +1,10 @@
-import React, { memo, useRef, useState } from "react";
+import React, { memo, useState, useRef } from "react";
 import useModalStore from "../../store/modalStateStores.ts";
 import gighubLogo from "../../assets/icons/gighubLogoSmall.svg";
+import qrCodeData from "../../assets/images/qrcode.png";
 import { SiVisa } from "react-icons/si";
 import MasterCardLogo from "../common/MasterCardLogo.tsx";
 import { useForm, Controller } from "react-hook-form";
-import qrCodeData from "../../assets/images/qrcode.png";
 import {
   X,
   CreditCard,
@@ -16,11 +16,17 @@ import {
   Shield,
   Lock,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
+import { SubscriptionResponse } from "../../utils/types";
+import numeral from "numeral";
+import { makePaymentForSub } from "../../services/api";
+import { useSubscriptionStore } from "../../store/useSubscriptionStore.ts";
 
 interface ModalProps {
   modalId: string;
+  selectedPlan: SubscriptionResponse;
+  user: any;
 }
 
 interface FormValues {
@@ -28,16 +34,17 @@ interface FormValues {
   cvv: string;
   expiryMonth: string;
   expiryYear: string;
-  password: string;
 }
 
-const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
+const PaymentModal: React.FC<ModalProps> = ({ modalId, selectedPlan, user }) => {
   const { modals, closeModal, openModal } = useModalStore();
+  const {subscribe} = useSubscriptionStore();
   const isOpen = modals[modalId];
   const [activeTab, setActiveTab] = useState<"card" | "bank">("card");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
   const [accountCopied, setAccountCopied] = useState(false);
   const [uploadedProof, setUploadedProof] = useState<File | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
 
   const cardInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -46,24 +53,21 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
     handleSubmit,
     setValue,
     watch,
-    formState: { errors, isValid },
+    formState: { isValid },
+    reset,
   } = useForm<FormValues>({
     defaultValues: {
       cardNumber: ["", "", "", ""],
       cvv: "",
       expiryMonth: "",
       expiryYear: "",
-      password: "",
     },
     mode: "onChange",
   });
 
   const cardNumber = watch("cardNumber");
   const firstDigit = cardNumber[0]?.[0];
-
-  const isCardNumberComplete = cardNumber.every(
-    (segment) => segment.length === 4,
-  );
+  const isCardNumberComplete = cardNumber.every(segment => segment.length === 4);
 
   const handleCardNumberChange = (value: string, index: number) => {
     const numericValue = value.replace(/\D/g, "");
@@ -82,34 +86,211 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
     }
   };
 
-  const validateExpiryDate = () => {
-    const month = parseInt(watch("expiryMonth"));
-    const year = parseInt(watch("expiryYear"));
+  const validateExpiryDate = (month: string, year: string) => {
+    const monthNum = parseInt(month);
+    const yearNum = parseInt(year);
 
-    if (month < 1 || month > 12) return false;
+    if (monthNum < 1 || monthNum > 12) return false;
 
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear() % 100;
     const currentMonth = currentDate.getMonth() + 1;
 
-    return !(year < currentYear || (year === currentYear && month < currentMonth));
-
-
+    return !(yearNum < currentYear || (yearNum === currentYear && monthNum < currentMonth));
   };
 
-  const onSubmit = async () => {
-    if (!validateExpiryDate()) {
-      alert("Please enter a valid expiry date");
+
+  const processEncryptedPayment = async (formData: FormValues) => {
+    setIsProcessing(true);
+    setPaymentError(null);
+
+    try {
+      const fullCardNumber = formData.cardNumber.join("");
+
+      // CHANGED: Send plain card data to backend - no encryption on frontend
+      const paymentPayload = {
+        amount: selectedPlan.price,
+        currency: selectedPlan.currency || "NGN",
+        reference: `sub_${Date.now()}_${user.id}`,
+        customer: {
+          email: user.email,
+          name: `${user.firstName} ${user.lastName}`,
+        },
+        payment_method: {
+          type: "card",
+          card: {
+            card_number: fullCardNumber, // Plain text - backend will encrypt
+            cvv: formData.cvv, // Plain text - backend will encrypt
+            expiry_month: formData.expiryMonth, // Plain text - backend will encrypt
+            expiry_year: `20${formData.expiryYear}`, // Plain text - backend will encrypt
+          },
+        },
+        metadata: {
+          userId: user.id,
+          subscriptionId: selectedPlan.id,
+          planName: selectedPlan.name,
+        },
+      };
+
+      console.log('Sending payment request to backend...');
+
+      // Make payment request to YOUR backend (not directly to Flutterwave)
+      const paymentResponse = await makePaymentForSub(paymentPayload);
+      console.log("Payment response:", paymentResponse);
+
+      if (paymentResponse.statusCode !== 200) {
+        throw new Error(
+          paymentResponse.message ||
+          paymentResponse.error ||
+          `Payment failed (${paymentResponse.statusCode})`
+        );
+      }
+
+      if (!paymentResponse.data) {
+        throw new Error("No payment data received from server");
+      }
+
+      const result = paymentResponse.data;
+
+      if (result.status === 'successful') {
+        await handleSuccessfulPayment(result);
+      } else if (result.status === 'pending' && result.authorization?.mode === 'pin') {
+        await handlePinRequired(result);
+      } else if (result.status === 'pending' && result.authorization?.mode === 'otp') {
+        await handleOtpRequired(result);
+      } else {
+        throw new Error(result.message || 'Payment failed');
+      }
+
+    } catch (error: any) {
+      console.error('Payment error:', error);
+
+      let errorMessage = 'Payment processing failed';
+
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('Network')) {
+        errorMessage = 'Network error: Please check your internet connection and try again';
+      } else if (error.message?.includes('401')) {
+        errorMessage = 'Authentication expired. Please log in again.';
+      } else if (error.message?.includes('403')) {
+        errorMessage = 'Payment not authorized. Please contact support.';
+      } else if (error.message?.includes('404')) {
+        errorMessage = 'Payment service unavailable. Please try again later.';
+      } else if (error.message?.includes('429')) {
+        errorMessage = 'Too many requests. Please wait a moment and try again.';
+      } else if (error.message?.includes('500')) {
+        errorMessage = 'Server error. Please try again in a few minutes.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      setPaymentError(errorMessage);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleSuccessfulPayment = async (paymentResult: any) => {
+    try {
+      const subscriptionResponse = await subscribe(user.id, selectedPlan.id);
+
+      if (subscriptionResponse.statusCode !== 200) {
+        const errorText = subscriptionResponse.message;
+        console.error('Subscription activation failed:', errorText, paymentResult);
+        throw new Error('Payment successful but subscription activation failed. Please contact support.');
+      }
+
+      // Clear form and close modal on success
+      reset();
+      setPaymentError(null);
+      handlePaymentSuccess();
+    } catch (error: any) {
+      console.error('Subscription activation error:', error);
+      setPaymentError(error.message || 'Payment successful but subscription activation failed');
+    }
+  };
+
+  const handlePinRequired = async (result: any) => {
+    const pin = prompt('Please enter your 4-digit card PIN:');
+    if (!pin) {
+      setPaymentError('PIN is required to complete this payment');
       return;
     }
 
-    setIsProcessing(true);
+    if (!/^\d{4}$/.test(pin)) {
+      setPaymentError('PIN must be exactly 4 digits');
+      return;
+    }
 
-    // Simulate payment processing
-    setTimeout(() => {
-      setIsProcessing(false);
-      handlePaymentSuccess();
-    }, 2000);
+    try {
+      const response = await fetch('/api/payments/flutterwave-validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+        body: JSON.stringify({
+          flw_ref: result.flw_ref,
+          otp: pin,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Validation failed (${response.status})`);
+      }
+
+      const pinResult = await response.json();
+
+      if (pinResult.status === 'successful') {
+        await handleSuccessfulPayment(pinResult);
+      } else {
+        throw new Error('Invalid PIN provided');
+      }
+    } catch (error: any) {
+      console.error('PIN validation error:', error);
+      setPaymentError(error.message || 'PIN validation failed');
+    }
+  };
+
+  const handleOtpRequired = async (result: any) => {
+    const otp = prompt('Please enter the OTP sent to your phone:');
+    if (!otp) {
+      setPaymentError('OTP is required to complete this payment');
+      return;
+    }
+
+    if (!/^\d{4,6}$/.test(otp)) {
+      setPaymentError('OTP must be 4-6 digits');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/payments/flutterwave-validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+        body: JSON.stringify({
+          flw_ref: result.flw_ref,
+          otp: otp,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Validation failed (${response.status})`);
+      }
+
+      const otpResult = await response.json();
+
+      if (otpResult.status === 'successful') {
+        await handleSuccessfulPayment(otpResult);
+      } else {
+        throw new Error('Invalid OTP provided');
+      }
+    } catch (error: any) {
+      console.error('OTP validation error:', error);
+      setPaymentError(error.message || 'OTP validation failed');
+    }
   };
 
   const handlePaymentSuccess = () => {
@@ -118,36 +299,119 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
   };
 
   const handleCopyAccount = () => {
-    navigator.clipboard.writeText("1234567890").then(r => r);
+    navigator.clipboard.writeText("1234567890");
     setAccountCopied(true);
     setTimeout(() => setAccountCopied(false), 2000);
   };
 
   const handleProofUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      setUploadedProof(file);
+    if (!file) return;
+
+    // Validate file size (10MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      setPaymentError("File size must be less than 10MB");
+      return;
     }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+    if (!allowedTypes.includes(file.type)) {
+      setPaymentError("Please upload a JPG, PNG, or PDF file");
+      return;
+    }
+
+    setUploadedProof(file);
+    setPaymentError(null); // Clear any previous errors
   };
 
   const handleBankTransferSubmit = async () => {
     if (!uploadedProof) {
-      alert("Please upload proof of payment");
+      setPaymentError("Please upload proof of payment");
       return;
     }
 
     setIsProcessing(true);
+    setPaymentError(null);
 
-    setTimeout(() => {
-      setIsProcessing(false);
+    try {
+      const formData = new FormData();
+      formData.append('proof', uploadedProof);
+      formData.append('userId', user.id.toString());
+      formData.append('subscriptionId', selectedPlan.id.toString());
+      formData.append('amount', selectedPlan.price.toString());
+      formData.append('reference', `bank_${Date.now()}_${user.id}`);
+
+      const response = await fetch('/api/payments/bank-transfer', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+        body: formData,
+      });
+
+      console.log('Bank transfer response status:', response.status);
+
+      if (!response.ok) {
+        let errorMessage = 'Failed to submit bank transfer';
+
+        if (response.status === 400) {
+          errorMessage = 'Invalid payment details. Please check and try again.';
+        } else if (response.status === 401) {
+          errorMessage = 'Authentication required. Please log in again.';
+        } else if (response.status === 404) {
+          errorMessage = 'Bank transfer service unavailable. Please contact support.';
+        } else if (response.status === 413) {
+          errorMessage = 'File too large. Please upload a smaller file.';
+        } else if (response.status === 500) {
+          errorMessage = 'Server error. Please try again later.';
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      // Success
+      alert('Bank transfer submitted successfully. Your subscription will be activated within 24 hours after verification.');
+
+      // Clear form and close modal
+      setUploadedProof(null);
       handlePaymentSuccess();
-    }, 1500);
+
+    } catch (error: any) {
+      console.error('Bank transfer error:', error);
+      setPaymentError(error.message || 'Bank transfer submission failed');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const onSubmit = async (data: FormValues) => {
+    if (!validateExpiryDate(data.expiryMonth, data.expiryYear)) {
+      setPaymentError("Please enter a valid expiry date");
+      return;
+    }
+
+    await processEncryptedPayment(data);
+  };
+
+  // Clear errors when switching tabs
+  const handleTabChange = (tab: "card" | "bank") => {
+    setActiveTab(tab);
+    setPaymentError(null);
+  };
+
+  // Clear errors and form when modal closes
+  const handleModalClose = () => {
+    closeModal(modalId);
+    setPaymentError(null);
+    setUploadedProof(null);
+    reset();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 p-4 backdrop-blur-xs">
       <div className="relative max-h-[95vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-2xl">
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-slate-200 bg-white p-4 sm:p-6">
@@ -155,13 +419,13 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
             <img src={gighubLogo} alt="GigHub Logo" className="h-8 w-auto" />
             <div>
               <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
-                Payment
+                Secure Payment
               </h2>
-              <p className="text-sm text-slate-600">Secure & Encrypted</p>
+              <p className="text-sm text-slate-600">3DES Encrypted</p>
             </div>
           </div>
           <button
-            onClick={() => closeModal(modalId)}
+            onClick={handleModalClose}
             className="rounded-full p-2 transition-colors hover:bg-slate-100"
           >
             <X className="h-5 w-5 text-slate-600" />
@@ -171,14 +435,14 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
         {/* Plan Summary */}
         <div className="border-b border-slate-200 bg-gradient-to-r from-indigo-50 to-purple-50 p-4 sm:p-6">
           <div className="mb-3 flex items-center justify-between">
-            <span className="text-sm font-medium text-slate-700">
-              Selected Plan
+            <span className="text-sm font-medium text-slate-700">Selected Plan</span>
+            <span className="text-2xl font-bold text-indigo-600">
+              {selectedPlan.currency}{numeral(selectedPlan.price).format("0,0")}
             </span>
-            <span className="text-2xl font-bold text-indigo-600">$40</span>
           </div>
           <div className="flex items-center justify-center rounded-lg border border-indigo-200 bg-white px-4 py-2">
             <span className="text-sm font-medium text-slate-800">
-              Quarterly Subscription
+              {selectedPlan.name} / {selectedPlan.billingCycle}
             </span>
           </div>
         </div>
@@ -187,7 +451,7 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
         <div className="border-b border-slate-100 p-4 pb-4 sm:p-6">
           <div className="flex rounded-xl bg-slate-100 p-1">
             <button
-              onClick={() => setActiveTab("card")}
+              onClick={() => handleTabChange("card")}
               className={`flex flex-1 items-center justify-center space-x-2 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
                 activeTab === "card"
                   ? "bg-white text-indigo-600 shadow-sm"
@@ -198,7 +462,7 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
               <span>Card Payment</span>
             </button>
             <button
-              onClick={() => setActiveTab("bank")}
+              onClick={() => handleTabChange("bank")}
               className={`flex flex-1 items-center justify-center space-x-2 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
                 activeTab === "bank"
                   ? "bg-white text-indigo-600 shadow-sm"
@@ -213,6 +477,14 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
 
         {/* Content */}
         <div className="p-4 sm:p-6">
+          {/* Error Display */}
+          {paymentError && (
+            <div className="mb-4 flex items-center space-x-2 rounded-lg border border-red-200 bg-red-50 p-3">
+              <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
+              <span className="text-sm text-red-700">{paymentError}</span>
+            </div>
+          )}
+
           {/* Card Payment Tab */}
           {activeTab === "card" && (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -220,24 +492,18 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
               <div className="flex items-center justify-center space-x-2 rounded-lg border border-green-200 bg-green-50 p-3">
                 <Shield className="h-4 w-4 text-green-600" />
                 <span className="text-sm font-medium text-green-700">
-                  256-bit SSL Encrypted
+                  Your card details are securely encrypted by our server
                 </span>
               </div>
 
               {/* Card Number */}
               <div className="space-y-3">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-900">
-                    Card Number
-                  </label>
-                  <p className="text-xs text-slate-600">
-                    Enter the 16-digit card number
-                  </p>
-                </div>
+                <label className="block text-sm font-medium text-slate-900">
+                  Card Number
+                </label>
 
                 <div className="relative">
                   <div className="flex items-center space-x-3 rounded-xl border border-slate-200 bg-slate-50 p-4 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20">
-                    {/* Card Logo */}
                     <div className="flex-shrink-0">
                       {firstDigit === "4" ? (
                         <SiVisa size={24} className="text-blue-600" />
@@ -246,8 +512,7 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                       )}
                     </div>
 
-                    {/* Card Number Inputs */}
-                    <div className="flex flex-1 items-center space-x-2">
+                    <div className="flex flex-1 items-center space-x-1">
                       {cardNumber.map((_value, index) => (
                         <React.Fragment key={index}>
                           <Controller
@@ -255,24 +520,15 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                             control={control}
                             rules={{
                               required: "Required",
-                              minLength: {
-                                value: 4,
-                                message: "4 digits required",
-                              },
+                              minLength: { value: 4, message: "4 digits required" },
                             }}
                             render={({ field }) => (
                               <input
                                 {...field}
-                                ref={(el) =>
-                                  (cardInputRefs.current[index] = el)
-                                }
-                                onChange={(e) =>
-                                  handleCardNumberChange(e.target.value, index)
-                                }
-                                onKeyDown={(e) =>
-                                  handleCardNumberKeyDown(e, index)
-                                }
-                                className="w-12 border-0 bg-transparent text-center font-mono text-sm focus:ring-0 focus:outline-none sm:w-14"
+                                ref={(el) => (cardInputRefs.current[index] = el)}
+                                onChange={(e) => handleCardNumberChange(e.target.value, index)}
+                                onKeyDown={(e) => handleCardNumberKeyDown(e, index)}
+                                className="w-14 border-0 bg-transparent text-center font-mono text-sm focus:ring-0 focus:outline-none"
                                 maxLength={4}
                                 placeholder="0000"
                                 type="text"
@@ -280,14 +536,11 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                               />
                             )}
                           />
-                          {index < 3 && (
-                            <div className="h-px w-2 bg-slate-400"></div>
-                          )}
+                          {index < 3 && <div className="h-px w-1 bg-slate-400"></div>}
                         </React.Fragment>
                       ))}
                     </div>
 
-                    {/* Validation Check */}
                     {isCardNumberComplete && (
                       <div className="flex-shrink-0">
                         <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500">
@@ -299,13 +552,10 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                 </div>
               </div>
 
-              {/* CVV and Expiry */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {/* CVV */}
+              {/* CVV, Month, Year */}
+              <div className="grid grid-cols-3 gap-3">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-slate-900">
-                    CVV
-                  </label>
+                  <label className="block text-sm font-medium text-slate-900">CVV</label>
                   <Controller
                     name="cvv"
                     control={control}
@@ -323,9 +573,7 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                           placeholder="123"
                           type="text"
                           inputMode="numeric"
-                          onChange={(e) =>
-                            field.onChange(e.target.value.replace(/\D/g, ""))
-                          }
+                          onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ""))}
                         />
                         <Lock className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 transform text-slate-400" />
                       </div>
@@ -333,71 +581,55 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                   />
                 </div>
 
-                {/* Expiry Date */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-slate-900">
-                    Expiry Date
-                  </label>
-                  <div className="flex items-center space-x-2">
-                    <Controller
-                      name="expiryMonth"
-                      control={control}
-                      rules={{
-                        required: "Month required",
-                        validate: (value) => {
-                          const month = parseInt(value);
-                          return (month >= 1 && month <= 12) || "Invalid";
-                        },
-                      }}
-                      render={({ field }) => (
-                        <input
-                          {...field}
-                          maxLength={2}
-                          placeholder="MM"
-                          className="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-3 text-center font-mono focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
-                          type="text"
-                          inputMode="numeric"
-                          onChange={(e) =>
-                            field.onChange(e.target.value.replace(/\D/g, ""))
-                          }
-                        />
-                      )}
-                    />
-                    <span className="text-slate-400">/</span>
-                    <Controller
-                      name="expiryYear"
-                      control={control}
-                      rules={{
-                        required: "Year required",
-                        minLength: { value: 2, message: "2 digits" },
-                      }}
-                      render={({ field }) => (
-                        <input
-                          {...field}
-                          maxLength={2}
-                          placeholder="YY"
-                          className="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-3 text-center font-mono focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
-                          type="text"
-                          inputMode="numeric"
-                          onChange={(e) =>
-                            field.onChange(e.target.value.replace(/\D/g, ""))
-                          }
-                        />
-                      )}
-                    />
-                  </div>
+                  <label className="block text-sm font-medium text-slate-900">Month</label>
+                  <Controller
+                    name="expiryMonth"
+                    control={control}
+                    rules={{
+                      required: "Month required",
+                      validate: (value) => {
+                        const month = parseInt(value);
+                        return (month >= 1 && month <= 12) || "Invalid";
+                      },
+                    }}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        maxLength={2}
+                        placeholder="MM"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-center font-mono focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                        type="text"
+                        inputMode="numeric"
+                        onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ""))}
+                      />
+                    )}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-slate-900">Year</label>
+                  <Controller
+                    name="expiryYear"
+                    control={control}
+                    rules={{
+                      required: "Year required",
+                      minLength: { value: 2, message: "2 digits" },
+                    }}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        maxLength={2}
+                        placeholder="YY"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-center font-mono focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                        type="text"
+                        inputMode="numeric"
+                        onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ""))}
+                      />
+                    )}
+                  />
                 </div>
               </div>
-
-              {/* Error Display */}
-              {Object.keys(errors).length > 0 && (
-                <div className="flex items-center space-x-2 rounded-lg border border-red-200 bg-red-50 p-3">
-                  <AlertCircle className="h-4 w-4 text-red-600" />
-                  <span className="text-sm text-red-700">
-                    Please fill in all required fields correctly
-                  </span>
-                </div>
-              )}
 
               {/* Submit Button */}
               <button
@@ -408,21 +640,35 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                 {isProcessing ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                    <span>Processing...</span>
+                    <span>Processing Payment...</span>
                   </>
                 ) : (
                   <>
                     <Shield className="h-4 w-4" />
-                    <span>Pay $40 Securely</span>
+                    <span>Pay {selectedPlan.currency}{numeral(selectedPlan.price).format("0,0")} Securely</span>
                   </>
                 )}
               </button>
+
+              {/* Security Notice */}
+              <div className="text-center text-xs text-slate-500">
+                <p>Your card details are securely transmitted and encrypted on our servers.</p>
+                <p className="mt-1">Your sensitive information never reaches our servers unencrypted.</p>
+              </div>
             </form>
           )}
 
           {/* Bank Transfer Tab */}
           {activeTab === "bank" && (
             <div className="space-y-6">
+              {/* Security Badge */}
+              <div className="flex items-center justify-center space-x-2 rounded-lg border border-blue-200 bg-blue-50 p-3">
+                <Building className="h-4 w-4 text-blue-600" />
+                <span className="text-sm font-medium text-blue-700">
+                  Secure Bank Transfer
+                </span>
+              </div>
+
               {/* QR Code Section */}
               <div className="space-y-4 text-center">
                 <div className="mb-4 flex items-center justify-center space-x-2">
@@ -468,8 +714,12 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                       value: "1234567890",
                       copyable: true,
                     },
-                    { label: "Amount", value: "$40.00", highlight: true },
-                    { label: "Reference", value: "QUARTERLY-2025" },
+                    {
+                      label: "Amount",
+                      value: `${selectedPlan.currency}${numeral(selectedPlan.price).format('0,0')}`,
+                      highlight: true
+                    },
+                    { label: "Reference", value: `${selectedPlan.billingCycle.toUpperCase()}-${user.id}-${Date.now()}` },
                   ].map((item, index) => (
                     <div
                       key={index}
@@ -500,6 +750,20 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                       </div>
                     </div>
                   ))}
+                </div>
+
+                <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
+                  <div className="flex items-start space-x-2">
+                    <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5" />
+                    <div className="text-sm text-amber-800">
+                      <p className="font-medium">Important Instructions:</p>
+                      <ul className="mt-1 space-y-1 text-xs">
+                        <li>• Use the exact reference number provided above</li>
+                        <li>• Upload clear proof of payment after transfer</li>
+                        <li>• Subscription will be activated within 24 hours</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -555,12 +819,12 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
                 {isProcessing ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                    <span>Processing...</span>
+                    <span>Submitting...</span>
                   </>
                 ) : (
                   <>
                     <CheckCircle className="h-4 w-4" />
-                    <span>Submit Payment</span>
+                    <span>Submit Payment Proof</span>
                   </>
                 )}
               </button>

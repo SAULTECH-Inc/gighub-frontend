@@ -25,6 +25,24 @@ export enum Action {
   UPLOAD_COMPANY_LOGO = "upload_company_logo",
 }
 
+export enum UserStatus {
+  ACTIVE = 'Active',
+  INACTIVE = 'Inactive',
+  BLOCKED = 'Blocked',
+  DELETED = 'Deleted',
+  PENDING = 'Pending',
+  VERIFIED = 'Verified',
+  UNVERIFIED = 'Unverified',
+  SUSPENDED = 'Suspended',
+  DEACTIVATED = 'Deactivated',
+  ARCHIVED = 'Archived',
+  BANNED = 'Banned',
+  RESTRICTED = 'Restricted',
+  PENDING_VERIFICATION = 'Pending Verification',
+  PENDING_APPROVAL = 'Pending Approval',
+  APPROVED = 'Approved',
+}
+
 export enum SubscriptionType {
   PROFESSIONAL = "Professional",
   ENTERPRISE = "Enterprise",
@@ -79,6 +97,13 @@ export enum InterviewType {
   ASSESSMENT = "assessment",
   GROUP_INTERVIEW = "group-interview",
 }
+export enum ScreeningQuestionType {
+  SHORT_TEXT = 'short_text',
+  LONG_TEXT = 'long_text',
+  YES_NO = 'yes_no',
+  OPTIONS = 'options',
+  DROPDOWN = 'dropdown',
+}
 
 export enum InterviewStatus {
   SCHEDULED = "scheduled",
@@ -98,4 +123,36 @@ export enum Priority{
   MEDIUM = "MEDIUM",
   HIGH = "HIGH",
   URGENT = "URGENT",
+}
+
+export enum ApplicationStatus {
+  VIEWED = "Viewed",
+  PENDING = "Pending",
+  HIRED = "Hired",
+  INTERVIEWED = "Interview scheduled",
+  REJECTED = "Rejected",
+  SHORTLISTED = "Shortlisted",
+  WITHDRAWN = "Withdrawn",
+  ACCEPTED="Accepted",
+  OFFER_ACCEPTED="Offer Accepted",
+  OFFER_DECLINED="Offer Declined",
+  OFFER_EXTENDED="Offer Extended",
+  ALL="All",
+}
+
+export enum EmploymentType {
+  FULL_TIME = "Full Time",
+  PART_TIME = "Part Time",
+  CONTRACT = "Contract",
+  FREELANCE = "Freelance",
+  REMOTE = "Remote",
+  INTERNSHIP = "Internship",
+  TEMPORARY = "Temporary",
+  VOLUNTEER = "Volunteer",
+  SEASONAL = "Seasonal",
+  PER_DIEM = "Per Diem",
+  CONSULTANT = "Consultant",
+  APPRENTICESHIP = "Apprenticeship",
+  ONSITE = "Onsite",
+  HYBRID = "Hybrid",
 }

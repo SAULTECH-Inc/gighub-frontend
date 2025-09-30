@@ -1,9 +1,10 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import { motion } from "framer-motion";
 import Image7 from "../../../../assets/images/image7.png";
 import { EmployerData } from "../../../../utils/types";
 import { useChatStore } from "../../../../store/useChatStore.ts";
 import { MapPin, Users, Building2, MessageCircle, Heart } from "lucide-react";
+import { followCompany, unfollowCompany } from "../../../../services/api";
 
 interface PublicProfileCardProp {
   user: EmployerData;
@@ -11,6 +12,8 @@ interface PublicProfileCardProp {
 
 const PublicProfileCard: React.FC<PublicProfileCardProp> = memo(({ user }) => {
   const { setIsClosed, setRecipient } = useChatStore();
+
+  const [isFollowing, setIsFollowing] = useState<boolean>(user.isFollowed || false);
 
   const handleSendMessage = React.useCallback(() => {
     if (user?.email) {
@@ -106,13 +109,37 @@ const PublicProfileCard: React.FC<PublicProfileCardProp> = memo(({ user }) => {
 
             {/* Action Buttons */}
             <div className="flex flex-col space-y-3 shrink-0 sm:flex-row sm:space-y-0 sm:space-x-3">
-              <button
-                className="flex items-center justify-center space-x-2 rounded-xl border-2 border-slate-200 bg-white px-6 py-3 text-sm font-medium text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
-                aria-label="Follow company"
-              >
-                <Heart className="h-4 w-4" />
-                <span>Follow</span>
-              </button>
+              {
+                isFollowing ? (<>
+                  <button
+                    onClick={async()=>{
+                      const response = await unfollowCompany(user?.id || 0);
+                      if(response.statusCode === 200){
+                        setIsFollowing((prev)=>!prev);
+                    }}}
+                    className="flex items-center justify-center space-x-2 rounded-xl border-2 border-slate-200 bg-white px-6 py-3 text-sm font-medium text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+                    aria-label="Following"
+                  >
+                    <Heart className="h-4 w-4 text-red-500" />
+                    <span>Following</span>
+                  </button>
+                </>) : (
+                  <>
+                    <button
+                      onClick={async()=>{
+                        const response = await followCompany(user?.id || 0);
+                        if(response.statusCode === 200){
+                          setIsFollowing((prev)=>!prev);
+                        }}}
+                      className="flex items-center justify-center space-x-2 rounded-xl border-2 border-slate-200 bg-white px-6 py-3 text-sm font-medium text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+                      aria-label="Follow company"
+                    >
+                      <Heart className="h-4 w-4" />
+                      <span>Follow</span>
+                    </button>
+                  </>
+                )
+              }
 
               <button
                 onClick={handleSendMessage}

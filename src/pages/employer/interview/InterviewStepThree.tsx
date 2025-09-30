@@ -13,6 +13,7 @@ import CustomSelect from "../../../components/common/CustomSelect.tsx";
 import DatePicker from "../../../components/common/DatePicker.tsx";
 import { InterviewScheduleDetails } from "../../../utils/types";
 import { useTimezones } from "../../../hooks/useTimezones.ts";
+import moment from "moment";
 
 // Common time slots for quick selection
 const COMMON_TIME_SLOTS = [
@@ -240,7 +241,7 @@ const InterviewStepThree: React.FC = () => {
 
             <div className="space-y-2">
               <DatePicker
-                selectedDate={interviewDetails?.date ? new Date(interviewDetails.date) : tomorrow}
+                selectedDate={interviewDetails?.date ? new Date(interviewDetails.date) : moment().toDate()}
                 onDateChange={(date) => {
                   handleInputChange('date', date?.toISOString());
                 }}

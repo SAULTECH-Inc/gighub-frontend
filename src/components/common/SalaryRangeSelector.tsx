@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { debounce } from "lodash";
-import { currencies } from "../../utils/Countries.ts";
 import CustomSelect from "./CustomSelect.tsx";
 import { Option } from "../../utils/types";
+import { currencies } from "../../utils/constants.ts";
 
 interface SalaryRangeProps {
   label?: string;

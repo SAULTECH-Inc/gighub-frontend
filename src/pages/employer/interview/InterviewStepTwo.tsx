@@ -1,76 +1,9 @@
-import React, { useCallback, useState, useEffect } from "react";
-import {
-  Video,
-  Phone,
-  MapPin,
-  Users,
-  Monitor,
-  FileText,
-  Check
-} from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { AlertCircle, Check, FileText, MapPin, Phone, Users, Video } from "lucide-react";
 import { useScheduleInterview } from "../../../store/useScheduleInterview.ts";
 import CustomSelect from "../../../components/common/CustomSelect.tsx";
 import { InterviewScheduleDetails, Option } from "../../../utils/types";
-
-// Interview type configuration with enhanced metadata
-const INTERVIEW_TYPES: Array<Option & {
-  icon: React.ComponentType<any>;
-  description: string;
-  color: string;
-}> = [
-  {
-    label: "Virtual Meeting",
-    value: "virtual-meeting",
-    icon: Video,
-    description: "Online video conference",
-    color: "bg-blue-50 border-blue-200 text-blue-700"
-  },
-  {
-    label: "Phone Call",
-    value: "phone-call",
-    icon: Phone,
-    description: "Voice-only interview",
-    color: "bg-green-50 border-green-200 text-green-700"
-  },
-  {
-    label: "In-Person",
-    value: "in-person",
-    icon: MapPin,
-    description: "Face-to-face meeting",
-    color: "bg-purple-50 border-purple-200 text-purple-700"
-  },
-  {
-    label: "Hybrid",
-    value: "hybrid",
-    icon: Monitor,
-    description: "Combined virtual and in-person",
-    color: "bg-orange-50 border-orange-200 text-orange-700"
-  },
-  {
-    label: "Assessment",
-    value: "assessment",
-    icon: FileText,
-    description: "Skill-based evaluation",
-    color: "bg-indigo-50 border-indigo-200 text-indigo-700"
-  },
-  {
-    label: "Group Interview",
-    value: "group-interview",
-    icon: Users,
-    description: "Multiple candidates together",
-    color: "bg-pink-50 border-pink-200 text-pink-700"
-  },
-];
-
-// Platform options with metadata
-const PLATFORM_OPTIONS: Option[] = [
-  { label: "Zoom", value: "zoom" },
-  { label: "Google Meet", value: "google-meet" },
-  { label: "Microsoft Teams", value: "microsoft-teams" },
-  { label: "Skype", value: "skype" },
-  { label: "WebEx", value: "webex" },
-  { label: "Other", value: "other" },
-];
+import { INTERVIEW_TYPES, PLATFORM_OPTIONS } from "../../../utils/constants.ts";
 
 // Validation schema
 interface ValidationErrors {
@@ -344,7 +277,7 @@ const InterviewStepTwo: React.FC = () => {
                           <CustomSelect
                             options={PLATFORM_OPTIONS}
                             placeholder="Select Platform"
-                            value={PLATFORM_OPTIONS.find(p => p.value === interviewDetails?.interviewPlatform) || ""}
+                            value={(PLATFORM_OPTIONS.find(p => p?.value === interviewDetails?.interviewPlatform) || PLATFORM_OPTIONS[0])?.value}
                             onChange={(option) => {
                               handleInputChange("interviewPlatform", option.value);
                             }}

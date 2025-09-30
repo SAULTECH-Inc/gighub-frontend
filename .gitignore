@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+logs.txt
+.env
+docker-compose.yml

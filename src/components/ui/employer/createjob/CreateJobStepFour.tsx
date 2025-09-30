@@ -1,35 +1,22 @@
 import React from "react";
 import { useJobFormStore } from "../../../../store/useJobFormStore";
-import { PreferredCompanies, universities } from "../../../../utils/Countries";
 import MultiSelect from "../../../common/MultiSelect";
 import { Crown } from "../../../../assets/images";
-import { toast } from "react-toastify";
 import { useSubscriptionStore } from "../../../../store/useSubscriptionStore.ts";
 import {
   RiArrowLeftLine,
+  RiArrowRightLine,
   RiBuilding2Line,
   RiSchoolLine,
   RiCheckLine,
   RiStarLine,
-  RiRocketLine
+  RiRobotLine
 } from "react-icons/ri";
+import { PreferredCompanies, universities } from "../../../../utils/constants.ts";
 
 const CreateJobStepFour: React.FC = () => {
   const { isSubscribed } = useSubscriptionStore();
-  const { prevStep, job, setJobData, postJob, resetFormData } = useJobFormStore();
-
-  const submitJob = async () => {
-    try {
-      const response = await postJob(job);
-      if (response.statusCode === 201) {
-        console.log("Job created successfully:", response.data);
-        toast.success("Job created successfully");
-        resetFormData();
-      }
-    } catch (error) {
-      console.error("Error creating job:", error);
-    }
-  };
+  const { prevStep, nextStep, job, setJobData } = useJobFormStore();
 
   const premiumFeatures = [
     "Advanced candidate filtering",
@@ -45,7 +32,7 @@ const CreateJobStepFour: React.FC = () => {
       <div className="w-full max-w-[880px] bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {/* Card Header */}
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Final Preferences</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Company Preferences</h2>
           <p className="text-sm text-gray-600">Set advanced candidate preferences to find the perfect match</p>
         </div>
 
@@ -205,6 +192,39 @@ const CreateJobStepFour: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Next Step Preview */}
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-200">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                  <RiRobotLine className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Next: AI Screening & Custom Questions</h3>
+                <p className="text-gray-600 mb-4">Configure intelligent candidate screening, set up custom application questions, and let AI help you find the perfect candidates automatically.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="flex items-center gap-2 text-sm text-gray-700">
+                    <RiCheckLine className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                    <span>AI-powered resume analysis</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-700">
+                    <RiCheckLine className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                    <span>Custom screening questions</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-700">
+                    <RiCheckLine className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                    <span>Automated candidate scoring</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-700">
+                    <RiCheckLine className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                    <span>Smart filtering & matching</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -218,12 +238,11 @@ const CreateJobStepFour: React.FC = () => {
           <span>Back</span>
         </button>
         <button
-          type="button"
-          onClick={submitJob}
-          className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+          onClick={nextStep}
+          className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200"
         >
-          <RiRocketLine className="h-4 w-4" />
-          <span>Publish Job</span>
+          <span>Continue to AI Setup</span>
+          <RiArrowRightLine className="h-4 w-4" />
         </button>
       </div>
     </div>

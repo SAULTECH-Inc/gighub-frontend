@@ -234,11 +234,25 @@ interface ApplicantNotificationSettings {
   options: ApplicantNotificationSettingsOptions;
 }
 
+export interface AutoApplySettings{
+  minimumMatchPercentage: number;
+  enableAutoApply: boolean;
+  pauseAutoApply: boolean;
+  applyImmediately: boolean;
+  batchApplyTime: string;
+  timezone: string;
+  applyOnWeekends: boolean;
+  skipAlreadyApplied: boolean;
+  blacklistedCompanies: string[];
+  blacklistedKeywords: string[];
+};
+
 // Applicant Settings
 export interface ApplicantSettings {
   notifications: ApplicantNotificationSettings;
   privacy: PrivacyOptions;
   subscription: SubscriptionDetails;
+  autoApplySettings: AutoApplySettings;
 }
 
 // Manage Job Notifications Options
@@ -262,6 +276,7 @@ interface EmployerNotificationsOptions {
   paymentAndBilling: PaymentAndBillingNotification;
   platform: PlatformNotifications;
   communication: CommunicationNotification;
+  generalSettings: GeneralSettingsNotification;
 }
 
 // Employer Settings
@@ -368,6 +383,12 @@ export interface SettingsStore {
     settings: ApplicantSettings | EmployerSettings,
     userType: UserType,
   ) => Promise<ApplicantSettings | EmployerSettings>;
+
+  updateAutoApplySettings: (
+    settings: AutoApplySettings,
+  ) => Promise<AutoApplySettings>;
+  autoApplySettings: AutoApplySettings;
+  setAutoApplySettings: (settings: AutoApplySettings) => void;
 }
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -566,6 +587,18 @@ export const useSettingsStore = create<SettingsStore>()(
               },
             ],
           },
+          autoApplySettings: {
+            minimumMatchPercentage: 80,
+            enableAutoApply: false,
+            pauseAutoApply: false,
+            applyImmediately: true,
+            batchApplyTime: "09:00",
+            timezone: "UTC",
+            applyOnWeekends: false,
+            skipAlreadyApplied: true,
+            blacklistedCompanies: [],
+            blacklistedKeywords: [],
+          },
         },
         employerSettings: {
           notifications: {
@@ -655,6 +688,21 @@ export const useSettingsStore = create<SettingsStore>()(
                 option: {
                   promotionalOffers: false,
                   fromPlatform: true,
+                },
+              },
+              generalSettings: {
+                notificationType: {
+                  all: false,
+                  emailNotification: true,
+                  pushNotification: true,
+                  smsNotification: false,
+                },
+                option: {
+                  enableTwoFactorAuth: true,
+                  passwordChange: true,
+                  passwordReset: true,
+                  loginFromNewDevice: true,
+                  login: true,
                 },
               },
             },
@@ -785,8 +833,8 @@ export const useSettingsStore = create<SettingsStore>()(
           status: ApplicationStatusNotification,
         ) =>
           set((state) => {
-            state.applicantSettings.notifications.options.applicationStatus =
-              status;
+            state.applicantSettings.notifications.options.applicationStatus = status;
+            state.applicationStatusNotification = status;
           }),
         updateApplicationStatusNotification: async (
           status: ApplicationStatusNotification,
@@ -835,8 +883,8 @@ export const useSettingsStore = create<SettingsStore>()(
           jobRecommendations: JobRecommendationsNotification,
         ) =>
           set((state) => {
-            state.applicantSettings.notifications.options.jobRecommendations =
-              jobRecommendations;
+            state.applicantSettings.notifications.options.jobRecommendations = jobRecommendations;
+            state.jobRecommendations = jobRecommendations;
           }),
         updateJobRecommendationsNotification: async (
           jobRecommendations: JobRecommendationsNotification,
@@ -879,12 +927,11 @@ export const useSettingsStore = create<SettingsStore>()(
         setInterviewInvitation: (invitation: InterviewInvitationNotification) =>
           set((state) => {
             if (USER_TYPE === UserType.APPLICANT) {
-              state.applicantSettings.notifications.options.interviewInvitation =
-                invitation;
+              state.applicantSettings.notifications.options.interviewInvitation = invitation;
             } else {
-              state.employerSettings.notifications.options.interviewInvitation =
-                invitation;
+              state.employerSettings.notifications.options.interviewInvitation = invitation;
             }
+            state.interviewInvitation = invitation;
           }),
         updateInterviewInvitation: async (
           invitation: InterviewInvitationNotification,
@@ -926,6 +973,7 @@ export const useSettingsStore = create<SettingsStore>()(
         setAutoApply: (autoApply: AutoApplyNotification) =>
           set((state) => {
             state.applicantSettings.notifications.options.autoApply = autoApply;
+            state.autoApply = autoApply;
           }),
         updateAutoApply: async (autoApply: AutoApplyNotification) => {
           const SETTINGS_URL = `${API_BASE_URL}/settings/auto-apply/update`;
@@ -965,6 +1013,7 @@ export const useSettingsStore = create<SettingsStore>()(
         setSavedJob: (savedJob: SavedJobNotification) =>
           set((state) => {
             state.applicantSettings.notifications.options.savedJob = savedJob;
+            state.savedJob = savedJob;
           }),
         updateSavedJob: async (savedJob: SavedJobNotification) => {
           const SETTINGS_URL = `${API_BASE_URL}/settings/saved-job/update`;
@@ -1000,8 +1049,8 @@ export const useSettingsStore = create<SettingsStore>()(
         },
         setEmployerAction: (employerAction: EmployerActionNotification) =>
           set((state) => {
-            state.applicantSettings.notifications.options.employerAction =
-              employerAction;
+            state.applicantSettings.notifications.options.employerAction = employerAction;
+            state.employerAction = employerAction;
           }),
         updateEmployerAction: async (
           employerAction: EmployerActionNotification,
@@ -1042,9 +1091,14 @@ export const useSettingsStore = create<SettingsStore>()(
             smsNotification: false,
           },
         },
-        setPlatform: (platform) => {
+        setPlatform: (platform: PlatformNotifications) => {
           set((state) => {
-            state.applicantSettings.notifications.options.platform = platform;
+            if (USER_TYPE === UserType.APPLICANT) {
+              state.applicantSettings.notifications.options.platform = platform;
+            } else {
+              state.employerSettings.notifications.options.platform = platform;
+            }
+            state.platform = platform;
           });
         },
         updatePlatform: async (platform: PlatformNotifications) => {
@@ -1080,8 +1134,12 @@ export const useSettingsStore = create<SettingsStore>()(
         },
         setGeneralSettings: (generalSettings: GeneralSettingsNotification) =>
           set((state) => {
-            state.applicantSettings.notifications.options.generalSettings =
-              generalSettings;
+            if (USER_TYPE === UserType.APPLICANT) {
+              state.applicantSettings.notifications.options.generalSettings = generalSettings;
+            } else {
+              state.employerSettings.notifications.options.generalSettings = generalSettings;
+            }
+            state.generalSettings = generalSettings;
           }),
         updateGeneralSettings: async (
           generalSettings: GeneralSettingsNotification,
@@ -1117,8 +1175,12 @@ export const useSettingsStore = create<SettingsStore>()(
         },
         setCommunication: (communication: CommunicationNotification) =>
           set((state) => {
-            state.applicantSettings.notifications.options.communication =
-              communication;
+            if (USER_TYPE === UserType.APPLICANT) {
+              state.applicantSettings.notifications.options.communication = communication;
+            } else {
+              state.employerSettings.notifications.options.communication = communication;
+            }
+            state.communication = communication;
           }),
         updateCommunication: async (
           communication: CommunicationNotification,
@@ -1148,7 +1210,12 @@ export const useSettingsStore = create<SettingsStore>()(
         },
         setPrivacy: (privacy: PrivacyOptions) =>
           set((state) => {
-            state.applicantSettings.privacy = privacy;
+            if (USER_TYPE === UserType.APPLICANT) {
+              state.applicantSettings.privacy = privacy;
+            } else {
+              state.employerSettings.privacy = privacy;
+            }
+            state.privacy = privacy;
           }),
         updatePrivacy: async (privacy: PrivacyOptions) => {
           const SETTINGS_URL = `${API_BASE_URL}/settings/privacy/update`;
@@ -1185,8 +1252,8 @@ export const useSettingsStore = create<SettingsStore>()(
           manageJobApplications: ManageJobApplicationsNotifications,
         ) =>
           set((state) => {
-            state.employerSettings.notifications.options.manageJobApplications =
-              manageJobApplications;
+            state.employerSettings.notifications.options.manageJobApplications = manageJobApplications;
+            state.manageJobApplications = manageJobApplications;
           }),
         updateManageJobApplications: async (
           manageJobApplications: ManageJobApplicationsNotifications,
@@ -1214,7 +1281,6 @@ export const useSettingsStore = create<SettingsStore>()(
             smsNotification: false,
           },
           option: {
-            newJobPosting: false,
             draftSaved: false,
             jobUpdated: false,
             jobPublished: false,
@@ -1225,8 +1291,8 @@ export const useSettingsStore = create<SettingsStore>()(
         },
         setJobPostingStatus: (jobPostingStatus: JobPostingStatusNotification) =>
           set((state) => {
-            state.employerSettings.notifications.options.jobPostingStatus =
-              jobPostingStatus;
+            state.employerSettings.notifications.options.jobPostingStatus = jobPostingStatus;
+            state.jobPostingStatus = jobPostingStatus;
           }),
         updateJobPostingStatus: async (
           jobPostingStatus: JobPostingStatusNotification,
@@ -1265,12 +1331,11 @@ export const useSettingsStore = create<SettingsStore>()(
         ) =>
           set((state) => {
             if (USER_TYPE === UserType.APPLICANT) {
-              state.applicantSettings.notifications.options.paymentAndBilling =
-                paymentAndBilling;
+              state.applicantSettings.notifications.options.paymentAndBilling = paymentAndBilling;
             } else {
-              state.employerSettings.notifications.options.paymentAndBilling =
-                paymentAndBilling;
+              state.employerSettings.notifications.options.paymentAndBilling = paymentAndBilling;
             }
+            state.paymentAndBilling = paymentAndBilling;
           }),
         updatePaymentAndBilling: async (
           paymentAndBilling: PaymentAndBillingNotification,
@@ -1290,6 +1355,45 @@ export const useSettingsStore = create<SettingsStore>()(
             return {} as PaymentAndBillingNotification;
           }
         },
+        updateAutoApplySettings: async (
+          autoApplySettings: AutoApplySettings,
+        ) => {
+          const SETTINGS_URL = `${API_BASE_URL}/settings/auto-apply-settings/update`;
+
+          try {
+            const response = await privateApiClient.put<
+              APIResponse<AutoApplySettings>
+            >(SETTINGS_URL, autoApplySettings);
+            set((state) => {
+              if (USER_TYPE === UserType.APPLICANT) {
+                state.applicantSettings.autoApplySettings = autoApplySettings;
+              }
+            });
+            return response?.data?.data;
+          } catch (err: any) {
+            handleError(err);
+            return {} as AutoApplySettings;
+          }
+        },
+        autoApplySettings: {
+          minimumMatchPercentage: 80,
+          enableAutoApply: false,
+          pauseAutoApply: false,
+          applyImmediately: true,
+          batchApplyTime: "09:00",
+          timezone: "UTC",
+          applyOnWeekends: false,
+          skipAlreadyApplied: true,
+          blacklistedCompanies: [],
+          blacklistedKeywords: [],
+        },
+        setAutoApplySettings: (autoApplySettings: AutoApplySettings) =>
+          set((state) => {
+            if (USER_TYPE === UserType.APPLICANT) {
+              state.applicantSettings.autoApplySettings = autoApplySettings;
+            }
+            state.autoApplySettings = autoApplySettings;
+          }),
       })),
       {
         name: "settings",
@@ -1313,6 +1417,7 @@ export const useSettingsStore = create<SettingsStore>()(
           manageJobApplications: state.manageJobApplications,
           jobPostingStatus: state.jobPostingStatus,
           paymentAndBilling: state.paymentAndBilling,
+          autoApplySettings: state.autoApplySettings,
         }),
       },
     ),
