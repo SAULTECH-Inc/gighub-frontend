@@ -115,9 +115,9 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
       transition={{ duration: 0.5 }}
     >
       {/* Header */}
-      <div className="text-center space-y-2">
+      <div className="space-y-2 text-center">
         <motion.h2
-          className="text-2xl sm:text-3xl font-semibold text-gray-900"
+          className="text-2xl font-semibold text-gray-900 sm:text-3xl"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
@@ -125,7 +125,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
           Company Profile Setup
         </motion.h2>
         <motion.p
-          className="text-gray-600 text-sm sm:text-base"
+          className="text-sm text-gray-600 sm:text-base"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -150,7 +150,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
           <input
             type="text"
             {...register("companyName")}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6438C2] focus:border-transparent transition-colors ${
+            className={`w-full rounded-lg border px-4 py-3 transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
               errors.companyName
                 ? "border-red-500 bg-red-50"
                 : "border-gray-300 hover:border-gray-400"
@@ -170,7 +170,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
           <input
             type="email"
             {...register("email")}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6438C2] focus:border-transparent transition-colors ${
+            className={`w-full rounded-lg border px-4 py-3 transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
               errors.email || accountExist
                 ? "border-red-500 bg-red-50"
                 : "border-gray-300 hover:border-gray-400"
@@ -196,7 +196,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
           <input
             type="tel"
             {...register("companyPhone")}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6438C2] focus:border-transparent transition-colors ${
+            className={`w-full rounded-lg border px-4 py-3 transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
               errors.companyPhone
                 ? "border-red-500 bg-red-50"
                 : "border-gray-300 hover:border-gray-400"
@@ -204,7 +204,9 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
             placeholder="Enter your phone number"
           />
           {errors.companyPhone && (
-            <p className="text-sm text-red-600">{errors.companyPhone.message}</p>
+            <p className="text-sm text-red-600">
+              {errors.companyPhone.message}
+            </p>
           )}
         </div>
 
@@ -218,7 +220,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
               type={passwordVisible ? "text" : "password"}
               {...register("password")}
               onChange={handlePasswordChange}
-              className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-[#6438C2] focus:border-transparent transition-colors ${
+              className={`w-full rounded-lg border px-4 py-3 pr-12 transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
                 errors.password
                   ? "border-red-500 bg-red-50"
                   : "border-gray-300 hover:border-gray-400"
@@ -228,7 +230,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors p-1"
+              className="absolute top-1/2 right-3 -translate-y-1/2 transform p-1 text-gray-500 transition-colors hover:text-gray-700"
             >
               {passwordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -256,7 +258,9 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
                 />
               ))}
             </div>
-            <p className={`text-sm text-right font-medium ${getPasswordStrengthColor()}`}>
+            <p
+              className={`text-right text-sm font-medium ${getPasswordStrengthColor()}`}
+            >
               {getPasswordStrengthText()}
             </p>
           </motion.div>
@@ -272,24 +276,30 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
               type={confirmPasswordVisible ? "text" : "password"}
               {...register("confirmPassword")}
               disabled={!password}
-              className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-[#6438C2] focus:border-transparent transition-colors ${
+              className={`w-full rounded-lg border px-4 py-3 pr-12 transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
                 errors.confirmPassword
                   ? "border-red-500 bg-red-50"
                   : "border-gray-300 hover:border-gray-400"
-              } ${!password ? "bg-gray-100 cursor-not-allowed" : ""}`}
+              } ${!password ? "cursor-not-allowed bg-gray-100" : ""}`}
               placeholder="Confirm your password"
             />
             <button
               type="button"
               onClick={toggleConfirmPasswordVisibility}
               disabled={!password}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors p-1 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="absolute top-1/2 right-3 -translate-y-1/2 transform p-1 text-gray-500 transition-colors hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {confirmPasswordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
+              {confirmPasswordVisible ? (
+                <EyeOff size={20} />
+              ) : (
+                <Eye size={20} />
+              )}
             </button>
           </div>
           {errors.confirmPassword && (
-            <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>
+            <p className="text-sm text-red-600">
+              {errors.confirmPassword.message}
+            </p>
           )}
         </div>
 
@@ -297,16 +307,16 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
         <motion.button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all duration-200 ${
+          className={`w-full rounded-lg px-4 py-3 font-medium text-white transition-all duration-200 ${
             isSubmitting
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#6E4AED] hover:bg-[#5931A9] active:transform active:scale-[0.98]"
+              ? "cursor-not-allowed bg-gray-400"
+              : "bg-[#6E4AED] hover:bg-[#5931A9] active:scale-[0.98] active:transform"
           } focus:ring-2 focus:ring-[#6438C2] focus:ring-offset-2`}
           whileTap={{ scale: 0.98 }}
         >
           {isSubmitting ? (
             <div className="flex items-center justify-center gap-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
               Processing...
             </div>
           ) : (
@@ -324,7 +334,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
       >
         Already have an account?{" "}
         <Link
-          className="font-semibold text-[#6E4AED] hover:text-[#5931A9] transition-colors"
+          className="font-semibold text-[#6E4AED] transition-colors hover:text-[#5931A9]"
           to="/login"
         >
           Sign in

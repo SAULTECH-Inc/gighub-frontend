@@ -10,7 +10,7 @@ interface JobActionState {
   applyToJob: (
     jobId: number,
     applicationMethod: ApplicationMethod,
-    screeningAnswers?: ScreeningAnswer[]
+    screeningAnswers?: ScreeningAnswer[],
   ) => Promise<any>;
   rateSomeone: (
     rating: number,
@@ -26,10 +26,11 @@ export const useJobActions = create<JobActionState>()(
       referSomeoneToAJob: async (jobId, emails) => {
         return await referJobToSomeone(jobId, emails); // just return the promise
       },
-      applyToJob: async (jobId, applicationMethod) => {
+      applyToJob: async (jobId, applicationMethod, screeningAnswers) => {
         return await applyForJob({
           jobId: jobId,
           applicationMethod: applicationMethod,
+          screeningAnswers: screeningAnswers
         });
       },
       rateSomeone: async (rating, userId, rateeType, comment) => {

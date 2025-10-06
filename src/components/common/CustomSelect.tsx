@@ -17,13 +17,13 @@ interface DropdownProps {
 }
 
 const CustomSelect: React.FC<DropdownProps> = ({
-                                                 placeholder = "Select an option...",
-                                                 className = "",
-                                                 options,
-                                                 onChange,
-                                                 disabled = false,
-                                                 value,
-                                               }) => {
+  placeholder = "Select an option...",
+  className = "",
+  options,
+  onChange,
+  disabled = false,
+  value,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
@@ -33,7 +33,7 @@ const CustomSelect: React.FC<DropdownProps> = ({
   // Set initial selected option based on value prop
   useEffect(() => {
     if (value) {
-      const option = options.find(opt => opt.value === value);
+      const option = options.find((opt) => opt.value === value);
       if (option) setSelectedOption(option);
     }
   }, [value, options]);
@@ -74,8 +74,11 @@ const CustomSelect: React.FC<DropdownProps> = ({
     setSearch("");
   };
 
-  const canAddNew = search.trim() !== "" &&
-    !options.some(option => option.label.toLowerCase() === search.toLowerCase());
+  const canAddNew =
+    search.trim() !== "" &&
+    !options.some(
+      (option) => option.label.toLowerCase() === search.toLowerCase(),
+    );
 
   const handleAddNew = () => {
     if (!canAddNew) return;
@@ -95,38 +98,35 @@ const CustomSelect: React.FC<DropdownProps> = ({
         type="button"
         disabled={disabled}
         onClick={() => !disabled && setIsOpen(!isOpen)}
-        className={`
-          relative flex w-full items-center justify-between rounded-lg border-2 bg-white px-3 sm:px-4 py-2 sm:py-3 text-left transition-all duration-200
-          ${disabled
-          ? 'cursor-not-allowed bg-gray-100 border-gray-200 text-gray-400'
-          : 'border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100'
-        }
-          ${className}
-        `}
+        className={`relative flex w-full items-center justify-between rounded-lg border-2 bg-white px-3 py-2 text-left transition-all duration-200 sm:px-4 sm:py-3 ${
+          disabled
+            ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
+            : "border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+        } ${className} `}
       >
-        <span className="pl-6 block truncate text-xs sm:text-sm">
+        <span className="block truncate pl-6 text-xs sm:text-sm">
           {selectedOption ? selectedOption.label : placeholder}
         </span>
 
         <div className="flex items-center">
           {isOpen ? (
-            <MdKeyboardArrowUp className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 transition-transform duration-200" />
+            <MdKeyboardArrowUp className="h-4 w-4 text-gray-400 transition-transform duration-200 sm:h-5 sm:w-5" />
           ) : (
-            <MdKeyboardArrowDown className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 transition-transform duration-200" />
+            <MdKeyboardArrowDown className="h-4 w-4 text-gray-400 transition-transform duration-200 sm:h-5 sm:w-5" />
           )}
         </div>
       </button>
 
       {/* Dropdown menu */}
       {isOpen && !disabled && (
-        <div className="absolute z-50 mt-2 w-full rounded-lg border-2 border-gray-200 bg-white shadow-lg animate-in slide-in-from-top-2 duration-200">
+        <div className="animate-in slide-in-from-top-2 absolute z-50 mt-2 w-full rounded-lg border-2 border-gray-200 bg-white shadow-lg duration-200">
           {/* Search input */}
-          <div className="p-3 border-b border-gray-100">
+          <div className="border-b border-gray-100 p-3">
             <div className="relative">
-              <RiSearchLine className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <RiSearchLine className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
               <input
                 type="text"
-                className="w-full pl-10 pr-3 py-2 border border-gray-200 rounded-md text-xs sm:text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-100"
+                className="w-full rounded-md border border-gray-200 py-2 pr-3 pl-10 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-100 focus:outline-none sm:text-sm"
                 placeholder="Search options..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -142,18 +142,18 @@ const CustomSelect: React.FC<DropdownProps> = ({
                 <button
                   key={`${option.value}-${index}`}
                   type="button"
-                  className="w-full text-left px-4 py-3 text-xs sm:text-sm hover:bg-blue-50 transition-colors duration-150 border-b border-gray-50 last:border-b-0"
+                  className="w-full border-b border-gray-50 px-4 py-3 text-left text-xs transition-colors duration-150 last:border-b-0 hover:bg-blue-50 sm:text-sm"
                   onClick={() => handleSelect(option)}
                 >
                   {option.label}
                 </button>
               ))
             ) : search.trim() === "" ? (
-              <div className="px-4 py-6 text-xs sm:text-sm text-gray-500 text-center">
+              <div className="px-4 py-6 text-center text-xs text-gray-500 sm:text-sm">
                 Start typing to search options
               </div>
             ) : (
-              <div className="px-4 py-6 text-xs sm:text-sm text-gray-500 text-center">
+              <div className="px-4 py-6 text-center text-xs text-gray-500 sm:text-sm">
                 No matching options found
               </div>
             )}
@@ -162,7 +162,7 @@ const CustomSelect: React.FC<DropdownProps> = ({
             {canAddNew && (
               <button
                 type="button"
-                className="w-full flex items-center gap-2 px-4 py-3 text-xs sm:text-sm text-blue-600 hover:bg-blue-50 transition-colors duration-150 border-t border-gray-100 font-medium"
+                className="flex w-full items-center gap-2 border-t border-gray-100 px-4 py-3 text-xs font-medium text-blue-600 transition-colors duration-150 hover:bg-blue-50 sm:text-sm"
                 onClick={handleAddNew}
               >
                 <span>+</span>

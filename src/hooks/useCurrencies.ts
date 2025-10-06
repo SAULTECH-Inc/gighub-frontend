@@ -14,7 +14,11 @@ const fetchCurrencies = async (): Promise<Option[]> => {
 };
 
 export const useCurrencies = () => {
-  const { data = [], isLoading, error } = useQuery({
+  const {
+    data = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["currencies"],
     queryFn: fetchCurrencies,
     staleTime: 1000 * 60 * 60,

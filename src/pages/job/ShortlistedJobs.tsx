@@ -8,7 +8,7 @@ import {
   ChevronRight,
   Briefcase,
   AlertCircle,
-  ExternalLink
+  ExternalLink,
 } from "lucide-react";
 import { fetchShortlistedJobs } from "../../services/api";
 import { JobPostResponse } from "../../utils/types";
@@ -66,7 +66,9 @@ const ShortlistedJobs: React.FC = memo(() => {
             <div className="rounded-lg bg-pink-100 p-2">
               <Heart className="h-5 w-5 text-pink-600" />
             </div>
-            <h2 className="text-lg font-bold text-slate-900">Shortlisted Jobs</h2>
+            <h2 className="text-lg font-bold text-slate-900">
+              Shortlisted Jobs
+            </h2>
           </div>
 
           <Link
@@ -91,7 +93,9 @@ const ShortlistedJobs: React.FC = memo(() => {
             // Error State
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <AlertCircle className="mb-3 h-10 w-10 text-red-400" />
-              <h3 className="mb-1 text-sm font-medium text-slate-900">Error Loading Jobs</h3>
+              <h3 className="mb-1 text-sm font-medium text-slate-900">
+                Error Loading Jobs
+              </h3>
               <p className="text-xs text-slate-500">{error}</p>
             </div>
           ) : jobs.length === 0 ? (
@@ -100,8 +104,10 @@ const ShortlistedJobs: React.FC = memo(() => {
               <div className="mb-4 rounded-full bg-slate-100 p-6">
                 <Briefcase className="h-8 w-8 text-slate-400" />
               </div>
-              <h3 className="mb-2 text-sm font-medium text-slate-900">No Shortlisted Jobs</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <h3 className="mb-2 text-sm font-medium text-slate-900">
+                No Shortlisted Jobs
+              </h3>
+              <p className="text-xs leading-relaxed text-slate-500">
                 Jobs you shortlist will appear here for easy access
               </p>
               <Link
@@ -149,13 +155,13 @@ const ShortlistedJobs: React.FC = memo(() => {
                     </div>
 
                     {/* Job Info */}
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between">
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-slate-900 text-sm leading-tight group-hover:text-indigo-600 transition-colors truncate">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="truncate text-sm leading-tight font-semibold text-slate-900 transition-colors group-hover:text-indigo-600">
                             {job.title}
                           </h3>
-                          <p className="text-xs text-slate-600 truncate mt-0.5">
+                          <p className="mt-0.5 truncate text-xs text-slate-600">
                             {job.company}
                           </p>
 
@@ -173,7 +179,7 @@ const ShortlistedJobs: React.FC = memo(() => {
                         </div>
 
                         {/* Arrow */}
-                        <ChevronRight className="h-4 w-4 text-slate-400 transition-all group-hover:translate-x-1 group-hover:text-indigo-600 shrink-0 ml-2" />
+                        <ChevronRight className="ml-2 h-4 w-4 shrink-0 text-slate-400 transition-all group-hover:translate-x-1 group-hover:text-indigo-600" />
                       </div>
                     </div>
                   </Link>
@@ -182,7 +188,7 @@ const ShortlistedJobs: React.FC = memo(() => {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     whileHover={{ opacity: 1, y: 0 }}
-                    className="absolute left-16 top-full z-10 hidden group-hover:block"
+                    className="absolute top-full left-16 z-10 hidden group-hover:block"
                   >
                     <div className="mt-1 rounded-lg bg-slate-800 px-3 py-2 text-xs text-white shadow-lg">
                       <div className="flex items-center space-x-2">
@@ -221,6 +227,6 @@ const ShortlistedJobs: React.FC = memo(() => {
   );
 });
 
-ShortlistedJobs.displayName = 'ShortlistedJobs';
+ShortlistedJobs.displayName = "ShortlistedJobs";
 
 export default ShortlistedJobs;

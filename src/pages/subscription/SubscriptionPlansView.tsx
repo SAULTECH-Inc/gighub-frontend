@@ -9,11 +9,15 @@ import {
   applicantNavItemsMobile,
   employerNavBarItemMap,
   employerNavItems,
-  employerNavItemsMobile
+  employerNavItemsMobile,
 } from "../../utils/constants.ts";
 import { USER_TYPE } from "../../utils/helpers.ts";
 import MainFooter from "../../components/layouts/MainFooter.tsx";
-import { BillingCycle, SubscriptionResponse, SubscriptionType } from "../../utils/types";
+import {
+  BillingCycle,
+  SubscriptionResponse,
+  SubscriptionType,
+} from "../../utils/types";
 import { useSubscriptionStore } from "../../store/useSubscriptionStore.ts";
 import { useFetchSubscriptionPlans } from "../../hooks/useFetchSubscriptionPlans.ts";
 import { useAuth } from "../../store/useAuth.ts";
@@ -36,13 +40,22 @@ interface PlanUI {
 }
 
 const SubscriptionPlansView: React.FC = () => {
-  const { isAuthenticated, applicant, employer, } = useAuth();
-  const [user,] = useState<any>(USER_TYPE === UserType.APPLICANT ? applicant : employer);
+  const { isAuthenticated, applicant, employer } = useAuth();
+  const [user] = useState<any>(
+    USER_TYPE === UserType.APPLICANT ? applicant : employer,
+  );
   const { openModal, isModalOpen } = useModalStore();
-  const { subscription: userSubscription, isLoading: subscriptionLoading } = useSubscriptionStore();
-  const { data: subscriptionPlans, isLoading: plansLoading } = useFetchSubscriptionPlans(
-    USER_TYPE === UserType.APPLICANT ? SubscriptionType.PROFESSIONAL : SubscriptionType.ENTERPRISE);
-  const [selectedPlan, setSelectedPlan] = useState<SubscriptionResponse | null>(null);
+  const { subscription: userSubscription, isLoading: subscriptionLoading } =
+    useSubscriptionStore();
+  const { data: subscriptionPlans, isLoading: plansLoading } =
+    useFetchSubscriptionPlans(
+      USER_TYPE === UserType.APPLICANT
+        ? SubscriptionType.PROFESSIONAL
+        : SubscriptionType.ENTERPRISE,
+    );
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionResponse | null>(
+    null,
+  );
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [animatedStats, setAnimatedStats] = useState({
     primary: 0,
@@ -96,14 +109,17 @@ const SubscriptionPlansView: React.FC = () => {
     }, 500);
   }, []);
 
-  const handleSubscription = async (planType?: string, apiPlan?: SubscriptionResponse) => {
+  const handleSubscription = async (
+    planType?: string,
+    apiPlan?: SubscriptionResponse,
+  ) => {
     if (planType) setSelectedPlan(apiPlan as SubscriptionResponse);
 
     // Check if user is authenticated
     if (!isAuthenticated) {
       setShowLoginPrompt(true);
       // Redirect to login with return URL
-      window.location.href = `/login?redirect=/subscriptions&plan=${planType || 'default'}`;
+      window.location.href = `/login?redirect=/subscriptions&plan=${planType || "default"}`;
       return;
     }
 
@@ -128,18 +144,24 @@ const SubscriptionPlansView: React.FC = () => {
     if (!isAuthenticated) return true; // Show all plans to non-authenticated users
 
     // Check if user already has this subscription
-    return !(userSubscription?.subscriptionId === plan.id && userSubscription.isActive);
-
-
+    return !(
+      userSubscription?.subscriptionId === plan.id && userSubscription.isActive
+    );
   };
 
   // Helper function to get button text based on user state
-  const getButtonText = (plan: SubscriptionResponse, isPopular: boolean): string => {
+  const getButtonText = (
+    plan: SubscriptionResponse,
+    isPopular: boolean,
+  ): string => {
     if (!isAuthenticated) {
       return isPopular ? "🚀 Sign Up & Start Free Trial" : "Get Started";
     }
 
-    if (userSubscription?.subscriptionId === plan.id && userSubscription.isActive) {
+    if (
+      userSubscription?.subscriptionId === plan.id &&
+      userSubscription.isActive
+    ) {
       return "Current Plan";
     }
 
@@ -154,26 +176,30 @@ const SubscriptionPlansView: React.FC = () => {
   // Helper function to map API plans to UI structure
   const mapApiPlansToUI = (apiPlans: SubscriptionResponse[]): PlanUI[] => {
     const getFeaturesByPlan = (plan: SubscriptionResponse): string[] => {
-      const baseFeatures = USER_TYPE === UserType.APPLICANT ? [
-        `Up to ${plan.billingCycle === BillingCycle.MONTHLY ? "6,000" : plan.billingCycle === BillingCycle.QUARTERLY ? "18,000" : "73,000"} automated applications`,
-        "AI-powered job matching",
-        "Personalized cover letters",
-        "Analytics dashboard",
-        "Email notifications"
-      ] : [
-        "Unlimited candidate matches",
-        "AI-powered screening and matching",
-        "Detailed candidate profiles",
-        "Hiring analytics dashboard",
-        "Email notifications"
-      ];
+      const baseFeatures =
+        USER_TYPE === UserType.APPLICANT
+          ? [
+              `Up to ${plan.billingCycle === BillingCycle.MONTHLY ? "6,000" : plan.billingCycle === BillingCycle.QUARTERLY ? "18,000" : "73,000"} automated applications`,
+              "AI-powered job matching",
+              "Personalized cover letters",
+              "Analytics dashboard",
+              "Email notifications",
+            ]
+          : [
+              "Unlimited candidate matches",
+              "AI-powered screening and matching",
+              "Detailed candidate profiles",
+              "Hiring analytics dashboard",
+              "Email notifications",
+            ];
 
       if (plan.type === SubscriptionType.ENTERPRISE) {
-        return [...baseFeatures,
+        return [
+          ...baseFeatures,
           "Dedicated account manager",
           "Custom integrations",
           "White-glove onboarding",
-          "Priority support"
+          "Priority support",
         ];
       }
 
@@ -181,26 +207,49 @@ const SubscriptionPlansView: React.FC = () => {
     };
 
     return apiPlans
-      .filter(plan => plan.isActive)
-      .map(plan => ({
+      .filter((plan) => plan.isActive)
+      .map((plan) => ({
         id: plan.billingCycle.toLowerCase(),
         name: plan.name,
         period: plan.billingCycle,
         price: `₦${plan.price.toLocaleString()}`,
         originalPrice: `₦${Math.round(plan.price * 1.4).toLocaleString()}`,
-        dailyLimit: plan.type === SubscriptionType.ENTERPRISE ? "Unlimited" : "200",
-        volume: plan.billingCycle === BillingCycle.MONTHLY ? "6,000" :
-          plan.billingCycle === BillingCycle.QUARTERLY ? "18,000" : "73,000",
-        icon: plan.billingCycle === BillingCycle.MONTHLY ? "⭐" :
-          plan.billingCycle === BillingCycle.QUARTERLY ? "💎" : "🏆",
-        gradient: plan.billingCycle === BillingCycle.QUARTERLY ? "from-[#6438C2] to-[#65FF81]" : "from-[#6438C2] to-[#FA4E09]",
-        badge: plan.billingCycle === BillingCycle.QUARTERLY ? "MOST POPULAR" :
-          plan.billingCycle === BillingCycle.ANNUALLY ? "BEST VALUE" : undefined,
-        badgeColor: plan.billingCycle === BillingCycle.QUARTERLY ? "bg-[#FACC15]" : "bg-green-400",
+        dailyLimit:
+          plan.type === SubscriptionType.ENTERPRISE ? "Unlimited" : "200",
+        volume:
+          plan.billingCycle === BillingCycle.MONTHLY
+            ? "6,000"
+            : plan.billingCycle === BillingCycle.QUARTERLY
+              ? "18,000"
+              : "73,000",
+        icon:
+          plan.billingCycle === BillingCycle.MONTHLY
+            ? "⭐"
+            : plan.billingCycle === BillingCycle.QUARTERLY
+              ? "💎"
+              : "🏆",
+        gradient:
+          plan.billingCycle === BillingCycle.QUARTERLY
+            ? "from-[#6438C2] to-[#65FF81]"
+            : "from-[#6438C2] to-[#FA4E09]",
+        badge:
+          plan.billingCycle === BillingCycle.QUARTERLY
+            ? "MOST POPULAR"
+            : plan.billingCycle === BillingCycle.ANNUALLY
+              ? "BEST VALUE"
+              : undefined,
+        badgeColor:
+          plan.billingCycle === BillingCycle.QUARTERLY
+            ? "bg-[#FACC15]"
+            : "bg-green-400",
         features: getFeaturesByPlan(plan),
-        savings: plan.billingCycle === BillingCycle.QUARTERLY ? "Save 17%" :
-          plan.billingCycle === BillingCycle.ANNUALLY ? "Save 25%" : undefined,
-        apiPlan: plan
+        savings:
+          plan.billingCycle === BillingCycle.QUARTERLY
+            ? "Save 17%"
+            : plan.billingCycle === BillingCycle.ANNUALLY
+              ? "Save 25%"
+              : undefined,
+        apiPlan: plan,
       }));
   };
 
@@ -212,7 +261,8 @@ const SubscriptionPlansView: React.FC = () => {
       return {
         serviceTitle: "Auto Apply",
         heroTitle: "Supercharge Your Job Search",
-        heroSubtitle: "Let AI do the heavy lifting while you focus on what matters - landing your dream job",
+        heroSubtitle:
+          "Let AI do the heavy lifting while you focus on what matters - landing your dream job",
         primaryStat: "Applications Sent",
         secondaryStat: "Happy Job Seekers",
         plans: mappedPlans,
@@ -220,32 +270,32 @@ const SubscriptionPlansView: React.FC = () => {
           {
             icon: "🤖",
             title: "AI-Powered Job Matching",
-            desc: "Smart algorithms find the perfect job matches for your skills and experience"
+            desc: "Smart algorithms find the perfect job matches for your skills and experience",
           },
           {
             icon: "✍️",
             title: "Personalized Applications",
-            desc: "Custom cover letters optimized for each employer and company culture"
+            desc: "Custom cover letters optimized for each employer and company culture",
           },
           {
             icon: "📊",
             title: "Market Analytics",
-            desc: "Track success rates and get insights into job market trends and opportunities"
+            desc: "Track success rates and get insights into job market trends and opportunities",
           },
           {
             icon: "🎯",
             title: "Multi-Platform Coverage",
-            desc: "Apply across LinkedIn, Indeed, company websites and major job boards"
+            desc: "Apply across LinkedIn, Indeed, company websites and major job boards",
           },
           {
             icon: "⚡",
             title: "Lightning Fast Applications",
-            desc: "Apply to 200 jobs daily across all major job platforms automatically"
+            desc: "Apply to 200 jobs daily across all major job platforms automatically",
           },
           {
             icon: "🔒",
             title: "Secure & Compliant",
-            desc: "Your data is encrypted and protected with enterprise-grade security"
+            desc: "Your data is encrypted and protected with enterprise-grade security",
           },
         ],
         testimonials: [
@@ -272,14 +322,16 @@ const SubscriptionPlansView: React.FC = () => {
           },
         ],
         ctaTitle: "Ready to Transform Your Career?",
-        ctaSubtitle: "Join thousands of professionals who've accelerated their careers with Auto Apply",
-        questionTitle: "Why Job Seekers Choose Auto Apply"
+        ctaSubtitle:
+          "Join thousands of professionals who've accelerated their careers with Auto Apply",
+        questionTitle: "Why Job Seekers Choose Auto Apply",
       };
     } else {
       return {
         serviceTitle: "Smart Match",
         heroTitle: "Transform Your Hiring Process",
-        heroSubtitle: "Find top talent faster with AI-powered matching while saving on recruitment costs",
+        heroSubtitle:
+          "Find top talent faster with AI-powered matching while saving on recruitment costs",
         primaryStat: "Candidates Matched",
         secondaryStat: "Happy Employers",
         plans: mappedPlans,
@@ -287,32 +339,32 @@ const SubscriptionPlansView: React.FC = () => {
           {
             icon: "🤖",
             title: "Advanced Matching",
-            desc: "AI trained on hiring patterns, skill requirements, and cultural fit"
+            desc: "AI trained on hiring patterns, skill requirements, and cultural fit",
           },
           {
             icon: "📋",
             title: "Automated Talent Sourcing",
-            desc: "Get pre-screened candidates from universities, bootcamps, and professional networks"
+            desc: "Get pre-screened candidates from universities, bootcamps, and professional networks",
           },
           {
             icon: "📊",
             title: "Hiring ROI Analytics",
-            desc: "Track time-to-hire, cost-per-hire, and success rates vs traditional methods"
+            desc: "Track time-to-hire, cost-per-hire, and success rates vs traditional methods",
           },
           {
             icon: "🎯",
             title: "Skills-Based Matching",
-            desc: "Find candidates with specific technical skills, certifications, and experience"
+            desc: "Find candidates with specific technical skills, certifications, and experience",
           },
           {
             icon: "⚡",
             title: "Rapid Candidate Delivery",
-            desc: "Get qualified candidates within 24 hours instead of weeks"
+            desc: "Get qualified candidates within 24 hours instead of weeks",
           },
           {
             icon: "🔒",
             title: "Compliant Screening",
-            desc: "All candidate screening follows data protection regulations and best practices"
+            desc: "All candidate screening follows data protection regulations and best practices",
           },
         ],
         testimonials: [
@@ -339,8 +391,9 @@ const SubscriptionPlansView: React.FC = () => {
           },
         ],
         ctaTitle: "Ready to Transform Your Hiring?",
-        ctaSubtitle: "Join leading companies who've streamlined recruitment with Smart Match",
-        questionTitle: "Why Companies Choose Smart Match"
+        ctaSubtitle:
+          "Join leading companies who've streamlined recruitment with Smart Match",
+        questionTitle: "Why Companies Choose Smart Match",
       };
     }
   };
@@ -372,11 +425,13 @@ const SubscriptionPlansView: React.FC = () => {
           >
             {/* Show current subscription status for authenticated users */}
             {isAuthenticated && userSubscription?.isActive && (
-              <div className="mb-6 mx-auto max-w-md rounded-lg bg-green-100 border border-green-300 px-4 py-3 text-green-800">
+              <div className="mx-auto mb-6 max-w-md rounded-lg border border-green-300 bg-green-100 px-4 py-3 text-green-800">
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-green-600">✓</span>
                   <span className="text-sm font-medium">
-                    Current Plan: {userSubscription.subscription?.name || 'Active Subscription'}
+                    Current Plan:{" "}
+                    {userSubscription.subscription?.name ||
+                      "Active Subscription"}
                   </span>
                 </div>
               </div>
@@ -395,13 +450,17 @@ const SubscriptionPlansView: React.FC = () => {
                 <div className="text-2xl font-bold text-white md:text-3xl">
                   {animatedStats.primary.toLocaleString()}+
                 </div>
-                <div className="text-sm text-white/80">{content.primaryStat}</div>
+                <div className="text-sm text-white/80">
+                  {content.primaryStat}
+                </div>
               </div>
               <div className="rounded-lg bg-white/10 px-4 py-3 text-center backdrop-blur-sm">
                 <div className="text-2xl font-bold text-white md:text-3xl">
                   {animatedStats.users.toLocaleString()}+
                 </div>
-                <div className="text-sm text-white/80">{content.secondaryStat}</div>
+                <div className="text-sm text-white/80">
+                  {content.secondaryStat}
+                </div>
               </div>
               <div className="rounded-lg bg-white/10 px-4 py-3 text-center backdrop-blur-sm">
                 <div className="text-2xl font-bold text-white md:text-3xl">
@@ -416,10 +475,14 @@ const SubscriptionPlansView: React.FC = () => {
               onClick={() => handleSubscription()}
               className="mb-3 rounded-lg bg-white px-6 py-3 text-base font-bold text-[#6438C2] transition-all duration-300 hover:bg-gray-100 hover:shadow-lg md:px-8 md:py-4 md:text-lg"
             >
-              {isAuthenticated ? "🚀 Start Your 7-Day Free Trial" : "🚀 Sign Up & Start Free Trial"}
+              {isAuthenticated
+                ? "🚀 Start Your 7-Day Free Trial"
+                : "🚀 Sign Up & Start Free Trial"}
             </button>
             <p className="text-sm text-white/75">
-              {isAuthenticated ? "No credit card required • Cancel anytime" : "Create account • No credit card required • Cancel anytime"}
+              {isAuthenticated
+                ? "No credit card required • Cancel anytime"
+                : "Create account • No credit card required • Cancel anytime"}
             </p>
           </div>
         </div>
@@ -427,15 +490,21 @@ const SubscriptionPlansView: React.FC = () => {
 
       {/* Login Prompt Banner for Non-Authenticated Users */}
       {!isAuthenticated && (
-        <div className="bg-blue-50 border-b border-blue-200 px-4 py-3">
+        <div className="border-b border-blue-200 bg-blue-50 px-4 py-3">
           <div className="container mx-auto text-center">
-            <p className="text-blue-800 text-sm">
+            <p className="text-sm text-blue-800">
               <span className="font-semibold">Want to subscribe?</span>
-              <a href="/login" className="ml-2 underline hover:no-underline text-blue-600 font-medium">
+              <a
+                href="/login"
+                className="ml-2 font-medium text-blue-600 underline hover:no-underline"
+              >
                 Sign in
               </a>
               <span className="mx-2">or</span>
-              <a href="/signup" className="underline hover:no-underline text-blue-600 font-medium">
+              <a
+                href="/signup"
+                className="font-medium text-blue-600 underline hover:no-underline"
+              >
                 create an account
               </a>
               <span className="ml-2">to get started with your free trial</span>
@@ -453,7 +522,7 @@ const SubscriptionPlansView: React.FC = () => {
           <p className="mx-auto max-w-2xl text-lg text-gray-600 md:text-xl">
             Transparent pricing. Start free, scale as you grow.
             {!isAuthenticated && (
-              <span className="block mt-2 text-blue-600 font-medium">
+              <span className="mt-2 block font-medium text-blue-600">
                 Sign up to unlock exclusive features and start your free trial
               </span>
             )}
@@ -464,38 +533,49 @@ const SubscriptionPlansView: React.FC = () => {
           {plansLoading ? (
             // Loading state
             Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="rounded-2xl bg-white shadow-lg animate-pulse">
+              <div
+                key={index}
+                className="animate-pulse rounded-2xl bg-white shadow-lg"
+              >
                 <div className="p-6 md:p-8">
                   <div className="mb-6 text-center">
-                    <div className="mb-3 h-12 w-12 bg-gray-200 rounded-full mx-auto"></div>
-                    <div className="mb-1 h-6 bg-gray-200 rounded w-3/4 mx-auto"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+                    <div className="mx-auto mb-3 h-12 w-12 rounded-full bg-gray-200"></div>
+                    <div className="mx-auto mb-1 h-6 w-3/4 rounded bg-gray-200"></div>
+                    <div className="mx-auto h-4 w-1/2 rounded bg-gray-200"></div>
                   </div>
                   <div className="mb-6 text-center">
-                    <div className="mb-2 h-10 bg-gray-200 rounded w-2/3 mx-auto"></div>
-                    <div className="mb-3 h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
-                    <div className="h-12 bg-gray-200 rounded"></div>
+                    <div className="mx-auto mb-2 h-10 w-2/3 rounded bg-gray-200"></div>
+                    <div className="mx-auto mb-3 h-4 w-1/2 rounded bg-gray-200"></div>
+                    <div className="h-12 rounded bg-gray-200"></div>
                   </div>
                   <div className="mb-6 space-y-3">
                     {Array.from({ length: 4 }).map((_, idx) => (
-                      <div key={idx} className="h-4 bg-gray-200 rounded"></div>
+                      <div key={idx} className="h-4 rounded bg-gray-200"></div>
                     ))}
                   </div>
-                  <div className="h-12 bg-gray-200 rounded"></div>
+                  <div className="h-12 rounded bg-gray-200"></div>
                 </div>
               </div>
             ))
           ) : content.plans.length === 0 ? (
             // Empty state
-            <div className="col-span-3 text-center py-12">
-              <div className="text-6xl mb-4">📦</div>
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">No Plans Available</h3>
-              <p className="text-gray-500">Subscription plans are being configured. Please check back later.</p>
+            <div className="col-span-3 py-12 text-center">
+              <div className="mb-4 text-6xl">📦</div>
+              <h3 className="mb-2 text-xl font-semibold text-gray-700">
+                No Plans Available
+              </h3>
+              <p className="text-gray-500">
+                Subscription plans are being configured. Please check back
+                later.
+              </p>
             </div>
           ) : (
             // Plans loaded successfully
             content.plans.map((plan, index) => {
-              const isCurrentPlan = isAuthenticated && userSubscription?.subscriptionId === plan.apiPlan.id && userSubscription.isActive;
+              const isCurrentPlan =
+                isAuthenticated &&
+                userSubscription?.subscriptionId === plan.apiPlan.id &&
+                userSubscription.isActive;
               const canSubscribe = canSubscribeToPlan(plan.apiPlan);
               const isPopularPlan = index === 1;
 
@@ -517,7 +597,7 @@ const SubscriptionPlansView: React.FC = () => {
                   )}
 
                   {isCurrentPlan && (
-                    <div className="absolute -top-3 right-4 bg-green-400 rounded-full px-3 py-1 text-xs font-bold text-black shadow-md">
+                    <div className="absolute -top-3 right-4 rounded-full bg-green-400 px-3 py-1 text-xs font-bold text-black shadow-md">
                       CURRENT
                     </div>
                   )}
@@ -552,7 +632,10 @@ const SubscriptionPlansView: React.FC = () => {
                       </div>
                       <div className="rounded-lg bg-gray-50 p-3">
                         <div className="text-sm font-medium text-gray-800">
-                          {plan.dailyLimit} {USER_TYPE === UserType.APPLICANT ? 'applications daily' : 'candidate matches'}
+                          {plan.dailyLimit}{" "}
+                          {USER_TYPE === UserType.APPLICANT
+                            ? "applications daily"
+                            : "candidate matches"}
                         </div>
                       </div>
                     </div>
@@ -562,7 +645,9 @@ const SubscriptionPlansView: React.FC = () => {
                       {plan.features.map((feature, idx) => (
                         <div key={idx} className="flex items-start gap-3">
                           <div className="mt-0.5 text-lg text-green-500">✓</div>
-                          <span className="text-sm text-gray-700">{feature}</span>
+                          <span className="text-sm text-gray-700">
+                            {feature}
+                          </span>
                         </div>
                       ))}
 
@@ -570,14 +655,18 @@ const SubscriptionPlansView: React.FC = () => {
                       {isAuthenticated && (
                         <>
                           <div className="flex items-start gap-3">
-                            <div className="mt-0.5 text-lg text-blue-500">⭐</div>
-                            <span className="text-sm text-blue-700 font-medium">
+                            <div className="mt-0.5 text-lg text-blue-500">
+                              ⭐
+                            </div>
+                            <span className="text-sm font-medium text-blue-700">
                               Personalized recommendations based on your profile
                             </span>
                           </div>
                           <div className="flex items-start gap-3">
-                            <div className="mt-0.5 text-lg text-blue-500">📈</div>
-                            <span className="text-sm text-blue-700 font-medium">
+                            <div className="mt-0.5 text-lg text-blue-500">
+                              📈
+                            </div>
+                            <span className="text-sm font-medium text-blue-700">
                               Advanced analytics and usage insights
                             </span>
                           </div>
@@ -587,16 +676,20 @@ const SubscriptionPlansView: React.FC = () => {
 
                     <button
                       onClick={() => handleSubscription(plan.id, plan.apiPlan)}
-                      disabled={plansLoading || subscriptionLoading || !canSubscribe}
+                      disabled={
+                        plansLoading || subscriptionLoading || !canSubscribe
+                      }
                       className={`w-full rounded-lg px-4 py-3 text-base font-semibold transition-all duration-300 ${
                         isCurrentPlan
-                          ? "bg-green-100 text-green-800 cursor-not-allowed"
+                          ? "cursor-not-allowed bg-green-100 text-green-800"
                           : isPopularPlan
                             ? "transform bg-gradient-to-r from-[#6438C2] to-[#FA4E09] text-white hover:scale-105 hover:shadow-lg disabled:opacity-50"
                             : "bg-gray-100 text-gray-800 hover:bg-gray-200 disabled:opacity-50"
                       }`}
                     >
-                      {plansLoading || subscriptionLoading ? "Loading..." : getButtonText(plan.apiPlan, isPopularPlan)}
+                      {plansLoading || subscriptionLoading
+                        ? "Loading..."
+                        : getButtonText(plan.apiPlan, isPopularPlan)}
                     </button>
 
                     {/* Show coupon input for authenticated users */}
@@ -605,11 +698,14 @@ const SubscriptionPlansView: React.FC = () => {
                         <input
                           type="text"
                           placeholder="Have a coupon code?"
-                          className="w-full text-sm px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6438C2]"
+                          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#6438C2] focus:outline-none"
                           onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
+                            if (e.key === "Enter") {
                               // Handle coupon validation
-                              console.log('Validate coupon:', e.currentTarget.value);
+                              console.log(
+                                "Validate coupon:",
+                                e.currentTarget.value,
+                              );
                             }
                           }}
                         />
@@ -685,9 +781,7 @@ const SubscriptionPlansView: React.FC = () => {
           <h3 className="mb-4 text-2xl font-bold md:text-3xl">
             {content.ctaTitle}
           </h3>
-          <p className="mb-6 text-lg opacity-90">
-            {content.ctaSubtitle}
-          </p>
+          <p className="mb-6 text-lg opacity-90">{content.ctaSubtitle}</p>
 
           {isAuthenticated ? (
             <div>
@@ -695,31 +789,40 @@ const SubscriptionPlansView: React.FC = () => {
                 onClick={() => handleSubscription()}
                 className="mb-3 rounded-lg bg-white px-6 py-3 text-lg font-bold text-[#6438C2] transition-all duration-300 hover:bg-gray-100 hover:shadow-lg"
               >
-                {userSubscription?.isActive ? "🚀 Upgrade Your Plan" : "🚀 Start Your 7-Day Free Trial"}
+                {userSubscription?.isActive
+                  ? "🚀 Upgrade Your Plan"
+                  : "🚀 Start Your 7-Day Free Trial"}
               </button>
               <p className="text-sm opacity-75">
-                {userSubscription?.isActive ? "Switch plans anytime • Full refund within 30 days" : "No credit card required • Cancel anytime"}
+                {userSubscription?.isActive
+                  ? "Switch plans anytime • Full refund within 30 days"
+                  : "No credit card required • Cancel anytime"}
               </p>
             </div>
           ) : (
             <div>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-4">
+              <div className="mb-4 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <button
-                  onClick={() => window.location.href = '/signup?redirect=/subscriptions'}
+                  onClick={() =>
+                    (window.location.href = "/signup?redirect=/subscriptions")
+                  }
                   className="rounded-lg bg-white px-6 py-3 text-lg font-bold text-[#6438C2] transition-all duration-300 hover:bg-gray-100 hover:shadow-lg"
                 >
                   🚀 Create Account & Start Free Trial
                 </button>
-                <span className="text-white/70 text-sm">or</span>
+                <span className="text-sm text-white/70">or</span>
                 <button
-                  onClick={() => window.location.href = '/login?redirect=/subscriptions'}
-                  className="rounded-lg bg-transparent border-2 border-white px-6 py-3 text-lg font-bold text-white transition-all duration-300 hover:bg-white hover:text-[#6438C2]"
+                  onClick={() =>
+                    (window.location.href = "/login?redirect=/subscriptions")
+                  }
+                  className="rounded-lg border-2 border-white bg-transparent px-6 py-3 text-lg font-bold text-white transition-all duration-300 hover:bg-white hover:text-[#6438C2]"
                 >
                   Sign In
                 </button>
               </div>
               <p className="text-sm opacity-75">
-                Join thousands of users • No credit card required • Cancel anytime
+                Join thousands of users • No credit card required • Cancel
+                anytime
               </p>
             </div>
           )}
@@ -737,29 +840,36 @@ const SubscriptionPlansView: React.FC = () => {
 
       {/* Login Prompt Modal for non-authenticated users */}
       {showLoginPrompt && !isAuthenticated && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
-            <h3 className="text-xl font-bold mb-4 text-gray-800">Sign Up Required</h3>
-            <p className="text-gray-600 mb-6">
-              Create an account or sign in to subscribe to our plans and start your free trial.
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="mx-4 max-w-md rounded-lg bg-white p-6">
+            <h3 className="mb-4 text-xl font-bold text-gray-800">
+              Sign Up Required
+            </h3>
+            <p className="mb-6 text-gray-600">
+              Create an account or sign in to subscribe to our plans and start
+              your free trial.
             </p>
             <div className="flex gap-3">
               <button
-                onClick={() => window.location.href = '/signup?redirect=/subscriptions'}
-                className="flex-1 bg-[#6438C2] text-white px-4 py-2 rounded-lg hover:bg-[#5329a0] transition-colors"
+                onClick={() =>
+                  (window.location.href = "/signup?redirect=/subscriptions")
+                }
+                className="flex-1 rounded-lg bg-[#6438C2] px-4 py-2 text-white transition-colors hover:bg-[#5329a0]"
               >
                 Create Account
               </button>
               <button
-                onClick={() => window.location.href = '/login?redirect=/subscriptions'}
-                className="flex-1 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+                onClick={() =>
+                  (window.location.href = "/login?redirect=/subscriptions")
+                }
+                className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50"
               >
                 Sign In
               </button>
             </div>
             <button
               onClick={() => setShowLoginPrompt(false)}
-              className="w-full mt-3 text-gray-500 hover:text-gray-700 text-sm"
+              className="mt-3 w-full text-sm text-gray-500 hover:text-gray-700"
             >
               Continue browsing
             </button>

@@ -15,7 +15,13 @@ interface PaystackOptions {
 }
 
 export const usePaystack = () => {
-  const pay = ({ email, amount, onSuccess, onCancel, onError }: PaystackOptions) => {
+  const pay = ({
+    email,
+    amount,
+    onSuccess,
+    onCancel,
+    onError,
+  }: PaystackOptions) => {
     const popup = new Paystack();
 
     popup.newTransaction({
@@ -26,7 +32,8 @@ export const usePaystack = () => {
       channels: ["card", "bank_transfer"], // add USSD, QR, Apple Pay if needed
       onSuccess,
       onCancel: onCancel || (() => console.log("Payment cancelled")),
-      onError: onError || ((err) => console.error("Payment error:", err.message)),
+      onError:
+        onError || ((err) => console.error("Payment error:", err.message)),
     });
   };
 

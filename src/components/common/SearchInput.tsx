@@ -12,29 +12,30 @@ interface SearchInputProps {
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({
-                                                   name,
-                                                   placeholder,
-                                                   value,
-                                                   onChange,
-                                                   disabled = false,
-                                                   className = "",
-                                                   required = false,
-                                                   suggestions = [],
-                                                 }) => {
+  name,
+  placeholder,
+  value,
+  onChange,
+  disabled = false,
+  className = "",
+  required = false,
+  suggestions = [],
+}) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Filter suggestions
   const filteredSuggestions = value
-    ? suggestions.filter((s) =>
-      s.toLowerCase().includes(value.toLowerCase())
-    )
+    ? suggestions.filter((s) => s.toLowerCase().includes(value.toLowerCase()))
     : [];
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setShowDropdown(false);
         setHighlightedIndex(null);
       }
@@ -64,19 +65,23 @@ const SearchInput: React.FC<SearchInputProps> = ({
         }}
         disabled={disabled}
         required={required}
-        className={`w-full px-3 py-2 border rounded ${className}`}
+        className={`w-full rounded border px-3 py-2 ${className}`}
         onKeyDown={(e) => {
           if (!showDropdown) return;
 
           if (e.key === "ArrowDown") {
             e.preventDefault();
             setHighlightedIndex((prev) =>
-              prev === null || prev === filteredSuggestions.length - 1 ? 0 : prev + 1
+              prev === null || prev === filteredSuggestions.length - 1
+                ? 0
+                : prev + 1,
             );
           } else if (e.key === "ArrowUp") {
             e.preventDefault();
             setHighlightedIndex((prev) =>
-              prev === null || prev === 0 ? filteredSuggestions.length - 1 : prev - 1
+              prev === null || prev === 0
+                ? filteredSuggestions.length - 1
+                : prev - 1,
             );
           } else if (e.key === "Enter" && highlightedIndex !== null) {
             e.preventDefault();

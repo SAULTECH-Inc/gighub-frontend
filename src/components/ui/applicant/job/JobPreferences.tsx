@@ -21,6 +21,7 @@ import {
   Target,
   X,
 } from "lucide-react";
+import { useProfileCompletionDetails } from "../../../../hooks/useProfileCompletionDetails.ts";
 
 // Frequency options for salary ranges
 const SALARY_FREQUENCIES = [
@@ -43,6 +44,8 @@ const JobPreferencesForm: React.FC = () => {
     maxAmount: 0,
     frequency: "per year", // Add default frequency
   });
+
+  const {refetch} = useProfileCompletionDetails();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,6 +88,8 @@ const JobPreferencesForm: React.FC = () => {
             { country, city },
           ],
         });
+
+        refetch().then(r=>r);
       }
     }
   };
@@ -92,7 +97,8 @@ const JobPreferencesForm: React.FC = () => {
   const handleSalaryChange = (field: keyof typeof salary, value: string) => {
     setSalary((prev) => ({
       ...prev,
-      [field]: field === "currency" || field === "frequency" ? value : Number(value),
+      [field]:
+        field === "currency" || field === "frequency" ? value : Number(value),
     }));
   };
 
@@ -102,7 +108,7 @@ const JobPreferencesForm: React.FC = () => {
         currency: "₦",
         minAmount: 0,
         maxAmount: 0,
-        frequency: "per year"
+        frequency: "per year",
       });
       setPreference({
         applicantId: Number(applicant?.id) || 0,
@@ -255,7 +261,8 @@ const JobPreferencesForm: React.FC = () => {
                       >
                         {CURRENCIES.map((currency) => (
                           <option key={currency.code} value={currency.symbol}>
-                            {currency.symbol} - {currency.name} ({currency.code})
+                            {currency.symbol} - {currency.name} ({currency.code}
+                            )
                           </option>
                         ))}
                       </select>
@@ -403,9 +410,10 @@ const JobPreferencesForm: React.FC = () => {
                               {salaryItem.maxAmount?.toLocaleString()}
                             </div>
                             <div className="text-xs text-orange-600">
-                              {salaryItem.frequency || "per year"} • {currency
-                              ? `${currency.name} (${currency.code})`
-                              : "Salary expectation"}
+                              {salaryItem.frequency || "per year"} •{" "}
+                              {currency
+                                ? `${currency.name} (${currency.code})`
+                                : "Salary expectation"}
                             </div>
                           </div>
                         </div>
@@ -428,7 +436,7 @@ const JobPreferencesForm: React.FC = () => {
 
             {/* Empty State */}
             {(!preferences?.salaryRange ||
-                preferences.salaryRange.length === 0) &&
+              preferences.salaryRange.length === 0) &&
               !isEditable && (
                 <div className="rounded-lg border border-gray-200 bg-gray-50 py-8 text-center text-gray-500">
                   <DollarSign className="mx-auto mb-3 h-12 w-12 text-gray-400" />
@@ -491,7 +499,10 @@ const JobPreferencesForm: React.FC = () => {
                 • Be realistic with salary expectations based on market rates
               </li>
               <li>• Consider different job types (remote, hybrid, on-site)</li>
-              <li>• Choose appropriate salary frequency (yearly, monthly, hourly, etc.)</li>
+              <li>
+                • Choose appropriate salary frequency (yearly, monthly, hourly,
+                etc.)
+              </li>
             </ul>
           </div>
         )}

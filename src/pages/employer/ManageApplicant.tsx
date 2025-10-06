@@ -46,17 +46,21 @@ import { useFetchJobMatchResult } from "../../hooks/useFetchJobMatchResult.tsx";
 import { X } from "lucide-react";
 
 // Match percentage component for applicant list
-const MatchPercentage: FC<{ applicantId: number; jobId: number; compact?: boolean }> = ({
-                                                                                          applicantId,
-                                                                                          jobId,
-                                                                                          compact = false
-                                                                                        }) => {
-  const { data: matchResponse, isLoading } = useFetchJobMatchResult(applicantId, jobId);
+const MatchPercentage: FC<{
+  applicantId: number;
+  jobId: number;
+  compact?: boolean;
+}> = ({ applicantId, jobId, compact = false }) => {
+  const { data: matchResponse, isLoading } = useFetchJobMatchResult(
+    applicantId,
+    jobId,
+  );
 
   const getMatchScore = () => {
     if (!matchResponse?.data?.breakdown) return 0;
 
-    const aiScore = matchResponse.data.breakdown.ai_enhancements?.ai_decision?.adjusted_score;
+    const aiScore =
+      matchResponse.data.breakdown.ai_enhancements?.ai_decision?.adjusted_score;
     if (aiScore) return aiScore;
 
     // Fallback: calculate from component scores
@@ -65,16 +69,17 @@ const MatchPercentage: FC<{ applicantId: number; jobId: number; compact?: boolea
 
     if (scores && weights) {
       return (
-        scores.skills * weights.skills +
-        scores.experience * weights.experience +
-        scores.title_intelligence * weights.title_intelligence +
-        scores.location * weights.location +
-        scores.education * weights.education +
-        scores.requirements_analysis * weights.requirements_analysis +
-        scores.job_preferences * weights.job_preferences +
-        scores.semantic * weights.semantic +
-        scores.certifications * weights.certifications
-      ) * 100;
+        (scores.skills * weights.skills +
+          scores.experience * weights.experience +
+          scores.title_intelligence * weights.title_intelligence +
+          scores.location * weights.location +
+          scores.education * weights.education +
+          scores.requirements_analysis * weights.requirements_analysis +
+          scores.job_preferences * weights.job_preferences +
+          scores.semantic * weights.semantic +
+          scores.certifications * weights.certifications) *
+        100
+      );
     }
 
     return 0;
@@ -82,29 +87,31 @@ const MatchPercentage: FC<{ applicantId: number; jobId: number; compact?: boolea
 
   const score = getMatchScore();
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'bg-green-500';
-    if (score >= 60) return 'bg-yellow-500';
-    if (score >= 40) return 'bg-orange-500';
-    return 'bg-red-500';
+    if (score >= 80) return "bg-green-500";
+    if (score >= 60) return "bg-yellow-500";
+    if (score >= 40) return "bg-orange-500";
+    return "bg-red-500";
   };
 
   const getScoreTextColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    if (score >= 40) return 'text-orange-600';
-    return 'text-red-600';
+    if (score >= 80) return "text-green-600";
+    if (score >= 60) return "text-yellow-600";
+    if (score >= 40) return "text-orange-600";
+    return "text-red-600";
   };
 
   if (isLoading) {
     return (
-      <div className={`${compact ? 'w-8 h-4' : 'w-12 h-6'} bg-gray-200 rounded animate-pulse`} />
+      <div
+        className={`${compact ? "h-4 w-8" : "h-6 w-12"} animate-pulse rounded bg-gray-200`}
+      />
     );
   }
 
   if (compact) {
     return (
       <div className="flex items-center gap-1">
-        <div className={`w-2 h-2 rounded-full ${getScoreColor(score)}`} />
+        <div className={`h-2 w-2 rounded-full ${getScoreColor(score)}`} />
         <span className={`text-xs font-medium ${getScoreTextColor(score)}`}>
           {score.toFixed(0)}%
         </span>
@@ -115,7 +122,7 @@ const MatchPercentage: FC<{ applicantId: number; jobId: number; compact?: boolea
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-1">
-        <div className={`w-3 h-3 rounded-full ${getScoreColor(score)}`} />
+        <div className={`h-3 w-3 rounded-full ${getScoreColor(score)}`} />
         <span className={`text-sm font-medium ${getScoreTextColor(score)}`}>
           {score.toFixed(1)}%
         </span>
@@ -125,18 +132,24 @@ const MatchPercentage: FC<{ applicantId: number; jobId: number; compact?: boolea
 };
 
 // Match summary component for the main profile
-const MatchSummary: FC<{ applicantId: number; jobId: number }> = ({ applicantId, jobId }) => {
-  const { data: matchResponse, isLoading } = useFetchJobMatchResult(applicantId, jobId);
+const MatchSummary: FC<{ applicantId: number; jobId: number }> = ({
+  applicantId,
+  jobId,
+}) => {
+  const { data: matchResponse, isLoading } = useFetchJobMatchResult(
+    applicantId,
+    jobId,
+  );
 
   if (isLoading) {
     return (
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
         <div className="animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
-          <div className="h-8 bg-gray-200 rounded w-1/2 mb-3"></div>
+          <div className="mb-2 h-4 w-1/4 rounded bg-gray-200"></div>
+          <div className="mb-3 h-8 w-1/2 rounded bg-gray-200"></div>
           <div className="space-y-2">
-            <div className="h-3 bg-gray-200 rounded w-full"></div>
-            <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+            <div className="h-3 w-full rounded bg-gray-200"></div>
+            <div className="h-3 w-3/4 rounded bg-gray-200"></div>
           </div>
         </div>
       </div>
@@ -145,8 +158,10 @@ const MatchSummary: FC<{ applicantId: number; jobId: number }> = ({ applicantId,
 
   if (!matchResponse?.data?.breakdown) {
     return (
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-        <h3 className="text-sm font-medium text-gray-500 mb-2">Job Match Analysis</h3>
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <h3 className="mb-2 text-sm font-medium text-gray-500">
+          Job Match Analysis
+        </h3>
         <p className="text-sm text-gray-400">Match data not available</p>
       </div>
     );
@@ -161,32 +176,35 @@ const MatchSummary: FC<{ applicantId: number; jobId: number }> = ({ applicantId,
     const weights = breakdown.weights_used;
 
     return (
-      scores.skills * weights.skills +
-      scores.experience * weights.experience +
-      scores.title_intelligence * weights.title_intelligence +
-      scores.location * weights.location +
-      scores.education * weights.education +
-      scores.requirements_analysis * weights.requirements_analysis +
-      scores.job_preferences * weights.job_preferences +
-      scores.semantic * weights.semantic +
-      scores.certifications * weights.certifications
-    ) * 100;
+      (scores.skills * weights.skills +
+        scores.experience * weights.experience +
+        scores.title_intelligence * weights.title_intelligence +
+        scores.location * weights.location +
+        scores.education * weights.education +
+        scores.requirements_analysis * weights.requirements_analysis +
+        scores.job_preferences * weights.job_preferences +
+        scores.semantic * weights.semantic +
+        scores.certifications * weights.certifications) *
+      100
+    );
   };
 
   const overallScore = getOverallScore();
-  const topSkills = breakdown.detailed_analysis?.skills?.matched_skills?.slice(0, 3) || [];
-  const missingSkills = breakdown.detailed_analysis?.skills?.missing_skills?.slice(0, 2) || [];
+  const topSkills =
+    breakdown.detailed_analysis?.skills?.matched_skills?.slice(0, 3) || [];
+  const missingSkills =
+    breakdown.detailed_analysis?.skills?.missing_skills?.slice(0, 2) || [];
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600 bg-green-50 border-green-200';
-    if (score >= 60) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-    if (score >= 40) return 'text-orange-600 bg-orange-50 border-orange-200';
-    return 'text-red-600 bg-red-50 border-red-200';
+    if (score >= 80) return "text-green-600 bg-green-50 border-green-200";
+    if (score >= 60) return "text-yellow-600 bg-yellow-50 border-yellow-200";
+    if (score >= 40) return "text-orange-600 bg-orange-50 border-orange-200";
+    return "text-red-600 bg-red-50 border-red-200";
   };
 
   return (
-    <div className={`border rounded-lg p-4 ${getScoreColor(overallScore)}`}>
-      <div className="flex items-center justify-between mb-3">
+    <div className={`rounded-lg border p-4 ${getScoreColor(overallScore)}`}>
+      <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-medium">Job Match Analysis</h3>
         <span className="text-xl font-bold">{overallScore.toFixed(1)}%</span>
       </div>
@@ -195,25 +213,38 @@ const MatchSummary: FC<{ applicantId: number; jobId: number }> = ({ applicantId,
         <div>
           <span className="font-medium">Key Matches:</span>
           <div className="mt-1 space-y-1">
-            <div>Skills: {Math.round(breakdown.component_scores.skills * 100)}%</div>
-            <div>Experience: {Math.round(breakdown.component_scores.experience * 100)}%</div>
+            <div>
+              Skills: {Math.round(breakdown.component_scores.skills * 100)}%
+            </div>
+            <div>
+              Experience:{" "}
+              {Math.round(breakdown.component_scores.experience * 100)}%
+            </div>
           </div>
         </div>
         <div>
           <span className="font-medium">Requirements:</span>
           <div className="mt-1 space-y-1">
-            <div>Education: {Math.round(breakdown.component_scores.education * 100)}%</div>
-            <div>Location: {Math.round(breakdown.component_scores.location * 100)}%</div>
+            <div>
+              Education:{" "}
+              {Math.round(breakdown.component_scores.education * 100)}%
+            </div>
+            <div>
+              Location: {Math.round(breakdown.component_scores.location * 100)}%
+            </div>
           </div>
         </div>
       </div>
 
       {topSkills.length > 0 && (
         <div className="mt-3">
-          <span className="font-medium text-xs">Top Skills Match:</span>
-          <div className="flex flex-wrap gap-1 mt-1">
+          <span className="text-xs font-medium">Top Skills Match:</span>
+          <div className="mt-1 flex flex-wrap gap-1">
             {topSkills.map((skill, index) => (
-              <span key={index} className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">
+              <span
+                key={index}
+                className="rounded bg-green-100 px-2 py-1 text-xs text-green-800"
+              >
                 {skill}
               </span>
             ))}
@@ -223,10 +254,13 @@ const MatchSummary: FC<{ applicantId: number; jobId: number }> = ({ applicantId,
 
       {missingSkills.length > 0 && (
         <div className="mt-2">
-          <span className="font-medium text-xs">Missing Skills:</span>
-          <div className="flex flex-wrap gap-1 mt-1">
+          <span className="text-xs font-medium">Missing Skills:</span>
+          <div className="mt-1 flex flex-wrap gap-1">
             {missingSkills.map((skill, index) => (
-              <span key={index} className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">
+              <span
+                key={index}
+                className="rounded bg-red-100 px-2 py-1 text-xs text-red-800"
+              >
                 {skill}
               </span>
             ))}
@@ -235,17 +269,20 @@ const MatchSummary: FC<{ applicantId: number; jobId: number }> = ({ applicantId,
       )}
 
       {breakdown.ai_enhancements?.ai_available && (
-        <div className="mt-3 pt-2 border-t">
+        <div className="mt-3 border-t pt-2">
           <div className="flex items-center justify-between text-xs">
             <span className="font-medium">AI Recommendation:</span>
-            <span className={`px-2 py-1 rounded ${
-              breakdown.ai_enhancements.ai_decision.decision === 'AUTO_ACCEPT'
-                ? 'bg-green-100 text-green-800'
-                : breakdown.ai_enhancements.ai_decision.decision === 'AUTO_REJECT'
-                  ? 'bg-red-100 text-red-800'
-                  : 'bg-yellow-100 text-yellow-800'
-            }`}>
-              {breakdown.ai_enhancements.ai_decision.decision.replace('_', ' ')}
+            <span
+              className={`rounded px-2 py-1 ${
+                breakdown.ai_enhancements.ai_decision.decision === "AUTO_ACCEPT"
+                  ? "bg-green-100 text-green-800"
+                  : breakdown.ai_enhancements.ai_decision.decision ===
+                      "AUTO_REJECT"
+                    ? "bg-red-100 text-red-800"
+                    : "bg-yellow-100 text-yellow-800"
+              }`}
+            >
+              {breakdown.ai_enhancements.ai_decision.decision.replace("_", " ")}
             </span>
           </div>
         </div>
@@ -256,14 +293,16 @@ const MatchSummary: FC<{ applicantId: number; jobId: number }> = ({ applicantId,
 
 const ManageApplicant: FC = () => {
   const { openModal } = useModalStore();
-  const { setRecipient, setRecipientDetails, setIsClosed, messages } = useChatStore();
+  const { setRecipient, setRecipientDetails, setIsClosed, messages } =
+    useChatStore();
   const {
     selectedApplication,
     setSelectedApplication,
     applicationStatus,
     setApplicationStatus,
   } = useApplicationView();
-  const { interviewId, setSelectedCandidates, selectedCandidates } = useScheduleInterview();
+  const { interviewId, setSelectedCandidates, selectedCandidates } =
+    useScheduleInterview();
   const [applications, setApplications] = useState<ApplicationResponse[]>();
   const [searchQuery, setSearchQuery] = useState("");
   const [page] = useState(1);
@@ -284,36 +323,38 @@ const ManageApplicant: FC = () => {
   const [showFilterMenu, setShowFilterMenu] = useState(false);
   const [showReferrerModal, setShowReferrerModal] = useState(false);
   const [filters, setFilters] = useState({
-    matchScore: '',
-    experience: '',
-    skills: '',
-    location: '',
-    applicationDate: ''
+    matchScore: "",
+    experience: "",
+    skills: "",
+    location: "",
+    applicationDate: "",
   });
 
   // Filter menu component
   const FilterMenu: FC = () => (
-    <div className="absolute right-0 top-12 w-80 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">Filter Applications</h3>
+    <div className="absolute top-12 right-0 z-50 w-80 rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-gray-900">
+          Filter Applications
+        </h3>
         <button
           onClick={() => setShowFilterMenu(false)}
-          className="p-1 hover:bg-gray-100 rounded"
+          className="rounded p-1 hover:bg-gray-100"
         >
-          <X className="w-4 h-4 text-gray-500" />
+          <X className="h-4 w-4 text-gray-500" />
         </button>
       </div>
 
       <div className="space-y-4">
         {/* Match Score Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="mb-2 block text-sm font-medium text-gray-700">
             Match Score
           </label>
           <select
             value={filters.matchScore}
-            onChange={(e) => handleFilterChange('matchScore', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            onChange={(e) => handleFilterChange("matchScore", e.target.value)}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none"
           >
             <option value="">All Scores</option>
             <option value="80+">Excellent (80%+)</option>
@@ -325,13 +366,13 @@ const ManageApplicant: FC = () => {
 
         {/* Experience Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="mb-2 block text-sm font-medium text-gray-700">
             Experience Level
           </label>
           <select
             value={filters.experience}
-            onChange={(e) => handleFilterChange('experience', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            onChange={(e) => handleFilterChange("experience", e.target.value)}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none"
           >
             <option value="">All Levels</option>
             <option value="entry">Entry Level (0-2 years)</option>
@@ -343,13 +384,15 @@ const ManageApplicant: FC = () => {
 
         {/* Application Date Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="mb-2 block text-sm font-medium text-gray-700">
             Application Date
           </label>
           <select
             value={filters.applicationDate}
-            onChange={(e) => handleFilterChange('applicationDate', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            onChange={(e) =>
+              handleFilterChange("applicationDate", e.target.value)
+            }
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none"
           >
             <option value="">All Dates</option>
             <option value="today">Today</option>
@@ -361,13 +404,13 @@ const ManageApplicant: FC = () => {
 
         {/* Location Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="mb-2 block text-sm font-medium text-gray-700">
             Location Preference
           </label>
           <select
             value={filters.location}
-            onChange={(e) => handleFilterChange('location', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            onChange={(e) => handleFilterChange("location", e.target.value)}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:outline-none"
           >
             <option value="">All Locations</option>
             <option value="remote">Remote Only</option>
@@ -378,16 +421,16 @@ const ManageApplicant: FC = () => {
         </div>
       </div>
 
-      <div className="flex gap-2 mt-6">
+      <div className="mt-6 flex gap-2">
         <button
           onClick={clearFilters}
-          className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+          className="flex-1 rounded-md border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50"
         >
           Clear All
         </button>
         <button
           onClick={() => setShowFilterMenu(false)}
-          className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+          className="flex-1 rounded-md bg-purple-600 px-4 py-2 text-white transition-colors hover:bg-purple-700"
         >
           Apply Filters
         </button>
@@ -398,59 +441,129 @@ const ManageApplicant: FC = () => {
   // Referrer modal component
   const ReferrerModal: FC = () => {
     const referrers = [
-      { id: 1, name: "John Smith", image: Referrer1, role: "Senior Developer", company: "Tech Corp" },
-      { id: 2, name: "Sarah Johnson", image: Referrer2, role: "Product Manager", company: "StartupXYZ" },
-      { id: 3, name: "Mike Chen", image: Referrer3, role: "Designer", company: "Creative Agency" },
-      { id: 4, name: "Emma Wilson", image: Referrer1, role: "HR Director", company: "Big Tech" },
-      { id: 5, name: "David Brown", image: Referrer2, role: "Engineering Manager", company: "Scale Inc" },
-      { id: 6, name: "Lisa Garcia", image: Referrer3, role: "Recruiter", company: "Talent Solutions" },
-      { id: 7, name: "Alex Taylor", image: Referrer1, role: "Team Lead", company: "Innovation Labs" },
-      { id: 8, name: "Rachel Davis", image: Referrer2, role: "VP Engineering", company: "Growth Co" },
-      { id: 9, name: "Tom Anderson", image: Referrer3, role: "CTO", company: "Future Tech" },
-      { id: 10, name: "Maria Rodriguez", image: Referrer1, role: "Senior Recruiter", company: "Elite Hiring" }
+      {
+        id: 1,
+        name: "John Smith",
+        image: Referrer1,
+        role: "Senior Developer",
+        company: "Tech Corp",
+      },
+      {
+        id: 2,
+        name: "Sarah Johnson",
+        image: Referrer2,
+        role: "Product Manager",
+        company: "StartupXYZ",
+      },
+      {
+        id: 3,
+        name: "Mike Chen",
+        image: Referrer3,
+        role: "Designer",
+        company: "Creative Agency",
+      },
+      {
+        id: 4,
+        name: "Emma Wilson",
+        image: Referrer1,
+        role: "HR Director",
+        company: "Big Tech",
+      },
+      {
+        id: 5,
+        name: "David Brown",
+        image: Referrer2,
+        role: "Engineering Manager",
+        company: "Scale Inc",
+      },
+      {
+        id: 6,
+        name: "Lisa Garcia",
+        image: Referrer3,
+        role: "Recruiter",
+        company: "Talent Solutions",
+      },
+      {
+        id: 7,
+        name: "Alex Taylor",
+        image: Referrer1,
+        role: "Team Lead",
+        company: "Innovation Labs",
+      },
+      {
+        id: 8,
+        name: "Rachel Davis",
+        image: Referrer2,
+        role: "VP Engineering",
+        company: "Growth Co",
+      },
+      {
+        id: 9,
+        name: "Tom Anderson",
+        image: Referrer3,
+        role: "CTO",
+        company: "Future Tech",
+      },
+      {
+        id: 10,
+        name: "Maria Rodriguez",
+        image: Referrer1,
+        role: "Senior Recruiter",
+        company: "Elite Hiring",
+      },
     ];
 
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4" style={{zIndex: 99998}}>
-        <div className="bg-white rounded-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto">
-          <div className="p-6 border-b border-gray-200">
+      <div
+        className="fixed inset-0 flex items-center justify-center bg-black/50 p-4"
+        style={{ zIndex: 99998 }}
+      >
+        <div className="max-h-[80vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-white">
+          <div className="border-b border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">Referrers</h2>
-                <p className="text-gray-600 mt-1">People who referred this candidate</p>
+                <p className="mt-1 text-gray-600">
+                  People who referred this candidate
+                </p>
               </div>
               <button
                 onClick={() => setShowReferrerModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="rounded-lg p-2 transition-colors hover:bg-gray-100"
               >
-                <X className="w-6 h-6 text-gray-500" />
+                <X className="h-6 w-6 text-gray-500" />
               </button>
             </div>
           </div>
 
           <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {referrers.map((referrer) => (
-                <div key={referrer.id} className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
-                  <div className="flex items-center gap-3 mb-3">
+                <div
+                  key={referrer.id}
+                  className="rounded-lg bg-gray-50 p-4 transition-colors hover:bg-gray-100"
+                >
+                  <div className="mb-3 flex items-center gap-3">
                     <img
                       src={referrer.image}
                       alt={referrer.name}
-                      className="w-12 h-12 rounded-full object-cover"
+                      className="h-12 w-12 rounded-full object-cover"
                     />
                     <div>
-                      <h3 className="font-medium text-gray-900">{referrer.name}</h3>
+                      <h3 className="font-medium text-gray-900">
+                        {referrer.name}
+                      </h3>
                       <p className="text-sm text-gray-600">{referrer.role}</p>
                     </div>
                   </div>
-                  <div className="text-sm text-gray-500 mb-3">
+                  <div className="mb-3 text-sm text-gray-500">
                     <p className="font-medium">{referrer.company}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="flex-1 px-3 py-1 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors">
+                    <button className="flex-1 rounded bg-purple-100 px-3 py-1 text-xs text-purple-700 transition-colors hover:bg-purple-200">
                       View Profile
                     </button>
-                    <button className="flex-1 px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors">
+                    <button className="flex-1 rounded bg-gray-200 px-3 py-1 text-xs text-gray-700 transition-colors hover:bg-gray-300">
                       Contact
                     </button>
                   </div>
@@ -497,7 +610,7 @@ const ManageApplicant: FC = () => {
     setSelectedMatchApplicant({
       applicantId: application.applicant.id,
       jobId: application.job.id,
-      applicantName: `${application.applicant.firstName} ${application.applicant.lastName}`
+      applicantName: `${application.applicant.firstName} ${application.applicant.lastName}`,
     });
     setIsMatchModalOpen(true);
   };
@@ -505,43 +618,44 @@ const ManageApplicant: FC = () => {
   const handleCloseJob = async () => {
     try {
       setIsJobClosed(!isJobClosed);
-      console.log(`Job ${isJobClosed ? 'opened' : 'closed'} successfully`);
+      console.log(`Job ${isJobClosed ? "opened" : "closed"} successfully`);
     } catch (error) {
-      console.error('Error toggling job status:', error);
+      console.error("Error toggling job status:", error);
     }
   };
 
   const handleListJob = async () => {
     try {
       setIsJobListed(!isJobListed);
-      console.log(`Job ${isJobListed ? 'unlisted' : 'listed'} successfully`);
+      console.log(`Job ${isJobListed ? "unlisted" : "listed"} successfully`);
     } catch (error) {
-      console.error('Error toggling job listing:', error);
+      console.error("Error toggling job listing:", error);
     }
   };
 
   const handleFilterChange = (filterType: string, value: string) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [filterType]: value
+      [filterType]: value,
     }));
   };
 
   const clearFilters = () => {
     setFilters({
-      matchScore: '',
-      experience: '',
-      skills: '',
-      location: '',
-      applicationDate: ''
+      matchScore: "",
+      experience: "",
+      skills: "",
+      location: "",
+      applicationDate: "",
     });
   };
 
   const applyFilters = (applicationsList: ApplicationResponse[]) => {
-    return applicationsList?.filter(application => {
-      const nameMatch = `${application.applicant.firstName} ${application.applicant.lastName}`
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
+    return applicationsList?.filter((application) => {
+      const nameMatch =
+        `${application.applicant.firstName} ${application.applicant.lastName}`
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
 
       if (!nameMatch) return false;
       return true;
@@ -592,34 +706,37 @@ const ManageApplicant: FC = () => {
                 onClick={handleCloseJob}
                 className={`rounded-[10px] px-5 py-[9px] text-white transition-all duration-300 ease-out active:scale-95 ${
                   isJobClosed
-                    ? 'bg-green-600 hover:bg-green-700'
-                    : 'bg-red-600 hover:bg-red-700'
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-red-600 hover:bg-red-700"
                 }`}
               >
-                {isJobClosed ? 'Reopen job' : 'Close job'}
+                {isJobClosed ? "Reopen job" : "Close job"}
               </button>
               <button
                 onClick={handleListJob}
                 className={`rounded-[10px] px-5 py-[9px] text-white transition-all duration-300 ease-out active:scale-95 ${
                   isJobListed
-                    ? 'bg-orange-600 hover:bg-orange-700'
-                    : 'bg-[#6438C2] hover:bg-[#5429a8]'
+                    ? "bg-orange-600 hover:bg-orange-700"
+                    : "bg-[#6438C2] hover:bg-[#5429a8]"
                 }`}
               >
-                {isJobListed ? 'Unlist job' : 'List job'}
+                {isJobListed ? "Unlist job" : "List job"}
               </button>
             </div>
             <div className="relative">
               <button
                 onClick={() => setShowFilterMenu(!showFilterMenu)}
-                className="mr-3 flex min-w-[78px] items-center gap-2 rounded-[10px] border border-[#E6E6E6] px-9 py-3 hover:bg-gray-50 transition-colors"
+                className="mr-3 flex min-w-[78px] items-center gap-2 rounded-[10px] border border-[#E6E6E6] px-9 py-3 transition-colors hover:bg-gray-50"
               >
                 <img src={FilterIcon} alt="FilterIcon" />
                 <p className="hidden font-extrabold text-[#8E8E8E] md:block">
                   Filter
                 </p>
-                {(filters.matchScore || filters.experience || filters.applicationDate || filters.location) && (
-                  <div className="absolute -top-2 -right-2 w-3 h-3 bg-red-500 rounded-full"></div>
+                {(filters.matchScore ||
+                  filters.experience ||
+                  filters.applicationDate ||
+                  filters.location) && (
+                  <div className="absolute -top-2 -right-2 h-3 w-3 rounded-full bg-red-500"></div>
                 )}
               </button>
               {showFilterMenu && <FilterMenu />}
@@ -632,34 +749,37 @@ const ManageApplicant: FC = () => {
               onClick={handleCloseJob}
               className={`rounded-[10px] px-5 py-[9px] text-[14px] text-white transition-all duration-300 ease-out active:scale-95 sm:text-base ${
                 isJobClosed
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-600 hover:bg-red-700'
+                  ? "bg-green-600 hover:bg-green-700"
+                  : "bg-red-600 hover:bg-red-700"
               }`}
             >
-              {isJobClosed ? 'Reopen job' : 'Close job'}
+              {isJobClosed ? "Reopen job" : "Close job"}
             </button>
             <button
               onClick={handleListJob}
               className={`rounded-[10px] px-5 py-[9px] text-[14px] text-white transition-all duration-300 ease-out active:scale-95 sm:text-base ${
                 isJobListed
-                  ? 'bg-orange-600 hover:bg-orange-700'
-                  : 'bg-[#6438C2] hover:bg-[#5429a8]'
+                  ? "bg-orange-600 hover:bg-orange-700"
+                  : "bg-[#6438C2] hover:bg-[#5429a8]"
               }`}
             >
-              {isJobListed ? 'Unlist job' : 'List job'}
+              {isJobListed ? "Unlist job" : "List job"}
             </button>
           </div>
           <div className="relative">
             <button
               onClick={() => setShowFilterMenu(!showFilterMenu)}
-              className="mr-3 flex min-w-[78px] items-center gap-2 rounded-[10px] border border-[#E6E6E6] px-9 py-3 hover:bg-gray-50 transition-colors"
+              className="mr-3 flex min-w-[78px] items-center gap-2 rounded-[10px] border border-[#E6E6E6] px-9 py-3 transition-colors hover:bg-gray-50"
             >
               <img src={FilterIcon} alt="FilterIcon" />
               <p className="hidden font-extrabold text-[#8E8E8E] md:block">
                 Filter
               </p>
-              {(filters.matchScore || filters.experience || filters.applicationDate || filters.location) && (
-                <div className="absolute -top-2 -right-2 w-3 h-3 bg-red-500 rounded-full"></div>
+              {(filters.matchScore ||
+                filters.experience ||
+                filters.applicationDate ||
+                filters.location) && (
+                <div className="absolute -top-2 -right-2 h-3 w-3 rounded-full bg-red-500"></div>
               )}
             </button>
             {showFilterMenu && <FilterMenu />}
@@ -714,8 +834,8 @@ const ManageApplicant: FC = () => {
                           <div className="relative">
                             {application.status ===
                               ApplicationStatus.VIEWED && (
-                                <div className="absolute right-0 h-[10px] w-[10px] rounded-full bg-[#FA4E09]"></div>
-                              )}
+                              <div className="absolute right-0 h-[10px] w-[10px] rounded-full bg-[#FA4E09]"></div>
+                            )}
                             <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full">
                               <img
                                 className="h-full w-full rounded-full"
@@ -784,7 +904,7 @@ const ManageApplicant: FC = () => {
                       </div>
 
                       {/* Match percentage row */}
-                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-200 border-opacity-20">
+                      <div className="border-opacity-20 mt-2 flex items-center justify-between border-t border-gray-200 pt-2">
                         <div className="flex items-center gap-2">
                           <MatchPercentage
                             applicantId={application.applicant.id}
@@ -797,10 +917,10 @@ const ManageApplicant: FC = () => {
                             e.stopPropagation();
                             handleOpenMatchDetails(application);
                           }}
-                          className={`text-xs px-2 py-1 rounded transition-all ${
+                          className={`rounded px-2 py-1 text-xs transition-all ${
                             application.id === selectedApplication?.id
-                              ? "bg-white bg-opacity-20 text-white hover:bg-opacity-30"
-                              : "bg-gray-200 text-gray-600 group-hover:bg-white group-hover:bg-opacity-20 group-hover:text-white"
+                              ? "bg-opacity-20 hover:bg-opacity-30 bg-white text-white"
+                              : "group-hover:bg-opacity-20 bg-gray-200 text-gray-600 group-hover:bg-white group-hover:text-white"
                           }`}
                         >
                           Details
@@ -884,20 +1004,40 @@ const ManageApplicant: FC = () => {
                 <div className="mb-4 flex flex-wrap items-center gap-4 rounded-[10px] bg-[#F4F7FA] px-4 py-1 md:min-w-[364px] lg:self-end">
                   <p className="font-extrabold text-[#000000]">Referrer</p>
                   <div className="flex gap-2">
-                    <img src={Referrer1} alt="Referrer1" className="w-8 h-8 rounded-full cursor-pointer hover:ring-2 hover:ring-purple-300 transition-all" />
-                    <img src={Referrer2} alt="Referrer2" className="w-8 h-8 rounded-full cursor-pointer hover:ring-2 hover:ring-purple-300 transition-all" />
-                    <img src={Referrer2} alt="Referrer3" className="w-8 h-8 rounded-full cursor-pointer hover:ring-2 hover:ring-purple-300 transition-all" />
-                    <img src={Referrer3} alt="Referrer4" className="w-8 h-8 rounded-full cursor-pointer hover:ring-2 hover:ring-purple-300 transition-all" />
-                    <img src={Referrer1} alt="Referrer5" className="w-8 h-8 rounded-full cursor-pointer hover:ring-2 hover:ring-purple-300 transition-all" />
+                    <img
+                      src={Referrer1}
+                      alt="Referrer1"
+                      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"
+                    />
+                    <img
+                      src={Referrer2}
+                      alt="Referrer2"
+                      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"
+                    />
+                    <img
+                      src={Referrer2}
+                      alt="Referrer3"
+                      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"
+                    />
+                    <img
+                      src={Referrer3}
+                      alt="Referrer4"
+                      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"
+                    />
+                    <img
+                      src={Referrer1}
+                      alt="Referrer5"
+                      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"
+                    />
                     <button
                       onClick={() => setShowReferrerModal(true)}
-                      className="font-extrabold text-[#6438C2] hover:text-[#5429a8] cursor-pointer transition-colors"
+                      className="cursor-pointer font-extrabold text-[#6438C2] transition-colors hover:text-[#5429a8]"
                     >
                       +5
                     </button>
                     <button
                       onClick={() => setShowReferrerModal(true)}
-                      className="hidden font-extrabold text-[#6438C2] hover:text-[#5429a8] cursor-pointer transition-colors md:block"
+                      className="hidden cursor-pointer font-extrabold text-[#6438C2] transition-colors hover:text-[#5429a8] md:block"
                     >
                       more
                     </button>
@@ -943,13 +1083,13 @@ const ManageApplicant: FC = () => {
                                 </h3>
                                 <p className="text-[13px] font-medium text-[#8E8E8E]">
                                   {moment(experience.startDate).format(
-                                      "MMM YYYY",
-                                    ) +
+                                    "MMM YYYY",
+                                  ) +
                                     " - " +
                                     (experience.endDate
                                       ? moment(experience.endDate).format(
-                                        "MMM YYYY",
-                                      )
+                                          "MMM YYYY",
+                                        )
                                       : "Present")}
                                 </p>
                               </div>
@@ -988,13 +1128,13 @@ const ManageApplicant: FC = () => {
                                 </h3>
                                 <p className="text-[13px] font-medium text-[#8E8E8E]">
                                   {moment(education.startDate).format(
-                                      "MMM YYYY",
-                                    ) +
+                                    "MMM YYYY",
+                                  ) +
                                     " - " +
                                     (education.endDate
                                       ? moment(education.endDate).format(
-                                        "MMM YYYY",
-                                      )
+                                          "MMM YYYY",
+                                        )
                                       : "Present")}
                                 </p>
                               </div>
@@ -1059,8 +1199,10 @@ const ManageApplicant: FC = () => {
                         jobId={selectedApplication.job.id}
                       />
                       <button
-                        onClick={() => handleOpenMatchDetails(selectedApplication)}
-                        className="w-full mt-3 px-4 py-2 bg-[#6438C2] text-white rounded-lg text-sm font-medium hover:bg-[#5429a8] transition-colors"
+                        onClick={() =>
+                          handleOpenMatchDetails(selectedApplication)
+                        }
+                        className="mt-3 w-full rounded-lg bg-[#6438C2] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5429a8]"
                       >
                         View Detailed Match Analysis
                       </button>

@@ -44,13 +44,13 @@ const JobMatchCard: React.FC = () => {
     if (job) {
       const updatedJob = {
         ...job,
-        rating: { ...job.rating, averageScore: ratingValue }
+        rating: { ...job.rating, averageScore: ratingValue },
       } as JobPostResponse;
       //JobRatingRequest
       await rateJob({
         score: ratingValue,
         rateeId: jobId,
-        rateeType: RateeType.JOB
+        rateeType: RateeType.JOB,
       });
       setJob(updatedJob);
     }
@@ -58,19 +58,19 @@ const JobMatchCard: React.FC = () => {
 
   return (
     <>
-      <div className={`bg-white ${LAYOUT.cardRadius} ${SHADOWS.card} ${SHADOWS.cardHover} transition-all duration-300 overflow-hidden`}>
+      <div
+        className={`bg-white ${LAYOUT.cardRadius} ${SHADOWS.card} ${SHADOWS.cardHover} overflow-hidden transition-all duration-300`}
+      >
         {/* Header with gradient background */}
-        <div className="relative bg-gradient-to-r from-slate-50 to-blue-50/30 p-6 border-b border-slate-200">
+        <div className="relative border-b border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50/30 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-sm">
-                <Sparkles className="w-5 h-5 text-white" />
+              <div className="rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 p-2 shadow-sm">
+                <Sparkles className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-slate-900">
-                  Job Match
-                </h3>
-                <p className="text-sm text-slate-600 mt-1">
+                <h3 className="text-xl font-bold text-slate-900">Job Match</h3>
+                <p className="mt-1 text-sm text-slate-600">
                   Jobs that match your profile
                 </p>
               </div>
@@ -78,7 +78,7 @@ const JobMatchCard: React.FC = () => {
 
             <button
               onClick={handleAutoApplyClick}
-              className="relative group flex items-center space-x-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg hover:shadow-purple-500/25 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              className="group relative flex transform items-center space-x-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg hover:shadow-purple-500/25 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
             >
               <span>Check Auto Apply</span>
               <div className="relative">
@@ -86,14 +86,14 @@ const JobMatchCard: React.FC = () => {
                   <img
                     src={checkAutoApplyRocket}
                     alt="Auto apply"
-                    className="w-5 h-5"
+                    className="h-5 w-5"
                   />
                 ) : (
-                  <Zap className="w-5 h-5" />
+                  <Zap className="h-5 w-5" />
                 )}
 
                 {/* Shine effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full blur-sm" />
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 blur-sm transition-opacity duration-300 group-hover:opacity-100" />
               </div>
             </button>
           </div>
@@ -104,20 +104,23 @@ const JobMatchCard: React.FC = () => {
           {/* Fix 5: Handle loading state */}
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
-              <p className="text-sm text-slate-500">Loading recommendations...</p>
+              <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600"></div>
+              <p className="text-sm text-slate-500">
+                Loading recommendations...
+              </p>
             </div>
           ) : error ? (
             // Fix 6: Handle error state
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-4">
-                <Sparkles className="w-8 h-8 text-red-400" />
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+                <Sparkles className="h-8 w-8 text-red-400" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-700 mb-2">
+              <h3 className="mb-2 text-lg font-semibold text-slate-700">
                 Unable to Load Recommendations
               </h3>
-              <p className="text-sm text-slate-500 max-w-sm">
-                There was an error loading your job recommendations. Please try again later.
+              <p className="max-w-sm text-sm text-slate-500">
+                There was an error loading your job recommendations. Please try
+                again later.
               </p>
             </div>
           ) : job ? (
@@ -140,7 +143,7 @@ const JobMatchCard: React.FC = () => {
 
               {/* Fix 7: Show recommendation-specific data */}
               {job.recommendationScore && (
-                <div className="mt-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                <div className="mt-4 rounded-lg border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 p-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-green-800">
                       Match Score
@@ -154,14 +157,15 @@ const JobMatchCard: React.FC = () => {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-                <Sparkles className="w-8 h-8 text-slate-400" />
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
+                <Sparkles className="h-8 w-8 text-slate-400" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-700 mb-2">
+              <h3 className="mb-2 text-lg font-semibold text-slate-700">
                 No Job Matches Yet
               </h3>
-              <p className="text-sm text-slate-500 max-w-sm">
-                Complete your profile to get personalized job recommendations that match your skills and preferences.
+              <p className="max-w-sm text-sm text-slate-500">
+                Complete your profile to get personalized job recommendations
+                that match your skills and preferences.
               </p>
             </div>
           )}
@@ -172,9 +176,7 @@ const JobMatchCard: React.FC = () => {
       {isSubscriptionModalOpen && (
         <SubscriptionModal modalId="subscription-modal" USER_TYPE={USER_TYPE} />
       )}
-      {isPaymentModalOpen && (
-        <PaymentModal modalId="payment-modal" />
-      )}
+      {isPaymentModalOpen && <PaymentModal modalId="payment-modal" />}
     </>
   );
 };

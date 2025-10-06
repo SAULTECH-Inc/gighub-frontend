@@ -15,7 +15,7 @@ import {
   Briefcase,
   MapPin,
   Calendar,
-  Building
+  Building,
 } from "lucide-react";
 
 interface ExperienceDetailsProps {
@@ -23,8 +23,8 @@ interface ExperienceDetailsProps {
 }
 
 const WorkExperienceDetails: React.FC<ExperienceDetailsProps> = ({
-                                                                   experienceData,
-                                                                 }) => {
+  experienceData,
+}) => {
   const {
     experience,
     updateExperience,
@@ -44,7 +44,9 @@ const WorkExperienceDetails: React.FC<ExperienceDetailsProps> = ({
   }, [experienceData, setExperience]);
 
   const handleDeleteExperience = async () => {
-    if (!window.confirm("Are you sure you want to delete this work experience?")) {
+    if (
+      !window.confirm("Are you sure you want to delete this work experience?")
+    ) {
       return;
     }
 
@@ -70,7 +72,9 @@ const WorkExperienceDetails: React.FC<ExperienceDetailsProps> = ({
     }
   };
 
-  const handleUpdateExperience = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleUpdateExperience = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+  ) => {
     e.preventDefault();
 
     try {
@@ -115,43 +119,48 @@ const WorkExperienceDetails: React.FC<ExperienceDetailsProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="relative bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-sm transition-all duration-200"
+      className="relative overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-200 hover:shadow-sm"
     >
       {/* Main Content */}
       <div className="p-6">
         {/* Header Section */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-start gap-4 flex-1">
+        <div className="mb-4 flex items-start justify-between">
+          <div className="flex flex-1 items-start gap-4">
             {/* Experience Icon */}
-            <div className="p-2 bg-orange-100 rounded-lg flex-shrink-0">
-              <Briefcase className="w-5 h-5 text-orange-600" />
+            <div className="flex-shrink-0 rounded-lg bg-orange-100 p-2">
+              <Briefcase className="h-5 w-5 text-orange-600" />
             </div>
 
             {/* Experience Info */}
-            <div className="flex-1 min-w-0">
-              <h4 className="text-lg font-semibold text-gray-900 mb-1">
+            <div className="min-w-0 flex-1">
+              <h4 className="mb-1 text-lg font-semibold text-gray-900">
                 {experienceData?.position}
                 {experienceData?.company && (
-                  <span className="text-gray-600"> at {experienceData.company}</span>
+                  <span className="text-gray-600">
+                    {" "}
+                    at {experienceData.company}
+                  </span>
                 )}
               </h4>
 
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-2">
+              <div className="mb-2 flex flex-wrap items-center gap-4 text-sm text-gray-600">
                 <div className="flex items-center gap-1">
-                  <Building className="w-4 h-4" />
+                  <Building className="h-4 w-4" />
                   <span>{experienceData?.company}</span>
                 </div>
 
                 {experienceData?.location && (
                   <div className="flex items-center gap-1">
-                    <MapPin className="w-4 h-4" />
+                    <MapPin className="h-4 w-4" />
                     <span>{experienceData.location}</span>
-                    {experienceData?.city && <span>, {experienceData.city}</span>}
+                    {experienceData?.city && (
+                      <span>, {experienceData.city}</span>
+                    )}
                   </div>
                 )}
 
                 <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
+                  <Calendar className="h-4 w-4" />
                   <span>{formatDateRange()}</span>
                 </div>
               </div>
@@ -159,19 +168,19 @@ const WorkExperienceDetails: React.FC<ExperienceDetailsProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex flex-shrink-0 items-center gap-2">
             {/* Delete Button */}
             <button
               type="button"
               onClick={handleDeleteExperience}
               disabled={isDeleting}
-              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200 disabled:opacity-50"
+              className="rounded-lg p-2 text-gray-400 transition-all duration-200 hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
               title="Delete experience"
             >
               {isDeleting ? (
-                <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-500 border-t-transparent" />
               ) : (
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="h-4 w-4" />
               )}
             </button>
 
@@ -179,13 +188,13 @@ const WorkExperienceDetails: React.FC<ExperienceDetailsProps> = ({
             <button
               type="button"
               onClick={() => setExperienceCollapse(!experienceCollapse)}
-              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
+              className="rounded-lg p-2 text-gray-400 transition-all duration-200 hover:bg-gray-100 hover:text-gray-600"
               title={experienceCollapse ? "Collapse" : "Expand"}
             >
               {experienceCollapse ? (
-                <ChevronUp className="w-5 h-5" />
+                <ChevronUp className="h-5 w-5" />
               ) : (
-                <ChevronDown className="w-5 h-5" />
+                <ChevronDown className="h-5 w-5" />
               )}
             </button>
           </div>
@@ -193,8 +202,10 @@ const WorkExperienceDetails: React.FC<ExperienceDetailsProps> = ({
 
         {/* Quick Preview (when collapsed) */}
         {!experienceCollapse && experienceData?.description && (
-          <div className="text-sm text-gray-600 line-clamp-2 bg-gray-50 rounded-lg p-3 mt-3">
-            <div dangerouslySetInnerHTML={{ __html: experienceData.description }} />
+          <div className="mt-3 line-clamp-2 rounded-lg bg-gray-50 p-3 text-sm text-gray-600">
+            <div
+              dangerouslySetInnerHTML={{ __html: experienceData.description }}
+            />
           </div>
         )}
       </div>
@@ -211,27 +222,27 @@ const WorkExperienceDetails: React.FC<ExperienceDetailsProps> = ({
           >
             <div className="p-6">
               {/* Edit Controls */}
-              <div className="flex items-center justify-end gap-2 mb-4">
+              <div className="mb-4 flex items-center justify-end gap-2">
                 <button
                   onClick={handleToggleEdit}
                   type="button"
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
                     isEditable
-                      ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      : 'bg-orange-50 text-orange-700 hover:bg-orange-100'
+                      ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      : "bg-orange-50 text-orange-700 hover:bg-orange-100"
                   }`}
                 >
-                  <Edit3 className="w-4 h-4" />
-                  {isEditable ? 'Cancel' : 'Edit'}
+                  <Edit3 className="h-4 w-4" />
+                  {isEditable ? "Cancel" : "Edit"}
                 </button>
 
                 {isEditable && (
                   <button
                     onClick={handleUpdateExperience}
                     type="button"
-                    className="flex items-center gap-2 px-3 py-2 bg-orange-600 text-white rounded-lg text-sm font-medium hover:bg-orange-700 transition-colors duration-200"
+                    className="flex items-center gap-2 rounded-lg bg-orange-600 px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-orange-700"
                   >
-                    <Save className="w-4 h-4" />
+                    <Save className="h-4 w-4" />
                     Save Changes
                   </button>
                 )}
@@ -251,7 +262,7 @@ const WorkExperienceDetails: React.FC<ExperienceDetailsProps> = ({
       {experienceCollapse && !isEditable && (
         <div className="px-6 pb-4">
           <div className="flex items-center gap-2 text-sm text-green-600">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <div className="h-2 w-2 rounded-full bg-green-500"></div>
             <span>Ready to save</span>
           </div>
         </div>

@@ -90,9 +90,9 @@ const JobDetailPage: FC = () => {
             navbarItemsMap={applicantNavBarItemMap}
           />
         )}
-        <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex min-h-[60vh] items-center justify-center">
           <div className="flex flex-col items-center space-y-4">
-            <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+            <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
             <p className="text-slate-600">Loading job details...</p>
           </div>
         </div>
@@ -116,18 +116,23 @@ const JobDetailPage: FC = () => {
             navbarItemsMap={applicantNavBarItemMap}
           />
         )}
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center max-w-md mx-auto p-6">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <ArrowLeft className="w-8 h-8 text-red-600" />
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <div className="mx-auto max-w-md p-6 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+              <ArrowLeft className="h-8 w-8 text-red-600" />
             </div>
-            <h2 className="text-xl font-semibold text-slate-800 mb-2">Job Not Found</h2>
-            <p className="text-slate-600 mb-4">{error || "This job may have been removed or the link is invalid."}</p>
+            <h2 className="mb-2 text-xl font-semibold text-slate-800">
+              Job Not Found
+            </h2>
+            <p className="mb-4 text-slate-600">
+              {error ||
+                "This job may have been removed or the link is invalid."}
+            </p>
             <button
               onClick={() => window.history.back()}
-              className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              className="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-white transition-colors hover:bg-indigo-700"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Go Back
             </button>
           </div>
@@ -139,7 +144,7 @@ const JobDetailPage: FC = () => {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Navigation */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200">
+      <div className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
         {USER_TYPE === UserType.EMPLOYER ? (
           <TopNavBar
             navItems={employerNavItems}
@@ -156,7 +161,7 @@ const JobDetailPage: FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
         {USER_TYPE === UserType.EMPLOYER && (
           <div className="mb-6">
             <JobDetailsTop />
@@ -164,7 +169,7 @@ const JobDetailPage: FC = () => {
         )}
 
         {/* Job Details Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_400px] lg:gap-8">
           {/* Main Content */}
           <div className="order-2 lg:order-1">
             <JobDetailsBody

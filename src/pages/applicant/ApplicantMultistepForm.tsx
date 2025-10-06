@@ -14,17 +14,21 @@ const ApplicantMultistepForm: React.FC = () => {
   const handlePrev = () => setStep(step - 1);
 
   const getStepImage = () => {
-    switch(step) {
-      case 1: return applicantSignupStep1;
-      case 2: return applicantSignupStep2;
-      case 3: return applicantSignupStep2;
-      default: return applicantSignupStep1;
+    switch (step) {
+      case 1:
+        return applicantSignupStep1;
+      case 2:
+        return applicantSignupStep2;
+      case 3:
+        return applicantSignupStep2;
+      default:
+        return applicantSignupStep1;
     }
   };
 
   return (
     <motion.div
-      className="min-h-screen bg-gray-50 flex flex-col"
+      className="flex min-h-screen flex-col bg-gray-50"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -55,8 +59,8 @@ const ApplicantMultistepForm: React.FC = () => {
                     key={stepNumber}
                     className={`h-2 rounded-full transition-all duration-300 ${
                       stepNumber <= step
-                        ? "bg-[#6438C2] w-8 sm:w-10"
-                        : "bg-gray-200 w-6 sm:w-8"
+                        ? "w-8 bg-[#6438C2] sm:w-10"
+                        : "w-6 bg-gray-200 sm:w-8"
                     }`}
                   />
                 ))}
@@ -70,12 +74,11 @@ const ApplicantMultistepForm: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center">
+      <main className="flex flex-1 items-center justify-center">
         <div className="container mx-auto px-4 py-6 lg:py-8">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center justify-items-center min-h-[calc(100vh-120px)]">
-
+          <div className="grid min-h-[calc(100vh-120px)] items-center justify-items-center gap-8 lg:grid-cols-2 lg:gap-12 xl:gap-16">
             {/* Form Section */}
-            <div className="w-full max-w-md flex items-center justify-center">
+            <div className="flex w-full max-w-md items-center justify-center">
               <motion.div
                 key={step}
                 initial={{ opacity: 0, x: 20 }}
@@ -100,10 +103,10 @@ const ApplicantMultistepForm: React.FC = () => {
             </div>
 
             {/* Image Section */}
-            <div className="hidden lg:flex items-center justify-center w-full">
+            <div className="hidden w-full items-center justify-center lg:flex">
               <motion.img
                 key={step}
-                className="max-w-full h-auto max-h-[600px] xl:max-h-[800px] object-contain"
+                className="h-auto max-h-[600px] max-w-full object-contain xl:max-h-[800px]"
                 src={getStepImage()}
                 alt={`Step ${step} illustration`}
                 initial={{ opacity: 0, scale: 0.95 }}

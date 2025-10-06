@@ -15,7 +15,8 @@ import {
   RiUser3Line,
   RiFolderLine,
   RiMailLine,
-  RiStarLine, RiCamera3Line
+  RiStarLine,
+  RiCamera3Line,
 } from "react-icons/ri";
 
 const CreateJobStepThree: React.FC = () => {
@@ -42,54 +43,60 @@ const CreateJobStepThree: React.FC = () => {
 
   const applicationMethods = [
     {
-      id: 'byCv',
-      label: 'Apply With CV',
+      id: "byCv",
+      label: "Apply With CV",
       icon: RiFileTextLine,
-      description: 'Allow candidates to apply with their resume'
+      description: "Allow candidates to apply with their resume",
     },
     {
-      id: 'byProfile',
-      label: 'Apply With Profile',
+      id: "byProfile",
+      label: "Apply With Profile",
       icon: RiUser3Line,
-      description: 'Let candidates use their platform profile'
+      description: "Let candidates use their platform profile",
     },
     {
-      id: 'byPortfolio',
-      label: 'Apply With Portfolio',
+      id: "byPortfolio",
+      label: "Apply With Portfolio",
       icon: RiFolderLine,
-      description: 'Request work samples and portfolio'
+      description: "Request work samples and portfolio",
     },
     {
-      id: 'byCoverLetter',
-      label: 'Apply With Cover Letter',
+      id: "byCoverLetter",
+      label: "Apply With Cover Letter",
       icon: RiMailLine,
-      description: 'Require a personalized cover letter'
+      description: "Require a personalized cover letter",
     },
     {
-      id: 'byVideo',
-      label: 'Apply With Video',
+      id: "byVideo",
+      label: "Apply With Video",
       icon: RiCamera3Line,
-      description: 'Request video introduction or pitch'
-    }
+      description: "Request video introduction or pitch",
+    },
   ];
 
   return (
     <div className="flex w-full flex-col items-center p-6">
       {/* Main Card */}
-      <div className="w-full max-w-[880px] bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="w-full max-w-[880px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
         {/* Card Header */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Skills & Preferences</h2>
-          <p className="text-sm text-gray-600">Define required skills and candidate preferences</p>
+        <div className="border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4">
+          <h2 className="mb-2 text-lg font-semibold text-gray-900">
+            Skills & Preferences
+          </h2>
+          <p className="text-sm text-gray-600">
+            Define required skills and candidate preferences
+          </p>
         </div>
 
         {/* Content Area */}
-        <div className="p-6 space-y-8">
+        <div className="space-y-8 p-6">
           {/* Required Skills Section */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <RiToolsLine className="h-5 w-5 text-gray-500" />
-              <h3 className="text-base font-medium text-gray-900">Required Skills</h3>
+              <h3 className="text-base font-medium text-gray-900">
+                Required Skills
+              </h3>
             </div>
 
             <MultiSelect
@@ -117,8 +124,8 @@ const CreateJobStepThree: React.FC = () => {
               }}
             />
             {errors.skillSet && (
-              <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-lg">
-                <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+              <div className="flex items-center gap-2 rounded-lg bg-red-50 p-3 text-red-600">
+                <div className="h-2 w-2 rounded-full bg-red-600"></div>
                 <span className="text-sm font-medium">{errors.skillSet}</span>
               </div>
             )}
@@ -131,11 +138,13 @@ const CreateJobStepThree: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <RiGlobalLine className="h-5 w-5 text-gray-500" />
-                  <h3 className="text-base font-medium text-gray-900">Candidate Location Preferences</h3>
+                  <h3 className="text-base font-medium text-gray-900">
+                    Candidate Location Preferences
+                  </h3>
                 </div>
                 {!isSubscribed && (
-                  <div className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-medium">
-                    <img src={Crown} alt="premium crown" className="w-3 h-3" />
+                  <div className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 px-3 py-1.5 text-xs font-medium text-white">
+                    <img src={Crown} alt="premium crown" className="h-3 w-3" />
                     <span>Premium</span>
                   </div>
                 )}
@@ -158,15 +167,24 @@ const CreateJobStepThree: React.FC = () => {
               />
 
               {!isSubscribed && (
-                <div className="flex items-center gap-3 text-sm text-gray-600 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
-                      <img src={Crown} alt="premium crown" className="w-4 h-4" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-blue-600">
+                      <img
+                        src={Crown}
+                        alt="premium crown"
+                        className="h-4 w-4"
+                      />
                     </div>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Upgrade to Premium</p>
-                    <p className="text-gray-600">Target candidates from specific countries to find the best talent for your role.</p>
+                    <p className="font-medium text-gray-900">
+                      Upgrade to Premium
+                    </p>
+                    <p className="text-gray-600">
+                      Target candidates from specific countries to find the best
+                      talent for your role.
+                    </p>
                   </div>
                 </div>
               )}
@@ -177,35 +195,39 @@ const CreateJobStepThree: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <RiStarLine className="h-5 w-5 text-gray-500" />
-                  <h3 className="text-base font-medium text-gray-900">Application Methods</h3>
+                  <h3 className="text-base font-medium text-gray-900">
+                    Application Methods
+                  </h3>
                 </div>
                 {!isSubscribed && (
-                  <div className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-medium">
-                    <img src={Crown} alt="premium crown" className="w-3 h-3" />
+                  <div className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 px-3 py-1.5 text-xs font-medium text-white">
+                    <img src={Crown} alt="premium crown" className="h-3 w-3" />
                     <span>Premium</span>
                   </div>
                 )}
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                <p className="text-sm text-gray-600 mb-4">Choose how candidates can apply for this position</p>
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
+                <p className="mb-4 text-sm text-gray-600">
+                  Choose how candidates can apply for this position
+                </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   {applicationMethods.map((method) => {
                     const Icon = method.icon;
-                    const isChecked = job?.applicationMethod?.[method.id as keyof typeof job.applicationMethod] ?? false;
+                    const isChecked =
+                      job?.applicationMethod?.[
+                        method.id as keyof typeof job.applicationMethod
+                      ] ?? false;
 
                     return (
                       <div
                         key={method.id}
-                        className={`
-                          relative p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer
-                          ${isChecked && isSubscribed
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 bg-white hover:border-gray-300'
-                        }
-                          ${!isSubscribed ? 'opacity-60' : ''}
-                        `}
+                        className={`relative cursor-pointer rounded-lg border-2 p-4 transition-all duration-200 ${
+                          isChecked && isSubscribed
+                            ? "border-blue-500 bg-blue-50"
+                            : "border-gray-200 bg-white hover:border-gray-300"
+                        } ${!isSubscribed ? "opacity-60" : ""} `}
                         onClick={() => {
                           if (isSubscribed) {
                             setJobData({
@@ -219,13 +241,14 @@ const CreateJobStepThree: React.FC = () => {
                         }}
                       >
                         <div className="flex items-start gap-3">
-                          <div className={`
-                            flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center
-                            ${isChecked && isSubscribed ? 'bg-blue-100' : 'bg-gray-100'}
-                          `}>
-                            <Icon className={`h-4 w-4 ${isChecked && isSubscribed ? 'text-blue-600' : 'text-gray-500'}`} />
+                          <div
+                            className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg ${isChecked && isSubscribed ? "bg-blue-100" : "bg-gray-100"} `}
+                          >
+                            <Icon
+                              className={`h-4 w-4 ${isChecked && isSubscribed ? "text-blue-600" : "text-gray-500"}`}
+                            />
                           </div>
-                          <div className="flex-1 min-w-0">
+                          <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">
                               <CustomCheckbox
                                 checked={isChecked}
@@ -245,9 +268,13 @@ const CreateJobStepThree: React.FC = () => {
                                   }
                                 }}
                               />
-                              <h4 className="text-sm font-medium text-gray-900">{method.label}</h4>
+                              <h4 className="text-sm font-medium text-gray-900">
+                                {method.label}
+                              </h4>
                             </div>
-                            <p className="text-xs text-gray-600 mt-1">{method.description}</p>
+                            <p className="mt-1 text-xs text-gray-600">
+                              {method.description}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -256,15 +283,24 @@ const CreateJobStepThree: React.FC = () => {
                 </div>
 
                 {!isSubscribed && (
-                  <div className="mt-4 flex items-center gap-3 text-sm text-gray-600 bg-white p-4 rounded-lg border border-gray-200">
+                  <div className="mt-4 flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-600">
                     <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
-                        <img src={Crown} alt="premium crown" className="w-4 h-4" />
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-blue-600">
+                        <img
+                          src={Crown}
+                          alt="premium crown"
+                          className="h-4 w-4"
+                        />
                       </div>
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">Customize Application Process</p>
-                      <p className="text-gray-600">With Premium, you can choose exactly how candidates apply and what materials they submit.</p>
+                      <p className="font-medium text-gray-900">
+                        Customize Application Process
+                      </p>
+                      <p className="text-gray-600">
+                        With Premium, you can choose exactly how candidates
+                        apply and what materials they submit.
+                      </p>
                     </div>
                   </div>
                 )}
@@ -275,17 +311,17 @@ const CreateJobStepThree: React.FC = () => {
       </div>
 
       {/* Action Buttons */}
-      <div className="w-full max-w-[880px] flex justify-between mt-6">
+      <div className="mt-6 flex w-full max-w-[880px] justify-between">
         <button
           onClick={prevStep}
-          className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-8 py-3 rounded-xl font-medium transition-all duration-200"
+          className="flex items-center gap-2 rounded-xl bg-gray-100 px-8 py-3 font-medium text-gray-700 transition-all duration-200 hover:bg-gray-200"
         >
           <RiArrowLeftLine className="h-4 w-4" />
           <span>Back</span>
         </button>
         <button
           onClick={handleNextStep}
-          className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 px-8 py-3 font-medium text-white shadow-lg transition-all duration-200 hover:from-purple-700 hover:to-blue-700 hover:shadow-xl"
         >
           <span>Continue</span>
           <RiArrowRightLine className="h-4 w-4" />

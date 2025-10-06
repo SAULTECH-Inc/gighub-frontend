@@ -7,17 +7,23 @@ const fetchLanguages = async (): Promise<Option[]> => {
   const languageSet = new Set<string>();
   countries.forEach((country: any) => {
     if (country.languages) {
-      Object.values(country.languages).forEach((lang: any) => languageSet.add(lang));
+      Object.values(country.languages).forEach((lang: any) =>
+        languageSet.add(lang),
+      );
     }
   });
   return Array.from(languageSet).map((lang) => ({
     label: lang,
-    value: lang.toLowerCase()
+    value: lang.toLowerCase(),
   }));
 };
 
 export const useLanguages = () => {
-  const { data = [], isLoading, error } = useQuery({
+  const {
+    data = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["languages"],
     queryFn: fetchLanguages,
     staleTime: 1000 * 60 * 60,

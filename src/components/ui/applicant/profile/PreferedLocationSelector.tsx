@@ -13,11 +13,11 @@ interface LocationSelectorProp {
 }
 
 const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
-                                                                     preferences,
-                                                                     handleLocationSelect,
-                                                                     removeLocation,
-                                                                     isEditable,
-                                                                   }: LocationSelectorProp) => {
+  preferences,
+  handleLocationSelect,
+  removeLocation,
+  isEditable,
+}: LocationSelectorProp) => {
   const { cities } = useCities();
   const { countries } = useCountries();
   const [selectedCountry, setSelectedCountry] = useState<string>("");
@@ -36,9 +36,9 @@ const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
     <div className="space-y-4">
       {/* Location Selection */}
       {isEditable && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <CustomDropdown
-            className="text-left w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-left text-sm focus:border-red-500 focus:ring-2 focus:ring-red-500 focus:outline-none"
             disabled={!isEditable}
             placeholder="Select Country"
             options={countries}
@@ -48,7 +48,7 @@ const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
           />
 
           <CustomDropdown
-            className="text-left w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-left text-sm focus:border-red-500 focus:ring-2 focus:ring-red-500 focus:outline-none"
             disabled={!isEditable}
             placeholder="Select City"
             options={cities}
@@ -67,10 +67,10 @@ const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
             {preferences.locations.map((location, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg"
+                className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-3"
               >
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-green-600" />
+                  <MapPin className="h-4 w-4 text-green-600" />
                   <span className="text-sm font-medium text-green-800">
                     {location.city}, {location.country}
                   </span>
@@ -78,9 +78,9 @@ const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
                 <button
                   onClick={() => removeLocation(index)}
                   disabled={!isEditable}
-                  className="p-1 text-green-600 hover:text-red-600 transition-colors duration-200 disabled:opacity-50"
+                  className="p-1 text-green-600 transition-colors duration-200 hover:text-red-600 disabled:opacity-50"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="h-4 w-4" />
                 </button>
               </div>
             ))}
@@ -89,18 +89,20 @@ const PreferredLocationSelector: React.FC<LocationSelectorProp> = ({
       )}
 
       {/* Empty State */}
-      {(!preferences?.locations || preferences.locations.length === 0) && !isEditable && (
-        <div className="text-center py-6 text-gray-500">
-          <MapPin className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-          <p className="text-sm">No preferred locations selected</p>
-        </div>
-      )}
+      {(!preferences?.locations || preferences.locations.length === 0) &&
+        !isEditable && (
+          <div className="py-6 text-center text-gray-500">
+            <MapPin className="mx-auto mb-2 h-8 w-8 text-gray-400" />
+            <p className="text-sm">No preferred locations selected</p>
+          </div>
+        )}
 
       {/* Helper Text */}
       {isEditable && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
           <p className="text-xs text-blue-600">
-            💡 Select multiple locations where you're willing to work to increase your job opportunities.
+            💡 Select multiple locations where you're willing to work to
+            increase your job opportunities.
           </p>
         </div>
       )}

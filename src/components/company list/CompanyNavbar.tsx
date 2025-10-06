@@ -9,7 +9,7 @@ import {
   FiCalendar,
   FiTrendingUp,
   FiSliders,
-  FiRefreshCw
+  FiRefreshCw,
 } from "react-icons/fi";
 
 import microscope from "../../assets/icons/microscope.svg";
@@ -32,14 +32,14 @@ interface CompanyNavbarProps {
 }
 
 const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
-                                                       onChange,
-                                                       pagination,
-                                                       totalResults = 0,
-                                                       isLoading = false,
-                                                       showFilters = false,
-                                                       layout = "default",
-                                                       aggregations,
-                                                     }) => {
+  onChange,
+  pagination,
+  totalResults = 0,
+  isLoading = false,
+  showFilters = false,
+  layout = "default",
+  aggregations,
+}) => {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [localFilters, setLocalFilters] = useState({
     companyName: pagination.sortBy.companyName || "",
@@ -51,7 +51,7 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
   const debounceUpdate = useCallback(
     (field: string, value: string) => {
       const timer = setTimeout(() => {
-        onChange(prev => ({
+        onChange((prev) => ({
           ...prev,
           page: 1, // Reset to first page when filtering
           sortBy: {
@@ -62,11 +62,11 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
       }, 300);
       return () => clearTimeout(timer);
     },
-    [onChange]
+    [onChange],
   );
 
   const handleInputChange = (field: string, value: string) => {
-    setLocalFilters(prev => ({ ...prev, [field]: value }));
+    setLocalFilters((prev) => ({ ...prev, [field]: value }));
     debounceUpdate(field, value);
   };
 
@@ -76,7 +76,7 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
       industry: "",
       location: "",
     });
-    onChange(prev => ({
+    onChange((prev) => ({
       ...prev,
       page: 1,
       sortBy: {
@@ -104,7 +104,7 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
   };
 
   const handleFilterChange = (filterType: string, value: any) => {
-    onChange(prev => ({
+    onChange((prev) => ({
       ...prev,
       page: 1,
       filters: {
@@ -114,11 +114,14 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
     }));
   };
 
-  const toggleArrayFilter = (filterType: keyof PaginationParams['filters'], value: string) => {
-    onChange(prev => {
-      const currentArray = prev.filters[filterType] as string[] || [];
+  const toggleArrayFilter = (
+    filterType: keyof PaginationParams["filters"],
+    value: string,
+  ) => {
+    onChange((prev) => {
+      const currentArray = (prev.filters[filterType] as string[]) || [];
       const newArray = currentArray.includes(value)
-        ? currentArray.filter(item => item !== value)
+        ? currentArray.filter((item) => item !== value)
         : [...currentArray, value];
 
       return {
@@ -137,12 +140,16 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
     if (localFilters.companyName) count++;
     if (localFilters.industry) count++;
     if (localFilters.location) count++;
-    if (pagination.filters.industry?.length) count += pagination.filters.industry.length;
-    if (pagination.filters.location?.length) count += pagination.filters.location.length;
-    if (pagination.filters.companySize?.length) count += pagination.filters.companySize.length;
+    if (pagination.filters.industry?.length)
+      count += pagination.filters.industry.length;
+    if (pagination.filters.location?.length)
+      count += pagination.filters.location.length;
+    if (pagination.filters.companySize?.length)
+      count += pagination.filters.companySize.length;
     if (pagination.filters.hasOpenings) count++;
     if (pagination.filters.isRemoteFriendly) count++;
-    if (pagination.filters.minRating && pagination.filters.minRating > 0) count++;
+    if (pagination.filters.minRating && pagination.filters.minRating > 0)
+      count++;
     return count;
   }, [localFilters, pagination.filters]);
 
@@ -156,35 +163,37 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
 
           <div className="space-y-3">
             <div className="relative">
-              <FiSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <FiSearch className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder="Company name..."
                 value={localFilters.companyName}
-                onChange={(e) => handleInputChange("companyName", e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                onChange={(e) =>
+                  handleInputChange("companyName", e.target.value)
+                }
+                className="w-full rounded-lg border border-gray-300 bg-white py-2 pr-4 pl-10 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
               />
             </div>
 
             <div className="relative">
-              <FiBriefcase className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <FiBriefcase className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder="Industry..."
                 value={localFilters.industry}
                 onChange={(e) => handleInputChange("industry", e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                className="w-full rounded-lg border border-gray-300 bg-white py-2 pr-4 pl-10 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
               />
             </div>
 
             <div className="relative">
-              <FiMapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <FiMapPin className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder="Location..."
                 value={localFilters.location}
                 onChange={(e) => handleInputChange("location", e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                className="w-full rounded-lg border border-gray-300 bg-white py-2 pr-4 pl-10 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
               />
             </div>
           </div>
@@ -196,20 +205,33 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
 
           {/* Company Size */}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-2 block">Company Size</label>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Company Size
+            </label>
             <div className="space-y-2">
-              {['startup', 'small', 'medium', 'large'].map((size) => (
+              {["startup", "small", "medium", "large"].map((size) => (
                 <label key={size} className="flex items-center">
                   <input
                     type="checkbox"
-                    checked={pagination.filters.companySize?.includes(size) || false}
-                    onChange={() => toggleArrayFilter('companySize', size)}
+                    checked={
+                      pagination.filters.companySize?.includes(size) || false
+                    }
+                    onChange={() => toggleArrayFilter("companySize", size)}
                     className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                   />
-                  <span className="ml-3 text-sm text-gray-700 capitalize">{size}</span>
-                  {aggregations?.companySizes.find(cs => cs.size === size) && (
+                  <span className="ml-3 text-sm text-gray-700 capitalize">
+                    {size}
+                  </span>
+                  {aggregations?.companySizes.find(
+                    (cs) => cs.size === size,
+                  ) && (
                     <span className="ml-auto text-xs text-gray-500">
-                      ({aggregations.companySizes.find(cs => cs.size === size)?.count})
+                      (
+                      {
+                        aggregations.companySizes.find((cs) => cs.size === size)
+                          ?.count
+                      }
+                      )
                     </span>
                   )}
                 </label>
@@ -220,18 +242,29 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
           {/* Popular Industries */}
           {aggregations?.industries && aggregations.industries.length > 0 && (
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Popular Industries</label>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Popular Industries
+              </label>
+              <div className="max-h-40 space-y-2 overflow-y-auto">
                 {aggregations.industries.slice(0, 10).map((industry) => (
                   <label key={industry.name} className="flex items-center">
                     <input
                       type="checkbox"
-                      checked={pagination.filters.industry?.includes(industry.name) || false}
-                      onChange={() => toggleArrayFilter('industry', industry.name)}
+                      checked={
+                        pagination.filters.industry?.includes(industry.name) ||
+                        false
+                      }
+                      onChange={() =>
+                        toggleArrayFilter("industry", industry.name)
+                      }
                       className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                     />
-                    <span className="ml-3 text-sm text-gray-700">{industry.name}</span>
-                    <span className="ml-auto text-xs text-gray-500">({industry.count})</span>
+                    <span className="ml-3 text-sm text-gray-700">
+                      {industry.name}
+                    </span>
+                    <span className="ml-auto text-xs text-gray-500">
+                      ({industry.count})
+                    </span>
                   </label>
                 ))}
               </div>
@@ -241,18 +274,26 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
           {/* Popular Locations */}
           {aggregations?.locations && aggregations.locations.length > 0 && (
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Popular Locations</label>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Popular Locations
+              </label>
+              <div className="max-h-40 space-y-2 overflow-y-auto">
                 {aggregations.locations.slice(0, 10).map((loc) => (
                   <label key={loc.name} className="flex items-center">
                     <input
                       type="checkbox"
-                      checked={pagination.filters.location?.includes(loc.name) || false}
-                      onChange={() => toggleArrayFilter('location', loc.name)}
+                      checked={
+                        pagination.filters.location?.includes(loc.name) || false
+                      }
+                      onChange={() => toggleArrayFilter("location", loc.name)}
                       className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                     />
-                    <span className="ml-3 text-sm text-gray-700">{loc.name}</span>
-                    <span className="ml-auto text-xs text-gray-500">({loc.count})</span>
+                    <span className="ml-3 text-sm text-gray-700">
+                      {loc.name}
+                    </span>
+                    <span className="ml-auto text-xs text-gray-500">
+                      ({loc.count})
+                    </span>
                   </label>
                 ))}
               </div>
@@ -261,7 +302,9 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
 
           {/* Rating Filter */}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-2 block">Minimum Rating</label>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Minimum Rating
+            </label>
             <div className="flex items-center space-x-2">
               <input
                 type="range"
@@ -269,10 +312,12 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
                 max="5"
                 step="0.5"
                 value={pagination.filters.minRating || 0}
-                onChange={(e) => handleFilterChange('minRating', parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleFilterChange("minRating", parseFloat(e.target.value))
+                }
                 className="flex-1"
               />
-              <span className="text-sm text-gray-600 w-8">
+              <span className="w-8 text-sm text-gray-600">
                 {pagination.filters.minRating || 0}+
               </span>
               <FiStar className="h-4 w-4 text-yellow-400" />
@@ -281,36 +326,55 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
 
           {/* Employee Count Range */}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-2 block">Employee Count</label>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Employee Count
+            </label>
             <div className="grid grid-cols-2 gap-2">
               <input
                 type="number"
                 placeholder="Min"
-                value={pagination.filters.minEmployees || ''}
-                onChange={(e) => handleFilterChange('minEmployees', parseInt(e.target.value) || 0)}
-                className="rounded-lg border border-gray-300 bg-white py-2 px-3 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                value={pagination.filters.minEmployees || ""}
+                onChange={(e) =>
+                  handleFilterChange(
+                    "minEmployees",
+                    parseInt(e.target.value) || 0,
+                  )
+                }
+                className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
               />
               <input
                 type="number"
                 placeholder="Max"
-                value={pagination.filters.maxEmployees || ''}
-                onChange={(e) => handleFilterChange('maxEmployees', parseInt(e.target.value) || 0)}
-                className="rounded-lg border border-gray-300 bg-white py-2 px-3 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                value={pagination.filters.maxEmployees || ""}
+                onChange={(e) =>
+                  handleFilterChange(
+                    "maxEmployees",
+                    parseInt(e.target.value) || 0,
+                  )
+                }
+                className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
               />
             </div>
           </div>
 
           {/* Founded Year */}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-2 block">Founded After</label>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Founded After
+            </label>
             <input
               type="number"
               placeholder="e.g., 2010"
               min="1800"
               max={new Date().getFullYear()}
-              value={pagination.filters.foundedAfter || ''}
-              onChange={(e) => handleFilterChange('foundedAfter', parseInt(e.target.value) || 0)}
-              className="w-full rounded-lg border border-gray-300 bg-white py-2 px-3 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+              value={pagination.filters.foundedAfter || ""}
+              onChange={(e) =>
+                handleFilterChange(
+                  "foundedAfter",
+                  parseInt(e.target.value) || 0,
+                )
+              }
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
             />
           </div>
 
@@ -320,20 +384,28 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
               <input
                 type="checkbox"
                 checked={pagination.filters.hasOpenings || false}
-                onChange={(e) => handleFilterChange('hasOpenings', e.target.checked)}
+                onChange={(e) =>
+                  handleFilterChange("hasOpenings", e.target.checked)
+                }
                 className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
               />
-              <span className="ml-3 text-sm text-gray-700">Has open positions</span>
+              <span className="ml-3 text-sm text-gray-700">
+                Has open positions
+              </span>
             </label>
 
             <label className="flex items-center">
               <input
                 type="checkbox"
                 checked={pagination.filters.isRemoteFriendly || false}
-                onChange={(e) => handleFilterChange('isRemoteFriendly', e.target.checked)}
+                onChange={(e) =>
+                  handleFilterChange("isRemoteFriendly", e.target.checked)
+                }
                 className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
               />
-              <span className="ml-3 text-sm text-gray-700">Remote-friendly</span>
+              <span className="ml-3 text-sm text-gray-700">
+                Remote-friendly
+              </span>
             </label>
           </div>
         </div>
@@ -342,7 +414,7 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
         {activeFiltersCount > 0 && (
           <button
             onClick={clearFilters}
-            className="w-full text-center text-sm text-purple-600 hover:text-purple-700 font-medium py-2"
+            className="w-full py-2 text-center text-sm font-medium text-purple-600 hover:text-purple-700"
           >
             Clear all filters ({activeFiltersCount})
           </button>
@@ -355,20 +427,20 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
   return (
     <header className="space-y-4">
       {/* Main Header */}
-      <div className="rounded-2xl bg-white shadow-sm border border-gray-100 overflow-hidden">
-        <nav className="hidden lg:flex items-center justify-between p-6">
+      <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <nav className="hidden items-center justify-between p-6 lg:flex">
           <div className="flex w-[30%] flex-col justify-center">
             <h2 className="text-2xl font-bold text-gray-900">
               Find Companies Easily
             </h2>
-            <div className="flex items-center space-x-2 mt-1">
+            <div className="mt-1 flex items-center space-x-2">
               <FiCalendar className="h-4 w-4 text-gray-500" />
               <span className="font-medium text-gray-600">
                 {moment().format("dddd, MMMM D, YYYY")}
               </span>
             </div>
             {totalResults > 0 && (
-              <div className="flex items-center space-x-2 mt-2">
+              <div className="mt-2 flex items-center space-x-2">
                 <FiTrendingUp className="h-4 w-4 text-green-500" />
                 <span className="text-sm text-gray-600">
                   {totalResults.toLocaleString()} companies found
@@ -379,15 +451,21 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
 
           <div className="flex w-[70%] items-end justify-evenly gap-4">
             {/* Company Name Search */}
-            <div className="flex w-full items-center rounded-xl border border-gray-200 bg-gray-50 focus-within:border-purple-500 focus-within:bg-white transition-all">
+            <div className="flex w-full items-center rounded-xl border border-gray-200 bg-gray-50 transition-all focus-within:border-purple-500 focus-within:bg-white">
               <div className="p-3">
-                <img src={microscope} alt="search" className="h-5 w-5 opacity-70" />
+                <img
+                  src={microscope}
+                  alt="search"
+                  className="h-5 w-5 opacity-70"
+                />
               </div>
               <input
                 type="text"
                 placeholder="Company Name"
                 value={localFilters.companyName}
-                onChange={(e) => handleInputChange("companyName", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("companyName", e.target.value)
+                }
                 className="h-12 w-full border-none bg-transparent px-2 py-2 text-gray-900 placeholder-gray-500 focus:ring-0 focus:outline-none"
                 disabled={isLoading}
               />
@@ -402,9 +480,13 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
             </div>
 
             {/* Industry Search */}
-            <div className="flex w-full items-center rounded-xl border border-gray-200 bg-gray-50 focus-within:border-purple-500 focus-within:bg-white transition-all">
+            <div className="flex w-full items-center rounded-xl border border-gray-200 bg-gray-50 transition-all focus-within:border-purple-500 focus-within:bg-white">
               <div className="p-3">
-                <img src={certificate} alt="industry" className="h-5 w-5 opacity-70" />
+                <img
+                  src={certificate}
+                  alt="industry"
+                  className="h-5 w-5 opacity-70"
+                />
               </div>
               <input
                 type="text"
@@ -425,9 +507,13 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
             </div>
 
             {/* Location Search */}
-            <div className="flex w-full items-center rounded-xl border border-gray-200 bg-gray-50 focus-within:border-purple-500 focus-within:bg-white transition-all">
+            <div className="flex w-full items-center rounded-xl border border-gray-200 bg-gray-50 transition-all focus-within:border-purple-500 focus-within:bg-white">
               <div className="p-3">
-                <img src={location} alt="location" className="h-5 w-5 opacity-70" />
+                <img
+                  src={location}
+                  alt="location"
+                  className="h-5 w-5 opacity-70"
+                />
               </div>
               <input
                 type="text"
@@ -450,17 +536,17 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
             {/* Advanced Filters Toggle */}
             <button
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-              className={`flex items-center space-x-2 px-4 py-3 rounded-xl border transition-all ${
+              className={`flex items-center space-x-2 rounded-xl border px-4 py-3 transition-all ${
                 showAdvancedFilters || activeFiltersCount > 0
-                  ? "bg-purple-600 text-white border-purple-600"
-                  : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                  ? "border-purple-600 bg-purple-600 text-white"
+                  : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
               }`}
               disabled={isLoading}
             >
               <FiSliders className="h-5 w-5" />
               <span className="hidden xl:inline">Filters</span>
               {activeFiltersCount > 0 && (
-                <span className="bg-white/20 text-xs px-2 py-1 rounded-full min-w-[20px] text-center">
+                <span className="min-w-[20px] rounded-full bg-white/20 px-2 py-1 text-center text-xs">
                   {activeFiltersCount}
                 </span>
               )}
@@ -469,44 +555,52 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
         </nav>
 
         {/* Mobile Header */}
-        <div className="lg:hidden p-4 space-y-4">
+        <div className="space-y-4 p-4 lg:hidden">
           <div className="text-center">
             <h2 className="text-xl font-bold text-gray-900">Find Companies</h2>
-            <span className="text-sm text-gray-600">{moment().format("MMM D, YYYY")}</span>
+            <span className="text-sm text-gray-600">
+              {moment().format("MMM D, YYYY")}
+            </span>
           </div>
 
           <div className="space-y-3">
             <div className="relative">
-              <FiSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <FiSearch className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search companies..."
                 value={localFilters.companyName}
-                onChange={(e) => handleInputChange("companyName", e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white py-3 pl-10 pr-4 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                onChange={(e) =>
+                  handleInputChange("companyName", e.target.value)
+                }
+                className="w-full rounded-lg border border-gray-300 bg-white py-3 pr-4 pl-10 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="relative">
-                <FiBriefcase className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <FiBriefcase className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Industry"
                   value={localFilters.industry}
-                  onChange={(e) => handleInputChange("industry", e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 bg-white py-3 pl-10 pr-4 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                  onChange={(e) =>
+                    handleInputChange("industry", e.target.value)
+                  }
+                  className="w-full rounded-lg border border-gray-300 bg-white py-3 pr-4 pl-10 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
                 />
               </div>
 
               <div className="relative">
-                <FiMapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <FiMapPin className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Location"
                   value={localFilters.location}
-                  onChange={(e) => handleInputChange("location", e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 bg-white py-3 pl-10 pr-4 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                  onChange={(e) =>
+                    handleInputChange("location", e.target.value)
+                  }
+                  className="w-full rounded-lg border border-gray-300 bg-white py-3 pr-4 pl-10 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
                 />
               </div>
             </div>
@@ -516,9 +610,11 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
 
       {/* Advanced Filters Panel */}
       {showAdvancedFilters && (
-        <div className="rounded-2xl bg-white shadow-sm border border-gray-100 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Advanced Filters</h3>
+        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Advanced Filters
+            </h3>
             <button
               onClick={() => setShowAdvancedFilters(false)}
               className="text-gray-400 hover:text-gray-600"
@@ -527,25 +623,34 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {/* Company Size Filter */}
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-3 block">Company Size</label>
+              <label className="mb-3 block text-sm font-medium text-gray-700">
+                Company Size
+              </label>
               <div className="space-y-2">
                 {[
-                  { value: 'startup', label: 'Startup (1-50)' },
-                  { value: 'small', label: 'Small (51-200)' },
-                  { value: 'medium', label: 'Medium (201-1000)' },
-                  { value: 'large', label: 'Large (1000+)' }
+                  { value: "startup", label: "Startup (1-50)" },
+                  { value: "small", label: "Small (51-200)" },
+                  { value: "medium", label: "Medium (201-1000)" },
+                  { value: "large", label: "Large (1000+)" },
                 ].map((size) => (
                   <label key={size.value} className="flex items-center">
                     <input
                       type="checkbox"
-                      checked={pagination.filters.companySize?.includes(size.value) || false}
-                      onChange={() => toggleArrayFilter('companySize', size.value)}
+                      checked={
+                        pagination.filters.companySize?.includes(size.value) ||
+                        false
+                      }
+                      onChange={() =>
+                        toggleArrayFilter("companySize", size.value)
+                      }
                       className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                     />
-                    <span className="ml-3 text-sm text-gray-700">{size.label}</span>
+                    <span className="ml-3 text-sm text-gray-700">
+                      {size.label}
+                    </span>
                   </label>
                 ))}
               </div>
@@ -553,7 +658,9 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
 
             {/* Rating Filter */}
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-3 block">Minimum Rating</label>
+              <label className="mb-3 block text-sm font-medium text-gray-700">
+                Minimum Rating
+              </label>
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
                   <input
@@ -562,11 +669,16 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
                     max="5"
                     step="0.5"
                     value={pagination.filters.minRating || 0}
-                    onChange={(e) => handleFilterChange('minRating', parseFloat(e.target.value))}
+                    onChange={(e) =>
+                      handleFilterChange(
+                        "minRating",
+                        parseFloat(e.target.value),
+                      )
+                    }
                     className="flex-1"
                   />
                   <div className="flex items-center space-x-1">
-                    <span className="text-sm text-gray-600 w-8">
+                    <span className="w-8 text-sm text-gray-600">
                       {pagination.filters.minRating || 0}
                     </span>
                     <FiStar className="h-4 w-4 text-yellow-400" />
@@ -577,62 +689,85 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
 
             {/* Quick Filters */}
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-3 block">Quick Filters</label>
+              <label className="mb-3 block text-sm font-medium text-gray-700">
+                Quick Filters
+              </label>
               <div className="space-y-3">
                 <label className="flex items-center">
                   <input
                     type="checkbox"
                     checked={pagination.filters.hasOpenings || false}
-                    onChange={(e) => handleFilterChange('hasOpenings', e.target.checked)}
+                    onChange={(e) =>
+                      handleFilterChange("hasOpenings", e.target.checked)
+                    }
                     className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                   />
-                  <span className="ml-3 text-sm text-gray-700">Has open positions</span>
+                  <span className="ml-3 text-sm text-gray-700">
+                    Has open positions
+                  </span>
                 </label>
 
                 <label className="flex items-center">
                   <input
                     type="checkbox"
                     checked={pagination.filters.isRemoteFriendly || false}
-                    onChange={(e) => handleFilterChange('isRemoteFriendly', e.target.checked)}
+                    onChange={(e) =>
+                      handleFilterChange("isRemoteFriendly", e.target.checked)
+                    }
                     className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                   />
-                  <span className="ml-3 text-sm text-gray-700">Remote-friendly</span>
+                  <span className="ml-3 text-sm text-gray-700">
+                    Remote-friendly
+                  </span>
                 </label>
               </div>
             </div>
 
             {/* Employee Range */}
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-3 block">Employee Count</label>
+              <label className="mb-3 block text-sm font-medium text-gray-700">
+                Employee Count
+              </label>
               <div className="grid grid-cols-2 gap-2">
                 <input
                   type="number"
                   placeholder="Min"
-                  value={pagination.filters.minEmployees || ''}
-                  onChange={(e) => handleFilterChange('minEmployees', parseInt(e.target.value) || 0)}
-                  className="rounded-lg border border-gray-300 bg-white py-2 px-3 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                  value={pagination.filters.minEmployees || ""}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "minEmployees",
+                      parseInt(e.target.value) || 0,
+                    )
+                  }
+                  className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
                 />
                 <input
                   type="number"
                   placeholder="Max"
-                  value={pagination.filters.maxEmployees || ''}
-                  onChange={(e) => handleFilterChange('maxEmployees', parseInt(e.target.value) || 0)}
-                  className="rounded-lg border border-gray-300 bg-white py-2 px-3 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                  value={pagination.filters.maxEmployees || ""}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "maxEmployees",
+                      parseInt(e.target.value) || 0,
+                    )
+                  }
+                  className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
                 />
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
+          <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-6">
             <span className="text-sm text-gray-600">
-              {activeFiltersCount} {activeFiltersCount === 1 ? 'filter' : 'filters'} active
+              {activeFiltersCount}{" "}
+              {activeFiltersCount === 1 ? "filter" : "filters"} active
             </span>
 
             <div className="flex items-center space-x-3">
               <button
                 onClick={clearFilters}
-                className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50"
                 disabled={activeFiltersCount === 0}
               >
                 Clear All
@@ -640,7 +775,7 @@ const CompanyNavbar: React.FC<CompanyNavbarProps> = ({
 
               <button
                 onClick={() => setShowAdvancedFilters(false)}
-                className="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                className="rounded-lg bg-purple-600 px-4 py-2 text-sm text-white transition-colors hover:bg-purple-700"
               >
                 Apply Filters
               </button>

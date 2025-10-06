@@ -8,9 +8,15 @@ import SocialsSection from "../../components/ui/SocialsSection.tsx";
 import ComplianceAndVerification from "../../components/ui/employer/profile/ComplianceAndVerification.tsx";
 import ProfileCard from "../../components/ui/employer/profile/ProfileCard.tsx";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
-import { employerNavBarItemMap, employerNavItems, employerNavItemsMobile } from "../../utils/constants.ts";
+import {
+  employerNavBarItemMap,
+  employerNavItems,
+  employerNavItemsMobile,
+} from "../../utils/constants.ts";
 import { useAuth } from "../../store/useAuth.ts";
 import { useEmployerProfile } from "../../store/useEmployerProfile.ts";
+import { useProfileCompletionDetails } from "../../hooks/useProfileCompletionDetails.ts";
+import { ProfileCompletionResponse } from "../../utils/types";
 
 const EmployerProfile: FC = () => {
   const { employer } = useAuth();
@@ -24,7 +30,8 @@ const EmployerProfile: FC = () => {
     setAboutCompany,
   } = useEmployerProfile();
 
-  const [profileCompletion, setProfileCompletion] = useState(0);
+  const [, setProfileCompletion] = useState(0);
+  const {data: completionDetails} = useProfileCompletionDetails();
 
   // Calculate profile completion percentage
   const calculateProfileCompletion = () => {
@@ -45,17 +52,20 @@ const EmployerProfile: FC = () => {
       employer.registrationNumber,
       employer.taxIdentificationNumber,
       employer.linkedInProfile,
-      employer.brandAndVisuals && employer.brandAndVisuals?.length > 0 ? "logo" : null,
+      employer.brandAndVisuals && employer.brandAndVisuals?.length > 0
+        ? "logo"
+        : null,
     ];
 
-    const completedFields = fields.filter(field => field && field.toString().trim() !== '').length;
+    const completedFields = fields.filter(
+      (field) => field && field.toString().trim() !== "",
+    ).length;
     return Math.round((completedFields / fields.length) * 100);
   };
 
   useEffect(() => {
     if (employer) {
       setEmployerProfile(employer);
-      console.log("Employer Profile: ", employer);
 
       // Set individual store states
       setCompanyInfo({
@@ -113,13 +123,13 @@ const EmployerProfile: FC = () => {
 
       <div className="mx-auto flex min-h-screen w-full items-start justify-center gap-x-6 bg-gray-50 pt-6 md:px-5 lg:px-10">
         {/* Sidebar */}
-        <EmployerProfileSidebar />
+        <EmployerProfileSidebar completionDetails={completionDetails || {} as ProfileCompletionResponse} />
 
         {/* Main Content */}
         <div className="h-fit w-full rounded-xl border border-gray-200 bg-white p-4 md:w-[70%] lg:w-[67%] lg:p-8 xl:w-[75%]">
           {/* Simple Header - Keep Original Style */}
           <div className="flex items-center justify-between pb-4 text-sm text-purple-600 lg:text-xl">
-            <p>Your Profile is {profileCompletion}% completed</p>
+            <p>Your Profile is {completionDetails?.percentage || 0}% completed</p>
             <p>Company Account</p>
           </div>
 

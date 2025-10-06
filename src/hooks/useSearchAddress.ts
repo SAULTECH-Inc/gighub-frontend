@@ -10,7 +10,7 @@ export interface AddressResult {
 
 const fetchAddresses = async (query: string): Promise<AddressResult[]> => {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-    query
+    query,
   )}&format=json&limit=5`;
 
   const res = await fetch(url, {

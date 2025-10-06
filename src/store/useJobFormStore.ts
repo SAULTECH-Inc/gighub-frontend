@@ -139,14 +139,14 @@ export const useJobFormStore = create<JobFormStore>()(
             enableAutoReject: false,
             rejectReasons: [],
             sendRejectionEmail: true,
-            customRejectionMessage: ""
+            customRejectionMessage: "",
           },
           resumeAnalysis: {
             checkEmploymentGaps: false,
-            analyzeCareerProgression: false
-          }
+            analyzeCareerProgression: false,
+          },
         },
-        screeningQuestions: []
+        screeningQuestions: [],
       },
       setStep: (step) => {
         set((state) => {
@@ -170,7 +170,6 @@ export const useJobFormStore = create<JobFormStore>()(
       },
       setJobData: (data) => {
         set((state) => {
-          console.log("Setting job data:", data);
           state.job = { ...state.job, ...data };
         });
       },
@@ -230,14 +229,14 @@ export const useJobFormStore = create<JobFormStore>()(
                 enableAutoReject: false,
                 rejectReasons: [],
                 sendRejectionEmail: true,
-                customRejectionMessage: ""
+                customRejectionMessage: "",
               },
               resumeAnalysis: {
                 checkEmploymentGaps: false,
-                analyzeCareerProgression: false
-              }
+                analyzeCareerProgression: false,
+              },
             },
-            screeningQuestions: []
+            screeningQuestions: [],
           };
           state.step = 1;
         });

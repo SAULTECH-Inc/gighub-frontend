@@ -31,115 +31,118 @@ const EmployerMultistepForm: React.FC = () => {
   const handlePrev = () => setStep(step - 1);
 
   const getStepImage = () => {
-    switch(step) {
-      case 1: return applicantSignupStep1;
-      case 2: return applicantSignupStep2;
-      case 3: return applicantSignupStep2;
-      case 4: return applicantSignupStep4;
-      default: return applicantSignupStep1;
+    switch (step) {
+      case 1:
+        return applicantSignupStep1;
+      case 2:
+        return applicantSignupStep2;
+      case 3:
+        return applicantSignupStep2;
+      case 4:
+        return applicantSignupStep4;
+      default:
+        return applicantSignupStep1;
     }
   };
 
   return (
-      <motion.div
-          className="min-h-screen bg-gray-50 flex flex-col"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-      >
-        {/* Header with Logo and Progress */}
-        <header className="sticky top-0 z-10 bg-white shadow-sm">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              {/* Logo */}
-              <motion.img
-                  className="h-8 w-auto sm:h-10"
-                  src={gighubLogo}
-                  alt="GigHub Logo"
-                  initial={{ x: -50, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-              />
+    <motion.div
+      className="flex min-h-screen flex-col bg-gray-50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Header with Logo and Progress */}
+      <header className="sticky top-0 z-10 bg-white shadow-sm">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <motion.img
+              className="h-8 w-auto sm:h-10"
+              src={gighubLogo}
+              alt="GigHub Logo"
+              initial={{ x: -50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            />
 
-              {/* Step Indicator */}
-              <div className="flex flex-col items-center gap-2">
+            {/* Step Indicator */}
+            <div className="flex flex-col items-center gap-2">
               <span className="text-sm font-medium text-gray-600">
                 Step {step} of 4
               </span>
-                <div className="flex gap-1.5">
-                  {[1, 2, 3, 4].map((stepNumber) => (
-                      <div
-                          key={stepNumber}
-                          className={`h-2 rounded-full transition-all duration-300 ${
-                              stepNumber <= step
-                                  ? "bg-[#6438C2] w-8 sm:w-10"
-                                  : "bg-gray-200 w-6 sm:w-8"
-                          }`}
-                      />
-                  ))}
-                </div>
+              <div className="flex gap-1.5">
+                {[1, 2, 3, 4].map((stepNumber) => (
+                  <div
+                    key={stepNumber}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      stepNumber <= step
+                        ? "w-8 bg-[#6438C2] sm:w-10"
+                        : "w-6 bg-gray-200 sm:w-8"
+                    }`}
+                  />
+                ))}
               </div>
+            </div>
 
-              {/* Spacer for alignment */}
-              <div className="w-8 sm:w-10" />
+            {/* Spacer for alignment */}
+            <div className="w-8 sm:w-10" />
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex flex-1 items-center justify-center">
+        <div className="container mx-auto px-4 py-6 lg:py-8">
+          <div className="grid min-h-[calc(100vh-120px)] items-center justify-items-center gap-8 lg:grid-cols-2 lg:gap-12 xl:gap-16">
+            {/* Form Section */}
+            <div className="flex w-full max-w-md items-center justify-center">
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="w-full"
+              >
+                {step === 1 && (
+                  <EmployerSignupStepOne handleNext={handleNext} />
+                )}
+                {step === 2 && (
+                  <EmployerSignupStepTwo
+                    handleNext={handleNext}
+                    handlePrev={handlePrev}
+                  />
+                )}
+                {step === 3 && (
+                  <EmployerSignupStepThree
+                    handleNext={handleNext}
+                    handlePrev={handlePrev}
+                  />
+                )}
+                {step === 4 && (
+                  <EmployerSignupStepFour handlePrev={handlePrev} />
+                )}
+              </motion.div>
+            </div>
+
+            {/* Image Section */}
+            <div className="hidden w-full items-center justify-center lg:flex">
+              <motion.img
+                key={step}
+                className="h-auto max-h-[600px] max-w-full object-contain xl:max-h-[700px]"
+                src={getStepImage()}
+                alt={`Step ${step} illustration`}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
+              />
             </div>
           </div>
-        </header>
-
-        {/* Main Content */}
-        <main className="flex-1 flex items-center justify-center">
-          <div className="container mx-auto px-4 py-6 lg:py-8">
-            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center justify-items-center min-h-[calc(100vh-120px)]">
-
-              {/* Form Section */}
-              <div className="w-full max-w-md flex items-center justify-center">
-                <motion.div
-                    key={step}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                    className="w-full"
-                >
-                  {step === 1 && (
-                      <EmployerSignupStepOne handleNext={handleNext} />
-                  )}
-                  {step === 2 && (
-                      <EmployerSignupStepTwo
-                          handleNext={handleNext}
-                          handlePrev={handlePrev}
-                      />
-                  )}
-                  {step === 3 && (
-                      <EmployerSignupStepThree
-                          handleNext={handleNext}
-                          handlePrev={handlePrev}
-                      />
-                  )}
-                  {step === 4 && (
-                      <EmployerSignupStepFour handlePrev={handlePrev} />
-                  )}
-                </motion.div>
-              </div>
-
-              {/* Image Section */}
-              <div className="hidden lg:flex items-center justify-center w-full">
-                <motion.img
-                    key={step}
-                    className="max-w-full h-auto max-h-[600px] xl:max-h-[700px] object-contain"
-                    src={getStepImage()}
-                    alt={`Step ${step} illustration`}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4 }}
-                />
-              </div>
-
-            </div>
-          </div>
-        </main>
-      </motion.div>
+        </div>
+      </main>
+    </motion.div>
   );
 };
 

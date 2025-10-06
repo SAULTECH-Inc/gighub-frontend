@@ -119,7 +119,7 @@ const AppRoutes = () => {
       <Route
         path="/employer/jobs/job-details/:id"
         element={
-          <PrivateRoute allowedRoles={[UserType.EMPLOYER,UserType.APPLICANT]}>
+          <PrivateRoute allowedRoles={[UserType.EMPLOYER, UserType.APPLICANT]}>
             <JobDetails />
           </PrivateRoute>
         }
@@ -225,19 +225,13 @@ const AppRoutes = () => {
       />
       <Route
         path="/auth/social/signup/callback"
-      element={
-        <SocialSignupSuccess/>
-      }/>
+        element={<SocialSignupSuccess />}
+      />
       <Route
         path="/auth/social/login/callback"
-        element={
-          <SocialLoginSuccess/>
-        }/>
-      <Route
-        path="/signup-option"
-        element={
-          <SignupOption/>
-        }/>
+        element={<SocialLoginSuccess />}
+      />
+      <Route path="/signup-option" element={<SignupOption />} />
     </Routes>
   );
 };

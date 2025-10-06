@@ -31,7 +31,7 @@ const InterviewScheduleMultiStepForm: React.FC<
   const isOpen = modals[modalId];
 
   // Get current step configuration
-  const currentStepConfig = STEPS_CONFIG.find(s => s.id === step);
+  const currentStepConfig = STEPS_CONFIG.find((s) => s.id === step);
   const CurrentStepComponent = currentStepConfig?.component || InterviewStepOne;
   const currentStepTitle = currentStepConfig?.title || "";
 
@@ -63,11 +63,14 @@ const InterviewScheduleMultiStepForm: React.FC<
   }, [isOpen, handleClose]);
 
   // Handle click outside modal
-  const handleBackdropClick = useCallback((event: React.MouseEvent) => {
-    if (event.target === event.currentTarget) {
-      handleClose();
-    }
-  }, [handleClose]);
+  const handleBackdropClick = useCallback(
+    (event: React.MouseEvent) => {
+      if (event.target === event.currentTarget) {
+        handleClose();
+      }
+    },
+    [handleClose],
+  );
 
   // Calculate progress percentage
   const progressPercentage = (step / TOTAL_STEPS) * 100;
@@ -99,7 +102,7 @@ const InterviewScheduleMultiStepForm: React.FC<
             </h1>
             <button
               onClick={handleClose}
-              className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#6438C2] focus:ring-offset-2"
+              className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-gray-200 focus:bg-gray-200 focus:ring-2 focus:ring-[#6438C2] focus:ring-offset-2 focus:outline-none"
               aria-label="Close modal"
               type="button"
             >

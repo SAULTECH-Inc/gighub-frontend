@@ -469,7 +469,7 @@ const HelpAndSupportPage: React.FC = () => {
                     onChange={(e) =>
                       setContactForm({
                         ...contactForm,
-                        priority: (e.target.value).toUpperCase() as Priority,
+                        priority: e.target.value.toUpperCase() as Priority,
                       })
                     }
                     className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-[#6438C2]"

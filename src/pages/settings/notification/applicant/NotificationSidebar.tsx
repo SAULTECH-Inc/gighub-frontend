@@ -23,7 +23,9 @@ const NotificationSidebar = () => {
   const navigate = useNavigate();
 
   const getDashboardRoute = () => {
-    return userType === UserType.EMPLOYER ? "/employer/dashboard" : "/applicant/dashboard";
+    return userType === UserType.EMPLOYER
+      ? "/employer/dashboard"
+      : "/applicant/dashboard";
   };
 
   const allMenuItems: MenuItem[] = [
@@ -61,8 +63,8 @@ const NotificationSidebar = () => {
   ];
 
   // Filter menu items based on user type
-  const menuItems = allMenuItems.filter(item =>
-    !item.userTypes || item.userTypes.includes(userType as UserType)
+  const menuItems = allMenuItems.filter(
+    (item) => !item.userTypes || item.userTypes.includes(userType as UserType),
   );
 
   const handleMenuItemClick = (key: string) => {
@@ -74,11 +76,11 @@ const NotificationSidebar = () => {
   };
 
   return (
-    <aside className="font-lato hidden h-fit max-h-[737px] w-full flex-col rounded-[16px] bg-white p-6 shadow-sm border border-gray-100 lg:flex">
+    <aside className="font-lato hidden h-fit max-h-[737px] w-full flex-col rounded-[16px] border border-gray-100 bg-white p-6 shadow-sm lg:flex">
       {/* Back Button */}
       <button
         onClick={handleBackClick}
-        className="mb-6 flex items-center font-semibold text-purple-700 hover:text-purple-800 transition-colors duration-200 group"
+        className="group mb-6 flex items-center font-semibold text-purple-700 transition-colors duration-200 hover:text-purple-800"
         aria-label="Go back to dashboard"
       >
         <img
@@ -101,22 +103,16 @@ const NotificationSidebar = () => {
               <li key={item.key}>
                 <button
                   onClick={() => handleMenuItemClick(item.key)}
-                  className={`
-                    flex w-full items-center p-3 rounded-lg transition-all duration-200
-                    ${
+                  className={`flex w-full items-center rounded-lg p-3 transition-all duration-200 ${
                     item.isActive
-                      ? "text-[#6438C2] bg-purple-50 shadow-sm"
-                      : "text-gray-700 hover:text-[#6438C2] hover:bg-gray-50"
-                  }
-                  `}
+                      ? "bg-purple-50 text-[#6438C2] shadow-sm"
+                      : "text-gray-700 hover:bg-gray-50 hover:text-[#6438C2]"
+                  } `}
                   aria-pressed={item.isActive}
                   aria-label={`${item.label} settings`}
                 >
                   <IconComponent
-                    className={`
-                      mr-3 h-5 w-5 transition-colors duration-200
-                      ${item.isActive ? "text-[#6438C2]" : "text-gray-500"}
-                    `}
+                    className={`mr-3 h-5 w-5 transition-colors duration-200 ${item.isActive ? "text-[#6438C2]" : "text-gray-500"} `}
                   />
                   <span className="font-medium">{item.label}</span>
                   {item.key === "autoApply" && (
@@ -133,13 +129,15 @@ const NotificationSidebar = () => {
 
       {/* Auto Apply Status Indicator (for applicants only) */}
       {userType === UserType.APPLICANT && (
-        <div className="mt-6 pt-4 border-t border-gray-200">
+        <div className="mt-6 border-t border-gray-200 pt-4">
           <div className="rounded-lg bg-blue-50 p-3">
             <div className="flex items-center">
-              <MdAutoMode className="h-4 w-4 text-blue-600 mr-2" />
-              <span className="text-sm font-medium text-blue-900">Auto Apply</span>
+              <MdAutoMode className="mr-2 h-4 w-4 text-blue-600" />
+              <span className="text-sm font-medium text-blue-900">
+                Auto Apply
+              </span>
             </div>
-            <p className="text-xs text-blue-700 mt-1">
+            <p className="mt-1 text-xs text-blue-700">
               Status: Active • 3 applications today
             </p>
           </div>

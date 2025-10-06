@@ -2,10 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { privateApiClient } from "../client/axios.ts";
-import {
-  APIResponse,
-  UserSubscriptionResponse
-} from "../utils/types";
+import { APIResponse, UserSubscriptionResponse } from "../utils/types";
 import {
   NODE_ENV,
   secureStorageWrapper,
@@ -181,7 +178,10 @@ export const useSubscriptionStore = create<SubscriptionStateStore>()(
         try {
           const response = await privateApiClient.post<
             APIResponse<UserSubscriptionResponse>
-          >(`${SUBSCRIPTION_SERVICE_HOST}/subscriptions/subscribe`, { userId, planId });
+          >(`${SUBSCRIPTION_SERVICE_HOST}/subscriptions/subscribe`, {
+            userId,
+            planId,
+          });
           const rawResponse = response.data;
           const data = rawResponse.data;
 
@@ -208,7 +208,10 @@ export const useSubscriptionStore = create<SubscriptionStateStore>()(
         try {
           const response = await privateApiClient.post<
             APIResponse<UserSubscriptionResponse>
-          >(`${SUBSCRIPTION_SERVICE_HOST}/subscriptions/resubscribe`, { userId, planId });
+          >(`${SUBSCRIPTION_SERVICE_HOST}/subscriptions/resubscribe`, {
+            userId,
+            planId,
+          });
           const rawResponse = response.data;
           const data = rawResponse.data;
 

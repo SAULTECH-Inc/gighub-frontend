@@ -48,7 +48,9 @@ const RatingsAndReviews = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="mb-6 text-2xl font-bold text-slate-900">Reviews & Ratings</h2>
+        <h2 className="mb-6 text-2xl font-bold text-slate-900">
+          Reviews & Ratings
+        </h2>
 
         <div className="space-y-6">
           {/* Overall Rating Section */}
@@ -73,10 +75,13 @@ const RatingsAndReviews = () => {
               {/* Rating Breakdown */}
               <div className="flex-1 space-y-2">
                 {ratingBreakdown.map((item) => (
-                  <div key={item.stars} className="flex items-center space-x-3 text-sm">
+                  <div
+                    key={item.stars}
+                    className="flex items-center space-x-3 text-sm"
+                  >
                     <div className="flex items-center space-x-1">
                       <span className="w-3 text-slate-600">{item.stars}</span>
-                      <Star className="h-3 w-3 text-yellow-400 fill-current" />
+                      <Star className="h-3 w-3 fill-current text-yellow-400" />
                     </div>
 
                     <div className="flex-1">
@@ -90,7 +95,9 @@ const RatingsAndReviews = () => {
                       </div>
                     </div>
 
-                    <span className="w-8 text-right text-slate-600">{item.count}</span>
+                    <span className="w-8 text-right text-slate-600">
+                      {item.count}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -103,7 +110,9 @@ const RatingsAndReviews = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <h3 className="mb-4 text-lg font-semibold text-slate-900">Rating Breakdown</h3>
+            <h3 className="mb-4 text-lg font-semibold text-slate-900">
+              Rating Breakdown
+            </h3>
             <div className="grid gap-4 sm:grid-cols-2">
               {highlights.map((highlight, index) => {
                 const IconComponent = highlight.icon;
@@ -120,7 +129,9 @@ const RatingsAndReviews = () => {
                     </div>
 
                     <div className="flex-1">
-                      <p className="font-medium text-slate-900">{highlight.label}</p>
+                      <p className="font-medium text-slate-900">
+                        {highlight.label}
+                      </p>
                       <div className="flex items-center space-x-2">
                         <Rating value={Math.round(highlight.rating)} readOnly />
                         <span className="text-sm font-semibold text-slate-700">
@@ -141,9 +152,11 @@ const RatingsAndReviews = () => {
             transition={{ duration: 0.5, delay: 0.5 }}
             className="rounded-xl bg-slate-50 p-6"
           >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900">Recent Reviews</h3>
-              <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-slate-900">
+                Recent Reviews
+              </h3>
+              <button className="text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-700">
                 View All Reviews
               </button>
             </div>
@@ -152,26 +165,34 @@ const RatingsAndReviews = () => {
               {[
                 {
                   rating: 5,
-                  comment: "Amazing company culture and great opportunities for growth. Highly recommend!",
+                  comment:
+                    "Amazing company culture and great opportunities for growth. Highly recommend!",
                   position: "Software Engineer",
                   timeAgo: "2 weeks ago",
                 },
                 {
                   rating: 4,
-                  comment: "Good work-life balance and competitive benefits. Management is supportive.",
+                  comment:
+                    "Good work-life balance and competitive benefits. Management is supportive.",
                   position: "Product Manager",
                   timeAgo: "1 month ago",
                 },
               ].map((review, index) => (
                 <div key={index} className="border-l-2 border-slate-200 pl-4">
-                  <div className="flex items-center space-x-2 mb-2">
+                  <div className="mb-2 flex items-center space-x-2">
                     <Rating value={review.rating} readOnly />
                     <span className="text-sm text-slate-500">•</span>
-                    <span className="text-sm font-medium text-slate-700">{review.position}</span>
+                    <span className="text-sm font-medium text-slate-700">
+                      {review.position}
+                    </span>
                     <span className="text-sm text-slate-500">•</span>
-                    <span className="text-sm text-slate-500">{review.timeAgo}</span>
+                    <span className="text-sm text-slate-500">
+                      {review.timeAgo}
+                    </span>
                   </div>
-                  <p className="text-sm text-slate-700 italic">"{review.comment}"</p>
+                  <p className="text-sm text-slate-700 italic">
+                    "{review.comment}"
+                  </p>
                 </div>
               ))}
             </div>

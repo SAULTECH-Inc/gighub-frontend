@@ -3,13 +3,15 @@ import {
   Action,
   ApplicationStatus,
   ConnectionStatus,
-  ConnectionType, EmploymentType,
+  ConnectionType,
+  EmploymentType,
   InterviewStatus,
   InterviewType,
   Priority,
-  RateeType, ScreeningQuestionType,
+  RateeType,
+  ScreeningQuestionType,
   UserStatus,
-  UserType
+  UserType,
 } from "../enums.ts";
 import { UserChatStatus } from "../../chat-module/types";
 
@@ -138,7 +140,7 @@ export interface EmployerData {
   foundedYear: any;
   isHiring: any;
   isTrending: any;
-  openPositions : number;
+  openPositions: number;
   rating: any;
   companyName: string;
   companyDescription: string;
@@ -537,7 +539,7 @@ export interface CompanyInfos {
   companyAddress: string;
 }
 
-export interface VerificationDetails{
+export interface VerificationDetails {
   companyRegistrationNumber?: string | null;
   governmentIdentificationNumber?: string | null;
   taxIdentificationNumber?: string | null;
@@ -604,8 +606,8 @@ export enum JobStatus {
   SHORTLISTING = "ShortListing",
   WITHDRAWN = "Withdrawn",
   DRAFT = "Draft",
-  DELETED="Deleted",
-  ALL="All",
+  DELETED = "Deleted",
+  ALL = "All",
 }
 
 export enum JobLevel {
@@ -638,6 +640,7 @@ export interface SalaryRangeDto {
 }
 
 export interface ScreeningQuestion {
+  id?: number;
   question: string;
   type: ScreeningQuestionType;
   required: boolean;
@@ -650,7 +653,6 @@ export interface ScreeningAnswer {
   answerBoolean?: boolean;
   answerOptions?: string[];
 }
-
 
 export interface JobPostResponse {
   recommendationScore: number;
@@ -699,8 +701,8 @@ export interface FetchMyJobParam {
   title?: string;
   companyName?: string;
   location?: string;
-  sortBy?: string,
-  sortOrder?: string,
+  sortBy?: string;
+  sortOrder?: string;
 }
 
 export interface BulkSearchParams {
@@ -730,6 +732,8 @@ export interface ApplicationMethod {
 export interface ApplicationRequest {
   jobId: number;
   applicationMethod: ApplicationMethod;
+  screeningAnswers?: ScreeningAnswer[]
+
 }
 
 export interface ApplicationResponse {
@@ -952,11 +956,11 @@ export interface SubscriptionResponse {
   createdAt: string;
   updatedAt: string;
 
-  features: string[];           // ["Feature 1", "Feature 2", ...]
-  originalPrice?: number;       // 2500 (for ₦2,500)
-  savings?: string;            // "Save 25%" or null
-  dailyLimit: string;          // "200" or "Unlimited"
-  volume: string;              // "6,000" or "Unlimited"
+  features: string[]; // ["Feature 1", "Feature 2", ...]
+  originalPrice?: number; // 2500 (for ₦2,500)
+  savings?: string; // "Save 25%" or null
+  dailyLimit: string; // "200" or "Unlimited"
+  volume: string; // "6,000" or "Unlimited"
 }
 
 export interface UserSubscriptionResponse {
@@ -997,7 +1001,7 @@ export const CURRENCIES: Currency[] = [
     symbol: "C$",
     name: "Canadian Dollar",
     code: "CAD",
-    region: "North America"
+    region: "North America",
   },
   { symbol: "A$", name: "Australian Dollar", code: "AUD", region: "Oceania" },
 
@@ -1036,14 +1040,13 @@ export const CURRENCIES: Currency[] = [
     symbol: "R$",
     name: "Brazilian Real",
     code: "BRL",
-    region: "South America"
+    region: "South America",
   },
-  { symbol: "MX$", name: "Mexican Peso", code: "MXN", region: "North America" }
+  { symbol: "MX$", name: "Mexican Peso", code: "MXN", region: "North America" },
 ];
 export const getCurrencyBySymbol = (symbol: string): Currency | undefined => {
   return CURRENCIES.find((currency) => currency.symbol === symbol);
 };
-
 
 export interface FeatureJob {
   id: number;
@@ -1060,16 +1063,13 @@ export interface FeatureJob {
   match: number;
 }
 
-
-export interface CategoryInfo{
+export interface CategoryInfo {
   id: number;
   name: string;
   count: number;
   icon: string;
   color: string;
 }
-
-
 
 export interface Customer {
   email: string;
@@ -1102,4 +1102,60 @@ export interface CreatePayment {
   customer: Customer;
   payment_method: PaymentMethod;
   metadata: Metadata;
+}
+
+
+export interface GenerateQrcodeResponse{secret: string, qrCode: string}
+
+export interface TwoFactorEnabledResponse{
+  backupCodes: string[],
+  warning: string
+}
+
+export interface ChangePasswordRequest{
+  oldPassword: string,
+  newPassword: string,
+  confirmPassword: string,
+}
+
+
+export interface Session {
+  id: string;
+  device: string;
+  location: string;
+  lastActive: string;
+  current: boolean;
+}
+export interface DeviceContext {
+  deviceId: string;
+  device: string;
+  latitude?: number;
+  longitude?: number;
+  deviceType: string;
+  location: string;
+  ip: string;
+  lastActive: string;
+}
+
+
+export interface ProfileSection {
+  /** Section name e.g. "Basic Information" */
+  name: string;
+
+  /** Whether this section is fully completed */
+  isComplete: boolean;
+
+  /** Completion percentage for this section (0–100) */
+  completionPercentage: number;
+
+  /** List of missing fields for this section */
+  missingFields: string[];
+}
+
+export interface ProfileCompletionResponse {
+  /** Overall profile completion percentage (0–100) */
+  percentage: number;
+
+  /** Breakdown of each profile section */
+  sections: ProfileSection[];
 }

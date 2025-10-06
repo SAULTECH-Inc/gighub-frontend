@@ -2,9 +2,10 @@ import { useMemo } from "react";
 import { Option } from "../utils/types";
 import { useQuery } from "@tanstack/react-query";
 
-
 const fetchCities = async (): Promise<Option[]> => {
-  const res = await fetch("https://countriesnow.space/api/v0.1/countries/population/cities");
+  const res = await fetch(
+    "https://countriesnow.space/api/v0.1/countries/population/cities",
+  );
   const json = await res.json();
   return json.data.map((c: any) => ({
     label: c.city,

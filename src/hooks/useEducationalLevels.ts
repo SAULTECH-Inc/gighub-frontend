@@ -20,5 +20,5 @@ const educationLevels = [
   { label: "Other", value: "other" },
 ];
 
-
-export const useEducationalLevel = (): Option[] => useMemo(() => educationLevels, []);
+export const useEducationalLevel = (): Option[] =>
+  useMemo(() => educationLevels, []);

@@ -32,7 +32,7 @@ import {
   FaUserCheck,
   FaUserClock,
   FaUserFriends,
-  FaUserTie
+  FaUserTie,
 } from "react-icons/fa";
 import { IconType } from "react-icons";
 import { EmploymentType, InterviewStatus, InterviewType } from "./enums.ts";
@@ -177,8 +177,10 @@ export const SUBSCRIPTION_SERVICE_HOST =
 export const FRONTEND_BASE_URL =
   import.meta.env.VITE_API_FRONTEND_BASE_URL || "http://localhost:5173";
 
-export const NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_API_NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "";
-export const NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY = import.meta.env.VITE_API_FLUTTERWAVE_PUBLIC_KEY || "";
+export const NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY =
+  import.meta.env.VITE_API_NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "";
+export const NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY =
+  import.meta.env.VITE_API_FLUTTERWAVE_PUBLIC_KEY || "";
 
 export const NOTIFICATION_API_URL =
   import.meta.env.VITE_API_NOTIFICATION_SERVICE || "http://localhost:3009";
@@ -542,56 +544,58 @@ export const getStatusColor = (status: InterviewStatus) => {
 export const signingSignupRouteMap: Record<string, string> = {
   google: "http://localhost:3005/auth/google?state=",
   outlook: "http://localhost:3005/auth/outlook?state=",
-  linkedin: "http://localhost:3005/auth/linkedin?state="
+  linkedin: "http://localhost:3005/auth/linkedin?state=",
 };
 // Interview type configuration with enhanced metadata
-export const INTERVIEW_TYPES: Array<Option & {
-  icon: React.ComponentType<any>;
-  description: string;
-  color: string;
-}> = [
+export const INTERVIEW_TYPES: Array<
+  Option & {
+    icon: React.ComponentType<any>;
+    description: string;
+    color: string;
+  }
+> = [
   {
     label: "Virtual Meeting",
     value: "virtual-meeting",
     icon: Video,
     description: "Online video conference",
-    color: "bg-blue-50 border-blue-200 text-blue-700"
+    color: "bg-blue-50 border-blue-200 text-blue-700",
   },
   {
     label: "Phone Call",
     value: "phone-call",
     icon: Phone,
     description: "Voice-only interview",
-    color: "bg-green-50 border-green-200 text-green-700"
+    color: "bg-green-50 border-green-200 text-green-700",
   },
   {
     label: "In-Person",
     value: "in-person",
     icon: MapPin,
     description: "Face-to-face meeting",
-    color: "bg-purple-50 border-purple-200 text-purple-700"
+    color: "bg-purple-50 border-purple-200 text-purple-700",
   },
   {
     label: "Hybrid",
     value: "hybrid",
     icon: Monitor,
     description: "Combined virtual and in-person",
-    color: "bg-orange-50 border-orange-200 text-orange-700"
+    color: "bg-orange-50 border-orange-200 text-orange-700",
   },
   {
     label: "Assessment",
     value: "assessment",
     icon: FileText,
     description: "Skill-based evaluation",
-    color: "bg-indigo-50 border-indigo-200 text-indigo-700"
+    color: "bg-indigo-50 border-indigo-200 text-indigo-700",
   },
   {
     label: "Group Interview",
     value: "group-interview",
     icon: Users,
     description: "Multiple candidates together",
-    color: "bg-pink-50 border-pink-200 text-pink-700"
-  }
+    color: "bg-pink-50 border-pink-200 text-pink-700",
+  },
 ];
 // Platform options with metadata
 export const PLATFORM_OPTIONS: Option[] = [
@@ -600,7 +604,7 @@ export const PLATFORM_OPTIONS: Option[] = [
   { label: "Microsoft Teams", value: "microsoft-teams" },
   { label: "Skype", value: "skype" },
   { label: "WebEx", value: "webex" },
-  { label: "Other", value: "other" }
+  { label: "Other", value: "other" },
 ];
 export const skills: Option[] = [
   // Programming Languages
@@ -783,7 +787,7 @@ export const skills: Option[] = [
   { label: "Serverless", value: "Serverless" },
   { label: "Lambda", value: "Lambda" },
   { label: "Prettier", value: "Prettier" },
-  { label: "ESLint", value: "ESLint" }
+  { label: "ESLint", value: "ESLint" },
 ];
 export const JobRoles: Option[] = [
   // Tech Industry - Developers & Engineers Variations
@@ -869,7 +873,7 @@ export const JobRoles: Option[] = [
   { label: "Digital Marketer", value: "Digital Marketer" },
   {
     label: "Digital Marketing Specialist",
-    value: "Digital Marketing Specialist"
+    value: "Digital Marketing Specialist",
   },
   { label: "SEO Specialist", value: "SEO Specialist" },
   { label: "Social Media Manager", value: "Social Media Manager" },
@@ -889,7 +893,7 @@ export const JobRoles: Option[] = [
   { label: "Recruiter", value: "Recruiter" },
   {
     label: "Talent Acquisition Specialist",
-    value: "Talent Acquisition Specialist"
+    value: "Talent Acquisition Specialist",
   },
 
   // Legal Variations
@@ -902,7 +906,7 @@ export const JobRoles: Option[] = [
   { label: "Customer Support", value: "Customer Support" },
   {
     label: "Customer Service Representative",
-    value: "Customer Service Representative"
+    value: "Customer Service Representative",
   },
   { label: "Client Success Manager", value: "Client Success Manager" },
 
@@ -912,7 +916,7 @@ export const JobRoles: Option[] = [
   { label: "Account Manager", value: "Account Manager" },
   {
     label: "Business Development Manager",
-    value: "Business Development Manager"
+    value: "Business Development Manager",
   },
 
   // Healthcare Variations
@@ -931,7 +935,7 @@ export const JobRoles: Option[] = [
   // Miscellaneous
   { label: "Entrepreneur", value: "Entrepreneur" },
   { label: "Consultant", value: "Consultant" },
-  { label: "Freelancer", value: "Freelancer" }
+  { label: "Freelancer", value: "Freelancer" },
 ];
 export const jobTypes: string[] = [
   EmploymentType.FULL_TIME,
@@ -945,7 +949,7 @@ export const jobTypes: string[] = [
   EmploymentType.SEASONAL,
   EmploymentType.PER_DIEM,
   EmploymentType.CONSULTANT,
-  EmploymentType.APPRENTICESHIP
+  EmploymentType.APPRENTICESHIP,
 ];
 export const JobTypes: Option[] = [
   { label: EmploymentType.FULL_TIME, value: EmploymentType.FULL_TIME },
@@ -961,8 +965,8 @@ export const JobTypes: Option[] = [
   { label: EmploymentType.CONSULTANT, value: EmploymentType.CONSULTANT },
   {
     label: EmploymentType.APPRENTICESHIP,
-    value: EmploymentType.APPRENTICESHIP
-  }
+    value: EmploymentType.APPRENTICESHIP,
+  },
 ];
 export const Industries: Option[] = [
   { value: "Accounting", label: "Accounting" },
@@ -979,14 +983,14 @@ export const Industries: Option[] = [
   { value: "Building Materials", label: "Building Materials" },
   {
     value: "Business Supplies & Equipment",
-    label: "Business Supplies & Equipment"
+    label: "Business Supplies & Equipment",
   },
   { value: "Chemicals", label: "Chemicals" },
   { value: "Civil Engineering", label: "Civil Engineering" },
   { value: "Commercial Real Estate", label: "Commercial Real Estate" },
   {
     value: "Computer & Network Security",
-    label: "Computer & Network Security"
+    label: "Computer & Network Security",
   },
   { value: "Computer Games", label: "Computer Games" },
   { value: "Computer Hardware", label: "Computer Hardware" },
@@ -1002,7 +1006,7 @@ export const Industries: Option[] = [
   { value: "Education", label: "Education" },
   {
     value: "Electrical & Electronic Manufacturing",
-    label: "Electrical & Electronic Manufacturing"
+    label: "Electrical & Electronic Manufacturing",
   },
   { value: "Entertainment", label: "Entertainment" },
   { value: "Environmental Services", label: "Environmental Services" },
@@ -1025,18 +1029,18 @@ export const Industries: Option[] = [
   { value: "Import & Export", label: "Import & Export" },
   {
     value: "Individual & Family Services",
-    label: "Individual & Family Services"
+    label: "Individual & Family Services",
   },
   { value: "Industrial Automation", label: "Industrial Automation" },
   { value: "Information Services", label: "Information Services" },
   {
     value: "Information Technology & Services",
-    label: "Information Technology & Services"
+    label: "Information Technology & Services",
   },
   { value: "Insurance", label: "Insurance" },
   {
     value: "International Trade & Development",
-    label: "International Trade & Development"
+    label: "International Trade & Development",
   },
   { value: "Internet", label: "Internet" },
   { value: "Investment Banking", label: "Investment Banking" },
@@ -1054,7 +1058,7 @@ export const Industries: Option[] = [
   { value: "Marketing & Advertising", label: "Marketing & Advertising" },
   {
     value: "Mechanical or Industrial Engineering",
-    label: "Mechanical or Industrial Engineering"
+    label: "Mechanical or Industrial Engineering",
   },
   { value: "Media Production", label: "Media Production" },
   { value: "Medical Devices", label: "Medical Devices" },
@@ -1068,7 +1072,7 @@ export const Industries: Option[] = [
   { value: "Newspapers", label: "Newspapers" },
   {
     value: "Non-Profit Organization Management",
-    label: "Non-Profit Organization Management"
+    label: "Non-Profit Organization Management",
   },
   { value: "Oil & Energy", label: "Oil & Energy" },
   { value: "Online Media", label: "Online Media" },
@@ -1083,18 +1087,18 @@ export const Industries: Option[] = [
   { value: "Political Organization", label: "Political Organization" },
   {
     value: "Primary/Secondary Education",
-    label: "Primary/Secondary Education"
+    label: "Primary/Secondary Education",
   },
   { value: "Printing", label: "Printing" },
   {
     value: "Professional Training & Coaching",
-    label: "Professional Training & Coaching"
+    label: "Professional Training & Coaching",
   },
   { value: "Program Development", label: "Program Development" },
   { value: "Public Policy", label: "Public Policy" },
   {
     value: "Public Relations & Communications",
-    label: "Public Relations & Communications"
+    label: "Public Relations & Communications",
   },
   { value: "Public Safety", label: "Public Safety" },
   { value: "Publishing", label: "Publishing" },
@@ -1116,19 +1120,19 @@ export const Industries: Option[] = [
   { value: "Translation & Localization", label: "Translation & Localization" },
   {
     value: "Transportation/Trucking/Railroad",
-    label: "Transportation/Trucking/Railroad"
+    label: "Transportation/Trucking/Railroad",
   },
   { value: "Utilities", label: "Utilities" },
   {
     value: "Venture Capital & Private Equity",
-    label: "Venture Capital & Private Equity"
+    label: "Venture Capital & Private Equity",
   },
   { value: "Veterinary", label: "Veterinary" },
   { value: "Warehousing", label: "Warehousing" },
   { value: "Wholesale", label: "Wholesale" },
   { value: "Wine & Spirits", label: "Wine & Spirits" },
   { value: "Wireless", label: "Wireless" },
-  { value: "Writing & Editing", label: "Writing & Editing" }
+  { value: "Writing & Editing", label: "Writing & Editing" },
 ];
 export const countries: Option[] = [
   { label: "Afghanistan", value: "Afghanistan" },
@@ -1177,7 +1181,7 @@ export const countries: Option[] = [
   { label: "Czechia (Czech Republic)", value: "Czechia (Czech Republic)" },
   {
     label: "Democratic Republic of the Congo",
-    value: "Democratic Republic of the Congo"
+    value: "Democratic Republic of the Congo",
   },
   { label: "Denmark", value: "Denmark" },
   { label: "Djibouti", value: "Djibouti" },
@@ -1283,7 +1287,7 @@ export const countries: Option[] = [
   { label: "Saint Lucia", value: "Saint Lucia" },
   {
     label: "Saint Vincent and the Grenadines",
-    value: "Saint Vincent and the Grenadines"
+    value: "Saint Vincent and the Grenadines",
   },
   { label: "Samoa", value: "Samoa" },
   { label: "San Marino", value: "San Marino" },
@@ -1332,7 +1336,7 @@ export const countries: Option[] = [
   { label: "Vietnam", value: "Vietnam" },
   { label: "Yemen", value: "Yemen" },
   { label: "Zambia", value: "Zambia" },
-  { label: "Zimbabwe", value: "Zimbabwe" }
+  { label: "Zimbabwe", value: "Zimbabwe" },
 ];
 export const PreferredCompanies: Option[] = [
   { label: "Dangote Group", value: "Dangote Group" },
@@ -1342,12 +1346,12 @@ export const PreferredCompanies: Option[] = [
   { label: "Access Bank", value: "Access Bank" },
   {
     label: "Guaranty Trust Bank (GTBank)",
-    value: "Guaranty Trust Bank (GTBank)"
+    value: "Guaranty Trust Bank (GTBank)",
   },
   { label: "First Bank of Nigeria", value: "First Bank of Nigeria" },
   {
     label: "United Bank for Africa (UBA)",
-    value: "United Bank for Africa (UBA)"
+    value: "United Bank for Africa (UBA)",
   },
   { label: "Airtel Nigeria", value: "Airtel Nigeria" },
   { label: "Nestlé Nigeria", value: "Nestlé Nigeria" },
@@ -1356,7 +1360,7 @@ export const PreferredCompanies: Option[] = [
   { label: "Total Nigeria", value: "Total Nigeria" },
   {
     label: "NNPC (Nigerian National Petroleum Corporation)",
-    value: "NNPC (Nigerian National Petroleum Corporation)"
+    value: "NNPC (Nigerian National Petroleum Corporation)",
   },
   { label: "Lafarge Africa", value: "Lafarge Africa" },
   { label: "Julius Berger Nigeria", value: "Julius Berger Nigeria" },
@@ -1563,20 +1567,20 @@ export const PreferredCompanies: Option[] = [
   { label: "Zontes Nigeria", value: "Zontes Nigeria" },
   { label: "Zuum Nigeria", value: "Zuum Nigeria" },
   { label: "Zongshen Nigeria", value: "Zongshen Nigeria" },
-  { label: "Lifan Nigeria", value: "Lifan Nigeria" }
+  { label: "Lifan Nigeria", value: "Lifan Nigeria" },
 ];
 export const universities: Option[] = [
   { label: "Harvard University", value: "Harvard University" },
   { label: "Stanford University", value: "Stanford University" },
   {
     label: "Massachusetts Institute of Technology (MIT)",
-    value: "Massachusetts Institute of Technology (MIT)"
+    value: "Massachusetts Institute of Technology (MIT)",
   },
   { label: "University of Oxford", value: "University of Oxford" },
   { label: "University of Cambridge", value: "University of Cambridge" },
   {
     label: "California Institute of Technology (Caltech)",
-    value: "California Institute of Technology (Caltech)"
+    value: "California Institute of Technology (Caltech)",
   },
   { label: "Princeton University", value: "Princeton University" },
   { label: "University of Chicago", value: "University of Chicago" },
@@ -1587,21 +1591,21 @@ export const universities: Option[] = [
   { label: "ETH Zurich", value: "ETH Zurich" },
   {
     label: "University of California, Berkeley",
-    value: "University of California, Berkeley"
+    value: "University of California, Berkeley",
   },
   { label: "University of Toronto", value: "University of Toronto" },
   { label: "Johns Hopkins University", value: "Johns Hopkins University" },
   {
     label: "University of California, Los Angeles (UCLA)",
-    value: "University of California, Los Angeles (UCLA)"
+    value: "University of California, Los Angeles (UCLA)",
   },
   {
     label: "UCL (University College London)",
-    value: "UCL (University College London)"
+    value: "UCL (University College London)",
   },
   {
     label: "National University of Singapore (NUS)",
-    value: "National University of Singapore (NUS)"
+    value: "National University of Singapore (NUS)",
   },
   { label: "Peking University", value: "Peking University" },
   { label: "University of Michigan", value: "University of Michigan" },
@@ -1618,54 +1622,54 @@ export const universities: Option[] = [
   { label: "Duke University", value: "Duke University" },
   {
     label: "University of British Columbia",
-    value: "University of British Columbia"
+    value: "University of British Columbia",
   },
   {
     label: "University of Texas at Austin",
-    value: "University of Texas at Austin"
+    value: "University of Texas at Austin",
   },
   { label: "University of Washington", value: "University of Washington" },
   {
     label: "University of California, San Diego (UCSD)",
-    value: "University of California, San Diego (UCSD)"
+    value: "University of California, San Diego (UCSD)",
   },
   {
     label: "Australian National University (ANU)",
-    value: "Australian National University (ANU)"
+    value: "Australian National University (ANU)",
   },
   { label: "University of Queensland", value: "University of Queensland" },
   {
     label: "University of Wisconsin-Madison",
-    value: "University of Wisconsin-Madison"
+    value: "University of Wisconsin-Madison",
   },
   { label: "KU Leuven", value: "KU Leuven" },
   { label: "University of Copenhagen", value: "University of Copenhagen" },
   { label: "Seoul National University", value: "Seoul National University" },
   {
     label: "Shanghai Jiao Tong University",
-    value: "Shanghai Jiao Tong University"
+    value: "Shanghai Jiao Tong University",
   },
   {
     label: "Ludwig Maximilian University of Munich",
-    value: "Ludwig Maximilian University of Munich"
+    value: "Ludwig Maximilian University of Munich",
   },
   { label: "Heidelberg University", value: "Heidelberg University" },
   {
     label: "Ecole Polytechnique Fédérale de Lausanne (EPFL)",
-    value: "Ecole Polytechnique Fédérale de Lausanne (EPFL)"
+    value: "Ecole Polytechnique Fédérale de Lausanne (EPFL)",
   },
   { label: "University of Amsterdam", value: "University of Amsterdam" },
   {
     label: "Hong Kong University of Science and Technology",
-    value: "Hong Kong University of Science and Technology"
+    value: "Hong Kong University of Science and Technology",
   },
   {
     label: "University of Southern California",
-    value: "University of Southern California"
+    value: "University of Southern California",
   },
   {
     label: "University of Illinois Urbana-Champaign",
-    value: "University of Illinois Urbana-Champaign"
+    value: "University of Illinois Urbana-Champaign",
   },
   { label: "University of Zurich", value: "University of Zurich" },
   { label: "McGill University", value: "McGill University" },
@@ -1673,45 +1677,45 @@ export const universities: Option[] = [
   { label: "Monash University", value: "Monash University" },
   {
     label: "Technical University of Munich",
-    value: "Technical University of Munich"
+    value: "Technical University of Munich",
   },
   {
     label: "Washington University in St. Louis",
-    value: "Washington University in St. Louis"
+    value: "Washington University in St. Louis",
   },
   {
     label: "University of California, Davis",
-    value: "University of California, Davis"
+    value: "University of California, Davis",
   },
   { label: "Purdue University", value: "Purdue University" },
   {
     label: "University of North Carolina at Chapel Hill",
-    value: "University of North Carolina at Chapel Hill"
+    value: "University of North Carolina at Chapel Hill",
   },
   { label: "Boston University", value: "Boston University" },
   { label: "University of Minnesota", value: "University of Minnesota" },
   {
     label: "University of Maryland, College Park",
-    value: "University of Maryland, College Park"
+    value: "University of Maryland, College Park",
   },
   { label: "King's College London", value: "King's College London" },
   {
     label: "Pennsylvania State University",
-    value: "Pennsylvania State University"
+    value: "Pennsylvania State University",
   },
   { label: "The Ohio State University", value: "The Ohio State University" },
   { label: "University of Geneva", value: "University of Geneva" },
   { label: "Osaka University", value: "Osaka University" },
   {
     label: "Tokyo Institute of Technology",
-    value: "Tokyo Institute of Technology"
+    value: "Tokyo Institute of Technology",
   },
   { label: "University of Groningen", value: "University of Groningen" },
   { label: "University of Bristol", value: "University of Bristol" },
   { label: "University of Glasgow", value: "University of Glasgow" },
   {
     label: "Vrije Universiteit Amsterdam",
-    value: "Vrije Universiteit Amsterdam"
+    value: "Vrije Universiteit Amsterdam",
   },
   { label: "University of Helsinki", value: "University of Helsinki" },
   { label: "University of Auckland", value: "University of Auckland" },
@@ -1720,18 +1724,18 @@ export const universities: Option[] = [
   { label: "University of Alberta", value: "University of Alberta" },
   {
     label: "Delft University of Technology",
-    value: "Delft University of Technology"
+    value: "Delft University of Technology",
   },
   { label: "Université de Montréal", value: "Université de Montréal" },
   { label: "Stockholm University", value: "Stockholm University" },
   { label: "RWTH Aachen University", value: "RWTH Aachen University" },
   {
     label: "Indian Institute of Science (IISc)",
-    value: "Indian Institute of Science (IISc)"
+    value: "Indian Institute of Science (IISc)",
   },
   { label: "University of Oslo", value: "University of Oslo" },
   { label: "National Taiwan University", value: "National Taiwan University" },
-  { label: "University of St Andrews", value: "University of St Andrews" }
+  { label: "University of St Andrews", value: "University of St Andrews" },
 ];
 export const currencies: Option[] = [
   { label: "USD", value: "$" }, // United States Dollar
@@ -1772,7 +1776,7 @@ export const currencies: Option[] = [
   { label: "EGP", value: "£" }, // Egyptian Pound
   { label: "NGN", value: "₦" }, // Nigerian Naira
   { label: "PKR", value: "₨" }, // Pakistani Rupee
-  { label: "PEN", value: "S/." } // Peruvian Sol
+  { label: "PEN", value: "S/." }, // Peruvian Sol
 ];
 export const DepartmentType: Option[] = [
   { value: "Engineering", label: "Engineering" },
@@ -1821,7 +1825,7 @@ export const DepartmentType: Option[] = [
   { value: "AI_Research", label: "AI Research" },
   { value: "Education", label: "Education" },
   { value: "Administration", label: "Administration" },
-  { value: "Event_Management", label: "Event Management" }
+  { value: "Event_Management", label: "Event Management" },
 ];
 export const JobType: Option[] = [
   { value: "Full Time", label: "Full Time" },
@@ -1832,7 +1836,7 @@ export const JobType: Option[] = [
   { value: "Apprenticeship", label: "Apprenticeship" },
   { value: "Consultant", label: "Consultant" },
   { value: "Temporary", label: "Temporary" },
-  { value: "Volunteer", label: "Volunteer" }
+  { value: "Volunteer", label: "Volunteer" },
 ];
 export const JobLocations: Option[] = [
   { value: "Abu_Dhabi", label: "Abu Dhabi, UAE" },
@@ -1891,7 +1895,7 @@ export const JobLocations: Option[] = [
   { value: "Vancouver", label: "Vancouver, Canada" },
   { value: "Vienna", label: "Vienna, Austria" },
   { value: "Warsaw", label: "Warsaw, Poland" },
-  { value: "Zurich", label: "Zurich, Switzerland" }
+  { value: "Zurich", label: "Zurich, Switzerland" },
 ];
 export const jobSkills: string[] = [
   "Active Listening",
@@ -2066,7 +2070,7 @@ export const jobSkills: string[] = [
   "SolidWorks",
   "Spark",
   "Tableau",
-  "Zendesk"
+  "Zendesk",
 ];
 
 export const employmentTypOptions: Option[] = [
@@ -2081,5 +2085,5 @@ export const employmentTypOptions: Option[] = [
   // { label: "Volunteer", value: "Volunteer" },
   { label: "Remote", value: "Remote" },
   { label: "On-site", value: "On-site" },
-  { label: "Hybrid", value: "Hybrid" }
+  { label: "Hybrid", value: "Hybrid" },
 ];

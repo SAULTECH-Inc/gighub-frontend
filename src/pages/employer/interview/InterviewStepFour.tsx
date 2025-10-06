@@ -15,7 +15,7 @@ import {
   CheckCircle,
   AlertCircle,
   Loader2,
-  Eye
+  Eye,
 } from "lucide-react";
 import { useScheduleInterview } from "../../../store/useScheduleInterview.ts";
 import { InterviewScheduleDetails } from "../../../utils/types";
@@ -35,12 +35,16 @@ interface ValidationErrors {
 
 // File type configurations
 const ALLOWED_FILE_TYPES = {
-  'application/pdf': { ext: '.pdf', icon: FileText, color: 'text-red-500' },
-  'application/msword': { ext: '.doc', icon: FileText, color: 'text-blue-500' },
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': { ext: '.docx', icon: FileText, color: 'text-blue-500' },
-  'text/plain': { ext: '.txt', icon: FileText, color: 'text-gray-500' },
-  'image/jpeg': { ext: '.jpg', icon: Eye, color: 'text-green-500' },
-  'image/png': { ext: '.png', icon: Eye, color: 'text-green-500' },
+  "application/pdf": { ext: ".pdf", icon: FileText, color: "text-red-500" },
+  "application/msword": { ext: ".doc", icon: FileText, color: "text-blue-500" },
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
+    ext: ".docx",
+    icon: FileText,
+    color: "text-blue-500",
+  },
+  "text/plain": { ext: ".txt", icon: FileText, color: "text-gray-500" },
+  "image/jpeg": { ext: ".jpg", icon: Eye, color: "text-green-500" },
+  "image/png": { ext: ".png", icon: Eye, color: "text-green-500" },
 };
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -48,7 +52,14 @@ const MAX_FILES = 5;
 
 const InterviewStepFour: React.FC = () => {
   const { openModal, closeModal } = useModalStore();
-  const { prevStep, interviewDetails, setInterviewDetails, reset, selectedCandidates, selectedJob } = useScheduleInterview();
+  const {
+    prevStep,
+    interviewDetails,
+    setInterviewDetails,
+    reset,
+    selectedCandidates,
+    selectedJob,
+  } = useScheduleInterview();
   const { employer } = useAuth();
 
   const [errors, setErrors] = useState<ValidationErrors>({});
@@ -58,11 +69,11 @@ const InterviewStepFour: React.FC = () => {
 
   // Format date for display
   const formatDate = useCallback((dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   }, []);
 
@@ -73,7 +84,7 @@ const InterviewStepFour: React.FC = () => {
     const mins = minutes % 60;
 
     if (hours === 0) return `${mins} minutes`;
-    if (mins === 0) return `${hours} hour${hours > 1 ? 's' : ''}`;
+    if (mins === 0) return `${hours} hour${hours > 1 ? "s" : ""}`;
     return `${hours}h ${mins}m`;
   }, []);
 
@@ -81,16 +92,24 @@ const InterviewStepFour: React.FC = () => {
   const getInterviewTypeInfo = useMemo(() => {
     const type = interviewDetails?.interviewType;
     switch (type) {
-      case 'virtual-meeting':
-        return { icon: Video, label: 'Virtual Meeting', color: 'text-blue-600' };
-      case 'phone-call':
-        return { icon: Phone, label: 'Phone Call', color: 'text-green-600' };
-      case 'in-person':
-        return { icon: MapPin, label: 'In-Person', color: 'text-purple-600' };
-      case 'hybrid':
-        return { icon: Globe, label: 'Hybrid', color: 'text-orange-600' };
+      case "virtual-meeting":
+        return {
+          icon: Video,
+          label: "Virtual Meeting",
+          color: "text-blue-600",
+        };
+      case "phone-call":
+        return { icon: Phone, label: "Phone Call", color: "text-green-600" };
+      case "in-person":
+        return { icon: MapPin, label: "In-Person", color: "text-purple-600" };
+      case "hybrid":
+        return { icon: Globe, label: "Hybrid", color: "text-orange-600" };
       default:
-        return { icon: Calendar, label: type || 'Interview', color: 'text-gray-600' };
+        return {
+          icon: Calendar,
+          label: type || "Interview",
+          color: "text-gray-600",
+        };
     }
   }, [interviewDetails?.interviewType]);
 
@@ -106,138 +125,162 @@ const InterviewStepFour: React.FC = () => {
   }, [interviewDetails?.notes]);
 
   // Handle notes change
-  const handleNotesChange = useCallback((value: string) => {
-    setInterviewDetails({
-      ...interviewDetails,
-      notes: value,
-    } as InterviewScheduleDetails);
+  const handleNotesChange = useCallback(
+    (value: string) => {
+      setInterviewDetails({
+        ...interviewDetails,
+        notes: value,
+      } as InterviewScheduleDetails);
 
-    // Clear notes error
-    if (errors.notes) {
-      setErrors(prev => ({ ...prev, notes: undefined }));
-    }
-  }, [interviewDetails, setInterviewDetails, errors.notes]);
+      // Clear notes error
+      if (errors.notes) {
+        setErrors((prev) => ({ ...prev, notes: undefined }));
+      }
+    },
+    [interviewDetails, setInterviewDetails, errors.notes],
+  );
 
   // Handle tag input
-  const handleTagInput = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' || event.key === ',') {
-      event.preventDefault();
-      const input = event.target as HTMLInputElement;
-      const value = input.value.trim();
+  const handleTagInput = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Enter" || event.key === ",") {
+        event.preventDefault();
+        const input = event.target as HTMLInputElement;
+        const value = input.value.trim();
 
-      if (value && value.length <= 50) {
-        const currentTags = interviewDetails?.tags || [];
-        if (!currentTags.includes(value) && currentTags.length < 10) {
-          setInterviewDetails({
-            ...interviewDetails,
-            tags: [...currentTags, value],
-          } as InterviewScheduleDetails);
+        if (value && value.length <= 50) {
+          const currentTags = interviewDetails?.tags || [];
+          if (!currentTags.includes(value) && currentTags.length < 10) {
+            setInterviewDetails({
+              ...interviewDetails,
+              tags: [...currentTags, value],
+            } as InterviewScheduleDetails);
+          }
+          input.value = "";
         }
-        input.value = "";
       }
-    }
-  }, [interviewDetails, setInterviewDetails]);
+    },
+    [interviewDetails, setInterviewDetails],
+  );
 
   // Remove tag
-  const handleTagRemoval = useCallback((tagToRemove: string) => {
-    const currentTags = interviewDetails?.tags || [];
-    const updatedTags = currentTags.filter(tag => tag !== tagToRemove);
-    setInterviewDetails({
-      ...interviewDetails,
-      tags: updatedTags,
-    } as InterviewScheduleDetails);
-  }, [interviewDetails, setInterviewDetails]);
+  const handleTagRemoval = useCallback(
+    (tagToRemove: string) => {
+      const currentTags = interviewDetails?.tags || [];
+      const updatedTags = currentTags.filter((tag) => tag !== tagToRemove);
+      setInterviewDetails({
+        ...interviewDetails,
+        tags: updatedTags,
+      } as InterviewScheduleDetails);
+    },
+    [interviewDetails, setInterviewDetails],
+  );
 
   // File validation
-  const validateFile = useCallback((file: File): string | null => {
-    if (file.size > MAX_FILE_SIZE) {
-      return `File "${file.name}" is too large. Maximum size is 10MB.`;
-    }
-
-    if (!ALLOWED_FILE_TYPES[file.type as keyof typeof ALLOWED_FILE_TYPES]) {
-      return `File "${file.name}" type is not supported.`;
-    }
-
-    const currentFiles = interviewDetails?.files || [];
-    if (currentFiles.length >= MAX_FILES) {
-      return `Maximum ${MAX_FILES} files allowed.`;
-    }
-
-    return null;
-  }, [interviewDetails?.files]);
-
-  // Handle file upload
-  const handleFileUpload = useCallback(async (files: FileList) => {
-    const fileArray = Array.from(files);
-
-    for (const file of fileArray) {
-      const validationError = validateFile(file);
-      if (validationError) {
-        setErrors(prev => ({ ...prev, general: validationError }));
-        continue;
+  const validateFile = useCallback(
+    (file: File): string | null => {
+      if (file.size > MAX_FILE_SIZE) {
+        return `File "${file.name}" is too large. Maximum size is 10MB.`;
       }
 
-      const fileId = `${file.name}-${Date.now()}`;
-      setUploadingFiles(prev => new Set(prev).add(fileId));
+      if (!ALLOWED_FILE_TYPES[file.type as keyof typeof ALLOWED_FILE_TYPES]) {
+        return `File "${file.name}" type is not supported.`;
+      }
 
+      const currentFiles = interviewDetails?.files || [];
+      if (currentFiles.length >= MAX_FILES) {
+        return `Maximum ${MAX_FILES} files allowed.`;
+      }
+
+      return null;
+    },
+    [interviewDetails?.files],
+  );
+
+  // Handle file upload
+  const handleFileUpload = useCallback(
+    async (files: FileList) => {
+      const fileArray = Array.from(files);
+
+      for (const file of fileArray) {
+        const validationError = validateFile(file);
+        if (validationError) {
+          setErrors((prev) => ({ ...prev, general: validationError }));
+          continue;
+        }
+
+        const fileId = `${file.name}-${Date.now()}`;
+        setUploadingFiles((prev) => new Set(prev).add(fileId));
+
+        try {
+          const response = await uploadFile(
+            employer?.id as number,
+            file,
+            Action.FILE_UPLOAD,
+            UserType.EMPLOYER,
+            "Interview Files",
+          );
+
+          if (response.statusCode === 200) {
+            const newFile = response.data.url;
+            const updatedFiles = [...(interviewDetails?.files || []), newFile];
+            setInterviewDetails({
+              ...interviewDetails,
+              files: updatedFiles,
+            } as InterviewScheduleDetails);
+
+            // Clear general error on successful upload
+            setErrors((prev) => ({ ...prev, general: undefined }));
+          } else {
+            setErrors((prev) => ({
+              ...prev,
+              general: `Failed to upload ${file.name}`,
+            }));
+          }
+        } catch (error) {
+          setErrors((prev) => ({
+            ...prev,
+            general: `Error uploading ${file.name}`,
+          }));
+        } finally {
+          setUploadingFiles((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(fileId);
+            return newSet;
+          });
+        }
+      }
+    },
+    [validateFile, employer?.id, interviewDetails, setInterviewDetails],
+  );
+
+  // Handle file removal
+  const handleFileRemoval = useCallback(
+    async (fileUrl: string, index: number) => {
       try {
-        const response = await uploadFile(
+        const response = await removeUploadedFile(
           employer?.id as number,
-          file,
-          Action.FILE_UPLOAD,
+          fileUrl,
+          Action.DELETING_A_FILE,
           UserType.EMPLOYER,
           "Interview Files",
         );
 
         if (response.statusCode === 200) {
-          const newFile = response.data.url;
-          const updatedFiles = [...(interviewDetails?.files || []), newFile];
+          const files = interviewDetails?.files || [];
+          const updatedFiles = files.filter((_, i) => i !== index);
           setInterviewDetails({
             ...interviewDetails,
             files: updatedFiles,
           } as InterviewScheduleDetails);
-
-          // Clear general error on successful upload
-          setErrors(prev => ({ ...prev, general: undefined }));
-        } else {
-          setErrors(prev => ({ ...prev, general: `Failed to upload ${file.name}` }));
         }
-      } catch (error) {
-        setErrors(prev => ({ ...prev, general: `Error uploading ${file.name}` }));
-      } finally {
-        setUploadingFiles(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(fileId);
-          return newSet;
-        });
+      } catch (error: any) {
+        console.log(error);
+        setErrors((prev) => ({ ...prev, general: "Failed to remove file" }));
       }
-    }
-  }, [validateFile, employer?.id, interviewDetails, setInterviewDetails]);
-
-  // Handle file removal
-  const handleFileRemoval = useCallback(async (fileUrl: string, index: number) => {
-    try {
-      const response = await removeUploadedFile(
-        employer?.id as number,
-        fileUrl,
-        Action.DELETING_A_FILE,
-        UserType.EMPLOYER,
-        "Interview Files",
-      );
-
-      if (response.statusCode === 200) {
-        const files = interviewDetails?.files || [];
-        const updatedFiles = files.filter((_, i) => i !== index);
-        setInterviewDetails({
-          ...interviewDetails,
-          files: updatedFiles,
-        } as InterviewScheduleDetails);
-      }
-    } catch (error: any) {
-      console.log(error);
-      setErrors(prev => ({ ...prev, general: "Failed to remove file" }));
-    }
-  }, [employer?.id, interviewDetails, setInterviewDetails]);
+    },
+    [employer?.id, interviewDetails, setInterviewDetails],
+  );
 
   // File drop handlers
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -250,15 +293,18 @@ const InterviewStepFour: React.FC = () => {
     }
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragActive(false);
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFileUpload(e.dataTransfer.files);
-    }
-  }, [handleFileUpload]);
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handleFileUpload(e.dataTransfer.files);
+      }
+    },
+    [handleFileUpload],
+  );
 
   // File input trigger
   const triggerFileInput = useCallback(() => {
@@ -298,7 +344,9 @@ const InterviewStepFour: React.FC = () => {
         closeModal("interview-schedule");
         openModal("success-modal");
       } else {
-        setErrors({ general: "Failed to schedule interview. Please try again." });
+        setErrors({
+          general: "Failed to schedule interview. Please try again.",
+        });
       }
     } catch (error: any) {
       setErrors({ general: error?.response?.data?.message });
@@ -312,13 +360,13 @@ const InterviewStepFour: React.FC = () => {
     const fileName = `File ${index + 1}`;
     const extension = fileUrl.slice(-4);
     const fileType = Object.entries(ALLOWED_FILE_TYPES).find(([_, config]) =>
-      extension.includes(config.ext)
+      extension.includes(config.ext),
     );
 
     return {
       name: fileName + extension,
       icon: fileType?.[1].icon || FileText,
-      color: fileType?.[1].color || 'text-gray-500'
+      color: fileType?.[1].color || "text-gray-500",
     };
   }, []);
 
@@ -328,10 +376,9 @@ const InterviewStepFour: React.FC = () => {
     <div className="flex w-full flex-col items-center">
       <div className="flex min-h-[400px] w-[96%] max-w-[900px] flex-col items-center rounded-[10px] bg-white py-6">
         <div className="flex w-[95%] flex-col gap-6">
-
           {/* Header */}
           <div className="text-center">
-            <div className="flex items-center justify-center gap-2 mb-2">
+            <div className="mb-2 flex items-center justify-center gap-2">
               <CheckCircle className="h-6 w-6 text-[#6438C2]" />
               <h4 className="text-xl font-bold text-[#000000] sm:text-2xl">
                 Review & Submit
@@ -344,12 +391,14 @@ const InterviewStepFour: React.FC = () => {
 
           {/* Interview Summary */}
           <section className="space-y-4">
-            <h5 className="text-lg font-semibold text-gray-900">Interview Summary</h5>
+            <h5 className="text-lg font-semibold text-gray-900">
+              Interview Summary
+            </h5>
 
             <div className="grid gap-4 sm:grid-cols-2">
               {/* Candidates */}
               <div className="rounded-[10px] border border-gray-200 bg-gray-50 p-4">
-                <div className="flex items-center gap-2 mb-3">
+                <div className="mb-3 flex items-center gap-2">
                   <Users className="h-5 w-5 text-[#6438C2]" />
                   <h6 className="font-medium text-gray-900">Candidates</h6>
                 </div>
@@ -367,30 +416,36 @@ const InterviewStepFour: React.FC = () => {
 
               {/* Job */}
               <div className="rounded-[10px] border border-gray-200 bg-gray-50 p-4">
-                <div className="flex items-center gap-2 mb-3">
+                <div className="mb-3 flex items-center gap-2">
                   <Briefcase className="h-5 w-5 text-[#6438C2]" />
                   <h6 className="font-medium text-gray-900">Position</h6>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-gray-900">{selectedJob?.title}</p>
-                  <p className="text-xs text-gray-500">{selectedJob?.company} • {selectedJob?.department}</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {selectedJob?.title}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {selectedJob?.company} • {selectedJob?.department}
+                  </p>
                 </div>
               </div>
 
               {/* Date & Time */}
               <div className="rounded-[10px] border border-gray-200 bg-gray-50 p-4">
-                <div className="flex items-center gap-2 mb-3">
+                <div className="mb-3 flex items-center gap-2">
                   <Calendar className="h-5 w-5 text-[#6438C2]" />
                   <h6 className="font-medium text-gray-900">Schedule</h6>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm text-gray-700">
-                    {interviewDetails?.date && formatDate(interviewDetails.date)}
+                    {interviewDetails?.date &&
+                      formatDate(interviewDetails.date)}
                   </p>
                   <div className="flex items-center gap-1">
                     <Clock className="h-4 w-4 text-gray-500" />
                     <span className="text-sm text-gray-700">
-                      {interviewDetails?.startTime} - {interviewDetails?.endTime}
+                      {interviewDetails?.startTime} -{" "}
+                      {interviewDetails?.endTime}
                     </span>
                   </div>
                   <p className="text-xs text-gray-500">
@@ -401,17 +456,25 @@ const InterviewStepFour: React.FC = () => {
 
               {/* Interview Type */}
               <div className="rounded-[10px] border border-gray-200 bg-gray-50 p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <TypeIcon className={`h-5 w-5 ${getInterviewTypeInfo.color}`} />
+                <div className="mb-3 flex items-center gap-2">
+                  <TypeIcon
+                    className={`h-5 w-5 ${getInterviewTypeInfo.color}`}
+                  />
                   <h6 className="font-medium text-gray-900">Type</h6>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-gray-700">{getInterviewTypeInfo.label}</p>
+                  <p className="text-sm text-gray-700">
+                    {getInterviewTypeInfo.label}
+                  </p>
                   {interviewDetails?.interviewPlatform && (
-                    <p className="text-xs text-gray-500">Platform: {interviewDetails.interviewPlatform}</p>
+                    <p className="text-xs text-gray-500">
+                      Platform: {interviewDetails.interviewPlatform}
+                    </p>
                   )}
                   {interviewDetails?.interviewLink && (
-                    <p className="text-xs text-gray-500 truncate">Link: {interviewDetails.interviewLink}</p>
+                    <p className="truncate text-xs text-gray-500">
+                      Link: {interviewDetails.interviewLink}
+                    </p>
                   )}
                 </div>
               </div>
@@ -422,7 +485,9 @@ const InterviewStepFour: React.FC = () => {
           <section className="space-y-4">
             <div className="flex items-center gap-2">
               <FileText className="h-5 w-5 text-[#6438C2]" />
-              <h5 className="text-lg font-semibold text-gray-900">Notes & Instructions</h5>
+              <h5 className="text-lg font-semibold text-gray-900">
+                Notes & Instructions
+              </h5>
             </div>
 
             <div className="space-y-2">
@@ -430,7 +495,7 @@ const InterviewStepFour: React.FC = () => {
                 placeholder="Add any special instructions, preparation notes, or important details for the interview..."
                 value={interviewDetails?.notes || ""}
                 onChange={(e) => handleNotesChange(e.target.value)}
-                className={`h-32 w-full resize-none rounded-[15px] border px-4 py-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+                className={`h-32 w-full resize-none rounded-[15px] border px-4 py-3 text-sm transition-colors focus:ring-2 focus:ring-offset-1 focus:outline-none ${
                   errors.notes
                     ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-200"
                     : "border-[#E6E6E6] bg-white focus:border-[#6438C2] focus:ring-[#6438C2]/20"
@@ -445,7 +510,7 @@ const InterviewStepFour: React.FC = () => {
                     <span>{errors.notes}</span>
                   </div>
                 )}
-                <span className="text-xs text-gray-500 ml-auto">
+                <span className="ml-auto text-xs text-gray-500">
                   {(interviewDetails?.notes || "").length}/1000
                 </span>
               </div>
@@ -464,7 +529,7 @@ const InterviewStepFour: React.FC = () => {
                 type="text"
                 placeholder="Add tags (press Enter or comma to add)"
                 onKeyDown={handleTagInput}
-                className="w-full rounded-[15px] border border-[#E6E6E6] px-4 py-3 text-sm transition-colors focus:border-[#6438C2] focus:outline-none focus:ring-2 focus:ring-[#6438C2]/20"
+                className="w-full rounded-[15px] border border-[#E6E6E6] px-4 py-3 text-sm transition-colors focus:border-[#6438C2] focus:ring-2 focus:ring-[#6438C2]/20 focus:outline-none"
                 maxLength={50}
               />
 
@@ -491,7 +556,8 @@ const InterviewStepFour: React.FC = () => {
               )}
 
               <p className="text-xs text-gray-500">
-                Add relevant tags like "technical", "senior", "remote", etc. ({(interviewDetails?.tags || []).length}/10)
+                Add relevant tags like "technical", "senior", "remote", etc. (
+                {(interviewDetails?.tags || []).length}/10)
               </p>
             </div>
           </section>
@@ -500,7 +566,9 @@ const InterviewStepFour: React.FC = () => {
           <section className="space-y-4">
             <div className="flex items-center gap-2">
               <Upload className="h-5 w-5 text-[#6438C2]" />
-              <h5 className="text-lg font-semibold text-gray-900">Attachments</h5>
+              <h5 className="text-lg font-semibold text-gray-900">
+                Attachments
+              </h5>
             </div>
 
             <div
@@ -528,7 +596,8 @@ const InterviewStepFour: React.FC = () => {
                     </button>
                   </p>
                   <p className="text-xs text-gray-500">
-                    PDF, DOC, DOCX, TXT, JPG, PNG up to 10MB each (max {MAX_FILES} files)
+                    PDF, DOC, DOCX, TXT, JPG, PNG up to 10MB each (max{" "}
+                    {MAX_FILES} files)
                   </p>
                 </div>
               </div>
@@ -537,7 +606,9 @@ const InterviewStepFour: React.FC = () => {
             {/* Uploaded Files */}
             {interviewDetails?.files && interviewDetails.files.length > 0 && (
               <div className="space-y-2">
-                <h6 className="text-sm font-medium text-gray-700">Uploaded Files:</h6>
+                <h6 className="text-sm font-medium text-gray-700">
+                  Uploaded Files:
+                </h6>
                 <div className="space-y-2">
                   {interviewDetails.files.map((file, index) => {
                     const fileInfo = getFileInfo(file, index);
@@ -550,7 +621,9 @@ const InterviewStepFour: React.FC = () => {
                       >
                         <div className="flex items-center gap-3">
                           <FileIcon className={`h-5 w-5 ${fileInfo.color}`} />
-                          <span className="text-sm text-gray-700">{fileInfo.name}</span>
+                          <span className="text-sm text-gray-700">
+                            {fileInfo.name}
+                          </span>
                         </div>
                         <button
                           type="button"
@@ -570,11 +643,15 @@ const InterviewStepFour: React.FC = () => {
             {/* Upload progress */}
             {uploadingFiles.size > 0 && (
               <div className="space-y-2">
-                <h6 className="text-sm font-medium text-gray-700">Uploading:</h6>
+                <h6 className="text-sm font-medium text-gray-700">
+                  Uploading:
+                </h6>
                 {Array.from(uploadingFiles).map((fileId) => (
                   <div key={fileId} className="flex items-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin text-[#6438C2]" />
-                    <span className="text-sm text-gray-600">Uploading file...</span>
+                    <span className="text-sm text-gray-600">
+                      Uploading file...
+                    </span>
                   </div>
                 ))}
               </div>
@@ -595,7 +672,7 @@ const InterviewStepFour: React.FC = () => {
         <button
           onClick={prevStep}
           disabled={isSubmitting}
-          className="rounded-[15px] border border-[#E6E6E6] bg-[#F7F7F7] px-6 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-[15px] border border-[#E6E6E6] bg-[#F7F7F7] px-6 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 focus:ring-2 focus:ring-gray-200 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           Back
         </button>
@@ -603,7 +680,7 @@ const InterviewStepFour: React.FC = () => {
         <button
           onClick={handleSubmit}
           disabled={isSubmitting || uploadingFiles.size > 0}
-          className="flex items-center gap-2 rounded-[15px] bg-[#6438C2] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5329a8] focus:outline-none focus:ring-2 focus:ring-[#6438C2] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex items-center gap-2 rounded-[15px] bg-[#6438C2] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5329a8] focus:ring-2 focus:ring-[#6438C2] focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? (
             <>

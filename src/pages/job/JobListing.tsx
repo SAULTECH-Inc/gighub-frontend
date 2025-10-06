@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Trash2, Eye, Calendar, Users, MoreVertical, AlertTriangle, Briefcase } from "lucide-react";
+import {
+  Trash2,
+  Eye,
+  Calendar,
+  Users,
+  MoreVertical,
+  AlertTriangle,
+  Briefcase,
+} from "lucide-react";
 import { JobPostResponse } from "../../utils/types";
 import moment from "moment";
 
@@ -10,10 +18,10 @@ interface JobListingsProps {
 }
 
 const JobListing: React.FC<JobListingsProps> = ({
-                                                  listings,
-                                                  onView = () => {},
-                                                  onDelete = () => {},
-                                                }) => {
+  listings,
+  onView = () => {},
+  onDelete = () => {},
+}) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
@@ -34,25 +42,29 @@ const JobListing: React.FC<JobListingsProps> = ({
 
   const getEmploymentTypeColor = (type: string) => {
     switch (type?.toLowerCase()) {
-      case 'full-time':
-        return 'bg-green-100 text-green-700';
-      case 'part-time':
-        return 'bg-blue-100 text-blue-700';
-      case 'contract':
-        return 'bg-purple-100 text-purple-700';
-      case 'internship':
-        return 'bg-orange-100 text-orange-700';
+      case "full-time":
+        return "bg-green-100 text-green-700";
+      case "part-time":
+        return "bg-blue-100 text-blue-700";
+      case "contract":
+        return "bg-purple-100 text-purple-700";
+      case "internship":
+        return "bg-orange-100 text-orange-700";
       default:
-        return 'bg-gray-100 text-gray-700';
+        return "bg-gray-100 text-gray-700";
     }
   };
 
   if (listings.length === 0) {
     return (
-      <div className="text-center py-12">
-        <Briefcase className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No active jobs</h3>
-        <p className="text-gray-600">Create your first job posting to start attracting candidates.</p>
+      <div className="py-12 text-center">
+        <Briefcase className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+        <h3 className="mb-2 text-lg font-medium text-gray-900">
+          No active jobs
+        </h3>
+        <p className="text-gray-600">
+          Create your first job posting to start attracting candidates.
+        </p>
       </div>
     );
   }
@@ -61,44 +73,50 @@ const JobListing: React.FC<JobListingsProps> = ({
     <>
       {/* Mobile Cards */}
       <div className="block lg:hidden">
-        <div className="p-4 space-y-4">
+        <div className="space-y-4 p-4">
           {listings.map((listing) => (
             <div
               key={listing.id}
-              className="bg-gray-50 rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow"
+              className="rounded-2xl border border-gray-100 bg-gray-50 p-6 transition-shadow hover:shadow-md"
             >
               {/* Header with Actions */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-semibold text-gray-900 truncate mb-1">
+              <div className="mb-4 flex items-start justify-between">
+                <div className="min-w-0 flex-1">
+                  <h3 className="mb-1 truncate text-lg font-semibold text-gray-900">
                     {listing.title}
                   </h3>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getEmploymentTypeColor(listing.employmentType)}`}>
+                  <span
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getEmploymentTypeColor(listing.employmentType)}`}
+                  >
                     {listing.employmentType}
                   </span>
                 </div>
                 <div className="relative">
                   <button
-                    onClick={() => setActiveDropdown(activeDropdown === listing.id ? null : listing.id)}
-                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                    onClick={() =>
+                      setActiveDropdown(
+                        activeDropdown === listing.id ? null : listing.id,
+                      )
+                    }
+                    className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
                   >
                     <MoreVertical size={16} />
                   </button>
                   {activeDropdown === listing.id && (
-                    <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-36">
+                    <div className="absolute top-full right-0 z-10 mt-1 min-w-36 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
                       <button
                         onClick={() => {
                           onView(listing.id);
                           setActiveDropdown(null);
                         }}
-                        className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        className="flex w-full items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                       >
                         <Eye size={14} />
                         <span>View Details</span>
                       </button>
                       <button
                         onClick={() => handleDeleteClick(listing.id)}
-                        className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                        className="flex w-full items-center space-x-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                       >
                         <Trash2 size={14} />
                         <span>Delete</span>
@@ -109,16 +127,18 @@ const JobListing: React.FC<JobListingsProps> = ({
               </div>
 
               {/* Stats Grid */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="mb-4 grid grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2">
-                  <Users className="w-4 h-4 text-blue-600" />
+                  <Users className="h-4 w-4 text-blue-600" />
                   <div>
                     <p className="text-xs text-gray-600">Applicants</p>
-                    <p className="font-semibold text-gray-900">{listing.applicantsCount || 0}</p>
+                    <p className="font-semibold text-gray-900">
+                      {listing.applicantsCount || 0}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Calendar className="w-4 h-4 text-green-600" />
+                  <Calendar className="h-4 w-4 text-green-600" />
                   <div>
                     <p className="text-xs text-gray-600">Posted</p>
                     <p className="font-semibold text-gray-900">
@@ -132,13 +152,13 @@ const JobListing: React.FC<JobListingsProps> = ({
               <div className="flex space-x-3">
                 <button
                   onClick={() => onView(listing.id)}
-                  className="flex-1 py-2.5 px-4 bg-white border border-gray-200 text-gray-700 text-center text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex-1 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-center text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
                 >
                   View Details
                 </button>
                 <button
                   onClick={() => handleDeleteClick(listing.id)}
-                  className="px-4 py-2.5 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors"
+                  className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
                 >
                   Delete
                 </button>
@@ -151,8 +171,8 @@ const JobListing: React.FC<JobListingsProps> = ({
       {/* Desktop Table */}
       <div className="hidden lg:block">
         {/* Table Header */}
-        <div className="bg-purple-600 text-white p-4 rounded-t-2xl">
-          <div className="grid grid-cols-12 gap-4 items-center font-medium text-sm">
+        <div className="rounded-t-2xl bg-purple-600 p-4 text-white">
+          <div className="grid grid-cols-12 items-center gap-4 text-sm font-medium">
             <div className="col-span-3">Job Title</div>
             <div className="col-span-2">Employment Type</div>
             <div className="col-span-2">Applicants</div>
@@ -167,31 +187,39 @@ const JobListing: React.FC<JobListingsProps> = ({
           {listings.map((listing, index) => (
             <div
               key={listing.id}
-              className={`grid grid-cols-12 gap-4 items-center p-4 hover:bg-gray-50 transition-colors ${
-                index % 2 === 0 ? 'bg-white' : 'bg-gray-25'
+              className={`grid grid-cols-12 items-center gap-4 p-4 transition-colors hover:bg-gray-50 ${
+                index % 2 === 0 ? "bg-white" : "bg-gray-25"
               }`}
             >
               <div className="col-span-3">
-                <h4 className="font-medium text-gray-900 truncate">{listing.title}</h4>
-                <p className="text-sm text-gray-500 truncate">{listing.location || 'Remote'}</p>
+                <h4 className="truncate font-medium text-gray-900">
+                  {listing.title}
+                </h4>
+                <p className="truncate text-sm text-gray-500">
+                  {listing.location || "Remote"}
+                </p>
               </div>
 
               <div className="col-span-2">
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getEmploymentTypeColor(listing.employmentType)}`}>
+                <span
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getEmploymentTypeColor(listing.employmentType)}`}
+                >
                   {listing.employmentType}
                 </span>
               </div>
 
               <div className="col-span-2">
                 <div className="flex items-center space-x-2">
-                  <Users className="w-4 h-4 text-blue-600" />
-                  <span className="font-medium text-gray-900">{listing.applicantsCount || 0}</span>
+                  <Users className="h-4 w-4 text-blue-600" />
+                  <span className="font-medium text-gray-900">
+                    {listing.applicantsCount || 0}
+                  </span>
                 </div>
               </div>
 
               <div className="col-span-2">
                 <div className="flex items-center space-x-2">
-                  <Calendar className="w-4 h-4 text-gray-400" />
+                  <Calendar className="h-4 w-4 text-gray-400" />
                   <span className="text-sm text-gray-600">
                     {moment(listing.createdAt).format("MMM D, YYYY")}
                   </span>
@@ -199,8 +227,8 @@ const JobListing: React.FC<JobListingsProps> = ({
               </div>
 
               <div className="col-span-2">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></div>
+                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700">
+                  <div className="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"></div>
                   Active
                 </span>
               </div>
@@ -209,14 +237,14 @@ const JobListing: React.FC<JobListingsProps> = ({
                 <div className="flex items-center justify-center space-x-2">
                   <button
                     onClick={() => onView(listing.id)}
-                    className="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                    className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-purple-50 hover:text-purple-600"
                     title="View details"
                   >
                     <Eye size={16} />
                   </button>
                   <button
                     onClick={() => handleDeleteClick(listing.id)}
-                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
                     title="Delete job"
                   >
                     <Trash2 size={16} />
@@ -230,29 +258,32 @@ const JobListing: React.FC<JobListingsProps> = ({
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-red-100 rounded-full">
-                <AlertTriangle className="w-6 h-6 text-red-600" />
+        <div className="bg-opacity-20 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6">
+            <div className="mb-4 flex items-center space-x-3">
+              <div className="rounded-full bg-red-100 p-2">
+                <AlertTriangle className="h-6 w-6 text-red-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Delete Job Posting</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Delete Job Posting
+              </h3>
             </div>
 
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete this job posting? This action cannot be undone and all associated applications will be removed.
+            <p className="mb-6 text-gray-600">
+              Are you sure you want to delete this job posting? This action
+              cannot be undone and all associated applications will be removed.
             </p>
 
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="flex-1 py-2.5 px-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                className="flex-1 rounded-lg bg-gray-100 px-4 py-2.5 font-medium text-gray-700 transition-colors hover:bg-gray-200"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                className="flex-1 py-2.5 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 font-medium text-white transition-colors hover:bg-red-700"
               >
                 Delete Job
               </button>

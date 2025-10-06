@@ -21,7 +21,7 @@ const FindConnections: React.FC = () => {
   });
 
   const { data, isError } = useConnections(
-    applicant.id || employer?.id as number,
+    applicant.id || (employer?.id as number),
     currentPage,
     ITEMS_PER_PAGE,
   );
@@ -34,7 +34,10 @@ const FindConnections: React.FC = () => {
     }
   }, [data]);
 
-  const handleSearchChange = async (field: keyof typeof searchParams, value: string) => {
+  const handleSearchChange = async (
+    field: keyof typeof searchParams,
+    value: string,
+  ) => {
     const updatedParams = {
       ...searchParams,
       [field]: value,
@@ -59,16 +62,21 @@ const FindConnections: React.FC = () => {
   };
 
   const totalPages = Math.ceil((data?.meta?.total || 0) / ITEMS_PER_PAGE);
-  const hasNextPage = connections.length === ITEMS_PER_PAGE && currentPage < totalPages;
+  const hasNextPage =
+    connections.length === ITEMS_PER_PAGE && currentPage < totalPages;
   const hasPrevPage = currentPage > 1;
 
   if (isError) {
     return (
-      <div className="flex items-center justify-center min-h-64">
+      <div className="flex min-h-64 items-center justify-center">
         <div className="text-center">
-          <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No connections yet</h3>
-          <p className="text-gray-600">Start building your network by finding new connections.</p>
+          <Users className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+          <h3 className="mb-2 text-lg font-medium text-gray-900">
+            No connections yet
+          </h3>
+          <p className="text-gray-600">
+            Start building your network by finding new connections.
+          </p>
         </div>
       </div>
     );
@@ -78,12 +86,16 @@ const FindConnections: React.FC = () => {
     <div className="space-y-6">
       <NetworkHeader
         handleSearchByName={(name) => handleSearchChange("name", name)}
-        handleSearchByLocation={(location) => handleSearchChange("location", location)}
-        handleSearchByProfession={(profession) => handleSearchChange("profession", profession)}
+        handleSearchByLocation={(location) =>
+          handleSearchChange("location", location)
+        }
+        handleSearchByProfession={(profession) =>
+          handleSearchChange("profession", profession)
+        }
       />
 
       {/* Stats Bar */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
@@ -106,9 +118,9 @@ const FindConnections: React.FC = () => {
       </div>
 
       {/* Connections Grid */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         {connections.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {connections.map((user, key: number) => (
               <UserCard
                 setChatWindowOpened={setIsChatWindowOpened}
@@ -118,13 +130,15 @@ const FindConnections: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <div className="py-12 text-center">
+            <Users className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+            <h3 className="mb-2 text-lg font-medium text-gray-900">
               {isSearching ? "Searching..." : "No connections found"}
             </h3>
             <p className="text-gray-600">
-              {isSearching ? "Please wait..." : "Try adjusting your search filters."}
+              {isSearching
+                ? "Please wait..."
+                : "Try adjusting your search filters."}
             </p>
           </div>
         )}
@@ -136,7 +150,7 @@ const FindConnections: React.FC = () => {
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={!hasPrevPage}
-            className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center space-x-2 rounded-lg border border-gray-200 bg-white px-4 py-2 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <ChevronLeft size={16} />
             <span>Previous</span>
@@ -149,10 +163,10 @@ const FindConnections: React.FC = () => {
                 <button
                   key={pageNum}
                   onClick={() => setCurrentPage(pageNum)}
-                  className={`w-10 h-10 rounded-lg font-medium transition-colors ${
+                  className={`h-10 w-10 rounded-lg font-medium transition-colors ${
                     currentPage === pageNum
                       ? "bg-purple-600 text-white"
-                      : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
+                      : "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
                   }`}
                 >
                   {pageNum}
@@ -164,7 +178,7 @@ const FindConnections: React.FC = () => {
           <button
             onClick={() => setCurrentPage((prev) => prev + 1)}
             disabled={!hasNextPage}
-            className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center space-x-2 rounded-lg border border-gray-200 bg-white px-4 py-2 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <span>Next</span>
             <ChevronRight size={16} />

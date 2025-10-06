@@ -12,7 +12,7 @@ import {
   DEFAULT_MAX,
   DEFAULT_MIN,
   employmentTypeMap,
-  employmentTypeOptions
+  employmentTypeOptions,
 } from "../../utils/constants.ts";
 
 import { EmploymentType } from "../../utils/enums.ts";

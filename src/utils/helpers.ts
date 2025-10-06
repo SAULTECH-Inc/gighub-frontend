@@ -2,7 +2,7 @@ import { NODE_ENV } from "./constants.ts";
 import secureLocalStorage from "react-secure-storage";
 import moment from "moment";
 import logger from "../log-config";
-import { UserSubscriptionResponse } from "./types";
+import { DeviceContext, UserSubscriptionResponse } from "./types";
 import { ApplicationStatus } from "./enums.ts";
 
 export const calculatePasswordStrength = (password: string): number => {
@@ -215,3 +215,10 @@ export const shouldSendReminder = (
 
   return diffInMs > 0 && diffInMs <= thresholdInMs;
 };
+
+
+export function isCurrentSession(device: DeviceContext): boolean {
+  const currentIp = localStorage.getItem('current_ip');
+  const matchIp = currentIp && device.ip === currentIp;
+  return !!(matchIp);
+}

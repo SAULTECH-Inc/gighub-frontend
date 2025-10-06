@@ -21,8 +21,8 @@ const EducationUpdateForm: React.FC<EductionUpdateFormProps> = ({
   educationData,
   isEditable,
 }) => {
-  const {cities} = useCities();
-  const {countries} = useCountries();
+  const { cities } = useCities();
+  const { countries } = useCountries();
   const { applicantEducation, setApplicantEducation } =
     useApplicantJobProfile();
   const [description, setDescription] = useState<string>(

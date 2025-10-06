@@ -9,7 +9,7 @@ import {
   Facebook,
   Twitter,
   Instagram,
-  ExternalLink
+  ExternalLink,
 } from "lucide-react";
 
 interface AboutUsProp {
@@ -22,27 +22,27 @@ const AboutUs: React.FC<AboutUsProp> = ({ user }) => {
       name: "LinkedIn",
       url: user?.linkedInProfile,
       icon: Linkedin,
-      color: "text-blue-600 hover:bg-blue-50"
+      color: "text-blue-600 hover:bg-blue-50",
     },
     {
       name: "Facebook",
       url: user?.facebookProfile,
       icon: Facebook,
-      color: "text-blue-700 hover:bg-blue-50"
+      color: "text-blue-700 hover:bg-blue-50",
     },
     {
       name: "Twitter",
       url: user?.twitterProfile,
       icon: Twitter,
-      color: "text-sky-500 hover:bg-sky-50"
+      color: "text-sky-500 hover:bg-sky-50",
     },
     {
       name: "Instagram",
       url: user?.instagramProfile,
       icon: Instagram,
-      color: "text-pink-600 hover:bg-pink-50"
+      color: "text-pink-600 hover:bg-pink-50",
     },
-  ].filter(link => link.url && link.url !== "#");
+  ].filter((link) => link.url && link.url !== "#");
 
   const companyStats = [
     {
@@ -63,7 +63,7 @@ const AboutUs: React.FC<AboutUsProp> = ({ user }) => {
       value: user?.companyAddress,
       color: "text-amber-600 bg-amber-50",
     },
-  ].filter(stat => stat.value);
+  ].filter((stat) => stat.value);
 
   return (
     <div className="p-6 sm:p-8">
@@ -83,9 +83,14 @@ const AboutUs: React.FC<AboutUsProp> = ({ user }) => {
             className="space-y-6"
           >
             <div className="rounded-xl bg-slate-50 p-6">
-              <h3 className="mb-4 text-lg font-semibold text-slate-800">Our Story</h3>
+              <h3 className="mb-4 text-lg font-semibold text-slate-800">
+                Our Story
+              </h3>
               <div
-                dangerouslySetInnerHTML={{ __html: user?.companyDescription || "No description available." }}
+                dangerouslySetInnerHTML={{
+                  __html:
+                    user?.companyDescription || "No description available.",
+                }}
                 className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-600"
               />
             </div>
@@ -93,7 +98,9 @@ const AboutUs: React.FC<AboutUsProp> = ({ user }) => {
             {/* Social Media Links */}
             {socialLinks.length > 0 && (
               <div className="rounded-xl bg-slate-50 p-6">
-                <h3 className="mb-4 text-lg font-semibold text-slate-800">Connect With Us</h3>
+                <h3 className="mb-4 text-lg font-semibold text-slate-800">
+                  Connect With Us
+                </h3>
                 <div className="flex flex-wrap gap-3">
                   {socialLinks.map((social, index) => {
                     const IconComponent = social.icon;
@@ -129,7 +136,9 @@ const AboutUs: React.FC<AboutUsProp> = ({ user }) => {
             className="space-y-4"
           >
             <div className="rounded-xl bg-slate-50 p-6">
-              <h3 className="mb-6 text-lg font-semibold text-slate-800">Company Details</h3>
+              <h3 className="mb-6 text-lg font-semibold text-slate-800">
+                Company Details
+              </h3>
               <div className="space-y-4">
                 {companyStats.map((stat, index) => {
                   const IconComponent = stat.icon;
@@ -144,9 +153,11 @@ const AboutUs: React.FC<AboutUsProp> = ({ user }) => {
                       <div className={`rounded-lg p-2.5 ${stat.color}`}>
                         <IconComponent className="h-5 w-5" />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-500">{stat.label}</p>
-                        <p className="text-base font-semibold text-slate-900 break-words">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-slate-500">
+                          {stat.label}
+                        </p>
+                        <p className="text-base font-semibold break-words text-slate-900">
                           {stat.value}
                         </p>
                       </div>

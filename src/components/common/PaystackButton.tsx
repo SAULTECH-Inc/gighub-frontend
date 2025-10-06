@@ -1,4 +1,3 @@
-
 import { usePaystack } from "../../hooks/usePaystack.ts";
 
 const PaymentButton = () => {
@@ -23,7 +22,7 @@ const PaymentButton = () => {
   return (
     <button
       onClick={handlePayment}
-      className="px-4 py-2 bg-purple-600 text-white rounded-lg"
+      className="rounded-lg bg-purple-600 px-4 py-2 text-white"
     >
       Pay ₦5000
     </button>

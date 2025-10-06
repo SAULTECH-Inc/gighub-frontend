@@ -1,5 +1,9 @@
 import { currencyAbbreviationToSymbol } from "../../../utils/constants.ts";
-import { calculateNextSubscriptionDate, subCycle, USER_TYPE } from "../../../utils/helpers.ts";
+import {
+  calculateNextSubscriptionDate,
+  subCycle,
+  USER_TYPE,
+} from "../../../utils/helpers.ts";
 import { useAuth } from "../../../store/useAuth.ts";
 import { UserType } from "../../../utils/enums.ts";
 import { useSubscriptionStore } from "../../../store/useSubscriptionStore.ts";
@@ -24,15 +28,15 @@ const MonthlyPlan = () => {
     <section className="font-lato flex w-[95%] flex-col self-center py-10 md:w-[90%]">
       {/* Section Header */}
       <div className="mb-6">
-        <div className="flex items-center space-x-3 mb-2">
-          <div className="p-2 bg-purple-100 rounded-lg">
+        <div className="mb-2 flex items-center space-x-3">
+          <div className="rounded-lg bg-purple-100 p-2">
             <RiVipCrownLine className="h-6 w-6 text-purple-600" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900">
             Subscription Management
           </h2>
         </div>
-        <p className="text-gray-600 text-sm">
+        <p className="text-sm text-gray-600">
           Manage your subscription plan and billing information.
         </p>
       </div>
@@ -40,12 +44,12 @@ const MonthlyPlan = () => {
       {/* Two-Column Layout */}
       <div className="flex flex-col gap-6 md:flex-row">
         {/* Left Box - Current Plan */}
-        <div className="flex h-[240px] w-full flex-col justify-between rounded-2xl bg-white p-6 shadow-sm border border-gray-200 md:flex-1">
+        <div className="flex h-[240px] w-full flex-col justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:flex-1">
           {/* Top Section */}
           <div className="space-y-4">
             {/* Plan Badge and Features */}
             <div className="flex items-center justify-between">
-              <div className="inline-flex items-center px-4 py-2 bg-[#6438C2] text-white rounded-lg text-sm font-bold">
+              <div className="inline-flex items-center rounded-lg bg-[#6438C2] px-4 py-2 text-sm font-bold text-white">
                 {subscription?.subscription?.billingCycle || "Monthly"} Plan
               </div>
               {userType === UserType.APPLICANT && (
@@ -58,11 +62,15 @@ const MonthlyPlan = () => {
 
             {/* Pricing Display */}
             <div className="flex items-baseline space-x-1">
-              <span className="text-3xl font-bold text-black leading-none">
-                {currencyAbbreviationToSymbol[subscription?.subscription?.currency || "$"]}
+              <span className="text-3xl leading-none font-bold text-black">
+                {
+                  currencyAbbreviationToSymbol[
+                    subscription?.subscription?.currency || "$"
+                  ]
+                }
                 {subscription?.subscription?.price || "0"}
               </span>
-              <span className="text-sm text-[#8E8E8E] leading-[19.2px]">
+              <span className="text-sm leading-[19.2px] text-[#8E8E8E]">
                 /{subCycle(subscription as UserSubscriptionResponse)}
               </span>
             </div>
@@ -73,14 +81,16 @@ const MonthlyPlan = () => {
             {/* Status Indicator */}
             {subscription?.isActive && (
               <div className="flex h-[42px] w-[120px] items-center justify-center rounded-[10px] bg-[#F7F6F7] shadow-sm">
-                <span className="text-center font-medium text-gray-700">Active</span>
+                <span className="text-center font-medium text-gray-700">
+                  Active
+                </span>
               </div>
             )}
 
             {/* Upgrade Button */}
             <button
               onClick={handleUpgrade}
-              className="flex h-[42px] w-[137px] items-center justify-center gap-[10px] rounded-[10px] bg-[#6438C2] hover:bg-[#5730af] text-[14px] font-bold text-white transition-colors duration-200 shadow-lg"
+              className="flex h-[42px] w-[137px] items-center justify-center gap-[10px] rounded-[10px] bg-[#6438C2] text-[14px] font-bold text-white shadow-lg transition-colors duration-200 hover:bg-[#5730af]"
             >
               Upgrade
               <RiArrowRightLine className="h-4 w-4" />
@@ -89,16 +99,18 @@ const MonthlyPlan = () => {
         </div>
 
         {/* Right Box - Next Payment */}
-        <div className="flex h-[240px] w-full flex-col justify-between rounded-2xl bg-white p-6 shadow-sm border border-gray-200 md:flex-1">
+        <div className="flex h-[240px] w-full flex-col justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:flex-1">
           {/* Header */}
           <div>
-            <h3 className="text-lg font-bold text-black mb-2">Next Payment</h3>
+            <h3 className="mb-2 text-lg font-bold text-black">Next Payment</h3>
 
             {/* Payment Date */}
             <div className="space-y-1">
               <p className="text-sm text-gray-600">Due Date</p>
-              <p className="text-2xl font-bold text-black leading-tight">
-                {subscription ? calculateNextSubscriptionDate(subscription) : "Not scheduled"}
+              <p className="text-2xl leading-tight font-bold text-black">
+                {subscription
+                  ? calculateNextSubscriptionDate(subscription)
+                  : "Not scheduled"}
               </p>
             </div>
 
@@ -106,7 +118,11 @@ const MonthlyPlan = () => {
             <div className="mt-4">
               <p className="text-sm text-gray-600">Amount</p>
               <p className="text-lg font-semibold text-black">
-                {currencyAbbreviationToSymbol[subscription?.subscription?.currency || "$"]}
+                {
+                  currencyAbbreviationToSymbol[
+                    subscription?.subscription?.currency || "$"
+                  ]
+                }
                 {subscription?.subscription?.price || "0.00"}
               </p>
             </div>
@@ -116,7 +132,7 @@ const MonthlyPlan = () => {
           <div className="flex justify-end">
             <button
               onClick={handleManagePayment}
-              className="flex h-[42px] w-[180px] items-center justify-center gap-[10px] rounded-[10px] bg-[#6438C2] hover:bg-[#5730af] text-[14px] font-bold text-white transition-colors duration-200 shadow-lg"
+              className="flex h-[42px] w-[180px] items-center justify-center gap-[10px] rounded-[10px] bg-[#6438C2] text-[14px] font-bold text-white shadow-lg transition-colors duration-200 hover:bg-[#5730af]"
             >
               Manage Payment
               <RiArrowRightLine className="h-4 w-4" />
