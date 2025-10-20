@@ -1,49 +1,37 @@
-import React, { useEffect, useState, useRef } from "react";
-import {
-  ASAbubakar,
-  Bagged,
-  Ellipse115,
-  Ellipse116,
-  Ellipse117,
-} from "../../../assets/images";
+import React, { useRef, useState } from "react";
+import { ASAbubakar, Bagged, Ellipse115, Ellipse116, Ellipse117 } from "../../../assets/images";
 import { useParams } from "react-router-dom";
-import { privateApiClient } from "../../../client/axios";
-import {
-  APIResponse,
-  ApplicantData,
-  NetworkDetails,
-} from "../../../utils/types";
-import {
-  API_BASE_URL,
-  applicantNavBarItemMap,
-  applicantNavItems,
-  applicantNavItemsMobile,
-} from "../../../utils/constants";
+import { handleDownload, NetworkDetails, Review } from "../../../utils/types";
+import { applicantNavBarItemMap, applicantNavItems, applicantNavItemsMobile } from "../../../utils/constants";
 import TopNavBar from "../../layouts/TopNavBar";
 import {
-  FaFacebook,
-  FaGithub,
-  FaLinkedin,
-  FaTwitter,
-  FaDownload,
-  FaShare,
   FaBookmark,
-  FaEye,
   FaCalendar,
-  FaMapMarkerAlt,
-  FaEnvelope,
-  FaPhone,
-  FaStar,
+  FaCheck,
   FaChevronDown,
   FaChevronUp,
-  FaPrint,
-  FaCheck,
-  FaHeart,
   FaComment,
+  FaDownload,
+  FaEnvelope,
+  FaEye,
+  FaFacebook,
+  FaGithub,
+  FaHeart,
+  FaLinkedin,
+  FaMapMarkerAlt,
+  FaPhone,
+  FaPrint,
+  FaShare,
+  FaStar,
+  FaTimes,
+  FaTwitter
 } from "react-icons/fa";
 import { useChatStore } from "../../../store/useChatStore.ts";
 import DOMPurify from "dompurify";
 import moment from "moment";
+import { useApplicant } from "../../../hooks/useApplicant.ts";
+import { useReviews } from "../../../hooks/useReviews.ts";
+import { connectUser } from "../../../services/api";
 
 interface SkillTagProps {
   skill: string;
@@ -58,9 +46,9 @@ const SkillTag: React.FC<SkillTagProps> = ({ skill, level }) => (
 );
 
 const ExperienceCard: React.FC<{ experience: any; index: number }> = ({
-  experience,
-  index,
-}) => (
+                                                                        experience,
+                                                                        index,
+                                                                      }) => (
   <div
     key={index}
     className="group relative mb-4 rounded-xl border border-gray-100 bg-white p-6 transition-all duration-300 hover:border-purple-200 hover:shadow-lg"
@@ -96,9 +84,9 @@ const ExperienceCard: React.FC<{ experience: any; index: number }> = ({
               <span className="font-medium text-green-600">
                 {experience?.endDate
                   ? moment(experience.endDate).diff(
-                      moment(experience.startDate),
-                      "months",
-                    ) + " months"
+                  moment(experience.startDate),
+                  "months"
+                ) + " months"
                   : "Current"}
               </span>
             </div>
@@ -114,21 +102,23 @@ const ExperienceCard: React.FC<{ experience: any; index: number }> = ({
           </div>
         </div>
 
-        <div
-          className="prose prose-sm mt-3 max-w-none text-sm leading-relaxed text-gray-700"
-          dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(experience?.description || ""),
-          }}
-        />
+        {experience?.description && (
+          <div
+            className="prose prose-sm mt-3 max-w-none text-sm leading-relaxed text-gray-700"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(experience.description),
+            }}
+          />
+        )}
       </div>
     </div>
   </div>
 );
 
 const EducationCard: React.FC<{ education: any; index: number }> = ({
-  education,
-  index,
-}) => (
+                                                                      education,
+                                                                      index,
+                                                                    }) => (
   <div
     key={index}
     className="group relative mb-4 rounded-xl border border-gray-100 bg-white p-6 transition-all duration-300 hover:border-blue-200 hover:shadow-lg"
@@ -176,7 +166,7 @@ const EducationCard: React.FC<{ education: any; index: number }> = ({
           <div
             className="prose prose-sm mt-3 max-w-none text-sm leading-relaxed text-gray-700"
             dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(education?.description || ""),
+              __html: DOMPurify.sanitize(education.description),
             }}
           />
         )}
@@ -185,10 +175,11 @@ const EducationCard: React.FC<{ education: any; index: number }> = ({
   </div>
 );
 
-const TestimonyCard: React.FC<{ testimony?: any; index: number }> = ({
-  index,
-}) => {
-  const [liked, setLiked] = useState(false);
+const ReviewCard: React.FC<{ review: Review; index: number }> = ({
+                                                                            review,
+                                                                            index,
+                                                                          }) => {
+  const [liked, setLiked] = useState(review.liked);
   const images = [Ellipse115, Ellipse116, Ellipse117];
 
   return (
@@ -200,34 +191,40 @@ const TestimonyCard: React.FC<{ testimony?: any; index: number }> = ({
         <div className="flex items-center gap-3">
           <div className="relative">
             <img
-              src={images[index % images.length]}
-              alt={`Testimonial ${index + 1}`}
+              src={review.authorImage || images[index % images.length]}
+              alt={`${review.authorName}'s avatar`}
               className="h-10 w-10 rounded-full border-2 border-purple-200 object-cover"
             />
             <div className="absolute -right-1 -bottom-1 h-4 w-4 rounded-full border-2 border-white bg-green-500"></div>
           </div>
           <div>
-            <p className="text-sm font-bold text-gray-900">Bashir Umar</p>
-            <p className="text-xs text-gray-500">
-              Senior Developer at TechCorp
+            <p className="text-sm font-bold text-gray-900">
+              {review.authorName}
             </p>
+            <p className="text-xs text-gray-500">{review.authorTitle}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex text-yellow-400">
+          <div className="flex">
             {[...Array(5)].map((_, i) => (
-              <FaStar key={i} size={12} />
+              <FaStar
+                key={i}
+                size={12}
+                className={
+                  i < review.rating
+                    ? "text-yellow-400 fill-current"
+                    : "text-gray-300"
+                }
+              />
             ))}
           </div>
-          <span className="text-xs text-gray-500">2:20 AM</span>
+          <span className="text-xs text-gray-500">{moment(review.time).fromNow()}</span>
         </div>
       </div>
 
       <p className="mb-4 text-sm leading-relaxed text-gray-700">
-        "I really love his work ethic and attention to detail. He's that smart,
-        reliable developer you may be searching for. His problem-solving skills
-        are exceptional!"
+        {review.content}
       </p>
 
       <div className="flex items-center justify-between border-t border-gray-100 pt-3">
@@ -239,10 +236,11 @@ const TestimonyCard: React.FC<{ testimony?: any; index: number }> = ({
             onClick={() => setLiked(!liked)}
           >
             <FaHeart className={liked ? "fill-current" : ""} />
-            {liked ? "24" : "23"} likes
+            {liked ? review.likes + 1 : review.likes} likes
           </button>
           <button className="flex items-center gap-2 text-xs text-gray-500 transition-colors hover:text-blue-500">
-            <FaComment />3 replies
+            <FaComment />
+            {review.replies} replies
           </button>
         </div>
 
@@ -254,53 +252,118 @@ const TestimonyCard: React.FC<{ testimony?: any; index: number }> = ({
   );
 };
 
+const LoadingState = () => (
+  <div className="flex min-h-screen items-center justify-center bg-gray-50">
+    <div className="text-center">
+      <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-purple-600"></div>
+      <p className="text-gray-600">Loading profile...</p>
+    </div>
+  </div>
+);
+
+const ErrorState = ({ error }: { error: string }) => (
+  <div className="flex min-h-screen items-center justify-center bg-gray-50">
+    <div className="max-w-md rounded-xl bg-white p-8 text-center shadow-lg">
+      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+        <span className="text-2xl text-red-600">⚠</span>
+      </div>
+      <h2 className="mb-2 text-xl font-bold text-gray-900">
+        Profile Not Found
+      </h2>
+      <p className="mb-4 text-red-500">{error}</p>
+      <button
+        onClick={() => window.history.back()}
+        className="rounded-lg bg-purple-600 px-6 py-2 text-white transition-colors hover:bg-purple-700"
+      >
+        Go Back
+      </button>
+    </div>
+  </div>
+);
+
+const EmptyState = () => (
+  <div className="flex min-h-screen items-center justify-center bg-gray-50">
+    <div className="max-w-md rounded-xl bg-white p-8 text-center shadow-lg">
+      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+        <span className="text-2xl text-gray-400">👤</span>
+      </div>
+      <h2 className="mb-2 text-xl font-bold text-gray-900">No Profile Found</h2>
+      <p className="mb-4 text-gray-600">
+        The profile you're looking for doesn't exist.
+      </p>
+      <button
+        onClick={() => window.history.back()}
+        className="rounded-lg bg-purple-600 px-6 py-2 text-white transition-colors hover:bg-purple-700"
+      >
+        Go Back
+      </button>
+    </div>
+  </div>
+);
+
 const PublicProfileView: React.FC = () => {
   const { setIsClosed, setRecipient, setRecipientDetails } = useChatStore();
   const { id } = useParams<{ id: string }>();
   const numericId = id ? parseInt(id, 10) : null;
-  const [applicant, setApplicant] = useState<ApplicantData>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
+  // Use the useUser hook directly - only runs if numericId is valid
+  const { data: applicant, isLoading, error } = useApplicant(numericId as number);
+
+  console.log("Debug Info:", {
+    id,
+    numericId,
+    applicant,
+    isLoading,
+    error,
+    hasData: !!applicant
+  });
+
   const [showAllExperiences, setShowAllExperiences] = useState(false);
   const [showAllEducations, setShowAllEducations] = useState(false);
   const [showAllSkills, setShowAllSkills] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [viewCount, setViewCount] = useState(847);
+  const [viewCount] = useState(847);
   const [connectionsSent, setConnectionsSent] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const {createReview, isCreating,    isCreateSuccess, reviews} = useReviews(numericId);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [currentRating, setCurrentRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
 
   const profileRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const fetchApplicant = async () => {
-      try {
-        const response = await privateApiClient.get<APIResponse<ApplicantData>>(
-          `${API_BASE_URL}/users/${numericId}`,
-        );
-        const userData: ApplicantData = response?.data?.data;
-        setApplicant(userData);
-        // Increment view count
-        setViewCount((prev) => prev + 1);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, t) => sum + t.rating, 0) / reviews.length
+      : 0;
+  const totalReviews = reviews.length;
 
-    if (id) fetchApplicant().then((r) => r);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  // Handle loading state
+  if (isLoading) {
+    return <LoadingState />;
+  }
 
-  const handleConnect = () => {
-    setConnectionsSent(true);
-    // Here you would typically make an API call
+  // Handle error state
+  if (error) {
+    return <ErrorState error={error.message || "Failed to load profile"} />;
+  }
+
+  // Handle empty state
+  if (!applicant) {
+    return <EmptyState />;
+  }
+
+  const handleConnect = async() => {
+    const res = await connectUser(applicant?.id || 0);
+    if(res.statusCode === 200){
+      setConnectionsSent(true);
+    }
   };
 
   const handleBookmark = () => {
     setIsBookmarked(!isBookmarked);
-    // Here you would typically make an API call
+    // TODO: Make API call to bookmark profile
   };
 
   const handleShare = async () => {
@@ -315,7 +378,6 @@ const PublicProfileView: React.FC = () => {
         console.log("Error sharing:", error);
       }
     } else {
-      // Fallback: copy to clipboard
       await navigator.clipboard.writeText(window.location.href);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -326,67 +388,28 @@ const PublicProfileView: React.FC = () => {
     window.print();
   };
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-purple-600"></div>
-          <p className="text-gray-600">Loading profile...</p>
-        </div>
-      </div>
-    );
-  }
+  const handleSubmitReview = async() => {
+    if (currentRating === 0 || !reviewText.trim()) {
+      alert("Please provide a rating and review.");
+      return;
+    }
 
-  if (error) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="max-w-md rounded-xl bg-white p-8 text-center shadow-lg">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-            <span className="text-2xl text-red-600">⚠</span>
-          </div>
-          <h2 className="mb-2 text-xl font-bold text-gray-900">
-            Profile Not Found
-          </h2>
-          <p className="mb-4 text-red-500">{error}</p>
-          <button
-            onClick={() => window.history.back()}
-            className="rounded-lg bg-purple-600 px-6 py-2 text-white transition-colors hover:bg-purple-700"
-          >
-            Go Back
-          </button>
-        </div>
-      </div>
-    );
-  }
+    const newTestimony = {
+      content: reviewText,
+      rating: currentRating,
+      userId: applicant.id
+    };
+   createReview(newTestimony);
+    if(isCreateSuccess){
+      setShowReviewModal(false);
+      setCurrentRating(0);
+      setReviewText("");
+    }
+  };
 
-  if (!applicant) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="max-w-md rounded-xl bg-white p-8 text-center shadow-lg">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-            <span className="text-2xl text-gray-400">👤</span>
-          </div>
-          <h2 className="mb-2 text-xl font-bold text-gray-900">
-            No Profile Found
-          </h2>
-          <p className="mb-4 text-gray-600">
-            The profile you're looking for doesn't exist.
-          </p>
-          <button
-            onClick={() => window.history.back()}
-            className="rounded-lg bg-purple-600 px-6 py-2 text-white transition-colors hover:bg-purple-700"
-          >
-            Go Back
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  let location = "";
-  if (applicant?.city) location += `${applicant.city}`;
-  if (applicant?.country)
-    location += `${applicant.city ? ", " : ""}${applicant.country}`;
+  const location = [applicant?.city, applicant?.country]
+    .filter(Boolean)
+    .join(", ");
 
   const tabs = [
     { id: "overview", label: "Overview", count: null },
@@ -400,7 +423,7 @@ const PublicProfileView: React.FC = () => {
       label: "Education",
       count: applicant?.cv?.educations?.length || 0,
     },
-    { id: "testimonials", label: "Testimonials", count: 3 },
+    { id: "testimonials", label: "Testimonials", count: reviews.length },
   ];
 
   return (
@@ -429,18 +452,21 @@ const PublicProfileView: React.FC = () => {
                       ? "bg-yellow-500 text-white shadow-lg"
                       : "bg-white/20 text-white hover:bg-white/30"
                   }`}
+                  aria-label={isBookmarked ? "Remove bookmark" : "Bookmark profile"}
                 >
                   <FaBookmark />
                 </button>
                 <button
                   onClick={handleShare}
                   className="rounded-full bg-white/20 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/30"
+                  aria-label="Share profile"
                 >
                   {copied ? <FaCheck /> : <FaShare />}
                 </button>
                 <button
                   onClick={handlePrint}
                   className="rounded-full bg-white/20 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/30"
+                  aria-label="Print profile"
                 >
                   <FaPrint />
                 </button>
@@ -490,17 +516,26 @@ const PublicProfileView: React.FC = () => {
               <div className="ml-40 space-y-4">
                 <div>
                   <h1 className="mb-2 text-3xl font-bold text-gray-900">
-                    {applicant?.firstName} {applicant?.middleName}{" "}
-                    {applicant?.lastName}
+                    {[
+                      applicant?.firstName,
+                      applicant?.middleName,
+                      applicant?.lastName,
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
                   </h1>
-                  <p className="mb-2 text-xl font-semibold text-purple-600">
-                    {applicant?.professionalTitle}
-                  </p>
+                  {applicant?.professionalTitle && (
+                    <p className="mb-2 text-xl font-semibold text-purple-600">
+                      {applicant.professionalTitle}
+                    </p>
+                  )}
                   <div className="mb-4 flex items-center gap-6 text-gray-600">
-                    <div className="flex items-center gap-2">
-                      <FaMapMarkerAlt />
-                      <span>{location}</span>
-                    </div>
+                    {location && (
+                      <div className="flex items-center gap-2">
+                        <FaMapMarkerAlt />
+                        <span>{location}</span>
+                      </div>
+                    )}
                     <div className="flex items-center gap-2">
                       <FaEye />
                       <span>{viewCount.toLocaleString()} profile views</span>
@@ -520,6 +555,7 @@ const PublicProfileView: React.FC = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="rounded-full bg-blue-100 p-3 text-blue-600 transition-all hover:scale-110 hover:bg-blue-200"
+                      aria-label="Facebook profile"
                     >
                       <FaFacebook size={20} />
                     </a>
@@ -530,6 +566,7 @@ const PublicProfileView: React.FC = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="rounded-full bg-sky-100 p-3 text-sky-600 transition-all hover:scale-110 hover:bg-sky-200"
+                      aria-label="Twitter profile"
                     >
                       <FaTwitter size={20} />
                     </a>
@@ -540,6 +577,7 @@ const PublicProfileView: React.FC = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="rounded-full bg-blue-100 p-3 text-blue-700 transition-all hover:scale-110 hover:bg-blue-200"
+                      aria-label="LinkedIn profile"
                     >
                       <FaLinkedin size={20} />
                     </a>
@@ -550,6 +588,7 @@ const PublicProfileView: React.FC = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="rounded-full bg-gray-100 p-3 text-gray-700 transition-all hover:scale-110 hover:bg-gray-200"
+                      aria-label="GitHub profile"
                     >
                       <FaGithub size={20} />
                     </a>
@@ -590,79 +629,87 @@ const PublicProfileView: React.FC = () => {
               <div className="space-y-8">
                 {/* Contact Info Grid */}
                 <div className="grid gap-6 md:grid-cols-3">
-                  <div className="rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
-                    <div className="mb-3 flex items-center gap-3">
-                      <div className="rounded-full bg-blue-100 p-3">
-                        <FaEnvelope className="text-blue-600" />
+                  {applicant.email && (
+                    <div className="rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
+                      <div className="mb-3 flex items-center gap-3">
+                        <div className="rounded-full bg-blue-100 p-3">
+                          <FaEnvelope className="text-blue-600" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900">Email</h3>
+                          <p className="text-sm text-gray-600">
+                            Reach out directly
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">Email</h3>
-                        <p className="text-sm text-gray-600">
-                          Reach out directly
-                        </p>
-                      </div>
+                      <p className="font-medium text-blue-600 break-all">
+                        {applicant.email}
+                      </p>
                     </div>
-                    <p className="font-medium text-blue-600">
-                      {applicant.email}
-                    </p>
-                  </div>
+                  )}
 
-                  <div className="rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 p-6">
-                    <div className="mb-3 flex items-center gap-3">
-                      <div className="rounded-full bg-green-100 p-3">
-                        <FaPhone className="text-green-600" />
+                  {applicant.phoneNumber && (
+                    <div className="rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 p-6">
+                      <div className="mb-3 flex items-center gap-3">
+                        <div className="rounded-full bg-green-100 p-3">
+                          <FaPhone className="text-green-600" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900">Phone</h3>
+                          <p className="text-sm text-gray-600">Call anytime</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">Phone</h3>
-                        <p className="text-sm text-gray-600">Call anytime</p>
-                      </div>
+                      <p className="font-medium text-green-600">
+                        {applicant.phoneNumber}
+                      </p>
                     </div>
-                    <p className="font-medium text-green-600">
-                      {applicant.phoneNumber}
-                    </p>
-                  </div>
+                  )}
 
-                  <div className="rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 p-6">
-                    <div className="mb-3 flex items-center gap-3">
-                      <div className="rounded-full bg-purple-100 p-3">
-                        <FaMapMarkerAlt className="text-purple-600" />
+                  {applicant.address && (
+                    <div className="rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 p-6">
+                      <div className="mb-3 flex items-center gap-3">
+                        <div className="rounded-full bg-purple-100 p-3">
+                          <FaMapMarkerAlt className="text-purple-600" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900">
+                            Location
+                          </h3>
+                          <p className="text-sm text-gray-600">Based in</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">
-                          Location
-                        </h3>
-                        <p className="text-sm text-gray-600">Based in</p>
-                      </div>
+                      <p className="font-medium text-purple-600">
+                        {applicant.address}
+                      </p>
                     </div>
-                    <p className="font-medium text-purple-600">
-                      {applicant.address}
-                    </p>
-                  </div>
+                  )}
                 </div>
 
                 {/* About Section */}
-                <div className="rounded-xl bg-gray-50 p-6">
-                  <h2 className="mb-4 text-2xl font-bold text-gray-900">
-                    About
-                  </h2>
-                  <div
-                    className="prose prose-gray max-w-none leading-relaxed text-gray-700"
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(
-                        applicant.cv?.professionalSummary || "",
-                      ),
-                    }}
-                  />
-                </div>
+                {applicant.cv?.professionalSummary && (
+                  <div className="rounded-xl bg-gray-50 p-6">
+                    <h2 className="mb-4 text-2xl font-bold text-gray-900">
+                      About
+                    </h2>
+                    <div
+                      className="prose prose-gray max-w-none leading-relaxed text-gray-700"
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(
+                          applicant.cv.professionalSummary
+                        ),
+                      }}
+                    />
+                  </div>
+                )}
 
                 {/* Skills Section */}
-                <div>
-                  <div className="mb-6 flex items-center justify-between">
-                    <h2 className="text-2xl font-bold text-gray-900">
-                      Skills & Technologies
-                    </h2>
-                    {applicant?.cv?.skills &&
-                      applicant.cv.skills.length > 8 && (
+                {applicant?.cv?.skills && applicant.cv.skills.length > 0 && (
+                  <div>
+                    <div className="mb-6 flex items-center justify-between">
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        Skills & Technologies
+                      </h2>
+                      {applicant.cv.skills.length > 8 && (
                         <button
                           onClick={() => setShowAllSkills(!showAllSkills)}
                           className="flex items-center gap-2 font-medium text-purple-600 hover:text-purple-700"
@@ -671,21 +718,22 @@ const PublicProfileView: React.FC = () => {
                           {showAllSkills ? <FaChevronUp /> : <FaChevronDown />}
                         </button>
                       )}
-                  </div>
+                    </div>
 
-                  <div className="flex flex-wrap gap-3">
-                    {(showAllSkills
-                      ? applicant?.cv?.skills
-                      : applicant?.cv?.skills?.slice(0, 8)
-                    )?.map((skill: any, idx: number) => (
-                      <SkillTag
-                        key={idx}
-                        skill={skill.skill || skill}
-                        level={skill.level}
-                      />
-                    ))}
+                    <div className="flex flex-wrap gap-3">
+                      {(showAllSkills
+                          ? applicant.cv.skills
+                          : applicant.cv.skills.slice(0, 8)
+                      )?.map((skill: any, idx: number) => (
+                        <SkillTag
+                          key={idx}
+                          skill={skill.skill || skill}
+                          level={skill.level}
+                        />
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Quick Stats */}
                 <div className="grid gap-4 md:grid-cols-4">
@@ -748,8 +796,8 @@ const PublicProfileView: React.FC = () => {
 
                 <div className="space-y-4">
                   {(showAllExperiences
-                    ? applicant?.cv?.experiences
-                    : applicant?.cv?.experiences?.slice(0, 2)
+                      ? applicant?.cv?.experiences
+                      : applicant?.cv?.experiences?.slice(0, 2)
                   )?.map((experience, idx) => (
                     <ExperienceCard
                       key={idx}
@@ -799,8 +847,8 @@ const PublicProfileView: React.FC = () => {
 
                 <div className="space-y-4">
                   {(showAllEducations
-                    ? applicant?.cv?.educations
-                    : applicant?.cv?.educations?.slice(0, 2)
+                      ? applicant?.cv?.educations
+                      : applicant?.cv?.educations?.slice(0, 2)
                   )?.map((education, idx) => (
                     <EducationCard
                       key={idx}
@@ -832,38 +880,76 @@ const PublicProfileView: React.FC = () => {
                   </h2>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                      <div className="flex text-yellow-400">
-                        {[...Array(5)].map((_, i) => (
-                          <FaStar key={i} size={16} />
-                        ))}
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => {
+                          const starValue = i + 1;
+                          if (starValue <= Math.floor(averageRating)) {
+                            return (
+                              <FaStar
+                                key={i}
+                                size={16}
+                                className="text-yellow-400 fill-current"
+                              />
+                            );
+                          } else if (
+                            starValue === Math.ceil(averageRating) &&
+                            averageRating % 1 >= 0.5
+                          ) {
+                            return (
+                              <FaStar
+                                key={i}
+                                size={16}
+                                className="text-yellow-400 fill-current"
+                                style={{ width: "8px", overflow: "hidden" }}
+                              />
+                            );
+                          } else {
+                            return (
+                              <FaStar
+                                key={i}
+                                size={16}
+                                className="text-gray-300"
+                              />
+                            );
+                          }
+                        })}
                       </div>
                       <span className="text-sm text-gray-600">
-                        4.9 (12 reviews)
+                        {averageRating.toFixed(1)} ({totalReviews} reviews)
                       </span>
                     </div>
-                    <button className="rounded-lg bg-purple-600 px-4 py-2 text-sm text-white transition-colors hover:bg-purple-700">
+                    <button
+                      onClick={() => setShowReviewModal(true)}
+                      className="rounded-lg bg-purple-600 px-4 py-2 text-sm text-white transition-colors hover:bg-purple-700"
+                    >
                       Write a Review
                     </button>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  {[...Array(3)].map((_, idx) => (
-                    <TestimonyCard key={idx} index={idx} />
+                  {reviews.map((review, idx) => (
+                    <ReviewCard
+                      key={idx}
+                      review={review}
+                      index={idx}
+                    />
                   ))}
                 </div>
 
-                <div className="mt-8 text-center">
-                  <button className="rounded-lg border border-gray-300 px-6 py-3 text-gray-700 transition-colors hover:bg-gray-50">
-                    Load More Testimonials
-                  </button>
-                </div>
+                {reviews.length > 0 && (
+                  <div className="mt-8 text-center">
+                    <button className="rounded-lg border border-gray-300 px-6 py-3 text-gray-700 transition-colors hover:bg-gray-50">
+                      Load More Testimonials
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
 
           {/* Floating Action Button */}
-          <div className="fixed right-6 bottom-6 z-50">
+          <div className="fixed right-28 bottom-6 z-50">
             <button
               onClick={() => {
                 setRecipient(applicant?.email || "");
@@ -871,64 +957,69 @@ const PublicProfileView: React.FC = () => {
                 setIsClosed(false);
               }}
               className="group flex h-14 w-14 items-center justify-center rounded-full bg-purple-600 text-white shadow-lg transition-all hover:bg-purple-700 hover:shadow-xl"
+              aria-label="Send message"
             >
               <FaEnvelope className="transition-transform group-hover:scale-110" />
             </button>
           </div>
 
           {/* Download CV Button */}
-          <div className="fixed bottom-6 left-6 z-50">
-            <button
-              onClick={() => {
-                // Handle CV download logic here
-                console.log("Downloading CV...");
-              }}
-              className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-3 text-gray-700 shadow-lg transition-all hover:bg-gray-50 hover:shadow-xl"
-            >
-              <FaDownload />
-              <span className="hidden sm:inline">Download CV</span>
-            </button>
-          </div>
+          {applicant?.cv?.cvLink && (
+            <div className="fixed bottom-6 left-6 z-50">
+              <button
+                onClick={() =>
+                  handleDownload({
+                    fileUrl: applicant.cv.cvLink || "#",
+                    fileName: `${applicant.firstName}_${applicant.lastName}_CV.pdf`,
+                  })
+                }
+                className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-3 text-gray-700 shadow-lg transition-all hover:bg-gray-50 hover:shadow-xl"
+              >
+                <FaDownload />
+                <span className="hidden sm:inline">Download CV</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Suggested Profiles */}
-        <div className="mt-8 rounded-2xl bg-white p-8 shadow-xl">
-          <h3 className="mb-6 text-xl font-bold text-gray-900">
-            People You May Know
-          </h3>
-          <div className="grid gap-6 md:grid-cols-3">
-            {[...Array(3)].map((_, idx) => (
-              <div
-                key={idx}
-                className="group cursor-pointer rounded-xl bg-gray-50 p-6 transition-colors hover:bg-gray-100"
-              >
-                <div className="mb-4 flex items-center gap-4">
-                  <img
-                    src={[Ellipse115, Ellipse116, Ellipse117][idx]}
-                    alt={`Suggested ${idx + 1}`}
-                    className="h-12 w-12 rounded-full object-cover"
-                  />
-                  <div>
-                    <h4 className="font-semibold text-gray-900">
-                      John Developer
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      Full Stack Developer
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <button className="flex-1 rounded-lg bg-purple-600 py-2 text-sm text-white transition-colors hover:bg-purple-700">
-                    Connect
-                  </button>
-                  <button className="rounded-lg border border-gray-300 px-3 py-2 text-gray-700 transition-colors hover:bg-gray-50">
-                    <FaEye />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/*<div className="mt-8 rounded-2xl bg-white p-8 shadow-xl">*/}
+        {/*  <h3 className="mb-6 text-xl font-bold text-gray-900">*/}
+        {/*    People You May Know*/}
+        {/*  </h3>*/}
+        {/*  <div className="grid gap-6 md:grid-cols-3">*/}
+        {/*    {[...Array(3)].map((_, idx) => (*/}
+        {/*      <div*/}
+        {/*        key={idx}*/}
+        {/*        className="group cursor-pointer rounded-xl bg-gray-50 p-6 transition-colors hover:bg-gray-100"*/}
+        {/*      >*/}
+        {/*        <div className="mb-4 flex items-center gap-4">*/}
+        {/*          <img*/}
+        {/*            src={[Ellipse115, Ellipse116, Ellipse117][idx]}*/}
+        {/*            alt={`Suggested ${idx + 1}`}*/}
+        {/*            className="h-12 w-12 rounded-full object-cover"*/}
+        {/*          />*/}
+        {/*          <div>*/}
+        {/*            <h4 className="font-semibold text-gray-900">*/}
+        {/*              John Developer*/}
+        {/*            </h4>*/}
+        {/*            <p className="text-sm text-gray-600">*/}
+        {/*              Full Stack Developer*/}
+        {/*            </p>*/}
+        {/*          </div>*/}
+        {/*        </div>*/}
+        {/*        <div className="flex gap-2">*/}
+        {/*          <button className="flex-1 rounded-lg bg-purple-600 py-2 text-sm text-white transition-colors hover:bg-purple-700">*/}
+        {/*            Connect*/}
+        {/*          </button>*/}
+        {/*          <button className="rounded-lg border border-gray-300 px-3 py-2 text-gray-700 transition-colors hover:bg-gray-50">*/}
+        {/*            <FaEye />*/}
+        {/*          </button>*/}
+        {/*        </div>*/}
+        {/*      </div>*/}
+        {/*    ))}*/}
+        {/*  </div>*/}
+        {/*</div>*/}
 
         {/* Back to Top Button */}
         <button
@@ -938,23 +1029,103 @@ const PublicProfileView: React.FC = () => {
             opacity:
               typeof window !== "undefined" && window.scrollY > 300 ? 1 : 0,
           }}
+          aria-label="Back to top"
         >
           <FaChevronUp />
         </button>
       </div>
 
-      {/* Toast Notification */}
+      {/* Toast Notifications */}
       {copied && (
-        <div className="fixed top-4 right-4 z-50 flex items-center gap-2 rounded-lg bg-green-500 px-6 py-3 text-white shadow-lg">
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-2 rounded-lg bg-green-500 px-6 py-3 text-white shadow-lg animate-fade-in">
           <FaCheck />
           <span>Profile link copied to clipboard!</span>
         </div>
       )}
 
       {connectionsSent && (
-        <div className="fixed top-4 right-4 z-50 flex items-center gap-2 rounded-lg bg-blue-500 px-6 py-3 text-white shadow-lg">
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-2 rounded-lg bg-blue-500 px-6 py-3 text-white shadow-lg animate-fade-in">
           <FaCheck />
           <span>Connection request sent!</span>
+        </div>
+      )}
+
+      {/* Review Modal */}
+      {showReviewModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+            <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+              <h2 className="text-xl font-bold text-gray-900">
+                Write a Review
+              </h2>
+              <button
+                onClick={() => {
+                  setShowReviewModal(false);
+                  setCurrentRating(0);
+                  setReviewText("");
+                }}
+                className="text-gray-400 hover:text-gray-600"
+                aria-label="Close modal"
+              >
+                <FaTimes size={20} />
+              </button>
+            </div>
+            <div className="space-y-4 py-4">
+              <div>
+                <p className="mb-2 font-medium text-gray-700">
+                  Rate this candidate (1-5 stars)
+                </p>
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <FaStar
+                      key={i}
+                      size={24}
+                      className={`cursor-pointer transition-colors ${
+                        i < currentRating
+                          ? "text-yellow-400 fill-current"
+                          : "text-gray-300"
+                      } hover:text-yellow-400`}
+                      onClick={() => setCurrentRating(i + 1)}
+                    />
+                  ))}
+                </div>
+              </div>
+              <textarea
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value)}
+                placeholder="Share your thoughts about this candidate..."
+                className="w-full resize-none rounded-lg border border-gray-300 p-3 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                rows={4}
+              />
+            </div>
+            <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
+              <button
+                onClick={() => {
+                  setShowReviewModal(false);
+                  setCurrentRating(0);
+                  setReviewText("");
+                }}
+                className="rounded-lg px-4 py-2 text-gray-600 transition-colors hover:text-gray-900"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmitReview}
+                disabled={currentRating === 0 || !reviewText.trim()}
+                className="rounded-lg bg-purple-600 px-6 py-2 text-white disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-purple-700 disabled:hover:bg-gray-300 transition-colors"
+              >
+                {
+                  isCreating && "Submitting..."
+                }
+                {
+                  isCreateSuccess && "Submitted"
+                }
+                {
+                  !isCreating && !isCreateSuccess &&  "Submit"
+                }
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -11,8 +11,17 @@ import {
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { usePlatform } from "../../store/usePlatform.ts";
+import {
+  GIGHUB_FACEBOOK_URL, GIGHUB_INSTAGRAM_URL, GIGHUB_LINKEDIN_URL,
+  GIGHUB_TWITTER_URL,
+  SUPPORT_ADDRESS,
+  SUPPORT_EMAIL,
+  SUPPORT_PHONE_NUMBER
+} from "../../utils/constants.ts";
+import { useNavMenuStore } from "../../store/useNavMenuStore.ts";
 
 const MainFooter: React.FC = () => {
+  const {toggleSetting} = useNavMenuStore();
   const [email, setEmail] = useState("");
   const { subscribe, isSubscribed } = usePlatform();
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -81,13 +90,14 @@ const MainFooter: React.FC = () => {
             </h4>
             <ul className="space-y-2">
               <li>
-                <a href="/jobs" className="text-gray-300 hover:text-white">
+                <a href="/applicant/find-jobs" className="text-gray-300 hover:text-white">
                   Browse Jobs
                 </a>
               </li>
               <li>
                 <a
-                  href="/auto-apply"
+                  onClick={() => toggleSetting("autoApply")}
+                  href="/settings"
                   className="text-gray-300 hover:text-white"
                 >
                   Auto Apply
@@ -95,7 +105,7 @@ const MainFooter: React.FC = () => {
               </li>
               <li>
                 <a
-                  href="/resume-builder"
+                  href="/applicant/resume-builder"
                   className="text-gray-300 hover:text-white"
                 >
                   Resume Builder
@@ -103,10 +113,10 @@ const MainFooter: React.FC = () => {
               </li>
               <li>
                 <a
-                  href="/career-advice"
+                  href="/applicant/assessments"
                   className="text-gray-300 hover:text-white"
                 >
-                  Career Advice
+                  Assessments
                 </a>
               </li>
             </ul>
@@ -119,13 +129,13 @@ const MainFooter: React.FC = () => {
             </h4>
             <ul className="space-y-2">
               <li>
-                <a href="/post-job" className="text-gray-300 hover:text-white">
+                <a href="/employer/dashboard" className="text-gray-300 hover:text-white">
                   Post a Job
                 </a>
               </li>
               <li>
                 <a
-                  href="/candidate-search"
+                  href="#"
                   className="text-gray-300 hover:text-white"
                 >
                   Search Candidates
@@ -133,7 +143,7 @@ const MainFooter: React.FC = () => {
               </li>
               <li>
                 <a
-                  href="/smart-match"
+                  href="#"
                   className="text-gray-300 hover:text-white"
                 >
                   Smart Match
@@ -141,10 +151,10 @@ const MainFooter: React.FC = () => {
               </li>
               <li>
                 <a
-                  href="/employer-solutions"
+                  href="/employer/assessments"
                   className="text-gray-300 hover:text-white"
                 >
-                  Enterprise Solutions
+                  Assessments
                 </a>
               </li>
             </ul>
@@ -162,17 +172,17 @@ const MainFooter: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a href="/contact" className="text-gray-300 hover:text-white">
+                <a href="#" className="text-gray-300 hover:text-white">
                   Contact
                 </a>
               </li>
               <li>
-                <a href="/help" className="text-gray-300 hover:text-white">
+                <a href="/help-and-support" className="text-gray-300 hover:text-white">
                   Help Center
                 </a>
               </li>
               <li>
-                <a href="/privacy" className="text-gray-300 hover:text-white">
+                <a href="/term-and-conditions" className="text-gray-300 hover:text-white">
                   Privacy Policy
                 </a>
               </li>
@@ -184,15 +194,15 @@ const MainFooter: React.FC = () => {
         <div className="mb-8 grid grid-cols-1 gap-4 text-center md:grid-cols-3">
           <div className="flex items-center justify-center gap-2">
             <Mail size={16} className="text-purple-400" />
-            <span className="text-sm">hello@gighub.com</span>
+            <span className="text-sm">{SUPPORT_EMAIL}</span>
           </div>
           <div className="flex items-center justify-center gap-2">
             <Phone size={16} className="text-orange-400" />
-            <span className="text-sm">+1 (555) GIG-JOBS</span>
+            <span className="text-sm">{SUPPORT_PHONE_NUMBER}</span>
           </div>
           <div className="flex items-center justify-center gap-2">
             <MapPin size={16} className="text-green-400" />
-            <span className="text-sm">San Francisco, CA</span>
+            <span className="text-sm">{SUPPORT_ADDRESS}</span>
           </div>
         </div>
 
@@ -200,25 +210,25 @@ const MainFooter: React.FC = () => {
         <div className="flex flex-col items-center justify-between border-t border-gray-700 pt-8 md:flex-row">
           <div className="mb-4 flex gap-4 md:mb-0">
             <a
-              href="#"
+              href={GIGHUB_FACEBOOK_URL}
               className="rounded-full bg-blue-600 p-2 hover:bg-blue-700"
             >
               <Facebook size={16} />
             </a>
             <a
-              href="#"
+              href={GIGHUB_TWITTER_URL}
               className="rounded-full bg-sky-500 p-2 hover:bg-sky-600"
             >
               <Twitter size={16} />
             </a>
             <a
-              href="#"
+              href={GIGHUB_LINKEDIN_URL}
               className="rounded-full bg-blue-700 p-2 hover:bg-blue-800"
             >
               <Linkedin size={16} />
             </a>
             <a
-              href="#"
+              href={GIGHUB_INSTAGRAM_URL}
               className="rounded-full bg-pink-600 p-2 hover:bg-pink-700"
             >
               <Instagram size={16} />

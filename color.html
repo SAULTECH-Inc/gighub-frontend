@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Palette Grid</title>
+  <style>
+      body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          line-height: 1.6;
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #f9f9f9;
+          color: #333;
+      }
+      h1 {
+          text-align: center;
+          color: #111;
+      }
+      .palette-section {
+          margin-bottom: 40px;
+          padding: 20px;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .palette-title {
+          font-size: 1.5em;
+          margin-bottom: 8px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+      }
+      .palette-description {
+          margin-bottom: 16px;
+          color: #666;
+          font-style: italic;
+      }
+      .palette-grid {
+          display: grid;
+          grid-template-columns: repeat(6, 120px);
+          gap: 16px;
+          margin-top: 10px;
+          justify-content: center;
+      }
+      .bonus-grid {
+          display: grid;
+          grid-template-columns: repeat(5, 120px);
+          gap: 16px;
+          margin-top: 10px;
+          justify-content: center;
+      }
+      .color-box {
+          width: 120px;
+          height: 120px;
+          border-radius: 4px;
+          border: 1px solid transparent;
+      }
+      .color-box.white {
+          border: 1px solid #ccc;
+      }
+      .hex-codes {
+          text-align: center;
+          margin-top: 12px;
+          font-family: monospace;
+          font-size: 0.9em;
+          color: #555;
+      }
+  </style>
+</head>
+<body>
+<h1>Clean Grid of Color Boxes You Can Visually Reference — Ideal for UI/UX Design Inspiration</h1>
+<p style="text-align: center; font-style: italic; color: #666;">I’ve grouped them by palette 👇</p>
+
+<div class="palette-section">
+  <div class="palette-title">🧭 Palette 1 — Modern Luxe</div>
+  <p class="palette-description">Premium & elegant — great for designer storefronts, hero sections, and luxury fashion.</p>
+  <div class="palette-grid">
+    <div class="color-box" style="background:#000000;"></div>
+    <div class="color-box" style="background:#F5F5F5;"></div>
+    <div class="color-box" style="background:#D4AF37;"></div>
+    <div class="color-box" style="background:#B76E79;"></div>
+    <div class="color-box white" style="background:#FFFFFF;"></div>
+    <div class="color-box" style="background:#111111;"></div>
+  </div>
+  <div class="hex-codes">#000000 | #F5F5F5 | #D4AF37 | #B76E79 | #FFFFFF | #111111</div>
+</div>
+
+<div class="palette-section">
+  <div class="palette-title">🌈 Palette 2 — Vibrant Streetwear</div>
+  <p class="palette-description">Youthful, energetic, bold — perfect for street fashion & Gen Z markets.</p>
+  <div class="palette-grid">
+    <div class="color-box" style="background:#FF0054;"></div>
+    <div class="color-box" style="background:#292929;"></div>
+    <div class="color-box" style="background:#00F0FF;"></div>
+    <div class="color-box" style="background:#FFD700;"></div>
+    <div class="color-box" style="background:#101010;"></div>
+    <div class="color-box white" style="background:#FFFFFF;"></div>
+  </div>
+  <div class="hex-codes">#FF0054 | #292929 | #00F0FF | #FFD700 | #101010 | #FFFFFF</div>
+</div>
+
+<div class="palette-section">
+  <div class="palette-title">🌿 Palette 3 — Afro Chic</div>
+  <p class="palette-description">Elegant, earthy, modern — great for Ankara, Adire, Kente, and African-inspired fashion.</p>
+  <div class="palette-grid">
+    <div class="color-box" style="background:#2D2D2D;"></div>
+    <div class="color-box" style="background:#EFCB68;"></div>
+    <div class="color-box" style="background:#A23E48;"></div>
+    <div class="color-box" style="background:#4A7856;"></div>
+    <div class="color-box white" style="background:#FAFAFA;"></div>
+    <div class="color-box" style="background:#111111;"></div>
+  </div>
+  <div class="hex-codes">#2D2D2D | #EFCB68 | #A23E48 | #4A7856 | #FAFAFA | #111111</div>
+</div>
+
+<div class="palette-section">
+  <div class="palette-title">🌌 Palette 4 — Minimal & Clean</div>
+  <p class="palette-description">Great for galleries and design showcases where the clothes should be the star.</p>
+  <div class="palette-grid">
+    <div class="color-box white" style="background:#FFFFFF;"></div>
+    <div class="color-box" style="background:#EAEAEA;"></div>
+    <div class="color-box" style="background:#111111;"></div>
+    <div class="color-box" style="background:#D97706;"></div>
+    <div class="color-box white" style="background:#F9FAFB;"></div>
+    <div class="color-box" style="background:#000000;"></div>
+  </div>
+  <div class="hex-codes">#FFFFFF | #EAEAEA | #111111 | #D97706 | #F9FAFB | #000000</div>
+</div>
+
+<div class="palette-section">
+  <div class="palette-title">✨ Bonus Accent Colors</div>
+  <p class="palette-description">For CTAs, badges, hover states, or special highlights.</p>
+  <div class="bonus-grid">
+    <div class="color-box" style="background:#FF7F50;"></div>
+    <div class="color-box" style="background:#8A2BE2;"></div>
+    <div class="color-box" style="background:#FF4500;"></div>
+    <div class="color-box" style="background:#1E90FF;"></div>
+    <div class="color-box" style="background:#32CD32;"></div>
+  </div>
+  <div class="hex-codes">#FF7F50 | #8A2BE2 | #FF4500 | #1E90FF | #32CD32</div>
+</div>
+</body>
+</html>

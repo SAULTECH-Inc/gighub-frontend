@@ -40,6 +40,11 @@ import SocialSignupSuccess from "../pages/auth/SocialSignupSuccess.tsx";
 import SignupOption from "../pages/SignupOption.tsx";
 import SocialLoginSuccess from "../pages/auth/SocialLoginSuccess.tsx";
 import HomeComponent from "../pages/Home.tsx";
+import ResumeBuilder from "../pages/applicant/ResumeBuilder.tsx";
+import ApplicantAssessmentPage from "../pages/applicant/ApplicantAssessmentPage.tsx";
+import EmployerAssessmentPage from "../pages/employer/EmployerAssessmentPage.tsx";
+import GigHubEmployerDashboard from "../pages/employer/dashboard-v2/DashboardV2.tsx";
+import CandidateMatchResults from "../pages/employer/CandidateMatchResults.tsx";
 
 const AppRoutes = () => {
   return (
@@ -105,6 +110,30 @@ const AppRoutes = () => {
         element={
           <PrivateRoute allowedRoles={[UserType.EMPLOYER]}>
             <ManageApplicant />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/applicant/resume-builder"
+        element={
+          <PrivateRoute allowedRoles={[UserType.APPLICANT]}>
+            <ResumeBuilder />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/applicant/assessments"
+        element={
+          <PrivateRoute allowedRoles={[UserType.APPLICANT]}>
+            <ApplicantAssessmentPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/employer/assessments"
+        element={
+          <PrivateRoute allowedRoles={[UserType.EMPLOYER]}>
+            <EmployerAssessmentPage />
           </PrivateRoute>
         }
       />
@@ -232,6 +261,24 @@ const AppRoutes = () => {
         element={<SocialLoginSuccess />}
       />
       <Route path="/signup-option" element={<SignupOption />} />
+
+      <Route
+        path="/employer/dash"
+        element={
+          <PrivateRoute allowedRoles={[UserType.EMPLOYER]}>
+            <GigHubEmployerDashboard />
+          </PrivateRoute>
+        }
+      />
+    {/*  CandidateMatchResults*/}
+      <Route
+        path="/employer/candidate-match-results/:jobId"
+        element={
+          <PrivateRoute allowedRoles={[UserType.EMPLOYER]}>
+            <CandidateMatchResults />
+          </PrivateRoute>
+        }
+      />
     </Routes>
   );
 };

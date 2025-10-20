@@ -26,8 +26,8 @@ import {
 } from "../../utils/constants.ts";
 import {
   ApplicantData,
-  ApplicationResponse,
-  NetworkDetails,
+  ApplicationResponse, handleDownload,
+  NetworkDetails
 } from "../../utils/types";
 import {
   fetchMyJobsApplications,
@@ -946,7 +946,7 @@ const ManageApplicant: FC = () => {
             </div>
             <div className="mx-auto mt-[50px] flex w-[95%] flex-col lg:mt-4">
               <div className="flex flex-row flex-wrap gap-4 md:mb-[35px] md:justify-between lg:flex-col-reverse">
-                <div className="flex flex-wrap justify-between gap-3">
+                <div className="flex flex-wrap justify-between gap-3 mt-14">
                   <div className="flex min-w-[247px] flex-col">
                     <div className="relative text-2xl font-extrabold text-[#000000]">
                       {selectedApplication?.applicant?.firstName}{" "}
@@ -1001,48 +1001,48 @@ const ManageApplicant: FC = () => {
                     )}
                   </div>
                 </div>
-                <div className="mb-4 flex flex-wrap items-center gap-4 rounded-[10px] bg-[#F4F7FA] px-4 py-1 md:min-w-[364px] lg:self-end">
-                  <p className="font-extrabold text-[#000000]">Referrer</p>
-                  <div className="flex gap-2">
-                    <img
-                      src={Referrer1}
-                      alt="Referrer1"
-                      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"
-                    />
-                    <img
-                      src={Referrer2}
-                      alt="Referrer2"
-                      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"
-                    />
-                    <img
-                      src={Referrer2}
-                      alt="Referrer3"
-                      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"
-                    />
-                    <img
-                      src={Referrer3}
-                      alt="Referrer4"
-                      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"
-                    />
-                    <img
-                      src={Referrer1}
-                      alt="Referrer5"
-                      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"
-                    />
-                    <button
-                      onClick={() => setShowReferrerModal(true)}
-                      className="cursor-pointer font-extrabold text-[#6438C2] transition-colors hover:text-[#5429a8]"
-                    >
-                      +5
-                    </button>
-                    <button
-                      onClick={() => setShowReferrerModal(true)}
-                      className="hidden cursor-pointer font-extrabold text-[#6438C2] transition-colors hover:text-[#5429a8] md:block"
-                    >
-                      more
-                    </button>
-                  </div>
-                </div>
+                {/*<div className="mb-4 flex flex-wrap items-center gap-4 rounded-[10px] bg-[#F4F7FA] px-4 py-1 md:min-w-[364px] lg:self-end">*/}
+                {/*  <p className="font-extrabold text-[#000000]">Referrer</p>*/}
+                {/*  <div className="flex gap-2">*/}
+                {/*    <img*/}
+                {/*      src={Referrer1}*/}
+                {/*      alt="Referrer1"*/}
+                {/*      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"*/}
+                {/*    />*/}
+                {/*    <img*/}
+                {/*      src={Referrer2}*/}
+                {/*      alt="Referrer2"*/}
+                {/*      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"*/}
+                {/*    />*/}
+                {/*    <img*/}
+                {/*      src={Referrer2}*/}
+                {/*      alt="Referrer3"*/}
+                {/*      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"*/}
+                {/*    />*/}
+                {/*    <img*/}
+                {/*      src={Referrer3}*/}
+                {/*      alt="Referrer4"*/}
+                {/*      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"*/}
+                {/*    />*/}
+                {/*    <img*/}
+                {/*      src={Referrer1}*/}
+                {/*      alt="Referrer5"*/}
+                {/*      className="h-8 w-8 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-purple-300"*/}
+                {/*    />*/}
+                {/*    <button*/}
+                {/*      onClick={() => setShowReferrerModal(true)}*/}
+                {/*      className="cursor-pointer font-extrabold text-[#6438C2] transition-colors hover:text-[#5429a8]"*/}
+                {/*    >*/}
+                {/*      +5*/}
+                {/*    </button>*/}
+                {/*    <button*/}
+                {/*      onClick={() => setShowReferrerModal(true)}*/}
+                {/*      className="hidden cursor-pointer font-extrabold text-[#6438C2] transition-colors hover:text-[#5429a8] md:block"*/}
+                {/*    >*/}
+                {/*      more*/}
+                {/*    </button>*/}
+                {/*  </div>*/}
+                {/*</div>*/}
               </div>
               <hr className="border-[#E6E6E6]" />
               <div className="mt-4 flex flex-wrap gap-4 lg:flex-nowrap lg:justify-between">
@@ -1253,42 +1253,63 @@ const ManageApplicant: FC = () => {
                     <h2 className="text-[18px] font-medium text-[#000000]">
                       File Attachment
                     </h2>
-                    <div className="flex justify-between rounded-[10px] bg-white px-4 py-2">
-                      <div>
-                        <p className="text-[13px] font-medium text-[#8E8E8E]">
-                          AS-cv-updated
-                        </p>
-                        <p className="text-[13px] font-medium text-[#8E8E8E]">
-                          File Pdf - 9.3 MB
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <img src={Eye} alt="Eye Icon" className="h-6 w-6" />
-                        <img
-                          src={Download}
-                          alt="Download Icon"
-                          className="h-6 w-6"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex justify-between rounded-[10px] bg-white px-4 py-2">
-                      <div>
-                        <p className="text-[13px] font-medium text-[#8E8E8E]">
-                          AS-cv-updated
-                        </p>
-                        <p className="text-[13px] font-medium text-[#8E8E8E]">
-                          File Pdf - 9.3 MB
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <img src={Eye} alt="Eye Icon" className="h-6 w-6" />
-                        <img
-                          src={Download}
-                          alt="Download Icon"
-                          className="h-6 w-6"
-                        />
-                      </div>
-                    </div>
+                    {
+                      !selectedApplication?.cv?.cvLink && !selectedApplication?.cv?.coverLetterLink && (
+                        <p className="self-center rounded-sm p-5">No File Uploaded</p>
+                      )
+                    }
+                    {
+                      selectedApplication?.cv?.cvLink && (
+                        <div className="flex justify-between rounded-[10px] bg-white px-4 py-2">
+                          <div>
+                            <p className="text-[13px] font-medium text-[#8E8E8E]">
+                              Cv File
+                            </p>
+                            {/*<p className="text-[13px] font-medium text-[#8E8E8E]">*/}
+                            {/*  File Pdf - 9.3 MB*/}
+                            {/*</p>*/}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <img src={Eye} alt="Eye Icon" className="h-6 w-6" />
+                            <img
+                              onClick={() => handleDownload({
+                                fileUrl: selectedApplication?.cv?.cvLink || "#",
+                                fileName: (selectedApplication?.applicant?.firstName || "").concat("_").concat(selectedApplication?.applicant?.firstName || "").concat("_cv") || "applicant_cv"
+                              })}
+                              src={Download}
+                              alt="Download Icon"
+                              className="h-6 w-6"
+                            />
+                          </div>
+                        </div>)
+                    }
+
+                    {
+                      selectedApplication?.cv?.coverLetterLink && (
+                        <div className="flex justify-between rounded-[10px] bg-white px-4 py-2">
+                          <div>
+                            <p className="text-[13px] font-medium text-[#8E8E8E]">
+                              Cover Letter
+                            </p>
+                            {/*<p className="text-[13px] font-medium text-[#8E8E8E]">*/}
+                            {/*  File Pdf - 9.3 MB*/}
+                            {/*</p>*/}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <img src={Eye} alt="Eye Icon" className="h-6 w-6" />
+                            <img
+                              onClick={() => handleDownload({
+                                fileUrl: selectedApplication?.cv?.coverLetterLink || "#",
+                                fileName: (selectedApplication?.applicant?.firstName || "").concat("_").concat(selectedApplication?.applicant?.firstName || "").concat("_cv") || "applicant_cv"
+                              })}
+                              src={Download}
+                              alt="Download Icon"
+                              className="h-6 w-6"
+                            />
+                          </div>
+                        </div>)
+                    }
+
                   </div>
                 </div>
               </div>

@@ -7,6 +7,7 @@ import { useChatStore } from "./store/useChatStore.ts";
 import { useEffect } from "react";
 import { useAuth } from "./store/useAuth.ts";
 import NotificationSocketHandler from "./chat-module/handler/NotificationSocketHandler.tsx";
+import GigHubAIAssistant from "./components/features/GigHubAIAssistant.tsx";
 function App() {
   const { email } = useAuth();
   const { sender, recipient, messages, setUnreadCount } = useChatStore();
@@ -52,6 +53,7 @@ function App() {
       <ChatSocketHandler userId={sender || ""} recipientId={recipient || ""} />
       <NotificationSocketHandler userId={email || ""} />
       <ChatWindow />
+      <GigHubAIAssistant />
     </>
   );
 }

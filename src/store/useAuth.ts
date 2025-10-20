@@ -50,6 +50,8 @@ export const removeFromLocalStorage = async (nodeEnv: string) => {
     localStorage.removeItem("application-metrics");
     //subscription-store
     localStorage.removeItem("subscription-store");
+    //application-view-storage
+    localStorage.removeItem("application-view-storage");
   } else {
     secureLocalStorage.removeItem("auth-storage");
     secureLocalStorage.removeItem("chat-store");
@@ -72,6 +74,7 @@ export const removeFromLocalStorage = async (nodeEnv: string) => {
     secureLocalStorage.removeItem("application-metrics");
     //subscription-store
     secureLocalStorage.removeItem("subscription-store");
+    secureLocalStorage.removeItem("application-view-storage");
   }
 };
 

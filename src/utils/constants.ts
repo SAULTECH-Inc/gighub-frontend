@@ -185,6 +185,17 @@ export const NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY =
 export const NOTIFICATION_API_URL =
   import.meta.env.VITE_API_NOTIFICATION_SERVICE || "http://localhost:3009";
 
+
+export const SUPPORT_EMAIL = import.meta.env.VITE_APP_GIGHUB_SUPPORT_MAIL || "support@gighub.work"
+export const SUPPORT_PHONE_NUMBER = import.meta.env.VITE_APP_GIGHUB_PHONE_NUMBER || "+2347012345678"
+export const SUPPORT_WHATSAPP_NUMBER = import.meta.env.VITE_APP_GIGHUB_WHATSAPP_NUMBER || "+2347012345678"
+export const SUPPORT_ADDRESS = import.meta.env.VITE_APP_GIGHUB_ADDRESS || "No 12, Example Street, Lagos, Nigeria"
+export const GIGHUB_FACEBOOK_URL = import.meta.env.VITE_APP_GIGHUB_FACEBOOK_URL || "https://facebook.com/gighub"
+export const GIGHUB_TWITTER_URL = import.meta.env.VITE_APP_GIGHUB_TWITTER_URL || "https://twitter.com/gighub"
+export const GIGHUB_INSTAGRAM_URL = import.meta.env.VITE_APP_GIGHUB_INSTAGRAM_URL || "https://instagram.com/gighub"
+export const GIGHUB_LINKEDIN_URL = import.meta.env.VITE_APP_GIGHUB_LINKEDIN_URL || "https://linkedin.com/company/gighub"
+export const LEGAL_TEAM_EMAIL = import.meta.env.VITE_APP_GIGHUB_LEGAL_TEAM_EMAIL || "legal@gighub.work"
+
 export const SOCKET_URL =
   import.meta.env.VITE_API_CHAT_SERVER_URL || "http://localhost:3003";
 export const NODE_ENV = import.meta.env.NODE_ENV || "development";
@@ -192,7 +203,9 @@ export const applicantNavBarItemMap = new Map<string, string>([]);
 applicantNavBarItemMap.set("Dashboard", "/applicant/dashboard");
 applicantNavBarItemMap.set("Find Jobs", "/applicant/find-jobs");
 applicantNavBarItemMap.set("Companies", "/companies");
+applicantNavBarItemMap.set("Resume Builder", "/applicant/resume-builder");
 applicantNavBarItemMap.set("Applications", "/applicant/my-applications");
+applicantNavBarItemMap.set("Assessments", "/applicant/assessments");
 applicantNavBarItemMap.set("My Networks", "/applicant/network");
 applicantNavBarItemMap.set("My Schedules", "/applicant/my-schedules");
 applicantNavBarItemMap.set("Profile", "/applicant/profile");
@@ -207,6 +220,7 @@ employerNavBarItemMap.set("My Networks", "/employer/network");
 employerNavBarItemMap.set("Profile", "/employer/profile");
 employerNavBarItemMap.set("Settings", "/settings");
 employerNavBarItemMap.set("Manage Jobs", "/employer/manage-jobs");
+employerNavBarItemMap.set("Assessments", "/employer/assessments");
 employerNavBarItemMap.set("My Schedules", "/employer/my-schedules");
 employerNavBarItemMap.set("Help & Support", "/help-and-support");
 employerNavBarItemMap.set("Logout", "/logout");
@@ -215,7 +229,9 @@ export const applicantNavItems = [
   "Dashboard",
   "Find Jobs",
   "Companies",
+  "Resume Builder",
   "Applications",
+  "Assessments",
   "My Networks",
   "My Schedules",
 ];
@@ -223,7 +239,9 @@ export const applicantNavItemsMobile = [
   "Dashboard",
   "Find Jobs",
   "Companies",
+  "Resume Builder",
   "Applications",
+  "Assessments",
   "My Networks",
   "My Schedules",
   "Profile",
@@ -236,6 +254,7 @@ export const employerNavItems = [
   "Manage Applicants",
   "My Networks",
   "Manage Jobs",
+  "Assessments",
   "My Schedules",
 ];
 export const employerNavItemsMobile = [
@@ -243,6 +262,7 @@ export const employerNavItemsMobile = [
   "Manage Applicants",
   "My Networks",
   "Manage Jobs",
+  "Assessments",
   "My Schedules",
   "Profile",
   "Settings",

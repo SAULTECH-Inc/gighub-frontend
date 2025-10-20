@@ -472,12 +472,12 @@ const ChatWindow: React.FC = () => {
             <FaWindowMinimize
               onClick={() => setIsMinimized(!isMinimized)}
               onTouchStart={() => setIsMinimized(!isMinimized)}
-              className="mb-1 cursor-pointer rounded px-2 text-[30px] text-white hover:bg-white/20"
+              className="mb-1 cursor-pointer rounded px-2 text-[30px] text-white"
             />
             <button
               onClick={() => setIsClosed(true)}
               onTouchStart={() => setIsClosed(true)}
-              className="rounded px-2 py-1 text-[30px] text-white hover:bg-white/20"
+              className="rounded px-2 py-1 text-[30px] text-white cursor-pointer"
             >
               &times;
             </button>

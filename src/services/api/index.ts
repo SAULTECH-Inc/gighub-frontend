@@ -15,7 +15,7 @@ import {
   JobPostResponse,
   JobStatus,
   NetworkDetails, ProfileCompletionResponse,
-  RatingResponseDTO, ScreeningQuestion,
+  RatingResponseDTO, Review, ScreeningQuestion,
   SortBy,
   SubscriptionResponse,
   SubscriptionType,
@@ -125,7 +125,7 @@ export const searchUsers = async (
 };
 
 export const connectUser = async (
-  userId: string,
+  userId: number,
 ): Promise<APIResponse<any>> => {
   console.log(`Connecting to user with ID: ${userId}`);
   const response = await privateApiClient.get<APIResponse<any>>(
@@ -987,3 +987,25 @@ export const fetchScreeningQuestions = async(jobId: number)=>{
   );
   return response.data;
 }
+
+
+export const fetchUser = async(userId: number)=>{
+  const response = await privateApiClient.get<APIResponse<ApplicantData | EmployerData>>(
+    `${API_BASE_URL}/users/${userId}`,
+  );
+  return response?.data;
+}
+
+export const submitReview = async(param: {content: string, rating: number, userId: number})=>{
+  const response = await privateApiClient.post<APIResponse<Review>>(
+    `${API_BASE_URL}/feedbacks/add-review`, param
+  );
+  return response?.data?.data;
+}
+
+export const fetchUserReviews = async (userId: number): Promise<Review[]> => {
+  console.log("Fetching...");
+  const res= await privateApiClient.get<APIResponse<Review[]>>(`${API_BASE_URL}/feedbacks/reviews/user/${userId}`);
+  return res?.data?.data || [];
+};
+

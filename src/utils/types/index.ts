@@ -11,9 +11,10 @@ import {
   RateeType,
   ScreeningQuestionType,
   UserStatus,
-  UserType,
+  UserType
 } from "../enums.ts";
 import { UserChatStatus } from "../../chat-module/types";
+import moment from "moment";
 
 export type User = {
   id: string;
@@ -1158,4 +1159,32 @@ export interface ProfileCompletionResponse {
 
   /** Breakdown of each profile section */
   sections: ProfileSection[];
+}
+
+
+interface DownloadButtonProps {
+  fileUrl: string;
+  fileName?: string;
+}
+
+export const handleDownload = (param: DownloadButtonProps) => {
+  const link = document.createElement('a');
+  link.href = param.fileUrl;
+  link.download = param.fileName || 'download-'+moment().format('YYYY-MM-DD-HH-mm-ss');
+  link.target = '_blank';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+export interface Review {
+  authorName: string;
+  authorTitle: string;
+  authorImage?: string;
+  content: string;
+  rating: number;
+  time: Date;
+  likes: number;
+  replies: number;
+  liked: boolean;
 }

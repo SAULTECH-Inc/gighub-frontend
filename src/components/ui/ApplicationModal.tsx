@@ -252,6 +252,22 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
           />
         );
 
+      case ScreeningQuestionType.SHORT_TEXT:
+        return (
+          <input
+            value={answer.answerText || ""}
+            onChange={(e) =>
+              handleScreeningAnswer(index, {
+                ...answer,
+                questionId: index,
+                answerText: e.target.value,
+              })
+            }
+            placeholder="Enter your answer..."
+            className="w-full resize-none rounded-lg border-2 border-slate-200 p-3 focus:border-indigo-500 focus:outline-none"
+          />
+        );
+
       case ScreeningQuestionType.OPTIONS:
         return (
           <div className="relative">
