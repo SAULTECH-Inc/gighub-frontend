@@ -1,5 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { AlertCircle, Check, FileText, MapPin, Phone, Users, Video } from "lucide-react";
+import {
+  AlertCircle,
+  Check,
+  FileText,
+  MapPin,
+  Phone,
+  Users,
+  Video,
+} from "lucide-react";
 import { useScheduleInterview } from "../../../store/useScheduleInterview.ts";
 import CustomSelect from "../../../components/common/CustomSelect.tsx";
 import { InterviewScheduleDetails, Option } from "../../../utils/types";
@@ -17,18 +25,24 @@ interface ValidationErrors {
 }
 
 const InterviewStepTwo: React.FC = () => {
-  const { nextStep, prevStep, interviewDetails, setInterviewDetails } = useScheduleInterview();
+  const { nextStep, prevStep, interviewDetails, setInterviewDetails } =
+    useScheduleInterview();
 
-  const [selectedInterviewType, setSelectedInterviewType] = useState<Option | null>(
-    INTERVIEW_TYPES.find(type => type.value === interviewDetails?.interviewType) || null
-  );
+  const [selectedInterviewType, setSelectedInterviewType] =
+    useState<Option | null>(
+      INTERVIEW_TYPES.find(
+        (type) => type.value === interviewDetails?.interviewType,
+      ) || null,
+    );
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize selected type from store on mount
   useEffect(() => {
     if (interviewDetails?.interviewType && !selectedInterviewType) {
-      const foundType = INTERVIEW_TYPES.find(type => type.value === interviewDetails.interviewType);
+      const foundType = INTERVIEW_TYPES.find(
+        (type) => type.value === interviewDetails.interviewType,
+      );
       if (foundType) {
         setSelectedInterviewType(foundType);
       }
@@ -43,9 +57,13 @@ const InterviewStepTwo: React.FC = () => {
       newErrors.interviewType = "Please select an interview type.";
     }
 
-    if (selectedInterviewType?.value === "virtual-meeting" || selectedInterviewType?.value === "hybrid") {
+    if (
+      selectedInterviewType?.value === "virtual-meeting" ||
+      selectedInterviewType?.value === "hybrid"
+    ) {
       if (!interviewDetails?.interviewPlatform) {
-        newErrors.interviewPlatform = "Please select a platform for virtual meetings.";
+        newErrors.interviewPlatform =
+          "Please select a platform for virtual meetings.";
       }
       if (!interviewDetails?.interviewLink?.trim()) {
         newErrors.interviewLink = "Please provide a meeting link.";
@@ -54,11 +72,19 @@ const InterviewStepTwo: React.FC = () => {
       }
     }
 
-    if (["phone-call", "hybrid", "in-person"].includes(selectedInterviewType?.value || "")) {
+    if (
+      ["phone-call", "hybrid", "in-person"].includes(
+        selectedInterviewType?.value || "",
+      )
+    ) {
       if (!interviewDetails?.interviewerPhoneNumber1?.trim()) {
-        newErrors.interviewerPhoneNumber1 = "Please provide a contact phone number.";
-      } else if (!isValidPhoneNumber(interviewDetails.interviewerPhoneNumber1)) {
-        newErrors.interviewerPhoneNumber1 = "Please provide a valid phone number.";
+        newErrors.interviewerPhoneNumber1 =
+          "Please provide a contact phone number.";
+      } else if (
+        !isValidPhoneNumber(interviewDetails.interviewerPhoneNumber1)
+      ) {
+        newErrors.interviewerPhoneNumber1 =
+          "Please provide a valid phone number.";
       }
     }
 
@@ -90,45 +116,55 @@ const InterviewStepTwo: React.FC = () => {
   // Phone number validation helper
   const isValidPhoneNumber = (phone: string): boolean => {
     const phoneRegex = /^[+]?[1-9][\d]{0,15}$/;
-    return phoneRegex.test(phone.replace(/[\s\-()]/g, ''));
+    return phoneRegex.test(phone.replace(/[\s\-()]/g, ""));
   };
 
   // Enhanced interview type selection handler
-  const handleInterviewTypeSelection = useCallback((type: Option) => {
-    setSelectedInterviewType(type);
-    setInterviewDetails({
-      ...interviewDetails,
-      interviewType: type.value,
-      // Clear dependent fields when type changes
-      ...(type.value !== "virtual-meeting" && type.value !== "hybrid" && {
-        interviewPlatform: undefined,
-        interviewLink: undefined,
-      }),
-      ...(type.value !== "phone-call" && type.value !== "hybrid" && type.value !== "in-person" && {
-        interviewerPhoneNumber1: undefined,
-        interviewerPhoneNumber2: undefined,
-      }),
-      ...(type.value !== "in-person" && type.value !== "hybrid" && {
-        interviewAddress: undefined,
-        interviewCity: undefined,
-        interviewState: undefined,
-      }),
-    } as InterviewScheduleDetails);
+  const handleInterviewTypeSelection = useCallback(
+    (type: Option) => {
+      setSelectedInterviewType(type);
+      setInterviewDetails({
+        ...interviewDetails,
+        interviewType: type.value,
+        // Clear dependent fields when type changes
+        ...(type.value !== "virtual-meeting" &&
+          type.value !== "hybrid" && {
+            interviewPlatform: undefined,
+            interviewLink: undefined,
+          }),
+        ...(type.value !== "phone-call" &&
+          type.value !== "hybrid" &&
+          type.value !== "in-person" && {
+            interviewerPhoneNumber1: undefined,
+            interviewerPhoneNumber2: undefined,
+          }),
+        ...(type.value !== "in-person" &&
+          type.value !== "hybrid" && {
+            interviewAddress: undefined,
+            interviewCity: undefined,
+            interviewState: undefined,
+          }),
+      } as InterviewScheduleDetails);
 
-    // Clear type-related errors
-    setErrors(prev => ({ ...prev, interviewType: undefined }));
-  }, [interviewDetails, setInterviewDetails]);
+      // Clear type-related errors
+      setErrors((prev) => ({ ...prev, interviewType: undefined }));
+    },
+    [interviewDetails, setInterviewDetails],
+  );
 
   // Generic input change handler
-  const handleInputChange = useCallback((field: keyof InterviewScheduleDetails, value: string) => {
-    setInterviewDetails({
-      ...interviewDetails,
-      [field]: value,
-    } as InterviewScheduleDetails);
+  const handleInputChange = useCallback(
+    (field: keyof InterviewScheduleDetails, value: string) => {
+      setInterviewDetails({
+        ...interviewDetails,
+        [field]: value,
+      } as InterviewScheduleDetails);
 
-    // Clear field-specific error
-    setErrors(prev => ({ ...prev, [field]: undefined }));
-  }, [interviewDetails, setInterviewDetails]);
+      // Clear field-specific error
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    },
+    [interviewDetails, setInterviewDetails],
+  );
 
   // Enhanced next step handler with validation
   const handleNextStep = useCallback(async () => {
@@ -146,7 +182,7 @@ const InterviewStepTwo: React.FC = () => {
       setIsSubmitting(false);
       // Scroll to first error
       const firstErrorField = document.querySelector('[data-error="true"]');
-      firstErrorField?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      firstErrorField?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [validateForm, nextStep]);
 
@@ -159,11 +195,19 @@ const InterviewStepTwo: React.FC = () => {
     error?: string;
     type?: string;
     required?: boolean;
-  }> = ({ label, placeholder, value, onChange, error, type = "text", required = false }) => (
+  }> = ({
+    label,
+    placeholder,
+    value,
+    onChange,
+    error,
+    type = "text",
+    required = false,
+  }) => (
     <div className="flex-1 space-y-2">
       <label className="text-sm font-medium text-gray-700">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="ml-1 text-red-500">*</span>}
       </label>
       <input
         type={type}
@@ -171,7 +215,7 @@ const InterviewStepTwo: React.FC = () => {
         value={value || ""}
         onChange={(e) => onChange(e.target.value)}
         data-error={!!error}
-        className={`w-full rounded-[10px] border px-4 py-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+        className={`w-full rounded-[10px] border px-4 py-3 text-sm transition-colors focus:ring-2 focus:ring-offset-1 focus:outline-none ${
           error
             ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-200"
             : "border-[#E6E6E6] bg-white focus:border-[#6438C2] focus:ring-[#6438C2]/20"
@@ -187,13 +231,14 @@ const InterviewStepTwo: React.FC = () => {
   );
 
   // Get current type configuration
-  const currentTypeConfig = INTERVIEW_TYPES.find(type => type.value === selectedInterviewType?.value);
+  const currentTypeConfig = INTERVIEW_TYPES.find(
+    (type) => type.value === selectedInterviewType?.value,
+  );
 
   return (
     <div className="flex w-full flex-col items-center">
       <div className="flex min-h-[400px] w-[96%] max-w-[900px] flex-col items-center rounded-[10px] bg-white px-4 py-6">
         <div className="flex w-full flex-col gap-6 sm:w-[95%]">
-
           {/* Interview Type Selection */}
           <section className="space-y-4">
             <div>
@@ -232,8 +277,12 @@ const InterviewStepTwo: React.FC = () => {
                         <Icon className="h-5 w-5" />
                       </div>
                       <div className="flex-1">
-                        <h5 className="font-medium text-gray-900">{type.label}</h5>
-                        <p className="text-xs text-gray-500">{type.description}</p>
+                        <h5 className="font-medium text-gray-900">
+                          {type.label}
+                        </h5>
+                        <p className="text-xs text-gray-500">
+                          {type.description}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -242,7 +291,10 @@ const InterviewStepTwo: React.FC = () => {
             </div>
 
             {errors.interviewType && (
-              <div className="flex items-center gap-1 text-sm text-red-600" data-error="true">
+              <div
+                className="flex items-center gap-1 text-sm text-red-600"
+                data-error="true"
+              >
                 <AlertCircle className="h-4 w-4" />
                 <span>{errors.interviewType}</span>
               </div>
@@ -253,8 +305,10 @@ const InterviewStepTwo: React.FC = () => {
           {selectedInterviewType && (
             <section className="space-y-6">
               <div className="rounded-[10px] border border-gray-200 bg-gray-50 p-4">
-                <div className="flex items-center gap-2 mb-4">
-                  {currentTypeConfig && <currentTypeConfig.icon className="h-5 w-5 text-[#6438C2]" />}
+                <div className="mb-4 flex items-center gap-2">
+                  {currentTypeConfig && (
+                    <currentTypeConfig.icon className="h-5 w-5 text-[#6438C2]" />
+                  )}
                   <h5 className="font-medium text-gray-900">
                     {selectedInterviewType.label} Details
                   </h5>
@@ -262,9 +316,10 @@ const InterviewStepTwo: React.FC = () => {
 
                 <div className="space-y-4">
                   {/* Virtual Meeting Fields */}
-                  {(selectedInterviewType.value === "virtual-meeting" || selectedInterviewType.value === "hybrid") && (
+                  {(selectedInterviewType.value === "virtual-meeting" ||
+                    selectedInterviewType.value === "hybrid") && (
                     <div className="space-y-4">
-                      <h6 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                      <h6 className="flex items-center gap-2 text-sm font-medium text-gray-700">
                         <Video className="h-4 w-4" />
                         Virtual Meeting Setup
                       </h6>
@@ -277,12 +332,25 @@ const InterviewStepTwo: React.FC = () => {
                           <CustomSelect
                             options={PLATFORM_OPTIONS}
                             placeholder="Select Platform"
-                            value={(PLATFORM_OPTIONS.find(p => p?.value === interviewDetails?.interviewPlatform) || PLATFORM_OPTIONS[0])?.value}
+                            value={
+                              (
+                                PLATFORM_OPTIONS.find(
+                                  (p) =>
+                                    p?.value ===
+                                    interviewDetails?.interviewPlatform,
+                                ) || PLATFORM_OPTIONS[0]
+                              )?.value
+                            }
                             onChange={(option) => {
-                              handleInputChange("interviewPlatform", option.value);
+                              handleInputChange(
+                                "interviewPlatform",
+                                option.value,
+                              );
                             }}
                             className={`w-full rounded-[10px] border px-4 py-3 text-sm ${
-                              errors.interviewPlatform ? "border-red-300" : "border-[#E6E6E6]"
+                              errors.interviewPlatform
+                                ? "border-red-300"
+                                : "border-[#E6E6E6]"
                             }`}
                           />
                           {errors.interviewPlatform && (
@@ -297,7 +365,9 @@ const InterviewStepTwo: React.FC = () => {
                           label="Meeting Link"
                           placeholder="https://zoom.us/j/..."
                           value={interviewDetails?.interviewLink}
-                          onChange={(value) => handleInputChange("interviewLink", value)}
+                          onChange={(value) =>
+                            handleInputChange("interviewLink", value)
+                          }
                           error={errors.interviewLink}
                           required
                         />
@@ -306,9 +376,11 @@ const InterviewStepTwo: React.FC = () => {
                   )}
 
                   {/* Phone Call Fields */}
-                  {(["phone-call", "hybrid", "in-person"].includes(selectedInterviewType.value)) && (
+                  {["phone-call", "hybrid", "in-person"].includes(
+                    selectedInterviewType.value,
+                  ) && (
                     <div className="space-y-4">
-                      <h6 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                      <h6 className="flex items-center gap-2 text-sm font-medium text-gray-700">
                         <Phone className="h-4 w-4" />
                         Contact Information
                       </h6>
@@ -318,7 +390,9 @@ const InterviewStepTwo: React.FC = () => {
                           label="Primary Phone"
                           placeholder="+1 (555) 123-4567"
                           value={interviewDetails?.interviewerPhoneNumber1}
-                          onChange={(value) => handleInputChange("interviewerPhoneNumber1", value)}
+                          onChange={(value) =>
+                            handleInputChange("interviewerPhoneNumber1", value)
+                          }
                           error={errors.interviewerPhoneNumber1}
                           type="tel"
                           required
@@ -328,7 +402,9 @@ const InterviewStepTwo: React.FC = () => {
                           label="Alternative Phone"
                           placeholder="+1 (555) 987-6543"
                           value={interviewDetails?.interviewerPhoneNumber2}
-                          onChange={(value) => handleInputChange("interviewerPhoneNumber2", value)}
+                          onChange={(value) =>
+                            handleInputChange("interviewerPhoneNumber2", value)
+                          }
                           type="tel"
                         />
                       </div>
@@ -336,9 +412,11 @@ const InterviewStepTwo: React.FC = () => {
                   )}
 
                   {/* Location Fields */}
-                  {(["in-person", "hybrid"].includes(selectedInterviewType.value)) && (
+                  {["in-person", "hybrid"].includes(
+                    selectedInterviewType.value,
+                  ) && (
                     <div className="space-y-4">
-                      <h6 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                      <h6 className="flex items-center gap-2 text-sm font-medium text-gray-700">
                         <MapPin className="h-4 w-4" />
                         Meeting Location
                       </h6>
@@ -348,7 +426,9 @@ const InterviewStepTwo: React.FC = () => {
                           label="Address"
                           placeholder="123 Business Ave, Suite 456"
                           value={interviewDetails?.interviewAddress}
-                          onChange={(value) => handleInputChange("interviewAddress", value)}
+                          onChange={(value) =>
+                            handleInputChange("interviewAddress", value)
+                          }
                           error={errors.interviewAddress}
                           required
                         />
@@ -358,7 +438,9 @@ const InterviewStepTwo: React.FC = () => {
                             label="City"
                             placeholder="New York"
                             value={interviewDetails?.interviewCity}
-                            onChange={(value) => handleInputChange("interviewCity", value)}
+                            onChange={(value) =>
+                              handleInputChange("interviewCity", value)
+                            }
                             error={errors.interviewCity}
                             required
                           />
@@ -367,7 +449,9 @@ const InterviewStepTwo: React.FC = () => {
                             label="State/Region"
                             placeholder="NY"
                             value={interviewDetails?.interviewState}
-                            onChange={(value) => handleInputChange("interviewState", value)}
+                            onChange={(value) =>
+                              handleInputChange("interviewState", value)
+                            }
                             error={errors.interviewState}
                             required
                           />
@@ -378,26 +462,32 @@ const InterviewStepTwo: React.FC = () => {
 
                   {/* Assessment Type Info */}
                   {selectedInterviewType.value === "assessment" && (
-                    <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
+                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
                       <div className="flex items-center gap-2 text-blue-700">
                         <FileText className="h-4 w-4" />
-                        <span className="text-sm font-medium">Assessment Interview</span>
+                        <span className="text-sm font-medium">
+                          Assessment Interview
+                        </span>
                       </div>
                       <p className="mt-2 text-sm text-blue-600">
-                        This interview will focus on evaluating the candidate's skills through practical assessments and tasks.
+                        This interview will focus on evaluating the candidate's
+                        skills through practical assessments and tasks.
                       </p>
                     </div>
                   )}
 
                   {/* Group Interview Info */}
                   {selectedInterviewType.value === "group-interview" && (
-                    <div className="rounded-lg bg-pink-50 border border-pink-200 p-4">
+                    <div className="rounded-lg border border-pink-200 bg-pink-50 p-4">
                       <div className="flex items-center gap-2 text-pink-700">
                         <Users className="h-4 w-4" />
-                        <span className="text-sm font-medium">Group Interview</span>
+                        <span className="text-sm font-medium">
+                          Group Interview
+                        </span>
                       </div>
                       <p className="mt-2 text-sm text-pink-600">
-                        Multiple candidates will be interviewed together in this session.
+                        Multiple candidates will be interviewed together in this
+                        session.
                       </p>
                     </div>
                   )}
@@ -412,7 +502,7 @@ const InterviewStepTwo: React.FC = () => {
       <div className="mx-2 my-4 flex w-[96%] max-w-[900px] justify-end gap-4">
         <button
           onClick={prevStep}
-          className="rounded-[15px] border border-[#E6E6E6] bg-[#F7F7F7] px-6 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
+          className="rounded-[15px] border border-[#E6E6E6] bg-[#F7F7F7] px-6 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 focus:ring-2 focus:ring-gray-200 focus:outline-none"
         >
           Back
         </button>
@@ -420,7 +510,7 @@ const InterviewStepTwo: React.FC = () => {
         <button
           onClick={handleNextStep}
           disabled={!selectedInterviewType || isSubmitting}
-          className="rounded-[15px] bg-[#6438C2] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5329a8] focus:outline-none focus:ring-2 focus:ring-[#6438C2] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-[15px] bg-[#6438C2] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5329a8] focus:ring-2 focus:ring-[#6438C2] focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? "Validating..." : "Continue"}
         </button>

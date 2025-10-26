@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useJobFormStore } from "../../../../store/useJobFormStore";
+import React, { useState, useEffect } from "react";
+import { JobAiSettings, useJobFormStore } from "../../../../store/useJobFormStore";
 import { Crown } from "../../../../assets/images";
 import { useSubscriptionStore } from "../../../../store/useSubscriptionStore";
 import CustomCheckbox from "../../../common/CustomCheckbox";
@@ -17,43 +17,52 @@ import {
   RiQuestionLine,
   RiAddLine,
   RiDeleteBin6Line,
-  RiEyeLine
+  RiEyeLine,
 } from "react-icons/ri";
+import { Option } from "../../../../utils/types";
+
+const DEFAULT_AI_SETTINGS = {
+  minimumMatchPercentage: 60,
+  enableAiScreening: false,
+  autoRejectThreshold: 30,
+  autoAcceptApplications: false,
+  strictSkillMatching: false,
+  criticalSkills: [],
+  minimumExperienceStrict: undefined,
+  requiredEducationLevels: [],
+  matchPriority: ["skills", "experience"],
+  autoRejectSettings: {
+    enableAutoReject: false,
+    rejectReasons: [],
+    sendRejectionEmail: true,
+    customRejectionMessage: "",
+  },
+  resumeAnalysis: {
+    checkEmploymentGaps: false,
+    analyzeCareerProgression: false,
+  },
+};
 
 const CreateJobStepFive: React.FC = () => {
   const skills = useSkills();
   const { isSubscribed } = useSubscriptionStore();
   const { prevStep, job, setJobData, postJob, resetFormData } = useJobFormStore();
+
+  // Use LOCAL state for immediate updates
+  const [aiSettings, setAiSettings] = useState<any>(job.aiSettings || DEFAULT_AI_SETTINGS);
+  const [screeningQuestions, setScreeningQuestions] = useState(job.screeningQuestions || []);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPreview, setShowPreview] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Initialize AI settings if they don't exist
-  const aiSettings = job.aiSettings || {
-    minimumMatchPercentage: 60,
-    enableAiScreening: false,
-    autoRejectThreshold: 30,
-    autoAcceptApplications: false,
-    strictSkillMatching: false,
-    criticalSkills: [],
-    minimumExperienceStrict: undefined,
-    requiredEducationLevels: [],
-    matchPriority: ["skills", "experience"],
-    autoRejectSettings: {
-      enableAutoReject: false,
-      rejectReasons: [],
-      sendRejectionEmail: true,
-      customRejectionMessage: ""
-    },
-    resumeAnalysis: {
-      checkEmploymentGaps: false,
-      analyzeCareerProgression: false
-    }
-  };
+  // Sync local state to store whenever it changes
+  useEffect(() => {
+    setJobData({ aiSettings });
+  }, [aiSettings]);
 
-  // Screening questions state
-  const [screeningQuestions, setScreeningQuestions] = useState(
-    job.screeningQuestions || []
-  );
+  useEffect(() => {
+    setJobData({ screeningQuestions });
+  }, [screeningQuestions]);
 
   const validateFields = () => {
     const newErrors: { [key: string]: string } = {};
@@ -66,13 +75,14 @@ const CreateJobStepFive: React.FC = () => {
       newErrors.criticalSkills = "Please select critical skills for strict matching";
     }
 
-    // Validate screening questions
     screeningQuestions.forEach((question, index) => {
       if (!question.question.trim()) {
         newErrors[`question_${index}`] = "Question text is required";
       }
-      if (question.type === "options" && question.options && question.options.length < 2) {
-        newErrors[`options_${index}`] = "At least 2 options are required for multiple choice questions";
+
+      const validOptions = question.options?.filter(opt => opt.trim()) || [];
+      if ((question.type === "options" || question.type === "dropdown") && validOptions.length < 2) {
+        newErrors[`options_${index}`] = "At least 2 valid options are required";
       }
     });
 
@@ -81,8 +91,7 @@ const CreateJobStepFive: React.FC = () => {
   };
 
   const handleAiSettingsChange = (updates: any) => {
-    const updatedSettings = { ...aiSettings, ...updates };
-    setJobData({ aiSettings: updatedSettings });
+    setAiSettings((prev: JobAiSettings) => ({ ...prev, ...updates }));
   };
 
   const addScreeningQuestion = () => {
@@ -91,71 +100,73 @@ const CreateJobStepFive: React.FC = () => {
       question: "",
       type: "short_text" as const,
       required: true,
-      options: []
+      options: [],
     };
-    const updated = [...screeningQuestions, newQuestion];
-    setScreeningQuestions(updated);
-    setJobData({ screeningQuestions: updated });
+    setScreeningQuestions(prev => [...prev, newQuestion]);
   };
 
   const updateScreeningQuestion = (index: number, updates: any) => {
-    const updated = screeningQuestions.map((q, i) =>
-      i === index ? { ...q, ...updates } : q
+    setScreeningQuestions(prev =>
+      prev.map((q, i) => i === index ? { ...q, ...updates } : q)
     );
-    setScreeningQuestions(updated);
-    setJobData({ screeningQuestions: updated });
   };
 
   const removeScreeningQuestion = (index: number) => {
-    const updated = screeningQuestions.filter((_, i) => i !== index);
-    setScreeningQuestions(updated);
-    setJobData({ screeningQuestions: updated });
+    setScreeningQuestions(prev => prev.filter((_, i) => i !== index));
   };
 
   const submitJob = async () => {
-    if (validateFields()) {
-      try {
-        const response = await postJob({
-          ...job,
-          aiSettings,
-          screeningQuestions
-        });
-        if (response.statusCode === 201) {
-          console.log("Job created successfully:", response.data);
-          resetFormData();
-        }
-      } catch (error) {
-        console.error("Error creating job:", error);
+    if (!validateFields()) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await postJob({
+        ...job,
+        aiSettings,
+        screeningQuestions,
+      });
+      if (response.statusCode === 201) {
+        console.log("Job created successfully:", response.data);
+        resetFormData();
       }
+    } catch (error) {
+      console.error("Error creating job:", error);
+      setErrors({ submit: "Failed to create job. Please try again." });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="flex w-full flex-col items-center p-6">
-      {/* Main Card */}
-      <div className="w-full max-w-[880px] bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        {/* Card Header */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">AI Screening & Questions</h2>
-          <p className="text-sm text-gray-600">Configure intelligent candidate screening and custom questions</p>
+      <div className="w-full max-w-[880px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div className="border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4">
+          <h2 className="mb-2 text-lg font-semibold text-gray-900">
+            AI Screening & Questions
+          </h2>
+          <p className="text-sm text-gray-600">
+            Configure intelligent candidate screening and custom questions
+          </p>
         </div>
 
-        {/* Content Area */}
-        <div className="p-6 space-y-8 max-h-[70vh] overflow-y-auto">
-          {/* Premium AI Features */}
+        <div className="max-h-[70vh] space-y-8 overflow-y-auto p-6">
           {!isSubscribed && (
-            <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-200">
+            <div className="rounded-xl border border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50 p-6">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl flex items-center justify-center">
-                    <RiRobotLine className="w-6 h-6 text-white" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-purple-600 to-blue-600">
+                    <RiRobotLine className="h-6 w-6 text-white" />
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">AI-Powered Candidate Screening</h3>
-                  <p className="text-gray-600 mb-4">Let our AI analyze resumes, match candidates, and automate initial screening to save you hours of manual review.</p>
-                  <button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2">
-                    <img src={Crown} alt="premium crown" className="w-4 h-4" />
+                  <h3 className="mb-2 text-lg font-semibold text-gray-900">
+                    AI-Powered Candidate Screening
+                  </h3>
+                  <p className="mb-4 text-gray-600">
+                    Let our AI analyze resumes, match candidates, and automate initial screening to save you hours of manual review.
+                  </p>
+                  <button className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-2 font-medium text-white transition-all duration-200 hover:from-purple-700 hover:to-blue-700">
+                    <img src={Crown} alt="premium crown" className="h-4 w-4" />
                     Upgrade to Premium
                   </button>
                 </div>
@@ -163,7 +174,6 @@ const CreateJobStepFive: React.FC = () => {
             </div>
           )}
 
-          {/* AI Screening Settings */}
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -171,24 +181,25 @@ const CreateJobStepFive: React.FC = () => {
                 <h3 className="text-base font-medium text-gray-900">AI Screening Settings</h3>
               </div>
               {!isSubscribed && (
-                <div className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-medium">
-                  <img src={Crown} alt="premium crown" className="w-3 h-3" />
+                <div className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 px-3 py-1.5 text-xs font-medium text-white">
+                  <img src={Crown} alt="premium crown" className="h-3 w-3" />
                   <span>Premium</span>
                 </div>
               )}
             </div>
 
-            {/* Enable AI Screening */}
-            <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+            <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <h4 className="text-sm font-medium text-gray-900 mb-1">Enable AI Screening</h4>
-                    <p className="text-xs text-gray-600">Use AI to automatically analyze and score candidate applications</p>
+                    <h4 className="mb-1 text-sm font-medium text-gray-900">Enable AI Screening</h4>
+                    <p className="text-xs text-gray-600">
+                      Use AI to automatically analyze and score candidate applications
+                    </p>
                   </div>
                   <CustomCheckbox
                     checked={aiSettings.enableAiScreening}
-                    disabled={false}
+                    disabled={!isSubscribed}
                     onChange={(e) => handleAiSettingsChange({ enableAiScreening: e.target.checked })}
                     size={20}
                     checkColor="#6438C2"
@@ -197,8 +208,7 @@ const CreateJobStepFive: React.FC = () => {
                 </div>
 
                 {aiSettings.enableAiScreening && (
-                  <div className="space-y-6 pt-4 border-t border-gray-200">
-                    {/* Minimum Match Percentage */}
+                  <div className="space-y-6 border-t border-gray-200 pt-4">
                     <div className="space-y-3">
                       <label className="flex items-center gap-2 text-sm font-medium text-gray-900">
                         <RiTentLine className="h-4 w-4 text-gray-500" />
@@ -210,24 +220,32 @@ const CreateJobStepFive: React.FC = () => {
                           min="1"
                           max="100"
                           value={aiSettings.minimumMatchPercentage}
-                          onChange={(e) => handleAiSettingsChange({ minimumMatchPercentage: parseInt(e.target.value) })}
-                          className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                          onChange={(e) => {
+                            handleAiSettingsChange({ minimumMatchPercentage: parseInt(e.target.value) });
+                          }}
+                          className="h-2 flex-1 cursor-pointer rounded-lg"
+                          style={{
+                            background: `linear-gradient(to right, #6438C2 0%, #6438C2 ${aiSettings.minimumMatchPercentage}%, #e5e7eb ${aiSettings.minimumMatchPercentage}%, #e5e7eb 100%)`
+                          }}
                         />
-                        <span className="text-sm font-medium text-gray-700 min-w-[3rem]">
+                        <span className="min-w-[3rem] rounded bg-purple-100 px-2 py-1 text-sm font-bold text-purple-700">
                           {aiSettings.minimumMatchPercentage}%
                         </span>
                       </div>
-                      <p className="text-xs text-gray-600">Only show candidates with at least this match percentage</p>
+                      <p className="text-xs text-gray-600">
+                        Only show candidates with at least this match percentage
+                      </p>
                     </div>
 
-                    {/* Auto Accept Applications */}
-                    <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-4">
                       <div className="flex-1">
-                        <h4 className="text-sm font-medium text-gray-900 mb-1 flex items-center gap-2">
+                        <h4 className="mb-1 flex items-center gap-2 text-sm font-medium text-gray-900">
                           <RiCheckLine className="h-4 w-4 text-green-600" />
                           Auto-Accept High Matches
                         </h4>
-                        <p className="text-xs text-gray-600">Automatically move candidates with 90%+ match to interview stage</p>
+                        <p className="text-xs text-gray-600">
+                          Automatically move candidates with 90%+ match to interview stage
+                        </p>
                       </div>
                       <CustomCheckbox
                         checked={aiSettings.autoAcceptApplications}
@@ -238,15 +256,16 @@ const CreateJobStepFive: React.FC = () => {
                       />
                     </div>
 
-                    {/* Strict Skill Matching */}
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-orange-50 rounded-lg border border-orange-200">
+                      <div className="flex items-center justify-between rounded-lg border border-orange-200 bg-orange-50 p-4">
                         <div className="flex-1">
-                          <h4 className="text-sm font-medium text-gray-900 mb-1 flex items-center gap-2">
+                          <h4 className="mb-1 flex items-center gap-2 text-sm font-medium text-gray-900">
                             <RiShieldCheckLine className="h-4 w-4 text-orange-600" />
                             Strict Skill Matching
                           </h4>
-                          <p className="text-xs text-gray-600">Require candidates to have ALL critical skills</p>
+                          <p className="text-xs text-gray-600">
+                            Require candidates to have ALL critical skills
+                          </p>
                         </div>
                         <CustomCheckbox
                           checked={aiSettings.strictSkillMatching}
@@ -259,19 +278,23 @@ const CreateJobStepFive: React.FC = () => {
 
                       {aiSettings.strictSkillMatching && (
                         <div className="space-y-3">
-                          <label className="text-sm font-medium text-gray-700">Critical Skills (Required)</label>
+                          <label className="text-sm font-medium text-gray-700">
+                            Critical Skills (Required)
+                          </label>
                           <MultiSelect
                             placeholder="Select critical skills that candidates MUST have"
                             options={skills}
                             label={"Strict Skill Matching"}
-                            selectedItems={aiSettings.criticalSkills.map(skill => ({ label: skill, value: skill }))}
+                            selectedItems={aiSettings.criticalSkills.map(
+                              (skill: Option) => ({ label: skill, value: skill })
+                            )}
                             setSelectedItems={(items) =>
-                              handleAiSettingsChange({ criticalSkills: items.map(item => item.value) })
+                              handleAiSettingsChange({ criticalSkills: items.map((item) => item.value) })
                             }
                           />
                           {errors.criticalSkills && (
-                            <div className="flex items-center gap-2 text-red-600 bg-red-50 p-2 rounded-lg">
-                              <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+                            <div className="flex items-center gap-2 rounded-lg bg-red-50 p-2 text-red-600">
+                              <div className="h-2 w-2 rounded-full bg-red-600"></div>
                               <span className="text-xs font-medium">{errors.criticalSkills}</span>
                             </div>
                           )}
@@ -279,58 +302,70 @@ const CreateJobStepFive: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Auto Reject Settings */}
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-200">
+                      <div className="flex items-center justify-between rounded-lg border border-red-200 bg-red-50 p-4">
                         <div className="flex-1">
-                          <h4 className="text-sm font-medium text-gray-900 mb-1 flex items-center gap-2">
+                          <h4 className="mb-1 flex items-center gap-2 text-sm font-medium text-gray-900">
                             <RiTriangleLine className="h-4 w-4 text-red-600" />
                             Auto-Reject Low Matches
                           </h4>
-                          <p className="text-xs text-gray-600">Automatically reject candidates below threshold</p>
+                          <p className="text-xs text-gray-600">
+                            Automatically reject candidates below threshold
+                          </p>
                         </div>
                         <CustomCheckbox
-                          checked={aiSettings.autoRejectSettings.enableAutoReject}
-                          onChange={(e) => handleAiSettingsChange({
-                            autoRejectSettings: {
-                              ...aiSettings.autoRejectSettings,
-                              enableAutoReject: e.target.checked
-                            }
-                          })}
+                          checked={aiSettings.autoRejectSettings?.enableAutoReject || false}
+                          onChange={(e) =>
+                            handleAiSettingsChange({
+                              autoRejectSettings: {
+                                ...(aiSettings.autoRejectSettings || {}),
+                                enableAutoReject: e.target.checked,
+                              },
+                            })
+                          }
                           size={18}
                           checkColor="#DC2626"
                           label=""
                         />
                       </div>
 
-                      {aiSettings.autoRejectSettings.enableAutoReject && (
-                        <div className="space-y-4 pl-4 border-l-2 border-red-200">
+                      {aiSettings.autoRejectSettings?.enableAutoReject && (
+                        <div className="space-y-4 border-l-2 border-red-200 pl-4">
                           <div className="space-y-3">
-                            <label className="text-sm font-medium text-gray-700">Auto-Reject Threshold</label>
+                            <label className="text-sm font-medium text-gray-700">
+                              Auto-Reject Threshold
+                            </label>
                             <div className="flex items-center gap-4">
                               <input
                                 type="range"
                                 min="1"
                                 max="50"
-                                value={aiSettings.autoRejectThreshold || 30}
-                                onChange={(e) => handleAiSettingsChange({ autoRejectThreshold: parseInt(e.target.value) })}
-                                className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                value={aiSettings.autoRejectThreshold}
+                                onChange={(e) => {
+                                  handleAiSettingsChange({ autoRejectThreshold: parseInt(e.target.value) });
+                                }}
+                                className="h-2 flex-1 cursor-pointer rounded-lg"
+                                style={{
+                                  background: `linear-gradient(to right, #DC2626 0%, #DC2626 ${aiSettings.autoRejectThreshold * 2}%, #e5e7eb ${aiSettings.autoRejectThreshold * 2}%, #e5e7eb 100%)`
+                                }}
                               />
-                              <span className="text-sm font-medium text-gray-700 min-w-[3rem]">
-                                {aiSettings.autoRejectThreshold || 30}%
+                              <span className="min-w-[3rem] rounded bg-red-100 px-2 py-1 text-sm font-bold text-red-700">
+                                {aiSettings.autoRejectThreshold}%
                               </span>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-4">
                             <CustomCheckbox
-                              checked={aiSettings.autoRejectSettings.sendRejectionEmail}
-                              onChange={(e) => handleAiSettingsChange({
-                                autoRejectSettings: {
-                                  ...aiSettings.autoRejectSettings,
-                                  sendRejectionEmail: e.target.checked
-                                }
-                              })}
+                              checked={aiSettings.autoRejectSettings?.sendRejectionEmail ?? true}
+                              onChange={(e) =>
+                                handleAiSettingsChange({
+                                  autoRejectSettings: {
+                                    ...(aiSettings.autoRejectSettings || {}),
+                                    sendRejectionEmail: e.target.checked,
+                                  },
+                                })
+                              }
                               size={16}
                               checkColor="#DC2626"
                               label="Send rejection email to candidates"
@@ -340,36 +375,39 @@ const CreateJobStepFive: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Resume Analysis */}
                     <div className="space-y-4">
-                      <h4 className="text-sm font-medium text-gray-900 flex items-center gap-2">
+                      <h4 className="flex items-center gap-2 text-sm font-medium text-gray-900">
                         <RiBrainLine className="h-4 w-4 text-gray-500" />
                         Resume Analysis Features
                       </h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
                           <CustomCheckbox
-                            checked={aiSettings.resumeAnalysis.checkEmploymentGaps}
-                            onChange={(e) => handleAiSettingsChange({
-                              resumeAnalysis: {
-                                ...aiSettings.resumeAnalysis,
-                                checkEmploymentGaps: e.target.checked
-                              }
-                            })}
+                            checked={aiSettings.resumeAnalysis?.checkEmploymentGaps || false}
+                            onChange={(e) =>
+                              handleAiSettingsChange({
+                                resumeAnalysis: {
+                                  ...(aiSettings.resumeAnalysis || {}),
+                                  checkEmploymentGaps: e.target.checked,
+                                },
+                              })
+                            }
                             size={16}
                             checkColor="#6438C2"
                             label="Check employment gaps"
                           />
                         </div>
-                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
                           <CustomCheckbox
-                            checked={aiSettings.resumeAnalysis.analyzeCareerProgression}
-                            onChange={(e) => handleAiSettingsChange({
-                              resumeAnalysis: {
-                                ...aiSettings.resumeAnalysis,
-                                analyzeCareerProgression: e.target.checked
-                              }
-                            })}
+                            checked={aiSettings.resumeAnalysis?.analyzeCareerProgression || false}
+                            onChange={(e) =>
+                              handleAiSettingsChange({
+                                resumeAnalysis: {
+                                  ...(aiSettings.resumeAnalysis || {}),
+                                  analyzeCareerProgression: e.target.checked,
+                                },
+                              })
+                            }
                             size={16}
                             checkColor="#6438C2"
                             label="Analyze career progression"
@@ -383,7 +421,6 @@ const CreateJobStepFive: React.FC = () => {
             </div>
           </div>
 
-          {/* Screening Questions */}
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -392,7 +429,7 @@ const CreateJobStepFive: React.FC = () => {
               </div>
               <button
                 onClick={addScreeningQuestion}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-blue-700"
               >
                 <RiAddLine className="h-4 w-4" />
                 Add Question
@@ -401,48 +438,47 @@ const CreateJobStepFive: React.FC = () => {
 
             <div className="space-y-4">
               {screeningQuestions.map((question, index) => (
-                <div key={question.id} className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                <div key={question.id} className="rounded-xl border border-gray-200 bg-gray-50 p-6">
                   <div className="space-y-4">
-                    {/* Question Header */}
                     <div className="flex items-center justify-between">
                       <h4 className="text-sm font-medium text-gray-900">Question {index + 1}</h4>
                       <button
                         onClick={() => removeScreeningQuestion(index)}
-                        className="text-red-600 hover:text-red-700 p-1"
+                        className="p-1 text-red-600 hover:text-red-700"
                       >
                         <RiDeleteBin6Line className="h-4 w-4" />
                       </button>
                     </div>
 
-                    {/* Question Text */}
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-gray-700">Question Text</label>
                       <textarea
                         value={question.question}
                         onChange={(e) => updateScreeningQuestion(index, { question: e.target.value })}
                         placeholder="Enter your screening question..."
-                        className="w-full h-20 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none resize-none text-sm"
+                        className="h-20 w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
                       />
                       {errors[`question_${index}`] && (
-                        <div className="flex items-center gap-2 text-red-600 text-xs">
-                          <div className="w-1.5 h-1.5 bg-red-600 rounded-full"></div>
+                        <div className="flex items-center gap-2 text-xs text-red-600">
+                          <div className="h-1.5 w-1.5 rounded-full bg-red-600"></div>
                           <span>{errors[`question_${index}`]}</span>
                         </div>
                       )}
                     </div>
 
-                    {/* Question Type and Settings */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                       <div className="space-y-2">
                         <label className="text-sm font-medium text-gray-700">Answer Type</label>
                         <select
                           value={question.type}
-                          onChange={(e) => updateScreeningQuestion(index, {
-                            type: e.target.value,
-                            options: e.target.value === "options" || e.target.value === "dropdown" ? ["", ""] : [],
-                            expectedAnswer: ""
-                          })}
-                          className="w-full h-10 px-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                          onChange={(e) =>
+                            updateScreeningQuestion(index, {
+                              type: e.target.value,
+                              options: e.target.value === "options" || e.target.value === "dropdown" ? ["", ""] : [],
+                              expectedAnswer: "",
+                            })
+                          }
+                          className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm focus:border-blue-500 focus:outline-none"
                         >
                           <option value="short_text">Short Text</option>
                           <option value="long_text">Long Text</option>
@@ -460,7 +496,7 @@ const CreateJobStepFive: React.FC = () => {
                           max="10"
                           value={question.aiWeight || 5}
                           onChange={(e) => updateScreeningQuestion(index, { aiWeight: parseInt(e.target.value) || 5 })}
-                          className="w-full h-10 px-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                          className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm focus:border-blue-500 focus:outline-none"
                           placeholder="5"
                         />
                       </div>
@@ -476,9 +512,8 @@ const CreateJobStepFive: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Expected Answer Section */}
-                    <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                      <h5 className="text-sm font-medium text-blue-900 mb-3 flex items-center gap-2">
+                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                      <h5 className="mb-3 flex items-center gap-2 text-sm font-medium text-blue-900">
                         <RiBrainLine className="h-4 w-4" />
                         AI Scoring Configuration
                       </h5>
@@ -509,35 +544,41 @@ const CreateJobStepFive: React.FC = () => {
                         </div>
                       )}
 
-                      {(question.type === "options" || question.type === "dropdown") && question.options && question.options.length > 0 && (
-                        <div className="space-y-3">
-                          <label className="text-sm font-medium text-gray-700">Expected Answer(s)</label>
-                          <div className="space-y-2">
-                            {question.options.map((option, optionIndex) => (
-                              option.trim() && (
-                                <div key={optionIndex} className="flex items-center gap-2">
-                                  <CustomCheckbox
-                                    checked={Array.isArray(question.expectedAnswer)
-                                      ? question.expectedAnswer.includes(option)
-                                      : question.expectedAnswer === option
-                                    }
-                                    onChange={(e) => {
-                                      const current = Array.isArray(question.expectedAnswer) ? question.expectedAnswer : [];
-                                      const updated = e.target.checked
-                                        ? [...current, option]
-                                        : current.filter(a => a !== option);
-                                      updateScreeningQuestion(index, { expectedAnswer: updated });
-                                    }}
-                                    size={16}
-                                    checkColor="#6438C2"
-                                    label={option}
-                                  />
-                                </div>
-                              )
-                            ))}
+                      {(question.type === "options" || question.type === "dropdown") &&
+                        question.options &&
+                        question.options.length > 0 && (
+                          <div className="space-y-3">
+                            <label className="text-sm font-medium text-gray-700">Expected Answer(s)</label>
+                            <div className="space-y-2">
+                              {question.options.map(
+                                (option, optionIndex) =>
+                                  option.trim() && (
+                                    <div key={optionIndex} className="flex items-center gap-2">
+                                      <CustomCheckbox
+                                        checked={
+                                          Array.isArray(question.expectedAnswer)
+                                            ? question.expectedAnswer.includes(option)
+                                            : question.expectedAnswer === option
+                                        }
+                                        onChange={(e) => {
+                                          const current = Array.isArray(question.expectedAnswer)
+                                            ? question.expectedAnswer
+                                            : [];
+                                          const updated = e.target.checked
+                                            ? [...current, option]
+                                            : current.filter((a) => a !== option);
+                                          updateScreeningQuestion(index, { expectedAnswer: updated });
+                                        }}
+                                        size={16}
+                                        checkColor="#6438C2"
+                                        label={option}
+                                      />
+                                    </div>
+                                  )
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
                       {(question.type === "short_text" || question.type === "long_text") && (
                         <div className="space-y-3">
@@ -548,7 +589,7 @@ const CreateJobStepFive: React.FC = () => {
                               value={typeof question.expectedAnswer === "string" ? question.expectedAnswer : ""}
                               onChange={(e) => updateScreeningQuestion(index, { expectedAnswer: e.target.value })}
                               placeholder="e.g. React, JavaScript, 5+ years experience (comma separated)"
-                              className="w-full h-10 px-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                              className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm focus:border-blue-500 focus:outline-none"
                             />
                           </div>
                           <div className="space-y-2">
@@ -557,14 +598,13 @@ const CreateJobStepFive: React.FC = () => {
                               value={question.scoringCriteria || ""}
                               onChange={(e) => updateScreeningQuestion(index, { scoringCriteria: e.target.value })}
                               placeholder="Describe how AI should evaluate this answer (e.g., 'Look for specific technologies mentioned, years of experience, leadership examples')"
-                              className="w-full h-16 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none resize-none text-sm"
+                              className="h-16 w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
                             />
                           </div>
                         </div>
                       )}
                     </div>
 
-                    {/* Options for Multiple Choice/Dropdown */}
                     {(question.type === "options" || question.type === "dropdown") && (
                       <div className="space-y-3">
                         <label className="text-sm font-medium text-gray-700">Answer Options</label>
@@ -580,14 +620,14 @@ const CreateJobStepFive: React.FC = () => {
                                   updateScreeningQuestion(index, { options: newOptions });
                                 }}
                                 placeholder={`Option ${optionIndex + 1}`}
-                                className="flex-1 h-10 px-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                className="h-10 flex-1 rounded-lg border border-gray-300 px-3 text-sm focus:border-blue-500 focus:outline-none"
                               />
                               <button
                                 onClick={() => {
                                   const newOptions = (question.options || []).filter((_, i) => i !== optionIndex);
                                   updateScreeningQuestion(index, { options: newOptions });
                                 }}
-                                className="text-red-600 hover:text-red-700 p-2"
+                                className="p-2 text-red-600 hover:text-red-700"
                               >
                                 <RiDeleteBin6Line className="h-4 w-4" />
                               </button>
@@ -598,12 +638,18 @@ const CreateJobStepFive: React.FC = () => {
                               const newOptions = [...(question.options || []), ""];
                               updateScreeningQuestion(index, { options: newOptions });
                             }}
-                            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm"
+                            className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700"
                           >
                             <RiAddLine className="h-4 w-4" />
                             Add Option
                           </button>
                         </div>
+                        {errors[`options_${index}`] && (
+                          <div className="flex items-center gap-2 text-xs text-red-600">
+                            <div className="h-1.5 w-1.5 rounded-full bg-red-600"></div>
+                            <span>{errors[`options_${index}`]}</span>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -611,13 +657,15 @@ const CreateJobStepFive: React.FC = () => {
               ))}
 
               {screeningQuestions.length === 0 && (
-                <div className="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
-                  <RiQuestionLine className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Screening Questions</h3>
-                  <p className="text-gray-600 mb-4">Add custom questions to screen candidates before they apply</p>
+                <div className="rounded-xl border border-gray-200 bg-gray-50 py-12 text-center">
+                  <RiQuestionLine className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                  <h3 className="mb-2 text-lg font-medium text-gray-900">No Screening Questions</h3>
+                  <p className="mb-4 text-gray-600">
+                    Add custom questions to screen candidates before they apply
+                  </p>
                   <button
                     onClick={addScreeningQuestion}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200"
+                    className="rounded-lg bg-blue-600 px-6 py-2 font-medium text-white transition-all duration-200 hover:bg-blue-700"
                   >
                     Add Your First Question
                   </button>
@@ -628,11 +676,17 @@ const CreateJobStepFive: React.FC = () => {
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="w-full max-w-[880px] flex justify-between mt-6">
+      {errors.submit && (
+        <div className="mt-4 w-full max-w-[880px] rounded-lg border border-red-200 bg-red-50 p-4">
+          <p className="text-sm text-red-600">{errors.submit}</p>
+        </div>
+      )}
+
+      <div className="mt-6 flex w-full max-w-[880px] justify-between">
         <button
           onClick={prevStep}
-          className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-8 py-3 rounded-xl font-medium transition-all duration-200"
+          disabled={isSubmitting}
+          className="flex items-center gap-2 rounded-xl bg-gray-100 px-8 py-3 font-medium text-gray-700 transition-all duration-200 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <RiArrowLeftLine className="h-4 w-4" />
           <span>Back</span>
@@ -640,17 +694,19 @@ const CreateJobStepFive: React.FC = () => {
         <div className="flex gap-3">
           <button
             onClick={() => setShowPreview(!showPreview)}
-            className="flex items-center gap-2 bg-blue-100 hover:bg-blue-200 text-blue-700 px-6 py-3 rounded-xl font-medium transition-all duration-200"
+            disabled={isSubmitting}
+            className="flex items-center gap-2 rounded-xl bg-blue-100 px-6 py-3 font-medium text-blue-700 transition-all duration-200 hover:bg-blue-200 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <RiEyeLine className="h-4 w-4" />
             <span>Preview</span>
           </button>
           <button
             onClick={submitJob}
-            className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+            disabled={isSubmitting}
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 px-8 py-3 font-medium text-white shadow-lg transition-all duration-200 hover:from-green-700 hover:to-emerald-700 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
           >
             <RiRobotLine className="h-4 w-4" />
-            <span>Publish Job</span>
+            <span>{isSubmitting ? "Publishing..." : "Publish Job"}</span>
           </button>
         </div>
       </div>

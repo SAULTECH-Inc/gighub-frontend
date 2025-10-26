@@ -13,7 +13,7 @@ const TestimonialCarousel = () => {
 
   const prevTestimonial = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1
+      prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1,
     );
   };
 
@@ -21,7 +21,7 @@ const TestimonialCarousel = () => {
     if (imageContainerRef.current) {
       const selectedImage = imageContainerRef.current.children[
         currentIndex
-        ] as HTMLImageElement;
+      ] as HTMLImageElement;
       selectedImage?.scrollIntoView({
         behavior: "smooth",
         block: "center",
@@ -85,7 +85,7 @@ const TestimonialCarousel = () => {
         />
       </div>
 
-      <div className="relative bg-testimonial flex items-center justify-center bg-contain bg-center bg-no-repeat p-10 md:p-28">
+      <div className="bg-testimonial relative flex items-center justify-center bg-contain bg-center bg-no-repeat p-10 md:p-28">
         <AnimatePresence mode="wait">
           <motion.p
             key={currentTestimonial.id}

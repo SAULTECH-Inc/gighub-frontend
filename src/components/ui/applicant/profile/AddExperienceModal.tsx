@@ -22,8 +22,9 @@ import {
   Building,
   Calendar,
   User,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
+import { useProfileCompletionDetails } from "../../../../hooks/useProfileCompletionDetails.ts";
 
 interface AddExperienceModalProp {
   modalId: string;
@@ -46,9 +47,10 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
   const [description, setDescription] = useState(experience?.description ?? "");
   const [currentlyEmployed, setCurrentlyEmployed] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const { modals, closeModal } = useModalStore();
+  const {refetch} = useProfileCompletionDetails();
   const isOpen = modals[modalId];
 
   // Lock scroll when modal is open
@@ -92,7 +94,7 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
   }, [description, currentlyEmployed]);
 
   const validateForm = (): boolean => {
-    const newErrors: {[key: string]: string} = {};
+    const newErrors: { [key: string]: string } = {};
 
     if (!experience?.company?.trim()) {
       newErrors.company = "Company name is required";
@@ -120,7 +122,7 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
 
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => {
+      setErrors((prev) => {
         const { [name]: _, ...rest } = prev;
         return rest;
       });
@@ -155,6 +157,7 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
         } as CvResponseDto);
 
         closeModal(modalId);
+        refetch().then(r=>r);
       }
     } catch (error) {
       toast.error("Failed to add experience.");
@@ -183,7 +186,7 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
 
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => {
+      setErrors((prev) => {
         const { [name]: _, ...rest } = prev;
         return rest;
       });
@@ -194,30 +197,34 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 p-4"
       onClick={handleCloseModal}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
+        className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-orange-600 to-orange-700">
+        <div className="flex items-center justify-between border-b border-gray-200 bg-gradient-to-r from-orange-600 to-orange-700 p-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-white/20 rounded-lg">
-              <Briefcase className="w-6 h-6 text-white" />
+            <div className="rounded-lg bg-white/20 p-2">
+              <Briefcase className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-white">Add Work Experience</h2>
-              <p className="text-orange-100 text-sm">Add your professional work experience and achievements</p>
+              <h2 className="text-xl font-semibold text-white">
+                Add Work Experience
+              </h2>
+              <p className="text-sm text-orange-100">
+                Add your professional work experience and achievements
+              </p>
             </div>
           </div>
           <button
             onClick={handleCloseModal}
             disabled={isSubmitting}
-            className="p-2 text-white hover:bg-white/20 rounded-lg transition-colors duration-200 disabled:opacity-50"
+            className="rounded-lg p-2 text-white transition-colors duration-200 hover:bg-white/20 disabled:opacity-50"
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
@@ -225,10 +232,10 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
         <div className="flex-1 overflow-y-auto p-6">
           <div className="space-y-6">
             {/* Company and Position */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <Building className="w-4 h-4" />
+                  <Building className="h-4 w-4" />
                   Company Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -236,16 +243,16 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
                   name="company"
                   value={experience?.company || ""}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg border transition-colors duration-200 ${
+                  className={`w-full rounded-lg border px-4 py-3 transition-colors duration-200 ${
                     errors.company
-                      ? 'border-red-500 bg-red-50'
-                      : 'border-gray-300 bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500'
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300 bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
                   } focus:outline-none`}
                   placeholder="Enter company name"
                 />
                 {errors.company && (
-                  <p className="text-sm text-red-600 flex items-center gap-1">
-                    <AlertCircle className="w-3 h-3" />
+                  <p className="flex items-center gap-1 text-sm text-red-600">
+                    <AlertCircle className="h-3 w-3" />
                     {errors.company}
                   </p>
                 )}
@@ -253,7 +260,7 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
 
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <User className="w-4 h-4" />
+                  <User className="h-4 w-4" />
                   Your Role/Position <span className="text-red-500">*</span>
                 </label>
                 <CustomDropdown
@@ -265,22 +272,22 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
                       position: option.value,
                     });
                     if (errors.position) {
-                      setErrors(prev => {
+                      setErrors((prev) => {
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         const { position, ...rest } = prev;
                         return rest;
                       });
                     }
                   }}
-                  className={`text-left w-full px-4 py-3 rounded-lg border transition-colors duration-200 ${
+                  className={`w-full rounded-lg border px-4 py-3 text-left transition-colors duration-200 ${
                     errors.position
-                      ? 'border-red-500 bg-red-50'
-                      : 'border-gray-300 bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500'
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300 bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
                   } focus:outline-none`}
                 />
                 {errors.position && (
-                  <p className="text-sm text-red-600 flex items-center gap-1">
-                    <AlertCircle className="w-3 h-3" />
+                  <p className="flex items-center gap-1 text-sm text-red-600">
+                    <AlertCircle className="h-3 w-3" />
                     {errors.position}
                   </p>
                 )}
@@ -288,10 +295,10 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
             </div>
 
             {/* Location and City */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <MapPin className="w-4 h-4" />
+                  <MapPin className="h-4 w-4" />
                   Work Location
                 </label>
                 <CustomSelect
@@ -303,7 +310,7 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
                       location: option.value,
                     });
                   }}
-                  className="text-left w-full px-4 py-3 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-left focus:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none"
                 />
               </div>
 
@@ -320,16 +327,16 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
                       city: option.value,
                     });
                   }}
-                  className="text-left w-full px-4 py-3 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-left focus:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none"
                 />
               </div>
             </div>
 
             {/* Dates */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <Calendar className="w-4 h-4" />
+                  <Calendar className="h-4 w-4" />
                   Start Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -338,18 +345,20 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
                   onChange={handleChangeDate}
                   value={
                     experience?.startDate
-                      ? new Date(experience.startDate).toISOString().split("T")[0]
+                      ? new Date(experience.startDate)
+                          .toISOString()
+                          .split("T")[0]
                       : ""
                   }
-                  className={`w-full px-4 py-3 rounded-lg border transition-colors duration-200 ${
+                  className={`w-full rounded-lg border px-4 py-3 transition-colors duration-200 ${
                     errors.startDate
-                      ? 'border-red-500 bg-red-50'
-                      : 'border-gray-300 bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500'
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300 bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
                   } focus:outline-none`}
                 />
                 {errors.startDate && (
-                  <p className="text-sm text-red-600 flex items-center gap-1">
-                    <AlertCircle className="w-3 h-3" />
+                  <p className="flex items-center gap-1 text-sm text-red-600">
+                    <AlertCircle className="h-3 w-3" />
                     {errors.startDate}
                   </p>
                 )}
@@ -358,7 +367,7 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
               {!currentlyEmployed && (
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                    <Calendar className="w-4 h-4" />
+                    <Calendar className="h-4 w-4" />
                     End Date <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -367,18 +376,20 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
                     onChange={handleChangeDate}
                     value={
                       experience?.endDate
-                        ? new Date(experience.endDate).toISOString().split("T")[0]
+                        ? new Date(experience.endDate)
+                            .toISOString()
+                            .split("T")[0]
                         : ""
                     }
-                    className={`w-full px-4 py-3 rounded-lg border transition-colors duration-200 ${
+                    className={`w-full rounded-lg border px-4 py-3 transition-colors duration-200 ${
                       errors.endDate
-                        ? 'border-red-500 bg-red-50'
-                        : 'border-gray-300 bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500'
+                        ? "border-red-500 bg-red-50"
+                        : "border-gray-300 bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
                     } focus:outline-none`}
                   />
                   {errors.endDate && (
-                    <p className="text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
+                    <p className="flex items-center gap-1 text-sm text-red-600">
+                      <AlertCircle className="h-3 w-3" />
                       {errors.endDate}
                     </p>
                   )}
@@ -400,42 +411,43 @@ const AddExperienceModal: React.FC<AddExperienceModalProp> = ({ modalId }) => {
               <label className="text-sm font-medium text-gray-700">
                 Job Description & Achievements
               </label>
-              <div className="border border-gray-300 rounded-lg overflow-hidden">
+              <div className="overflow-hidden rounded-lg border border-gray-300">
                 <RichTextEditor
                   value={description || ""}
                   onChange={setDescription}
                 />
               </div>
               <p className="text-xs text-gray-500">
-                Highlight your key responsibilities, achievements, and skills gained in this role
+                Highlight your key responsibilities, achievements, and skills
+                gained in this role
               </p>
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-end gap-3 border-t border-gray-200 bg-gray-50 p-6">
           <button
             type="button"
             onClick={handleCloseModal}
             disabled={isSubmitting}
-            className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors duration-200 font-medium disabled:opacity-50"
+            className="rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-100 disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex items-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors duration-200 font-medium disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-orange-600 px-6 py-3 font-medium text-white transition-colors duration-200 hover:bg-orange-700 disabled:opacity-50"
           >
             {isSubmitting ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                 Adding...
               </>
             ) : (
               <>
-                <Plus className="w-4 h-4" />
+                <Plus className="h-4 w-4" />
                 Add Experience
               </>
             )}

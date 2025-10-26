@@ -6,7 +6,7 @@ import {
   AlertCircle,
   Info,
   CheckCircle,
-  Timer
+  Timer,
 } from "lucide-react";
 import { useScheduleInterview } from "../../../store/useScheduleInterview.ts";
 import CustomSelect from "../../../components/common/CustomSelect.tsx";
@@ -17,9 +17,24 @@ import moment from "moment";
 
 // Common time slots for quick selection
 const COMMON_TIME_SLOTS = [
-  "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-  "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
-  "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
+  "09:00",
+  "09:30",
+  "10:00",
+  "10:30",
+  "11:00",
+  "11:30",
+  "12:00",
+  "12:30",
+  "13:00",
+  "13:30",
+  "14:00",
+  "14:30",
+  "15:00",
+  "15:30",
+  "16:00",
+  "16:30",
+  "17:00",
+  "17:30",
 ];
 
 // Duration presets in minutes
@@ -41,11 +56,14 @@ interface ValidationErrors {
 
 const InterviewStepThree: React.FC = () => {
   const timezones = useTimezones();
-  const { nextStep, prevStep, interviewDetails, setInterviewDetails } = useScheduleInterview();
+  const { nextStep, prevStep, interviewDetails, setInterviewDetails } =
+    useScheduleInterview();
 
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [showTimeSlots, setShowTimeSlots] = useState(false);
-  const [selectedDurationPreset, setSelectedDurationPreset] = useState<number | null>(null);
+  const [selectedDurationPreset, setSelectedDurationPreset] = useState<
+    number | null
+  >(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Calculate duration based on start and end times
@@ -79,7 +97,7 @@ const InterviewStepThree: React.FC = () => {
     const mins = minutes % 60;
 
     if (hours === 0) return `${mins} minutes`;
-    if (mins === 0) return `${hours} hour${hours > 1 ? 's' : ''}`;
+    if (mins === 0) return `${hours} hour${hours > 1 ? "s" : ""}`;
     return `${hours}h ${mins}m`;
   }, []);
 
@@ -110,7 +128,9 @@ const InterviewStepThree: React.FC = () => {
         const today = new Date();
 
         if (selectedDate.toDateString() === today.toDateString()) {
-          const [hours, minutes] = interviewDetails.startTime.split(':').map(Number);
+          const [hours, minutes] = interviewDetails.startTime
+            .split(":")
+            .map(Number);
           const selectedTime = new Date();
           selectedTime.setHours(hours, minutes, 0, 0);
 
@@ -149,48 +169,59 @@ const InterviewStepThree: React.FC = () => {
   }, [interviewDetails, calculatedDuration]);
 
   // Handle input changes with error clearing
-  const handleInputChange = useCallback((field: keyof InterviewScheduleDetails, value: any) => {
-    setInterviewDetails({
-      ...interviewDetails,
-      [field]: value,
-    } as InterviewScheduleDetails);
+  const handleInputChange = useCallback(
+    (field: keyof InterviewScheduleDetails, value: any) => {
+      setInterviewDetails({
+        ...interviewDetails,
+        [field]: value,
+      } as InterviewScheduleDetails);
 
-    // Clear related errors
-    setErrors(prev => ({ ...prev, [field]: undefined }));
+      // Clear related errors
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
 
-    // Clear duration error when time changes
-    if (field === 'startTime' || field === 'endTime') {
-      setErrors(prev => ({ ...prev, duration: undefined }));
-    }
-  }, [interviewDetails, setInterviewDetails]);
+      // Clear duration error when time changes
+      if (field === "startTime" || field === "endTime") {
+        setErrors((prev) => ({ ...prev, duration: undefined }));
+      }
+    },
+    [interviewDetails, setInterviewDetails],
+  );
 
   // Quick time slot selection
-  const handleTimeSlotSelection = useCallback((time: string) => {
-    handleInputChange('startTime', time);
-    setShowTimeSlots(false);
+  const handleTimeSlotSelection = useCallback(
+    (time: string) => {
+      handleInputChange("startTime", time);
+      setShowTimeSlots(false);
 
-    // Auto-calculate end time based on duration preset or default 1 hour
-    if (selectedDurationPreset) {
-      const [hours, minutes] = time.split(':').map(Number);
-      const endTime = new Date();
-      endTime.setHours(hours, minutes + selectedDurationPreset, 0, 0);
-      const endTimeString = endTime.toTimeString().slice(0, 5);
-      handleInputChange('endTime', endTimeString);
-    }
-  }, [handleInputChange, selectedDurationPreset]);
+      // Auto-calculate end time based on duration preset or default 1 hour
+      if (selectedDurationPreset) {
+        const [hours, minutes] = time.split(":").map(Number);
+        const endTime = new Date();
+        endTime.setHours(hours, minutes + selectedDurationPreset, 0, 0);
+        const endTimeString = endTime.toTimeString().slice(0, 5);
+        handleInputChange("endTime", endTimeString);
+      }
+    },
+    [handleInputChange, selectedDurationPreset],
+  );
 
   // Duration preset selection
-  const handleDurationPresetSelection = useCallback((duration: number) => {
-    setSelectedDurationPreset(duration);
+  const handleDurationPresetSelection = useCallback(
+    (duration: number) => {
+      setSelectedDurationPreset(duration);
 
-    if (interviewDetails?.startTime) {
-      const [hours, minutes] = interviewDetails.startTime.split(':').map(Number);
-      const endTime = new Date();
-      endTime.setHours(hours, minutes + duration, 0, 0);
-      const endTimeString = endTime.toTimeString().slice(0, 5);
-      handleInputChange('endTime', endTimeString);
-    }
-  }, [interviewDetails?.startTime, handleInputChange]);
+      if (interviewDetails?.startTime) {
+        const [hours, minutes] = interviewDetails.startTime
+          .split(":")
+          .map(Number);
+        const endTime = new Date();
+        endTime.setHours(hours, minutes + duration, 0, 0);
+        const endTimeString = endTime.toTimeString().slice(0, 5);
+        handleInputChange("endTime", endTimeString);
+      }
+    },
+    [interviewDetails?.startTime, handleInputChange],
+  );
 
   // Enhanced next step handler
   const handleNextStep = useCallback(async () => {
@@ -207,21 +238,22 @@ const InterviewStepThree: React.FC = () => {
       setIsSubmitting(false);
       // Scroll to first error
       const firstErrorField = document.querySelector('[data-error="true"]');
-      firstErrorField?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      firstErrorField?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [validateForm, nextStep]);
 
   // Get timezone display
-  const selectedTimezone = timezones.find(tz => tz.value === interviewDetails?.timeZone);
+  const selectedTimezone = timezones.find(
+    (tz) => tz.value === interviewDetails?.timeZone,
+  );
 
   return (
     <div className="flex w-full flex-col items-center">
       <div className="flex min-h-[400px] w-[96%] max-w-[900px] flex-col items-center rounded-[10px] bg-white py-6">
         <div className="flex w-[95%] flex-col gap-6">
-
           {/* Header */}
           <div className="text-center">
-            <div className="flex items-center justify-center gap-2 mb-2">
+            <div className="mb-2 flex items-center justify-center gap-2">
               <Calendar className="h-6 w-6 text-[#6438C2]" />
               <h4 className="text-xl font-bold text-[#000000] sm:text-2xl">
                 Schedule Interview
@@ -241,11 +273,15 @@ const InterviewStepThree: React.FC = () => {
 
             <div className="space-y-2">
               <DatePicker
-                selectedDate={interviewDetails?.date ? new Date(interviewDetails.date) : moment().toDate()}
+                selectedDate={
+                  interviewDetails?.date
+                    ? new Date(interviewDetails.date)
+                    : moment().toDate()
+                }
                 onDateChange={(date) => {
-                  handleInputChange('date', date?.toISOString());
+                  handleInputChange("date", date?.toISOString());
                 }}
-                className={`w-full rounded-[10px] border px-4 py-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+                className={`w-full rounded-[10px] border px-4 py-3 text-sm transition-colors focus:ring-2 focus:ring-offset-1 focus:outline-none ${
                   errors.date
                     ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-200"
                     : "border-[#E6E6E6] bg-white focus:border-[#6438C2] focus:ring-[#6438C2]/20"
@@ -303,8 +339,10 @@ const InterviewStepThree: React.FC = () => {
                   <input
                     type="time"
                     value={interviewDetails?.startTime || ""}
-                    onChange={(e) => handleInputChange('startTime', e.target.value)}
-                    className={`w-full rounded-[10px] border px-4 py-3 pr-10 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+                    onChange={(e) =>
+                      handleInputChange("startTime", e.target.value)
+                    }
+                    className={`w-full rounded-[10px] border px-4 py-3 pr-10 text-sm transition-colors focus:ring-2 focus:ring-offset-1 focus:outline-none ${
                       errors.startTime
                         ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-200"
                         : "border-[#E6E6E6] bg-white focus:border-[#6438C2] focus:ring-[#6438C2]/20"
@@ -314,7 +352,7 @@ const InterviewStepThree: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowTimeSlots(!showTimeSlots)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     <Clock className="h-4 w-4" />
                   </button>
@@ -336,7 +374,7 @@ const InterviewStepThree: React.FC = () => {
                           key={time}
                           type="button"
                           onClick={() => handleTimeSlotSelection(time)}
-                          className="rounded px-2 py-1 text-xs hover:bg-[#6438C2] hover:text-white transition-colors"
+                          className="rounded px-2 py-1 text-xs transition-colors hover:bg-[#6438C2] hover:text-white"
                         >
                           {time}
                         </button>
@@ -354,8 +392,8 @@ const InterviewStepThree: React.FC = () => {
                 <input
                   type="time"
                   value={interviewDetails?.endTime || ""}
-                  onChange={(e) => handleInputChange('endTime', e.target.value)}
-                  className={`w-full rounded-[10px] border px-4 py-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+                  onChange={(e) => handleInputChange("endTime", e.target.value)}
+                  className={`w-full rounded-[10px] border px-4 py-3 text-sm transition-colors focus:ring-2 focus:ring-offset-1 focus:outline-none ${
                     errors.endTime
                       ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-200"
                       : "border-[#E6E6E6] bg-white focus:border-[#6438C2] focus:ring-[#6438C2]/20"
@@ -373,12 +411,22 @@ const InterviewStepThree: React.FC = () => {
 
               {/* Duration Display */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Duration</label>
-                <div className={`flex items-center gap-2 rounded-[10px] border px-4 py-3 text-sm ${
-                  errors.duration ? "border-red-300 bg-red-50" : "border-gray-300 bg-gray-50"
-                }`}>
+                <label className="text-sm font-medium text-gray-700">
+                  Duration
+                </label>
+                <div
+                  className={`flex items-center gap-2 rounded-[10px] border px-4 py-3 text-sm ${
+                    errors.duration
+                      ? "border-red-300 bg-red-50"
+                      : "border-gray-300 bg-gray-50"
+                  }`}
+                >
                   <Timer className="h-4 w-4 text-gray-500" />
-                  <span className={calculatedDuration > 0 ? "text-gray-900" : "text-gray-500"}>
+                  <span
+                    className={
+                      calculatedDuration > 0 ? "text-gray-900" : "text-gray-500"
+                    }
+                  >
                     {formatDuration(calculatedDuration)}
                   </span>
                 </div>
@@ -405,8 +453,10 @@ const InterviewStepThree: React.FC = () => {
                 options={timezones}
                 placeholder="Select Timezone"
                 value={selectedTimezone?.value || ""}
-                onChange={(option) => handleInputChange('timeZone', option.value)}
-                className={`w-full rounded-[10px] border px-4 py-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+                onChange={(option) =>
+                  handleInputChange("timeZone", option.value)
+                }
+                className={`w-full rounded-[10px] border px-4 py-3 text-sm transition-colors focus:ring-2 focus:ring-offset-1 focus:outline-none ${
                   errors.timeZone
                     ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-200"
                     : "border-[#E6E6E6] bg-white focus:border-[#6438C2] focus:ring-[#6438C2]/20"
@@ -424,35 +474,46 @@ const InterviewStepThree: React.FC = () => {
           </section>
 
           {/* Summary Card */}
-          {interviewDetails?.date && interviewDetails?.startTime && interviewDetails?.endTime && selectedTimezone && (
-            <div className="rounded-[10px] border border-green-200 bg-green-50 p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <h6 className="font-medium text-green-800">Interview Summary</h6>
+          {interviewDetails?.date &&
+            interviewDetails?.startTime &&
+            interviewDetails?.endTime &&
+            selectedTimezone && (
+              <div className="rounded-[10px] border border-green-200 bg-green-50 p-4">
+                <div className="mb-2 flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <h6 className="font-medium text-green-800">
+                    Interview Summary
+                  </h6>
+                </div>
+                <div className="space-y-1 text-sm text-green-700">
+                  <p>
+                    <strong>Date:</strong>{" "}
+                    {new Date(interviewDetails.date).toLocaleDateString(
+                      "en-US",
+                      {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      },
+                    )}
+                  </p>
+                  <p>
+                    <strong>Time:</strong> {interviewDetails.startTime} -{" "}
+                    {interviewDetails.endTime} (
+                    {formatDuration(calculatedDuration)})
+                  </p>
+                  <p>
+                    <strong>Timezone:</strong> {selectedTimezone.label}
+                  </p>
+                </div>
               </div>
-              <div className="space-y-1 text-sm text-green-700">
-                <p>
-                  <strong>Date:</strong> {new Date(interviewDetails.date).toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-                </p>
-                <p>
-                  <strong>Time:</strong> {interviewDetails.startTime} - {interviewDetails.endTime} ({formatDuration(calculatedDuration)})
-                </p>
-                <p>
-                  <strong>Timezone:</strong> {selectedTimezone.label}
-                </p>
-              </div>
-            </div>
-          )}
+            )}
 
           {/* Tips */}
           <div className="rounded-[10px] border border-blue-200 bg-blue-50 p-4">
             <div className="flex items-start gap-2">
-              <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <Info className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
               <div className="space-y-2 text-sm text-blue-700">
                 <p className="font-medium">Scheduling Tips:</p>
                 <ul className="space-y-1 text-xs">
@@ -471,7 +532,7 @@ const InterviewStepThree: React.FC = () => {
       <div className="mx-2 my-4 flex w-[96%] max-w-[900px] justify-end gap-4">
         <button
           onClick={prevStep}
-          className="rounded-[15px] border border-[#E6E6E6] bg-[#F7F7F7] px-6 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
+          className="rounded-[15px] border border-[#E6E6E6] bg-[#F7F7F7] px-6 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 focus:ring-2 focus:ring-gray-200 focus:outline-none"
         >
           Back
         </button>
@@ -479,7 +540,7 @@ const InterviewStepThree: React.FC = () => {
         <button
           onClick={handleNextStep}
           disabled={isSubmitting || Object.keys(validateForm()).length > 0}
-          className="rounded-[15px] bg-[#6438C2] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5329a8] focus:outline-none focus:ring-2 focus:ring-[#6438C2] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-[15px] bg-[#6438C2] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5329a8] focus:ring-2 focus:ring-[#6438C2] focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? "Validating..." : "Continue"}
         </button>

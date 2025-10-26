@@ -14,7 +14,7 @@ import {
   Trash2,
   GraduationCap,
   MapPin,
-  Calendar
+  Calendar,
 } from "lucide-react";
 
 export interface EducationDetailsProps {
@@ -42,7 +42,9 @@ const EducationDetails: React.FC<EducationDetailsProps> = ({ education }) => {
   }, [education, setApplicantEducation]);
 
   const handleDeleteEducation = async () => {
-    if (!window.confirm("Are you sure you want to delete this education entry?")) {
+    if (
+      !window.confirm("Are you sure you want to delete this education entry?")
+    ) {
       return;
     }
 
@@ -52,7 +54,7 @@ const EducationDetails: React.FC<EducationDetailsProps> = ({ education }) => {
       if (success) {
         toast.success("Education deleted successfully!");
         const updatedEducations = educations.filter(
-            (edu) => edu.id !== education.id,
+          (edu) => edu.id !== education.id,
         );
         setEducations(updatedEducations);
         setCvDetails({
@@ -68,7 +70,9 @@ const EducationDetails: React.FC<EducationDetailsProps> = ({ education }) => {
     }
   };
 
-  const handleUpdateEducation = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleUpdateEducation = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+  ) => {
     e.preventDefault();
 
     try {
@@ -103,156 +107,165 @@ const EducationDetails: React.FC<EducationDetailsProps> = ({ education }) => {
   const formatDateRange = () => {
     const startDate = moment(applicantEducation?.startDate).format("MMM YYYY");
     const endDate = applicantEducation?.endDate
-        ? moment(applicantEducation.endDate).format("MMM YYYY")
-        : "Present";
+      ? moment(applicantEducation.endDate).format("MMM YYYY")
+      : "Present";
     return `${startDate} - ${endDate}`;
   };
 
   return (
-      <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="relative bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-sm transition-all duration-200"
-      >
-        {/* Main Content */}
-        <div className="p-6">
-          {/* Header Section */}
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-start gap-4 flex-1">
-              {/* Education Icon */}
-              <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
-                <GraduationCap className="w-5 h-5 text-purple-600" />
-              </div>
-
-              {/* Education Info */}
-              <div className="flex-1 min-w-0">
-                <h4 className="text-lg font-semibold text-gray-900 mb-1">
-                  {applicantEducation?.degree}
-                  {applicantEducation?.fieldOfStudy && (
-                      <span className="text-gray-600"> in {applicantEducation.fieldOfStudy}</span>
-                  )}
-                </h4>
-
-                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-2">
-                  <div className="flex items-center gap-1">
-                    <GraduationCap className="w-4 h-4" />
-                    <span>{applicantEducation?.institution}</span>
-                  </div>
-
-                  {applicantEducation?.city && (
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
-                        <span>{applicantEducation.city}, {applicantEducation?.country}</span>
-                      </div>
-                  )}
-
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>{formatDateRange()}</span>
-                  </div>
-                </div>
-              </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="relative overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-200 hover:shadow-sm"
+    >
+      {/* Main Content */}
+      <div className="p-6">
+        {/* Header Section */}
+        <div className="mb-4 flex items-start justify-between">
+          <div className="flex flex-1 items-start gap-4">
+            {/* Education Icon */}
+            <div className="flex-shrink-0 rounded-lg bg-purple-100 p-2">
+              <GraduationCap className="h-5 w-5 text-purple-600" />
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2 flex-shrink-0">
-              {/* Delete Button */}
-              <button
-                  onClick={handleDeleteEducation}
-                  disabled={isDeleting}
-                  className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200 disabled:opacity-50"
-                  title="Delete education"
-              >
-                {isDeleting ? (
-                    <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
-                ) : (
-                    <Trash2 className="w-4 h-4" />
+            {/* Education Info */}
+            <div className="min-w-0 flex-1">
+              <h4 className="mb-1 text-lg font-semibold text-gray-900">
+                {applicantEducation?.degree}
+                {applicantEducation?.fieldOfStudy && (
+                  <span className="text-gray-600">
+                    {" "}
+                    in {applicantEducation.fieldOfStudy}
+                  </span>
                 )}
-              </button>
+              </h4>
 
-              {/* Expand/Collapse Button */}
-              <button
-                  type="button"
-                  onClick={() => setEducationCollapse(!educationCollapse)}
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
-                  title={educationCollapse ? "Collapse" : "Expand"}
-              >
-                {educationCollapse ? (
-                    <ChevronUp className="w-5 h-5" />
-                ) : (
-                    <ChevronDown className="w-5 h-5" />
+              <div className="mb-2 flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                <div className="flex items-center gap-1">
+                  <GraduationCap className="h-4 w-4" />
+                  <span>{applicantEducation?.institution}</span>
+                </div>
+
+                {applicantEducation?.city && (
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>
+                      {applicantEducation.city}, {applicantEducation?.country}
+                    </span>
+                  </div>
                 )}
-              </button>
+
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  <span>{formatDateRange()}</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Quick Preview (when collapsed) */}
-          {!educationCollapse && applicantEducation?.description && (
-              <div className="text-sm text-gray-600 line-clamp-2 bg-gray-50 rounded-lg p-3 mt-3">
-                <div dangerouslySetInnerHTML={{ __html: applicantEducation.description }} />
-              </div>
-          )}
+          {/* Action Buttons */}
+          <div className="flex flex-shrink-0 items-center gap-2">
+            {/* Delete Button */}
+            <button
+              onClick={handleDeleteEducation}
+              disabled={isDeleting}
+              className="rounded-lg p-2 text-gray-400 transition-all duration-200 hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
+              title="Delete education"
+            >
+              {isDeleting ? (
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-500 border-t-transparent" />
+              ) : (
+                <Trash2 className="h-4 w-4" />
+              )}
+            </button>
+
+            {/* Expand/Collapse Button */}
+            <button
+              type="button"
+              onClick={() => setEducationCollapse(!educationCollapse)}
+              className="rounded-lg p-2 text-gray-400 transition-all duration-200 hover:bg-gray-100 hover:text-gray-600"
+              title={educationCollapse ? "Collapse" : "Expand"}
+            >
+              {educationCollapse ? (
+                <ChevronUp className="h-5 w-5" />
+              ) : (
+                <ChevronDown className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </div>
 
-        {/* Expanded Content */}
-        <AnimatePresence>
-          {educationCollapse && (
-              <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="border-t border-gray-100 bg-gray-50"
-              >
-                <div className="p-6">
-                  {/* Edit Controls */}
-                  <div className="flex items-center justify-end gap-2 mb-4">
-                    <button
-                        onClick={handleToggleEdit}
-                        type="button"
-                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                            isEditable
-                                ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                : 'bg-purple-50 text-purple-700 hover:bg-purple-100'
-                        }`}
-                    >
-                      <Edit3 className="w-4 h-4" />
-                      {isEditable ? 'Cancel' : 'Edit'}
-                    </button>
-
-                    {isEditable && (
-                        <button
-                            onClick={handleUpdateEducation}
-                            type="button"
-                            className="flex items-center gap-2 px-3 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors duration-200"
-                        >
-                          <Save className="w-4 h-4" />
-                          Save Changes
-                        </button>
-                    )}
-                  </div>
-
-                  {/* Education Update Form */}
-                  <EducationUpdateForm
-                      isEditable={isEditable}
-                      educationData={education}
-                  />
-                </div>
-              </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Status Indicators */}
-        {educationCollapse && !isEditable && (
-            <div className="px-6 pb-4">
-              <div className="flex items-center gap-2 text-sm text-green-600">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>Ready to save</span>
-              </div>
-            </div>
+        {/* Quick Preview (when collapsed) */}
+        {!educationCollapse && applicantEducation?.description && (
+          <div className="mt-3 line-clamp-2 rounded-lg bg-gray-50 p-3 text-sm text-gray-600">
+            <div
+              dangerouslySetInnerHTML={{
+                __html: applicantEducation.description,
+              }}
+            />
+          </div>
         )}
-      </motion.div>
+      </div>
+
+      {/* Expanded Content */}
+      <AnimatePresence>
+        {educationCollapse && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="border-t border-gray-100 bg-gray-50"
+          >
+            <div className="p-6">
+              {/* Edit Controls */}
+              <div className="mb-4 flex items-center justify-end gap-2">
+                <button
+                  onClick={handleToggleEdit}
+                  type="button"
+                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
+                    isEditable
+                      ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      : "bg-purple-50 text-purple-700 hover:bg-purple-100"
+                  }`}
+                >
+                  <Edit3 className="h-4 w-4" />
+                  {isEditable ? "Cancel" : "Edit"}
+                </button>
+
+                {isEditable && (
+                  <button
+                    onClick={handleUpdateEducation}
+                    type="button"
+                    className="flex items-center gap-2 rounded-lg bg-purple-600 px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-purple-700"
+                  >
+                    <Save className="h-4 w-4" />
+                    Save Changes
+                  </button>
+                )}
+              </div>
+
+              {/* Education Update Form */}
+              <EducationUpdateForm
+                isEditable={isEditable}
+                educationData={education}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Status Indicators */}
+      {educationCollapse && !isEditable && (
+        <div className="px-6 pb-4">
+          <div className="flex items-center gap-2 text-sm text-green-600">
+            <div className="h-2 w-2 rounded-full bg-green-500"></div>
+            <span>Ready to save</span>
+          </div>
+        </div>
+      )}
+    </motion.div>
   );
 };
 

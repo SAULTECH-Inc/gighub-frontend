@@ -19,9 +19,12 @@ import ViewApplicationMethodModal from "../../components/ui/ViewApplicationMetho
 import { showErrorToast } from "../../utils/toastConfig.tsx";
 
 const MyApplications: React.FC = memo(() => {
-  const [applicationToView, setApplicationToView] = useState<ApplicationResponse | null>(null);
+  const [applicationToView, setApplicationToView] =
+    useState<ApplicationResponse | null>(null);
   const { isModalOpen, openModal } = useModalStore();
-  const [allApplications, setAllApplications] = useState<ApplicationResponse[]>([]);
+  const [allApplications, setAllApplications] = useState<ApplicationResponse[]>(
+    [],
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState(0);
@@ -31,7 +34,9 @@ const MyApplications: React.FC = memo(() => {
     orderBy: "createdAt",
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
+  const [applicationStatus, setApplicationStatus] = useState<string | null>(
+    null,
+  );
   const [pageSize, setPageSize] = useState(20);
   const [searchQuery, setSearchQuery] = useState({
     jobTitle: "",
@@ -39,62 +44,77 @@ const MyApplications: React.FC = memo(() => {
   });
 
   // Fetch applications with loading and error handling
-  const fetchApplications = useCallback(async (
-    page = currentPage,
-    size = pageSize,
-    jobTitle = "",
-    companyName = ""
-  ) => {
-    setIsLoading(true);
-    setError(null);
+  const fetchApplications = useCallback(
+    async (
+      page = currentPage,
+      size = pageSize,
+      jobTitle = "",
+      companyName = "",
+    ) => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const response = await getMyApplications(
-        applicationStatus,
-        sort,
-        page,
-        size,
-        jobTitle || undefined,
-        companyName || undefined
-      );
-      setAllApplications(response.data || []);
-      setTotalCount(response?.meta?.total || response.data?.length || 0);
-    } catch (error: any) {
-      const errorMessage = error?.response?.data?.message || "Failed to load applications";
-      setError(errorMessage);
-      showErrorToast(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [applicationStatus, sort, currentPage, pageSize]);
+      try {
+        const response = await getMyApplications(
+          applicationStatus,
+          sort,
+          page,
+          size,
+          jobTitle || undefined,
+          companyName || undefined,
+        );
+        setAllApplications(response.data || []);
+        setTotalCount(response?.meta?.total || response.data?.length || 0);
+      } catch (error: any) {
+        const errorMessage =
+          error?.response?.data?.message || "Failed to load applications";
+        setError(errorMessage);
+        showErrorToast(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [applicationStatus, sort, currentPage, pageSize],
+  );
 
   useEffect(() => {
-    fetchApplications().then(r=>r);
+    fetchApplications().then((r) => r);
   }, [fetchApplications]);
 
-  const handlePageChange = useCallback((page: number, size?: number) => {
-    setCurrentPage(page);
-    if (size && size !== pageSize) {
-      setPageSize(size);
-      setCurrentPage(1); // Reset to first page when changing page size
-    }
-  }, [pageSize]);
+  const handlePageChange = useCallback(
+    (page: number, size?: number) => {
+      setCurrentPage(page);
+      if (size && size !== pageSize) {
+        setPageSize(size);
+        setCurrentPage(1); // Reset to first page when changing page size
+      }
+    },
+    [pageSize],
+  );
 
   const handleSearchApplications = useCallback(async () => {
     setCurrentPage(1); // Reset to first page for new search
-    await fetchApplications(1, pageSize, searchQuery.jobTitle, searchQuery.companyName);
+    await fetchApplications(
+      1,
+      pageSize,
+      searchQuery.jobTitle,
+      searchQuery.companyName,
+    );
   }, [searchQuery, pageSize, fetchApplications]);
 
   const clearSearch = useCallback(() => {
     setSearchQuery({ jobTitle: "", companyName: "" });
     setCurrentPage(1);
-    fetchApplications(1, pageSize).then(r=>r);
+    fetchApplications(1, pageSize).then((r) => r);
   }, [pageSize, fetchApplications]);
 
-  const handleViewApplication = useCallback((application: ApplicationResponse) => {
-    setApplicationToView(application);
-    openModal("application-method");
-  }, [openModal]);
+  const handleViewApplication = useCallback(
+    (application: ApplicationResponse) => {
+      setApplicationToView(application);
+      openModal("application-method");
+    },
+    [openModal],
+  );
 
   // Loading skeleton component
   const ApplicationSkeleton = () => (
@@ -104,10 +124,10 @@ const MyApplications: React.FC = memo(() => {
           <div className="flex items-center space-x-4">
             <div className="h-12 w-12 rounded-lg bg-slate-200"></div>
             <div className="flex-1 space-y-2">
-              <div className="h-4 bg-slate-200 rounded w-1/2"></div>
-              <div className="h-3 bg-slate-200 rounded w-1/3"></div>
+              <div className="h-4 w-1/2 rounded bg-slate-200"></div>
+              <div className="h-3 w-1/3 rounded bg-slate-200"></div>
             </div>
-            <div className="h-6 w-16 bg-slate-200 rounded"></div>
+            <div className="h-6 w-16 rounded bg-slate-200"></div>
           </div>
         </div>
       ))}
@@ -139,22 +159,29 @@ const MyApplications: React.FC = memo(() => {
                   <div className="flex flex-1 flex-col gap-3 sm:flex-row">
                     {/* Job Title Field */}
                     <div className="relative flex-1">
-                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                      <label className="mb-1 block text-sm font-medium text-slate-700">
                         Job Title
                       </label>
                       <div className="relative">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                         <input
                           type="text"
                           placeholder="Search by job title..."
                           value={searchQuery.jobTitle}
-                          onChange={(e) => setSearchQuery({ ...searchQuery, jobTitle: e.target.value })}
-                          className="w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-10 text-sm placeholder-slate-400 transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                          onChange={(e) =>
+                            setSearchQuery({
+                              ...searchQuery,
+                              jobTitle: e.target.value,
+                            })
+                          }
+                          className="w-full rounded-lg border border-slate-300 bg-white py-3 pr-10 pl-10 text-sm placeholder-slate-400 transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                         />
                         {searchQuery.jobTitle && (
                           <button
-                            onClick={() => setSearchQuery({ ...searchQuery, jobTitle: "" })}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                            onClick={() =>
+                              setSearchQuery({ ...searchQuery, jobTitle: "" })
+                            }
+                            className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                           >
                             <X className="h-4 w-4" />
                           </button>
@@ -164,22 +191,32 @@ const MyApplications: React.FC = memo(() => {
 
                     {/* Company Name Field */}
                     <div className="relative flex-1">
-                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                      <label className="mb-1 block text-sm font-medium text-slate-700">
                         Company Name
                       </label>
                       <div className="relative">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                         <input
                           type="text"
                           placeholder="Search by company..."
                           value={searchQuery.companyName}
-                          onChange={(e) => setSearchQuery({ ...searchQuery, companyName: e.target.value })}
-                          className="w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-10 text-sm placeholder-slate-400 transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                          onChange={(e) =>
+                            setSearchQuery({
+                              ...searchQuery,
+                              companyName: e.target.value,
+                            })
+                          }
+                          className="w-full rounded-lg border border-slate-300 bg-white py-3 pr-10 pl-10 text-sm placeholder-slate-400 transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                         />
                         {searchQuery.companyName && (
                           <button
-                            onClick={() => setSearchQuery({ ...searchQuery, companyName: "" })}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                            onClick={() =>
+                              setSearchQuery({
+                                ...searchQuery,
+                                companyName: "",
+                              })
+                            }
+                            className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                           >
                             <X className="h-4 w-4" />
                           </button>
@@ -193,7 +230,7 @@ const MyApplications: React.FC = memo(() => {
                     <button
                       onClick={handleSearchApplications}
                       disabled={isLoading}
-                      className="flex-1 sm:flex-none sm:w-32 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 py-3 px-6 text-sm font-medium text-white shadow-lg transition-all hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      className="flex-1 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-medium text-white shadow-lg transition-all hover:from-indigo-700 hover:to-purple-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:w-32 sm:flex-none"
                     >
                       {isLoading ? "..." : "Search"}
                     </button>
@@ -201,7 +238,7 @@ const MyApplications: React.FC = memo(() => {
                     {(searchQuery.jobTitle || searchQuery.companyName) && (
                       <button
                         onClick={clearSearch}
-                        className="rounded-lg border border-slate-300 bg-white py-3 px-4 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+                        className="rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:outline-none"
                       >
                         Clear
                       </button>
@@ -231,21 +268,25 @@ const MyApplications: React.FC = memo(() => {
                   {isLoading ? (
                     <ApplicationSkeleton />
                   ) : error ? (
-                    <div className="text-center py-12">
-                      <AlertCircle className="mx-auto h-12 w-12 text-red-400 mb-4" />
-                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Error Loading Applications</h3>
-                      <p className="text-slate-600 mb-4">{error}</p>
+                    <div className="py-12 text-center">
+                      <AlertCircle className="mx-auto mb-4 h-12 w-12 text-red-400" />
+                      <h3 className="mb-2 text-lg font-semibold text-slate-900">
+                        Error Loading Applications
+                      </h3>
+                      <p className="mb-4 text-slate-600">{error}</p>
                       <button
                         onClick={() => fetchApplications()}
-                        className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700 transition-colors"
+                        className="rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
                       >
                         Try Again
                       </button>
                     </div>
                   ) : allApplications.length === 0 ? (
-                    <div className="text-center py-12">
-                      <FileText className="mx-auto h-12 w-12 text-slate-400 mb-4" />
-                      <h3 className="text-lg font-semibold text-slate-600 mb-2">No Applications Found</h3>
+                    <div className="py-12 text-center">
+                      <FileText className="mx-auto mb-4 h-12 w-12 text-slate-400" />
+                      <h3 className="mb-2 text-lg font-semibold text-slate-600">
+                        No Applications Found
+                      </h3>
                       <p className="text-slate-500">
                         {searchQuery.jobTitle || searchQuery.companyName
                           ? "Try adjusting your search criteria"
@@ -287,7 +328,7 @@ const MyApplications: React.FC = memo(() => {
                       showTotal={(total, range) =>
                         `${range[0]}-${range[1]} of ${total} applications`
                       }
-                      className="[&_.ant-pagination-item-active]:bg-indigo-600 [&_.ant-pagination-item-active]:border-indigo-600"
+                      className="[&_.ant-pagination-item-active]:border-indigo-600 [&_.ant-pagination-item-active]:bg-indigo-600"
                     />
                   </div>
                 )}
@@ -300,7 +341,7 @@ const MyApplications: React.FC = memo(() => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className="xl:w-[30%] space-y-6"
+            className="space-y-6 xl:w-[30%]"
           >
             <div className="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-slate-200">
               <ApplicantSchedules />
@@ -324,6 +365,6 @@ const MyApplications: React.FC = memo(() => {
   );
 });
 
-MyApplications.displayName = 'MyApplications';
+MyApplications.displayName = "MyApplications";
 
 export default MyApplications;

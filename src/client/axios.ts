@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { API_BASE_URL, NODE_ENV, storage } from "../utils/constants.ts";
-import { removeFromLocalStorage, useAuth } from "../store/useAuth.ts";
+import { removeFromLocalStorage } from "../store/useAuth.ts";
 
 const baseURL = API_BASE_URL || "http://localhost:3005";
 
@@ -10,6 +10,14 @@ export const publicApiClient: AxiosInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+publicApiClient.interceptors.request.use((config: InternalAxiosRequestConfig)=>{
+  const deviceIp = localStorage.getItem("current_ip");
+  if (deviceIp) {
+    config.headers["X-Device-IP"] = deviceIp;
+  }
+  return config;
+},(error) => Promise.reject(error),)
 
 export const privateApiClient: AxiosInstance = axios.create({
   baseURL,
@@ -24,6 +32,10 @@ privateApiClient.interceptors.request.use(
     const token = storage.getItem("authToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    const deviceIp = localStorage.getItem("current_ip");
+    if (deviceIp) {
+      config.headers["X-Device-IP"] = deviceIp;
     }
     return config;
   },

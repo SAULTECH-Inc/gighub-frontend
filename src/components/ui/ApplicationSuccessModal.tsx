@@ -1,13 +1,6 @@
 import React from "react";
 import useModalStore from "../../store/modalStateStores.ts";
-import {
-  X,
-  CheckCircle,
-  Calendar,
-  Mail,
-  Bell,
-  TrendingUp
-} from "lucide-react";
+import { X, CheckCircle, Calendar, Mail, Bell, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface SuccessModalProps {
@@ -27,106 +20,104 @@ const ApplicationSuccessModal: React.FC<SuccessModalProps> = ({ modalId }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="relative w-full max-w-md max-h-[95vh] bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 p-4 backdrop-blur-xs">
+      <div className="relative max-h-[95vh] w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
         {/* Close Button */}
         <button
           onClick={handleCloseModal}
-          className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-slate-100 transition-colors"
+          className="absolute top-4 right-4 z-10 rounded-full p-2 transition-colors hover:bg-slate-100"
         >
-          <X className="w-5 h-5 text-slate-600" />
+          <X className="h-5 w-5 text-slate-600" />
         </button>
 
         {/* Content */}
-        <div className="p-6 sm:p-8 text-center">
+        <div className="p-6 text-center sm:p-8">
           {/* Success Animation Container */}
           <div className="relative mb-6">
             {/* Animated Background Circles */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-24 h-24 bg-green-100 rounded-full animate-pulse opacity-20"></div>
+              <div className="h-24 w-24 animate-pulse rounded-full bg-green-100 opacity-20"></div>
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-16 h-16 bg-green-200 rounded-full animate-ping opacity-30"></div>
+              <div className="h-16 w-16 animate-ping rounded-full bg-green-200 opacity-30"></div>
             </div>
 
             {/* Main Success Icon */}
             <div className="relative flex items-center justify-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg">
-                <CheckCircle className="w-10 h-10 text-white fill-current" />
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-green-400 to-emerald-500 shadow-lg">
+                <CheckCircle className="h-10 w-10 fill-current text-white" />
               </div>
             </div>
           </div>
 
           {/* Success Message */}
           <div className="mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+            <h2 className="mb-3 text-2xl font-bold text-slate-900 sm:text-3xl">
               🎉 Congratulations!
             </h2>
-            <h3 className="text-lg font-semibold text-green-600 mb-4">
+            <h3 className="mb-4 text-lg font-semibold text-green-600">
               Application Submitted Successfully
             </h3>
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-sm mx-auto">
-              Your application has been successfully submitted and all your details
-              have been received by the recruiter. You can monitor your application
-              status on your dashboard.
+            <p className="mx-auto max-w-sm text-sm leading-relaxed text-slate-600 sm:text-base">
+              Your application has been successfully submitted and all your
+              details have been received by the recruiter. You can monitor your
+              application status on your dashboard.
             </p>
           </div>
 
           {/* Quick Actions */}
-          <div className="space-y-4 mb-6">
+          <div className="mb-6 space-y-4">
             {/* Primary Action */}
             <Link
-              to="/applications"
-              onClick={handleCloseModal}
-              className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 hover:shadow-lg"
+              to="/applicant/my-applications"
+              className="flex w-full transform items-center justify-center space-x-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg"
             >
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp className="h-4 w-4" />
               <span>Check Application Status</span>
             </Link>
 
             {/* Secondary Actions */}
             <div className="grid grid-cols-2 gap-3">
               <Link
-                to="/dashboard"
-                onClick={handleCloseModal}
-                className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors text-sm"
+                to="/applicant/dashboard"
+                className="flex items-center justify-center space-x-2 rounded-lg bg-slate-100 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200"
               >
-                <Calendar className="w-4 h-4" />
+                <Calendar className="h-4 w-4" />
                 <span>Dashboard</span>
               </Link>
 
-              <button
-                onClick={handleCloseModal}
-                className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors text-sm"
+              <Link
+                to="/settings"
+                className="flex items-center justify-center space-x-2 rounded-lg bg-slate-100 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200"
               >
-                <Bell className="w-4 h-4" />
+                <Bell className="h-4 w-4" />
                 <span>Set Alerts</span>
-              </button>
+              </Link>
             </div>
           </div>
 
           {/* What's Next Section */}
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 mb-6 border border-blue-200">
-            <h4 className="text-sm font-semibold text-slate-800 mb-3 flex items-center justify-center space-x-2">
-              <Mail className="w-4 h-4 text-blue-600" />
+          <div className="mb-6 rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-4">
+            <h4 className="mb-3 flex items-center justify-center space-x-2 text-sm font-semibold text-slate-800">
+              <Mail className="h-4 w-4 text-blue-600" />
               <span>What happens next?</span>
             </h4>
 
             <div className="space-y-2 text-left">
               <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-500"></div>
                 <p className="text-xs text-slate-600">
                   You'll receive an email confirmation shortly
                 </p>
               </div>
               <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-500"></div>
                 <p className="text-xs text-slate-600">
                   The recruiter will review your application
                 </p>
               </div>
               <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-500"></div>
                 <p className="text-xs text-slate-600">
                   We'll notify you of any status updates
                 </p>
@@ -135,19 +126,19 @@ const ApplicationSuccessModal: React.FC<SuccessModalProps> = ({ modalId }) => {
           </div>
 
           {/* Tips Section */}
-          <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
-            <h4 className="text-sm font-semibold text-amber-800 mb-2">
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+            <h4 className="mb-2 text-sm font-semibold text-amber-800">
               💡 Pro Tip
             </h4>
             <p className="text-xs text-amber-700">
-              While you wait, consider applying to similar positions or
-              updating your profile to attract more opportunities.
+              While you wait, consider applying to similar positions or updating
+              your profile to attract more opportunities.
             </p>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="border-t border-slate-200 px-6 py-4 bg-slate-50">
+        <div className="border-t border-slate-200 bg-slate-50 px-6 py-4">
           <div className="flex items-center justify-center space-x-4 text-xs text-slate-500">
             <span>Application ID: #APL-{Date.now().toString().slice(-6)}</span>
             <span>•</span>

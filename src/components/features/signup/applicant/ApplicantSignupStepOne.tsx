@@ -18,7 +18,7 @@ import {
   UserPlus,
   AlertCircle,
   CheckCircle,
-  Loader2
+  Loader2,
 } from "lucide-react";
 
 interface StepOneProp {
@@ -32,40 +32,55 @@ interface EmailCheckResponse {
 }
 
 const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
-  const { applicantSignupRequest, setApplicantSignupRequest, validateEmailAssociationToAnAccount } = useAuth();
+  const {
+    applicantSignupRequest,
+    setApplicantSignupRequest,
+    validateEmailAssociationToAnAccount,
+  } = useAuth();
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
 
   // API call to check if email exists
-  const checkEmailExists = async (email: string): Promise<EmailCheckResponse> => {
+  const checkEmailExists = async (
+    email: string,
+  ): Promise<EmailCheckResponse> => {
     try {
       // Replace with your actual API endpoint
-      const response: APIResponse<any> = await validateEmailAssociationToAnAccount(email);
+      const response: APIResponse<any> =
+        await validateEmailAssociationToAnAccount(email);
 
       if (response.statusCode === 200) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
 
       return await response.data;
     } catch (error) {
-      console.error('Error checking email:', error);
+      console.error("Error checking email:", error);
       // Return false on error to allow user to continue
-      return { exists: false, message: 'Unable to verify email. Please try again.' };
+      return {
+        exists: false,
+        message: "Unable to verify email. Please try again.",
+      };
     }
   };
 
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmPasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const value = e.target.value;
     setConfirmPassword(value);
 
     // Clear error if passwords now match
-    if (value === applicantSignupRequest?.password && formErrors.confirmPassword) {
-      setFormErrors(prev => {
+    if (
+      value === applicantSignupRequest?.password &&
+      formErrors.confirmPassword
+    ) {
+      setFormErrors((prev) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { confirmPassword, ...rest } = prev;
         return rest;
@@ -90,7 +105,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
 
     // Clear error when user starts typing
     if (formErrors[name]) {
-      setFormErrors(prev => {
+      setFormErrors((prev) => {
         const { [name]: _, ...rest } = prev;
         return rest;
       });
@@ -104,7 +119,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
   };
 
   const validateForm = (): boolean => {
-    const errors: {[key: string]: string} = {};
+    const errors: { [key: string]: string } = {};
 
     // Required field validation
     if (!applicantSignupRequest?.firstName?.trim()) {
@@ -149,23 +164,23 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
       const emailCheck = await checkEmailExists(applicantSignupRequest.email!);
 
       if (emailCheck) {
-        setFormErrors(prev => ({
+        setFormErrors((prev) => ({
           ...prev,
-          email: "An account with this email already exists. Please use a different email or sign in."
+          email:
+            "An account with this email already exists. Please use a different email or sign in.",
         }));
         return;
       }
 
       // If email doesn't exist, proceed to next step
       // Simulate additional processing delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       handleNext();
-
     } catch (error) {
-      console.error('Error during email validation:', error);
-      setFormErrors(prev => ({
+      console.error("Error during email validation:", error);
+      setFormErrors((prev) => ({
         ...prev,
-        email: "Unable to verify email. Please try again."
+        email: "Unable to verify email. Please try again.",
       }));
     } finally {
       setIsSubmitting(false);
@@ -192,7 +207,8 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
   ];
 
   // Check if passwords match for the confirm password field
-  const passwordsMatch = confirmPassword && confirmPassword === applicantSignupRequest?.password;
+  const passwordsMatch =
+    confirmPassword && confirmPassword === applicantSignupRequest?.password;
 
   return (
     <motion.div
@@ -202,18 +218,18 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
       transition={{ duration: 0.5 }}
     >
       {/* Header */}
-      <div className="text-center space-y-3">
+      <div className="space-y-3 text-center">
         <motion.div
-          className="mx-auto w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center"
+          className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-purple-100"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <UserPlus className="w-8 h-8 text-[#6438C2]" />
+          <UserPlus className="h-8 w-8 text-[#6438C2]" />
         </motion.div>
 
         <motion.h2
-          className="text-2xl sm:text-3xl font-semibold text-gray-900"
+          className="text-2xl font-semibold text-gray-900 sm:text-3xl"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
@@ -222,12 +238,13 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
         </motion.h2>
 
         <motion.p
-          className="text-gray-600 text-sm sm:text-base max-w-md mx-auto"
+          className="mx-auto max-w-md text-sm text-gray-600 sm:text-base"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          Let's start building your career profile. We'll ask a few quick questions to tailor opportunities just for you.
+          Let's start building your career profile. We'll ask a few quick
+          questions to tailor opportunities just for you.
         </motion.p>
       </div>
 
@@ -239,10 +256,10 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
         transition={{ duration: 0.5, delay: 0.5 }}
       >
         {/* Name Fields */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              <User className="inline w-4 h-4 mr-1" />
+              <User className="mr-1 inline h-4 w-4" />
               First Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -250,7 +267,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
               name="firstName"
               value={applicantSignupRequest?.firstName || ""}
               onChange={handleChange}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6438C2] focus:border-transparent transition-colors ${
+              className={`w-full rounded-lg border px-4 py-3 transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
                 formErrors.firstName
                   ? "border-red-500 bg-red-50"
                   : "border-gray-300 hover:border-gray-400"
@@ -258,8 +275,8 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
               placeholder="Enter your first name"
             />
             {formErrors.firstName && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" />
+              <p className="flex items-center gap-1 text-sm text-red-600">
+                <AlertCircle className="h-3 w-3" />
                 {formErrors.firstName}
               </p>
             )}
@@ -274,7 +291,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
               name="lastName"
               value={applicantSignupRequest?.lastName || ""}
               onChange={handleChange}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6438C2] focus:border-transparent transition-colors ${
+              className={`w-full rounded-lg border px-4 py-3 transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
                 formErrors.lastName
                   ? "border-red-500 bg-red-50"
                   : "border-gray-300 hover:border-gray-400"
@@ -282,8 +299,8 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
               placeholder="Enter your last name"
             />
             {formErrors.lastName && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" />
+              <p className="flex items-center gap-1 text-sm text-red-600">
+                <AlertCircle className="h-3 w-3" />
                 {formErrors.lastName}
               </p>
             )}
@@ -291,7 +308,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
         </div>
 
         {/* Middle Name and Email */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
               Middle Name
@@ -301,14 +318,14 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
               name="middleName"
               value={applicantSignupRequest?.middleName || ""}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6438C2] focus:border-transparent transition-colors hover:border-gray-400"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 transition-colors hover:border-gray-400 focus:border-transparent focus:ring-2 focus:ring-[#6438C2]"
               placeholder="Enter your middle name (optional)"
             />
           </div>
 
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              <Mail className="inline w-4 h-4 mr-1" />
+              <Mail className="mr-1 inline h-4 w-4" />
               Email Address <span className="text-red-500">*</span>
             </label>
             <div className="relative">
@@ -317,7 +334,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
                 name="email"
                 value={applicantSignupRequest?.email || ""}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 ${isCheckingEmail ? 'pr-12' : ''} border rounded-lg focus:ring-2 focus:ring-[#6438C2] focus:border-transparent transition-colors ${
+                className={`w-full px-4 py-3 ${isCheckingEmail ? "pr-12" : ""} rounded-lg border transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
                   formErrors.email
                     ? "border-red-500 bg-red-50"
                     : "border-gray-300 hover:border-gray-400"
@@ -325,14 +342,14 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
                 placeholder="Enter your email address"
               />
               {isCheckingEmail && (
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <Loader2 className="w-4 h-4 animate-spin text-[#6438C2]" />
+                <div className="absolute top-1/2 right-3 -translate-y-1/2 transform">
+                  <Loader2 className="h-4 w-4 animate-spin text-[#6438C2]" />
                 </div>
               )}
             </div>
             {formErrors.email && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" />
+              <p className="flex items-center gap-1 text-sm text-red-600">
+                <AlertCircle className="h-3 w-3" />
                 {formErrors.email}
               </p>
             )}
@@ -342,7 +359,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
         {/* Phone Number */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            <Phone className="inline w-4 h-4 mr-1" />
+            <Phone className="mr-1 inline h-4 w-4" />
             Phone Number <span className="text-red-500">*</span>
           </label>
           <input
@@ -350,7 +367,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
             name="phoneNumber"
             value={applicantSignupRequest?.phoneNumber || ""}
             onChange={handleChange}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#6438C2] focus:border-transparent transition-colors ${
+            className={`w-full rounded-lg border px-4 py-3 transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
               formErrors.phoneNumber
                 ? "border-red-500 bg-red-50"
                 : "border-gray-300 hover:border-gray-400"
@@ -358,8 +375,8 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
             placeholder="Enter your phone number"
           />
           {formErrors.phoneNumber && (
-            <p className="text-sm text-red-600 flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
+            <p className="flex items-center gap-1 text-sm text-red-600">
+              <AlertCircle className="h-3 w-3" />
               {formErrors.phoneNumber}
             </p>
           )}
@@ -368,7 +385,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
         {/* Password */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            <Lock className="inline w-4 h-4 mr-1" />
+            <Lock className="mr-1 inline h-4 w-4" />
             Password <span className="text-red-500">*</span>
           </label>
           <div className="relative">
@@ -377,7 +394,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
               name="password"
               value={applicantSignupRequest?.password || ""}
               onChange={handlePasswordChange}
-              className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-[#6438C2] focus:border-transparent transition-colors ${
+              className={`w-full rounded-lg border px-4 py-3 pr-12 transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
                 formErrors.password
                   ? "border-red-500 bg-red-50"
                   : "border-gray-300 hover:border-gray-400"
@@ -387,14 +404,14 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors p-1"
+              className="absolute top-1/2 right-3 -translate-y-1/2 transform p-1 text-gray-500 transition-colors hover:text-gray-700"
             >
               {passwordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
           {formErrors.password && (
-            <p className="text-sm text-red-600 flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
+            <p className="flex items-center gap-1 text-sm text-red-600">
+              <AlertCircle className="h-3 w-3" />
               {formErrors.password}
             </p>
           )}
@@ -418,8 +435,10 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
                 />
               ))}
             </div>
-            <p className={`text-sm text-right font-medium ${getPasswordStrengthColor()}`}>
-              <Shield className="inline w-3 h-3 mr-1" />
+            <p
+              className={`text-right text-sm font-medium ${getPasswordStrengthColor()}`}
+            >
+              <Shield className="mr-1 inline h-3 w-3" />
               {getPasswordStrengthText()}
             </p>
           </motion.div>
@@ -437,20 +456,20 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
               disabled={!applicantSignupRequest?.password}
-              className={`w-full px-4 py-3 ${passwordsMatch ? 'pr-20' : 'pr-12'} border rounded-lg focus:ring-2 focus:ring-[#6438C2] focus:border-transparent transition-colors ${
+              className={`w-full px-4 py-3 ${passwordsMatch ? "pr-20" : "pr-12"} rounded-lg border transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
                 formErrors.confirmPassword
                   ? "border-red-500 bg-red-50"
                   : passwordsMatch
                     ? "border-green-500 bg-green-50"
                     : "border-gray-300 hover:border-gray-400"
-              } ${!applicantSignupRequest?.password ? "bg-gray-100 cursor-not-allowed" : ""}`}
+              } ${!applicantSignupRequest?.password ? "cursor-not-allowed bg-gray-100" : ""}`}
               placeholder="Confirm your password"
             />
 
             {/* Check icon - positioned further left when visible */}
             {passwordsMatch && (
-              <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
-                <CheckCircle className="w-5 h-5 text-green-500" />
+              <div className="absolute top-1/2 right-12 -translate-y-1/2 transform">
+                <CheckCircle className="h-5 w-5 text-green-500" />
               </div>
             )}
 
@@ -459,14 +478,18 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
               type="button"
               onClick={toggleConfirmPasswordVisibility}
               disabled={!applicantSignupRequest?.password}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors p-1 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="absolute top-1/2 right-3 -translate-y-1/2 transform p-1 text-gray-500 transition-colors hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {confirmPasswordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
+              {confirmPasswordVisible ? (
+                <EyeOff size={20} />
+              ) : (
+                <Eye size={20} />
+              )}
             </button>
           </div>
           {formErrors.confirmPassword && (
-            <p className="text-sm text-red-600 flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
+            <p className="flex items-center gap-1 text-sm text-red-600">
+              <AlertCircle className="h-3 w-3" />
               {formErrors.confirmPassword}
             </p>
           )}
@@ -477,16 +500,16 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
           type="button"
           onClick={next}
           disabled={isSubmitting}
-          className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all duration-200 ${
+          className={`w-full rounded-lg px-4 py-3 font-medium text-white transition-all duration-200 ${
             isSubmitting
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#6E4AED] hover:bg-[#5931A9] active:transform active:scale-[0.98]"
+              ? "cursor-not-allowed bg-gray-400"
+              : "bg-[#6E4AED] hover:bg-[#5931A9] active:scale-[0.98] active:transform"
           } focus:ring-2 focus:ring-[#6438C2] focus:ring-offset-2`}
           whileTap={{ scale: 0.98 }}
         >
           {isSubmitting ? (
             <div className="flex items-center justify-center gap-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
               {isCheckingEmail ? "Checking email..." : "Processing..."}
             </div>
           ) : (
@@ -504,7 +527,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
       >
         Already have an account?{" "}
         <Link
-          className="font-semibold text-[#6E4AED] hover:text-[#5931A9] transition-colors"
+          className="font-semibold text-[#6E4AED] transition-colors hover:text-[#5931A9]"
           to="/login"
         >
           Sign in
@@ -523,7 +546,9 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
             <div className="w-full border-t border-gray-300" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-gray-50 text-gray-500">Or continue with</span>
+            <span className="bg-gray-50 px-4 text-gray-500">
+              Or continue with
+            </span>
           </div>
         </div>
 
@@ -532,12 +557,16 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
             <motion.button
               key={provider.name}
               type="button"
-              className={`flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 rounded-lg transition-colors ${provider.color} hover:border-gray-400`}
+              className={`flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-4 py-3 transition-colors ${provider.color} hover:border-gray-400`}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <img src={provider.logo} alt={`${provider.name} logo`} className="w-5 h-5" />
-              <span className="text-sm font-medium text-gray-700 hidden sm:inline">
+              <img
+                src={provider.logo}
+                alt={`${provider.name} logo`}
+                className="h-5 w-5"
+              />
+              <span className="hidden text-sm font-medium text-gray-700 sm:inline">
                 {provider.name}
               </span>
             </motion.button>
@@ -547,7 +576,7 @@ const ApplicantSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
 
       {/* Terms and Conditions */}
       <motion.div
-        className="text-center text-xs text-gray-500 border-t pt-4"
+        className="border-t pt-4 text-center text-xs text-gray-500"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.8 }}

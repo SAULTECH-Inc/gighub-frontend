@@ -12,7 +12,7 @@ import {
   DEFAULT_MAX,
   DEFAULT_MIN,
   employmentTypeMap,
-  employmentTypeOptions
+  employmentTypeOptions,
 } from "../../utils/constants.ts";
 
 import { EmploymentType } from "../../utils/enums.ts";
@@ -51,7 +51,7 @@ const JobSearchSidebarMobile = forwardRef<HTMLDivElement, Props>(
     return (
       <div
         ref={ref}
-        className={`bg-opacity-50 fixed inset-0 z-50 items-start justify-start overflow-y-auto bg-black ${isOpened ? "flex" : "hidden"}`}
+        className={`fixed inset-0 z-50 items-start justify-start overflow-y-auto bg-black/20 ${isOpened ? "flex" : "hidden"}`}
       >
         <div className="relative grid min-h-screen w-[300px] grid-cols-1 overflow-y-auto border-2 border-[#F5F5F5] bg-white px-4 py-4">
           {/* Filter Header */}
@@ -63,7 +63,7 @@ const JobSearchSidebarMobile = forwardRef<HTMLDivElement, Props>(
             <p
               className="cursor-pointer text-[#6438C2]"
               onClick={resetSettings}
-            >
+            >n
               Reset
             </p>
           </div>

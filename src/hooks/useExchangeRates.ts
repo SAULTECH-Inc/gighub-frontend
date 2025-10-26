@@ -11,7 +11,11 @@ const fetchExchangeRates = async (base: string): Promise<Option[]> => {
 };
 
 export const useExchangeRates = (base: string) => {
-  const { data = [], isLoading, error } = useQuery({
+  const {
+    data = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["exchangeRates", base],
     queryFn: () => fetchExchangeRates(base),
     enabled: !!base,

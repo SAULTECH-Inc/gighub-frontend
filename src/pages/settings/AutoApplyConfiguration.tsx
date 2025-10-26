@@ -2,7 +2,8 @@ import { FC, useState } from "react";
 import { useSettingsStore } from "../../store/useSettingsStore.ts";
 
 const AutoApplyConfiguration: FC = () => {
-  const { applicantSettings, updateAutoApplySettings, setAutoApplySettings } = useSettingsStore();
+  const { applicantSettings, updateAutoApplySettings, setAutoApplySettings } =
+    useSettingsStore();
   const [newCompany, setNewCompany] = useState("");
   const [newKeyword, setNewKeyword] = useState("");
 
@@ -11,68 +12,81 @@ const AutoApplyConfiguration: FC = () => {
     enableAutoApply: true,
     pauseAutoApply: false,
     applyImmediately: false,
-    batchApplyTime: '09:00',
-    timezone: 'Africa/Lagos',
+    batchApplyTime: "09:00",
+    timezone: "Africa/Lagos",
     applyOnWeekends: true,
     skipAlreadyApplied: true,
     blacklistedCompanies: [],
-    blacklistedKeywords: []
+    blacklistedKeywords: [],
   };
 
   const handleSettingChange = async (key: string, value: any) => {
-    const settingsBeforeUpdate = {...autoApplySettings};
+    const settingsBeforeUpdate = { ...autoApplySettings };
     setAutoApplySettings({
       ...autoApplySettings,
-      [key]: value
+      [key]: value,
     });
     const response = await updateAutoApplySettings({
       ...autoApplySettings,
-      [key]: value
+      [key]: value,
     });
     if (response) {
       setAutoApplySettings(response);
-    }else{
+    } else {
       setAutoApplySettings(settingsBeforeUpdate);
     }
-
   };
 
   const addBlacklistedCompany = () => {
-    if (newCompany.trim() && !autoApplySettings.blacklistedCompanies.includes(newCompany.trim())) {
-      handleSettingChange('blacklistedCompanies', [...autoApplySettings.blacklistedCompanies, newCompany.trim()]);
+    if (
+      newCompany.trim() &&
+      !autoApplySettings.blacklistedCompanies.includes(newCompany.trim())
+    ) {
+      handleSettingChange("blacklistedCompanies", [
+        ...autoApplySettings.blacklistedCompanies,
+        newCompany.trim(),
+      ]);
       setNewCompany("");
     }
   };
 
   const removeBlacklistedCompany = (company: string) => {
-    handleSettingChange('blacklistedCompanies',
-      autoApplySettings.blacklistedCompanies.filter(c => c !== company)
+    handleSettingChange(
+      "blacklistedCompanies",
+      autoApplySettings.blacklistedCompanies.filter((c) => c !== company),
     );
   };
 
   const addBlacklistedKeyword = () => {
-    if (newKeyword.trim() && !autoApplySettings.blacklistedKeywords.includes(newKeyword.trim())) {
-      handleSettingChange('blacklistedKeywords', [...autoApplySettings.blacklistedKeywords, newKeyword.trim()]);
+    if (
+      newKeyword.trim() &&
+      !autoApplySettings.blacklistedKeywords.includes(newKeyword.trim())
+    ) {
+      handleSettingChange("blacklistedKeywords", [
+        ...autoApplySettings.blacklistedKeywords,
+        newKeyword.trim(),
+      ]);
       setNewKeyword("");
     }
   };
 
   const removeBlacklistedKeyword = (keyword: string) => {
-    handleSettingChange('blacklistedKeywords',
-      autoApplySettings.blacklistedKeywords.filter(k => k !== keyword)
+    handleSettingChange(
+      "blacklistedKeywords",
+      autoApplySettings.blacklistedKeywords.filter((k) => k !== keyword),
     );
   };
 
   const timezones = [
-    { value: 'Africa/Lagos', label: 'Lagos (WAT)' },
-    { value: 'America/New_York', label: 'New York (EST)' },
-    { value: 'America/Los_Angeles', label: 'Los Angeles (PST)' },
-    { value: 'Europe/London', label: 'London (GMT)' },
-    { value: 'Europe/Paris', label: 'Paris (CET)' },
-    { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
-    { value: 'Asia/Dubai', label: 'Dubai (GST)' },
-    { value: 'Australia/Sydney', label: 'Sydney (AEST)' },
-    { value: 'UTC', label: 'UTC' }
+    { value: "Africa/Lagos", label: "Lagos (WAT)" },
+    { value: "America/New_York", label: "New York (EST)" },
+    { value: "America/Los_Angeles", label: "Los Angeles (PST)" },
+    { value: "Europe/London", label: "London (GMT)" },
+    { value: "Europe/Paris", label: "Paris (CET)" },
+    { value: "Asia/Tokyo", label: "Tokyo (JST)" },
+    { value: "Asia/Dubai", label: "Dubai (GST)" },
+    { value: "Australia/Sydney", label: "Sydney (AEST)" },
+    { value: "UTC", label: "UTC" },
   ];
 
   return (
@@ -136,9 +150,12 @@ const AutoApplyConfiguration: FC = () => {
       `}</style>
 
       <div className="mb-6 border-b border-gray-200 pb-4">
-        <h3 className="text-xl font-semibold text-gray-900">Auto Apply Configuration</h3>
+        <h3 className="text-xl font-semibold text-gray-900">
+          Auto Apply Configuration
+        </h3>
         <p className="mt-2 text-sm text-gray-600">
-          Set up automatic job applications based on your preferences and criteria
+          Set up automatic job applications based on your preferences and
+          criteria
         </p>
       </div>
 
@@ -146,22 +163,25 @@ const AutoApplyConfiguration: FC = () => {
       <div className="mb-8 rounded-lg bg-purple-50 p-4">
         <div className="flex items-center justify-between">
           <div>
-            <h4 className="text-lg font-medium text-gray-900">Auto Apply Feature</h4>
+            <h4 className="text-lg font-medium text-gray-900">
+              Auto Apply Feature
+            </h4>
             <p className="text-sm text-gray-600">
               {autoApplySettings.enableAutoApply
                 ? "Automatically apply to jobs that match your criteria"
-                : "Auto apply is currently disabled"
-              }
+                : "Auto apply is currently disabled"}
             </p>
           </div>
           <label className="relative inline-flex cursor-pointer items-center">
             <input
               type="checkbox"
               checked={autoApplySettings.enableAutoApply}
-              onChange={(e) => handleSettingChange('enableAutoApply', e.target.checked)}
+              onChange={(e) =>
+                handleSettingChange("enableAutoApply", e.target.checked)
+              }
               className="peer sr-only"
             />
-            <div className="peer h-7 w-12 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-6 after:w-6 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-purple-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300"></div>
+            <div className="peer h-7 w-12 rounded-full bg-gray-200 peer-checked:bg-purple-600 peer-focus:ring-4 peer-focus:ring-purple-300 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-6 after:w-6 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
           </label>
         </div>
       </div>
@@ -172,29 +192,39 @@ const AutoApplyConfiguration: FC = () => {
           <div className="mb-6 flex items-center justify-between rounded-lg border border-yellow-200 bg-yellow-50 p-4">
             <div>
               <h4 className="font-medium text-gray-900">Pause Auto Apply</h4>
-              <p className="text-sm text-gray-600">Temporarily pause without losing your settings</p>
+              <p className="text-sm text-gray-600">
+                Temporarily pause without losing your settings
+              </p>
             </div>
             <label className="relative inline-flex cursor-pointer items-center">
               <input
                 type="checkbox"
                 checked={autoApplySettings.pauseAutoApply}
-                onChange={(e) => handleSettingChange('pauseAutoApply', e.target.checked)}
+                onChange={(e) =>
+                  handleSettingChange("pauseAutoApply", e.target.checked)
+                }
                 className="peer sr-only"
               />
-              <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-yellow-500 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300"></div>
+              <div className="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-yellow-500 peer-focus:ring-4 peer-focus:ring-yellow-300 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
             </label>
           </div>
 
           {/* Matching Criteria */}
           <div className="mb-8">
-            <h4 className="mb-4 text-lg font-medium text-gray-900">Matching Criteria</h4>
+            <h4 className="mb-4 text-lg font-medium text-gray-900">
+              Matching Criteria
+            </h4>
 
             <div className="rounded-lg border border-gray-200 p-4">
               <label className="mb-3 block font-medium text-gray-900">
-                Minimum Match Percentage: <span className="text-purple-600">{autoApplySettings.minimumMatchPercentage}%</span>
+                Minimum Match Percentage:{" "}
+                <span className="text-purple-600">
+                  {autoApplySettings.minimumMatchPercentage}%
+                </span>
               </label>
               <p className="mb-3 text-sm text-gray-600">
-                Only apply to jobs that match at least this percentage of your profile
+                Only apply to jobs that match at least this percentage of your
+                profile
               </p>
               <input
                 type="range"
@@ -202,7 +232,12 @@ const AutoApplyConfiguration: FC = () => {
                 max="95"
                 step="5"
                 value={autoApplySettings.minimumMatchPercentage}
-                onChange={(e) => handleSettingChange('minimumMatchPercentage', parseInt(e.target.value))}
+                onChange={(e) =>
+                  handleSettingChange(
+                    "minimumMatchPercentage",
+                    parseInt(e.target.value),
+                  )
+                }
                 className="custom-range h-2 w-full cursor-pointer"
               />
               <div className="mt-2 flex justify-between text-sm text-gray-500">
@@ -215,7 +250,9 @@ const AutoApplyConfiguration: FC = () => {
 
           {/* Application Timing */}
           <div className="mb-8">
-            <h4 className="mb-4 text-lg font-medium text-gray-900">Application Timing</h4>
+            <h4 className="mb-4 text-lg font-medium text-gray-900">
+              Application Timing
+            </h4>
 
             <div className="space-y-4 rounded-lg border border-gray-200 p-4">
               <div className="flex items-start">
@@ -223,14 +260,19 @@ const AutoApplyConfiguration: FC = () => {
                   type="radio"
                   id="applyImmediately"
                   checked={autoApplySettings.applyImmediately}
-                  onChange={() => handleSettingChange('applyImmediately', true)}
+                  onChange={() => handleSettingChange("applyImmediately", true)}
                   className="mt-1 mr-3 h-4 w-4 text-purple-600 focus:ring-purple-500"
                 />
                 <div>
-                  <label htmlFor="applyImmediately" className="font-medium text-gray-900 cursor-pointer">
+                  <label
+                    htmlFor="applyImmediately"
+                    className="cursor-pointer font-medium text-gray-900"
+                  >
                     Apply Immediately
                   </label>
-                  <p className="text-sm text-gray-600">Submit applications as soon as matching jobs are found</p>
+                  <p className="text-sm text-gray-600">
+                    Submit applications as soon as matching jobs are found
+                  </p>
                 </div>
               </div>
 
@@ -239,14 +281,21 @@ const AutoApplyConfiguration: FC = () => {
                   type="radio"
                   id="batch_apply"
                   checked={!autoApplySettings.applyImmediately}
-                  onChange={() => handleSettingChange('applyImmediately', false)}
+                  onChange={() =>
+                    handleSettingChange("applyImmediately", false)
+                  }
                   className="mt-1 mr-3 h-4 w-4 text-purple-600 focus:ring-purple-500"
                 />
                 <div className="flex-1">
-                  <label htmlFor="batch_apply" className="font-medium text-gray-900 cursor-pointer">
+                  <label
+                    htmlFor="batch_apply"
+                    className="cursor-pointer font-medium text-gray-900"
+                  >
                     Batch Processing
                   </label>
-                  <p className="text-sm text-gray-600 mb-3">Collect matches and apply at a specific time</p>
+                  <p className="mb-3 text-sm text-gray-600">
+                    Collect matches and apply at a specific time
+                  </p>
 
                   {!autoApplySettings.applyImmediately && (
                     <div className="ml-0 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -257,8 +306,13 @@ const AutoApplyConfiguration: FC = () => {
                         <input
                           type="time"
                           value={autoApplySettings.batchApplyTime}
-                          onChange={(e) => handleSettingChange('batchApplyTime', e.target.value)}
-                          className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                          onChange={(e) =>
+                            handleSettingChange(
+                              "batchApplyTime",
+                              e.target.value,
+                            )
+                          }
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none"
                         />
                       </div>
 
@@ -268,8 +322,10 @@ const AutoApplyConfiguration: FC = () => {
                         </label>
                         <select
                           value={autoApplySettings.timezone}
-                          onChange={(e) => handleSettingChange('timezone', e.target.value)}
-                          className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                          onChange={(e) =>
+                            handleSettingChange("timezone", e.target.value)
+                          }
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none"
                         >
                           {timezones.map((tz) => (
                             <option key={tz.value} value={tz.value}>
@@ -287,38 +343,56 @@ const AutoApplyConfiguration: FC = () => {
 
           {/* Application Preferences */}
           <div className="mb-8">
-            <h4 className="mb-4 text-lg font-medium text-gray-900">Application Preferences</h4>
+            <h4 className="mb-4 text-lg font-medium text-gray-900">
+              Application Preferences
+            </h4>
 
             <div className="space-y-4">
               <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4">
                 <div>
-                  <h5 className="font-medium text-gray-900">Apply on Weekends</h5>
-                  <p className="text-sm text-gray-600">Allow applications on Saturday and Sunday</p>
+                  <h5 className="font-medium text-gray-900">
+                    Apply on Weekends
+                  </h5>
+                  <p className="text-sm text-gray-600">
+                    Allow applications on Saturday and Sunday
+                  </p>
                 </div>
                 <label className="relative inline-flex cursor-pointer items-center">
                   <input
                     type="checkbox"
                     checked={autoApplySettings.applyOnWeekends}
-                    onChange={(e) => handleSettingChange('applyOnWeekends', e.target.checked)}
+                    onChange={(e) =>
+                      handleSettingChange("applyOnWeekends", e.target.checked)
+                    }
                     className="peer sr-only"
                   />
-                  <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-purple-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300"></div>
+                  <div className="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-purple-600 peer-focus:ring-4 peer-focus:ring-purple-300 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
                 </label>
               </div>
 
               <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4">
                 <div>
-                  <h5 className="font-medium text-gray-900">Skip Already Applied Jobs</h5>
-                  <p className="text-sm text-gray-600">Avoid duplicate applications to jobs you've already applied to</p>
+                  <h5 className="font-medium text-gray-900">
+                    Skip Already Applied Jobs
+                  </h5>
+                  <p className="text-sm text-gray-600">
+                    Avoid duplicate applications to jobs you've already applied
+                    to
+                  </p>
                 </div>
                 <label className="relative inline-flex cursor-pointer items-center">
                   <input
                     type="checkbox"
                     checked={autoApplySettings.skipAlreadyApplied}
-                    onChange={(e) => handleSettingChange('skipAlreadyApplied', e.target.checked)}
+                    onChange={(e) =>
+                      handleSettingChange(
+                        "skipAlreadyApplied",
+                        e.target.checked,
+                      )
+                    }
                     className="peer sr-only"
                   />
-                  <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-purple-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300"></div>
+                  <div className="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-purple-600 peer-focus:ring-4 peer-focus:ring-purple-300 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
                 </label>
               </div>
             </div>
@@ -328,7 +402,9 @@ const AutoApplyConfiguration: FC = () => {
           <div className="space-y-6">
             {/* Blacklisted Companies */}
             <div>
-              <h4 className="mb-4 text-lg font-medium text-gray-900">Company Exclusions</h4>
+              <h4 className="mb-4 text-lg font-medium text-gray-900">
+                Company Exclusions
+              </h4>
               <div className="rounded-lg border border-gray-200 p-4">
                 <p className="mb-4 text-sm text-gray-600">
                   Add companies you never want to apply to automatically
@@ -340,13 +416,15 @@ const AutoApplyConfiguration: FC = () => {
                     value={newCompany}
                     onChange={(e) => setNewCompany(e.target.value)}
                     placeholder="Enter company name (e.g., BadCompany Inc)"
-                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
-                    onKeyPress={(e) => e.key === 'Enter' && addBlacklistedCompany()}
+                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none"
+                    onKeyPress={(e) =>
+                      e.key === "Enter" && addBlacklistedCompany()
+                    }
                   />
                   <button
                     onClick={addBlacklistedCompany}
                     disabled={!newCompany.trim()}
-                    className="rounded-lg bg-purple-600 px-6 py-2 text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    className="rounded-lg bg-purple-600 px-6 py-2 text-white hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-300"
                   >
                     Add
                   </button>
@@ -354,34 +432,41 @@ const AutoApplyConfiguration: FC = () => {
 
                 {autoApplySettings.blacklistedCompanies.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {autoApplySettings.blacklistedCompanies.map((company, index) => (
-                      <span
-                        key={index}
-                        className="flex items-center rounded-full bg-red-50 border border-red-200 px-3 py-1 text-sm text-red-800"
-                      >
-                        {company}
-                        <button
-                          onClick={() => removeBlacklistedCompany(company)}
-                          className="ml-2 text-red-500 hover:text-red-700 font-bold"
-                          title="Remove company"
+                    {autoApplySettings.blacklistedCompanies.map(
+                      (company, index) => (
+                        <span
+                          key={index}
+                          className="flex items-center rounded-full border border-red-200 bg-red-50 px-3 py-1 text-sm text-red-800"
                         >
-                          ×
-                        </button>
-                      </span>
-                    ))}
+                          {company}
+                          <button
+                            onClick={() => removeBlacklistedCompany(company)}
+                            className="ml-2 font-bold text-red-500 hover:text-red-700"
+                            title="Remove company"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ),
+                    )}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500 italic">No companies blacklisted yet</p>
+                  <p className="text-sm text-gray-500 italic">
+                    No companies blacklisted yet
+                  </p>
                 )}
               </div>
             </div>
 
             {/* Blacklisted Keywords */}
             <div>
-              <h4 className="mb-4 text-lg font-medium text-gray-900">Keyword Exclusions</h4>
+              <h4 className="mb-4 text-lg font-medium text-gray-900">
+                Keyword Exclusions
+              </h4>
               <div className="rounded-lg border border-gray-200 p-4">
                 <p className="mb-4 text-sm text-gray-600">
-                  Add keywords to avoid in job titles and descriptions (e.g., "unpaid", "commission only")
+                  Add keywords to avoid in job titles and descriptions (e.g.,
+                  "unpaid", "commission only")
                 </p>
 
                 <div className="mb-4 flex gap-2">
@@ -390,13 +475,15 @@ const AutoApplyConfiguration: FC = () => {
                     value={newKeyword}
                     onChange={(e) => setNewKeyword(e.target.value)}
                     placeholder="Enter keyword to avoid"
-                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
-                    onKeyPress={(e) => e.key === 'Enter' && addBlacklistedKeyword()}
+                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none"
+                    onKeyPress={(e) =>
+                      e.key === "Enter" && addBlacklistedKeyword()
+                    }
                   />
                   <button
                     onClick={addBlacklistedKeyword}
                     disabled={!newKeyword.trim()}
-                    className="rounded-lg bg-purple-600 px-6 py-2 text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    className="rounded-lg bg-purple-600 px-6 py-2 text-white hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-300"
                   >
                     Add
                   </button>
@@ -404,24 +491,28 @@ const AutoApplyConfiguration: FC = () => {
 
                 {autoApplySettings.blacklistedKeywords.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {autoApplySettings.blacklistedKeywords.map((keyword, index) => (
-                      <span
-                        key={index}
-                        className="flex items-center rounded-full bg-red-50 border border-red-200 px-3 py-1 text-sm text-red-800"
-                      >
-                        {keyword}
-                        <button
-                          onClick={() => removeBlacklistedKeyword(keyword)}
-                          className="ml-2 text-red-500 hover:text-red-700 font-bold"
-                          title="Remove keyword"
+                    {autoApplySettings.blacklistedKeywords.map(
+                      (keyword, index) => (
+                        <span
+                          key={index}
+                          className="flex items-center rounded-full border border-red-200 bg-red-50 px-3 py-1 text-sm text-red-800"
                         >
-                          ×
-                        </button>
-                      </span>
-                    ))}
+                          {keyword}
+                          <button
+                            onClick={() => removeBlacklistedKeyword(keyword)}
+                            className="ml-2 font-bold text-red-500 hover:text-red-700"
+                            title="Remove keyword"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ),
+                    )}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500 italic">No keywords blacklisted yet</p>
+                  <p className="text-sm text-gray-500 italic">
+                    No keywords blacklisted yet
+                  </p>
                 )}
               </div>
             </div>
@@ -429,14 +520,32 @@ const AutoApplyConfiguration: FC = () => {
 
           {/* Status Summary */}
           {!autoApplySettings.pauseAutoApply && (
-            <div className="mt-8 rounded-lg bg-green-50 border border-green-200 p-4">
-              <h5 className="font-medium text-green-800 mb-2">Auto Apply Status: Active</h5>
-              <div className="text-sm text-green-700 space-y-1">
-                <p>• Minimum match: {autoApplySettings.minimumMatchPercentage}%</p>
-                <p>• Timing: {autoApplySettings.applyImmediately ? 'Immediate' : `Batch at ${autoApplySettings.batchApplyTime}`}</p>
-                <p>• Weekend applications: {autoApplySettings.applyOnWeekends ? 'Enabled' : 'Disabled'}</p>
-                <p>• Excluded companies: {autoApplySettings.blacklistedCompanies.length}</p>
-                <p>• Excluded keywords: {autoApplySettings.blacklistedKeywords.length}</p>
+            <div className="mt-8 rounded-lg border border-green-200 bg-green-50 p-4">
+              <h5 className="mb-2 font-medium text-green-800">
+                Auto Apply Status: Active
+              </h5>
+              <div className="space-y-1 text-sm text-green-700">
+                <p>
+                  • Minimum match: {autoApplySettings.minimumMatchPercentage}%
+                </p>
+                <p>
+                  • Timing:{" "}
+                  {autoApplySettings.applyImmediately
+                    ? "Immediate"
+                    : `Batch at ${autoApplySettings.batchApplyTime}`}
+                </p>
+                <p>
+                  • Weekend applications:{" "}
+                  {autoApplySettings.applyOnWeekends ? "Enabled" : "Disabled"}
+                </p>
+                <p>
+                  • Excluded companies:{" "}
+                  {autoApplySettings.blacklistedCompanies.length}
+                </p>
+                <p>
+                  • Excluded keywords:{" "}
+                  {autoApplySettings.blacklistedKeywords.length}
+                </p>
               </div>
             </div>
           )}

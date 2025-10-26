@@ -16,7 +16,9 @@ import React from "react";
 interface JobDescriptionProps {
   jobCurrentlyViewed: JobPostResponse;
 }
-const JobDescription: React.FC<JobDescriptionProps> = ({jobCurrentlyViewed}) => {
+const JobDescription: React.FC<JobDescriptionProps> = ({
+  jobCurrentlyViewed,
+}) => {
   const { isModalOpen, openModal, closeModal } = useModalStore();
   const { setJobToApply } = useJobSearchSettings();
   const salaryExist =
@@ -46,55 +48,55 @@ const JobDescription: React.FC<JobDescriptionProps> = ({jobCurrentlyViewed}) => 
   };
 
   return (
-    <div className="relative mx-auto flex w-full flex-col bg-white p-4 sm:p-6 lg:p-8 overflow-y-auto h-screen">
+    <div className="relative mx-auto flex h-screen w-full flex-col overflow-y-auto bg-white p-4 sm:p-6 lg:p-8">
       {/* Header Section */}
-      <div className="flex items-start gap-4 mb-6">
+      <div className="mb-6 flex items-start gap-4">
         <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm sm:h-20 sm:w-20">
           <img
             src={jobCurrentlyViewed?.employer?.companyLogo || paystack}
             alt="company logo"
-            className="h-10 w-10 object-cover rounded-lg sm:h-16 sm:w-16"
+            className="h-10 w-10 rounded-lg object-cover sm:h-16 sm:w-16"
           />
         </div>
 
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="hidden sm:block">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">
+            <h1 className="mb-2 text-2xl leading-tight font-bold text-gray-900">
               {jobCurrentlyViewed?.title}
             </h1>
-            <div className="flex flex-wrap items-center gap-6 mb-3">
-              <span className="text-gray-600 font-medium">
+            <div className="mb-3 flex flex-wrap items-center gap-6">
+              <span className="font-medium text-gray-600">
                 {jobCurrentlyViewed?.company}
               </span>
-              <span className="text-gray-500 text-sm">
+              <span className="text-sm text-gray-500">
                 {jobCurrentlyViewed?.applicantsCount &&
                 jobCurrentlyViewed?.applicantsCount > 1
                   ? `${jobCurrentlyViewed?.applicantsCount} people have applied`
                   : "No applicants yet"}
               </span>
             </div>
-            {
-              (jobCurrentlyViewed?.noMutualConnections &&
-                jobCurrentlyViewed.noMutualConnections > 0) ? (
-                <p className="text-gray-600 text-sm">
-                  {jobCurrentlyViewed.noMutualConnections} people from your network work here,{" "}
-                  <a href="" className="text-purple-600 hover:text-purple-700 font-medium">
-                    see connections
-                  </a>
-                </p>
-              ) : (
-                <p className="text-gray-600 text-sm">
-                  No mutual connections
-                </p>
-              )
-            }
+            {jobCurrentlyViewed?.noMutualConnections &&
+            jobCurrentlyViewed.noMutualConnections > 0 ? (
+              <p className="text-sm text-gray-600">
+                {jobCurrentlyViewed.noMutualConnections} people from your
+                network work here,{" "}
+                <a
+                  href=""
+                  className="font-medium text-purple-600 hover:text-purple-700"
+                >
+                  see connections
+                </a>
+              </p>
+            ) : (
+              <p className="text-sm text-gray-600">No mutual connections</p>
+            )}
           </div>
 
           <div className="block sm:hidden">
-            <h1 className="text-xl font-bold text-gray-900 mb-1">
+            <h1 className="mb-1 text-xl font-bold text-gray-900">
               {jobCurrentlyViewed?.title}
             </h1>
-            <span className="text-gray-600 font-medium">
+            <span className="font-medium text-gray-600">
               {jobCurrentlyViewed?.company}
             </span>
           </div>
@@ -103,50 +105,66 @@ const JobDescription: React.FC<JobDescriptionProps> = ({jobCurrentlyViewed}) => 
 
       {/* Mobile network info */}
 
-      {
-        (jobCurrentlyViewed?.noMutualConnections && jobCurrentlyViewed.noMutualConnections > 0) ? (
-          (<p className="text-gray-600 text-sm mb-6 block sm:hidden">
-            {jobCurrentlyViewed.noMutualConnections} people from your network work here,{" "}
-            <a href="" className="text-purple-600 hover:text-purple-700 font-medium">
-              see connections
-            </a>
-          </p>)
-        ) : (
-          <p className="text-gray-600 text-sm mb-6 block sm:hidden">
-            No mutual connections
-          </p>
-        )
-      }
+      {jobCurrentlyViewed?.noMutualConnections &&
+      jobCurrentlyViewed.noMutualConnections > 0 ? (
+        <p className="mb-6 block text-sm text-gray-600 sm:hidden">
+          {jobCurrentlyViewed.noMutualConnections} people from your network work
+          here,{" "}
+          <a
+            href=""
+            className="font-medium text-purple-600 hover:text-purple-700"
+          >
+            see connections
+          </a>
+        </p>
+      ) : (
+        <p className="mb-6 block text-sm text-gray-600 sm:hidden">
+          No mutual connections
+        </p>
+      )}
 
       {/* Job Stats Cards */}
-      <div className="border-t border-gray-200 pt-6 mb-8">
-        <div className={`grid gap-4 ${salaryExist ? "grid-cols-3" : "grid-cols-2"} sm:gap-6`}>
-          <div
-            className="flex flex-col items-center justify-center rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 p-4 text-center border border-purple-200 sm:p-6">
-            <span className="text-sm font-medium text-gray-700 mb-1">Job Type</span>
+      <div className="mb-8 border-t border-gray-200 pt-6">
+        <div
+          className={`grid gap-4 ${salaryExist ? "grid-cols-3" : "grid-cols-2"} sm:gap-6`}
+        >
+          <div className="flex flex-col items-center justify-center rounded-xl border border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100 p-4 text-center sm:p-6">
+            <span className="mb-1 text-sm font-medium text-gray-700">
+              Job Type
+            </span>
             <span className="text-lg font-semibold text-gray-900">
               {jobCurrentlyViewed?.jobType}
             </span>
           </div>
 
-          <div className="flex flex-col items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 p-4 text-center border border-blue-200 sm:p-6">
-            <span className="text-sm font-medium text-gray-700 mb-1">Experience</span>
+          <div className="flex flex-col items-center justify-center rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-4 text-center sm:p-6">
+            <span className="mb-1 text-sm font-medium text-gray-700">
+              Experience
+            </span>
             <span className="text-lg font-semibold text-gray-900">
               {jobCurrentlyViewed?.experienceYears}+ years
             </span>
           </div>
 
           {salaryExist && (
-            <div className="flex flex-col items-center justify-center rounded-xl bg-gradient-to-br from-green-50 to-green-100 p-4 text-center border border-green-200 sm:p-6 col-span-2 sm:col-span-1">
-              <span className="text-sm font-medium text-gray-700 mb-1">Salary</span>
-              <span className="text-lg font-semibold text-gray-900 text-center">
+            <div className="col-span-2 flex flex-col items-center justify-center rounded-xl border border-green-200 bg-gradient-to-br from-green-50 to-green-100 p-4 text-center sm:col-span-1 sm:p-6">
+              <span className="mb-1 text-sm font-medium text-gray-700">
+                Salary
+              </span>
+              <span className="text-center text-lg font-semibold text-gray-900">
                 {jobCurrentlyViewed?.salaryRange?.currency}
-                {numeral(jobCurrentlyViewed?.salaryRange?.minimumAmount).format("0.[00]a")}
+                {numeral(jobCurrentlyViewed?.salaryRange?.minimumAmount).format(
+                  "0.[00]a",
+                )}
                 {" - "}
                 {jobCurrentlyViewed.salaryRange.currency}
-                {numeral(jobCurrentlyViewed?.salaryRange?.maximumAmount).format("0.[00]a")}
-                <span className="text-sm text-gray-600 block">
-                  /{jobCurrentlyViewed?.salaryRange?.frequency?.split(" ")[1] || jobCurrentlyViewed?.salaryRange?.frequency}
+                {numeral(jobCurrentlyViewed?.salaryRange?.maximumAmount).format(
+                  "0.[00]a",
+                )}
+                <span className="block text-sm text-gray-600">
+                  /
+                  {jobCurrentlyViewed?.salaryRange?.frequency?.split(" ")[1] ||
+                    jobCurrentlyViewed?.salaryRange?.frequency}
                 </span>
               </span>
             </div>
@@ -157,11 +175,11 @@ const JobDescription: React.FC<JobDescriptionProps> = ({jobCurrentlyViewed}) => 
       {/* Content Sections */}
       <div className="space-y-8">
         <section>
-          <h2 className="text-xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+          <h2 className="mb-4 border-b border-gray-200 pb-2 text-xl font-bold text-gray-900">
             About the Role
           </h2>
           <div
-            className="prose prose-gray max-w-none text-gray-700 leading-relaxed"
+            className="prose prose-gray max-w-none leading-relaxed text-gray-700"
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(jobCurrentlyViewed?.description || ""),
             }}
@@ -169,26 +187,30 @@ const JobDescription: React.FC<JobDescriptionProps> = ({jobCurrentlyViewed}) => 
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+          <h2 className="mb-4 border-b border-gray-200 pb-2 text-xl font-bold text-gray-900">
             Key Responsibilities
           </h2>
           <div
-            className="prose prose-gray max-w-none text-gray-700 leading-relaxed"
+            className="prose prose-gray max-w-none leading-relaxed text-gray-700"
             dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(jobCurrentlyViewed?.responsibility || ""),
+              __html: DOMPurify.sanitize(
+                jobCurrentlyViewed?.responsibility || "",
+              ),
             }}
           />
         </section>
 
         {jobCurrentlyViewed?.requirements && (
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+            <h2 className="mb-4 border-b border-gray-200 pb-2 text-xl font-bold text-gray-900">
               Requirements
             </h2>
             <div
-              className="prose prose-gray max-w-none text-gray-700 leading-relaxed"
+              className="prose prose-gray max-w-none leading-relaxed text-gray-700"
               dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(jobCurrentlyViewed?.requirements || ""),
+                __html: DOMPurify.sanitize(
+                  jobCurrentlyViewed?.requirements || "",
+                ),
               }}
             />
           </section>
@@ -196,26 +218,26 @@ const JobDescription: React.FC<JobDescriptionProps> = ({jobCurrentlyViewed}) => 
       </div>
 
       {/* Footer Actions */}
-      <div className="border-t border-gray-200 pt-6 mt-12">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <span className="text-gray-500 text-sm">
+      <div className="mt-12 border-t border-gray-200 pt-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <span className="text-sm text-gray-500">
             Posted {moment(jobCurrentlyViewed?.createdAt as Date).fromNow()}
           </span>
 
           <div className="flex gap-3">
             <button
               onClick={() => openModal("refer-modal")}
-              className="px-6 py-3 border border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex-1 sm:flex-none"
+              className="flex-1 rounded-xl border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-all duration-200 hover:border-gray-400 hover:bg-gray-50 sm:flex-none"
             >
               Refer Someone
             </button>
             <button
               onClick={handleApply}
               disabled={jobCurrentlyViewed?.applied || false}
-              className={`px-8 py-3 rounded-xl font-medium transition-all duration-200 flex-1 sm:flex-none ${
+              className={`flex-1 rounded-xl px-8 py-3 font-medium transition-all duration-200 sm:flex-none ${
                 jobCurrentlyViewed?.applied
-                  ? "bg-green-500 text-white cursor-default"
-                  : "bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-lg"
+                  ? "cursor-default bg-green-500 text-white"
+                  : "bg-purple-600 text-white shadow-md hover:bg-purple-700 hover:shadow-lg"
               }`}
             >
               {!jobCurrentlyViewed?.applied ? "Quick Apply" : "Applied ✓"}
@@ -227,7 +249,9 @@ const JobDescription: React.FC<JobDescriptionProps> = ({jobCurrentlyViewed}) => 
       {/* Modals */}
       {isModalOpen("application-modal") && (
         <ApplicationModal
-          applicationMethod={jobCurrentlyViewed?.applicationMethod as ApplicationMethod}
+          applicationMethod={
+            jobCurrentlyViewed?.applicationMethod as ApplicationMethod
+          }
           modalId="application-modal"
         />
       )}

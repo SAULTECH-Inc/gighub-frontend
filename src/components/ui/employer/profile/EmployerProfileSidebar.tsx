@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import React, { FC, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Building2,
@@ -11,8 +11,9 @@ import {
   Eye,
   ChevronRight,
   CheckCircle2,
-  Circle
+  Circle,
 } from "lucide-react";
+import { ProfileCompletionResponse } from "../../../../utils/types";
 
 interface SidebarItem {
   id: string;
@@ -22,7 +23,11 @@ interface SidebarItem {
   active?: boolean;
 }
 
-const EmployerProfileSidebar: FC = () => {
+interface Props{
+  completionDetails: ProfileCompletionResponse
+}
+
+const EmployerProfileSidebar: FC<Props> = ({completionDetails}) => {
   const [activeSection, setActiveSection] = useState("company-info");
 
   // Define sidebar navigation items with icons and completion status
@@ -32,43 +37,43 @@ const EmployerProfileSidebar: FC = () => {
       label: "Basic Company Information",
       icon: Building2,
       completed: true,
-      active: activeSection === "company-info"
+      active: activeSection === "company-info",
     },
     {
       id: "contact-info",
       label: "Contact Information",
       icon: Phone,
       completed: false,
-      active: activeSection === "contact-info"
+      active: activeSection === "contact-info",
     },
     {
       id: "branding",
       label: "Branding and Visual",
       icon: Palette,
       completed: false,
-      active: activeSection === "branding"
+      active: activeSection === "branding",
     },
     {
       id: "overview",
       label: "Company Overview",
       icon: FileText,
       completed: false,
-      active: activeSection === "overview"
+      active: activeSection === "overview",
     },
     {
       id: "social",
       label: "Social and Professional Links",
       icon: Share2,
       completed: true,
-      active: activeSection === "social"
+      active: activeSection === "social",
     },
     {
       id: "compliance",
       label: "Compliance and Verifications",
       icon: Shield,
       completed: false,
-      active: activeSection === "compliance"
-    }
+      active: activeSection === "compliance",
+    },
   ];
 
   const handleSectionClick = (sectionId: string) => {
@@ -76,40 +81,40 @@ const EmployerProfileSidebar: FC = () => {
     // Scroll to section
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
-
-  const completedSections = sidebarItems.filter(item => item.completed).length;
-  const totalSections = sidebarItems.length;
-  const completionPercentage = Math.round((completedSections / totalSections) * 100);
 
   return (
     <div className="relative hidden min-h-screen w-[35%] md:block md:w-[29%] lg:w-[25%] xl:w-[22%]">
       <div className="sticky top-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           {/* Profile Progress */}
           <div className="mb-8">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-semibold text-gray-900">Profile Progress</h3>
-              <span className="text-sm font-medium text-purple-600">{completionPercentage}%</span>
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Profile Progress
+              </h3>
+              <span className="text-sm font-medium text-purple-600">
+                {completionDetails?.percentage || 0}%
+              </span>
             </div>
 
-            <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+            <div className="mb-2 h-2 w-full rounded-full bg-gray-200">
               <div
-                className="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full transition-all duration-500"
-                style={{ width: `${completionPercentage}%` }}
+                className="h-2 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-500"
+                style={{ width: `${completionDetails?.percentage || 0}%` }}
               ></div>
             </div>
 
             <p className="text-xs text-gray-600">
-              {completedSections} of {totalSections} sections completed
+              {(completionDetails?.sections?.filter(p=>p.isComplete)?.length || 0)} of 6 sections completed
             </p>
           </div>
 
           {/* Navigation Menu */}
           <nav className="mb-8">
-            <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
+            <h4 className="mb-4 text-sm font-medium tracking-wide text-gray-500 uppercase">
               Profile Sections
             </h4>
 
@@ -122,26 +127,30 @@ const EmployerProfileSidebar: FC = () => {
                   <li key={item.id}>
                     <button
                       onClick={() => handleSectionClick(item.id)}
-                      className={`group w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      className={`group flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
                         isActive
-                          ? 'bg-purple-50 text-purple-700 border border-purple-200'
-                          : 'text-gray-700 hover:bg-gray-50 hover:text-purple-600'
+                          ? "border border-purple-200 bg-purple-50 text-purple-700"
+                          : "text-gray-700 hover:bg-gray-50 hover:text-purple-600"
                       }`}
                     >
-                      <div className={`flex items-center gap-3 flex-1 ${isActive ? 'text-purple-600' : 'text-gray-400 group-hover:text-purple-500'}`}>
-                        <IconComponent className="w-4 h-4" />
-                        <span className="text-left leading-tight">{item.label}</span>
+                      <div
+                        className={`flex flex-1 items-center gap-3 ${isActive ? "text-purple-600" : "text-gray-400 group-hover:text-purple-500"}`}
+                      >
+                        <IconComponent className="h-4 w-4" />
+                        <span className="text-left leading-tight">
+                          {item.label}
+                        </span>
                       </div>
 
                       <div className="flex items-center gap-2">
                         {item.completed ? (
-                          <CheckCircle2 className="w-4 h-4 text-green-500" />
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
                         ) : (
-                          <Circle className="w-4 h-4 text-gray-300" />
+                          <Circle className="h-4 w-4 text-gray-300" />
                         )}
 
                         {isActive && (
-                          <ChevronRight className="w-4 h-4 text-purple-600" />
+                          <ChevronRight className="h-4 w-4 text-purple-600" />
                         )}
                       </div>
                     </button>
@@ -155,43 +164,47 @@ const EmployerProfileSidebar: FC = () => {
           <div className="space-y-3">
             <Link
               to="/employer/dashboard"
-              className="group flex items-center justify-center gap-2 w-full px-4 py-3 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors duration-200"
+              className="group flex w-full items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-3 text-sm font-medium text-white transition-colors duration-200 hover:bg-purple-700"
             >
-              <LayoutDashboard className="w-4 h-4" />
+              <LayoutDashboard className="h-4 w-4" />
               Go to Dashboard
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+              <ChevronRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
             </Link>
 
             <Link
               to="/employer/profile"
-              className="group flex items-center justify-center gap-2 w-full px-4 py-3 border border-purple-200 text-purple-700 rounded-lg text-sm font-medium hover:bg-purple-50 transition-colors duration-200"
+              className="group flex w-full items-center justify-center gap-2 rounded-lg border border-purple-200 px-4 py-3 text-sm font-medium text-purple-700 transition-colors duration-200 hover:bg-purple-50"
             >
-              <Eye className="w-4 h-4" />
+              <Eye className="h-4 w-4" />
               View Public Profile
             </Link>
           </div>
 
           {/* Profile Tips */}
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h5 className="text-sm font-medium text-blue-800 mb-2">💡 Quick Tip</h5>
-            <p className="text-xs text-blue-700 leading-relaxed">
-              Complete all sections to make your company profile more attractive to potential candidates and improve your visibility in search results.
+          <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <h5 className="mb-2 text-sm font-medium text-blue-800">
+              💡 Quick Tip
+            </h5>
+            <p className="text-xs leading-relaxed text-blue-700">
+              Complete all sections to make your company profile more attractive
+              to potential candidates and improve your visibility in search
+              results.
             </p>
           </div>
         </div>
 
         {/* Bottom CTA - Separate Card */}
-        <div className="mt-4 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl p-6 text-white">
+        <div className="mt-4 rounded-xl bg-gradient-to-r from-purple-600 to-purple-700 p-6 text-white">
           <div className="text-center">
-            <h4 className="font-semibold mb-2">Ready to Start Hiring?</h4>
-            <p className="text-sm text-purple-100 mb-4">
+            <h4 className="mb-2 font-semibold">Ready to Start Hiring?</h4>
+            <p className="mb-4 text-sm text-purple-100">
               Complete your profile and start attracting top talent today
             </p>
             <Link
               to="/employer/dashboard"
-              className="inline-flex items-center justify-center gap-2 w-full px-4 py-3 bg-white text-purple-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-medium text-purple-700 transition-colors duration-200 hover:bg-gray-50"
             >
-              <LayoutDashboard className="w-4 h-4" />
+              <LayoutDashboard className="h-4 w-4" />
               Start Hiring Now
             </Link>
           </div>

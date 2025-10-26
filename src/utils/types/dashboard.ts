@@ -5,40 +5,45 @@ import {
   JobType,
   ApplicantData,
   JobPostResponse,
-  InterviewScheduleDetailsResponse
-} from './index';
-import { ApplicationStatus, InterviewStatus, InterviewType, Priority } from "../enums.ts"; // Adjust import path as needed
+  InterviewScheduleDetailsResponse,
+} from "./index";
+import {
+  ApplicationStatus,
+  InterviewStatus,
+  InterviewType,
+  Priority,
+} from "../enums.ts"; // Adjust import path as needed
 
 export interface DashboardMetrics {
   totalApplications: {
     value: number;
     change: number;
-    trend: 'up' | 'down' | 'neutral';
+    trend: "up" | "down" | "neutral";
   };
   activePositions: {
     value: number;
     change: number;
-    trend: 'up' | 'down' | 'neutral';
+    trend: "up" | "down" | "neutral";
   };
   interviewsScheduled: {
     value: number;
     change: number;
-    trend: 'up' | 'down' | 'neutral';
+    trend: "up" | "down" | "neutral";
   };
   offersSent: {
     value: number;
     change: number;
-    trend: 'up' | 'down' | 'neutral';
+    trend: "up" | "down" | "neutral";
   };
   hireRate: {
     value: number; // percentage
     change: number;
-    trend: 'up' | 'down' | 'neutral';
+    trend: "up" | "down" | "neutral";
   };
   avgTimeToHire: {
     value: number; // in days
     change: number;
-    trend: 'up' | 'down' | 'neutral';
+    trend: "up" | "down" | "neutral";
   };
 }
 
@@ -96,7 +101,13 @@ export interface HiringFunnelData {
 
 export interface ActivityFeedItem {
   id: string;
-  type: 'hire' | 'interview_scheduled' | 'application_received' | 'job_posted' | 'offer_sent' | 'candidate_rejected';
+  type:
+    | "hire"
+    | "interview_scheduled"
+    | "application_received"
+    | "job_posted"
+    | "offer_sent"
+    | "candidate_rejected";
   title: string;
   description: string;
   timestamp: string; // ISO date string
@@ -120,7 +131,7 @@ export interface WeeklyGoals {
 
 export interface AIInsight {
   id: string;
-  type: 'optimization' | 'performance' | 'alert' | 'recommendation';
+  type: "optimization" | "performance" | "alert" | "recommendation";
   title: string;
   description: string;
   priority: Priority;
@@ -146,7 +157,7 @@ export interface DashboardAPIResponse {
 
 // API Query Parameters
 export interface DashboardFilters {
-  period?: 'week' | 'month' | 'quarter' | 'year';
+  period?: "week" | "month" | "quarter" | "year";
   departmentId?: string;
   jobId?: number;
   dateFrom?: string;
@@ -211,7 +222,7 @@ export function transformApplicantToCandidate(
   matchScore: number = 0,
   appliedDate: string,
   salaryExpectation?: string,
-  availability: string = 'Available'
+  availability: string = "Available",
 ): DashboardCandidate {
   return {
     ...applicant,
@@ -225,7 +236,7 @@ export function transformApplicantToCandidate(
 }
 
 export function transformInterviewToDashboard(
-  interview: InterviewScheduleDetailsResponse
+  interview: InterviewScheduleDetailsResponse,
 ): DashboardInterview {
   return {
     id: interview.id,
@@ -246,22 +257,27 @@ export function transformInterviewToDashboard(
     interviewerId: 0, // You may need to add this to your InterviewScheduleDetailsResponse
     meetingLink: interview.interviewLink,
     notes: interview.notes,
-    location: interview.interviewType === InterviewType.IN_PERSON
-      ? `${interview.interviewCity}, ${interview.interviewState}`
-      : undefined,
+    location:
+      interview.interviewType === InterviewType.IN_PERSON
+        ? `${interview.interviewCity}, ${interview.interviewState}`
+        : undefined,
     timeZone: interview.timeZone,
   };
 }
 
-export function transformJobToDashboard(job: JobPostResponse): DashboardJobPosting {
+export function transformJobToDashboard(
+  job: JobPostResponse,
+): DashboardJobPosting {
   return {
     ...job,
     applications: job.applicantsCount || 0,
     views: 0, // You may need to add this field to JobPostResponse
     posted: formatRelativeDate(job.createdAt.toString()),
     urgency: job.priority as Priority,
-    remote: job.employmentType?.toString().toLowerCase().includes('remote') || false,
-    hybrid: job.employmentType?.toString().toLowerCase().includes('hybrid') || false,
+    remote:
+      job.employmentType?.toString().toLowerCase().includes("remote") || false,
+    hybrid:
+      job.employmentType?.toString().toLowerCase().includes("hybrid") || false,
   };
 }
 
@@ -273,16 +289,16 @@ function formatRelativeDate(dateString: string): string {
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   if (diffDays === 1) {
-    return '1 day ago';
+    return "1 day ago";
   } else if (diffDays < 7) {
     return `${diffDays} days ago`;
   } else if (diffDays < 14) {
-    return '1 week ago';
+    return "1 week ago";
   } else if (diffDays < 30) {
     const weeks = Math.floor(diffDays / 7);
     return `${weeks} weeks ago`;
   } else {
     const months = Math.floor(diffDays / 30);
-    return `${months} month${months > 1 ? 's' : ''} ago`;
+    return `${months} month${months > 1 ? "s" : ""} ago`;
   }
 }

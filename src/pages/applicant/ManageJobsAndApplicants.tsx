@@ -21,15 +21,24 @@ import {
   Search,
   Star,
   StopCircle,
-  Trash2, TrendingUp,
+  Trash2,
+  TrendingUp,
   UserCheck,
   Users,
-  X
+  X,
 } from "lucide-react";
 
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
-import { employerNavBarItemMap, employerNavItems, employerNavItemsMobile } from "../../utils/constants.ts";
-import { useFetchJobApplications, useFetchMyJobs, useSearchJobs } from "../../hooks/useJobQuery.ts";
+import {
+  employerNavBarItemMap,
+  employerNavItems,
+  employerNavItemsMobile,
+} from "../../utils/constants.ts";
+import {
+  useFetchJobApplications,
+  useFetchMyJobs,
+  useSearchJobs,
+} from "../../hooks/useJobQuery.ts";
 import {
   ApplicationResponse,
   AwardResponseDto,
@@ -37,12 +46,16 @@ import {
   ExperienceResponseDto,
   JobPostResponse,
   JobStatus,
-  SkillsResponseDto
+  SkillsResponseDto,
 } from "../../utils/types";
 import useModalStore from "../../store/modalStateStores.ts";
 import EmployerJobMultistepForm from "../employer/EmployerJobMultistepForm.tsx";
 import moment from "moment";
-import { updateApplicationStatus, updateJob, updateJobStatus } from "../../services/api";
+import {
+  updateApplicationStatus,
+  updateJob,
+  updateJobStatus,
+} from "../../services/api";
 import { ApplicationStatus, EmploymentType } from "../../utils/enums.ts";
 import ConfirmationDialog from "../../components/ui/Prompts.tsx";
 import MatchDetailsModal from "../../components/ui/MatchDetailsModal.tsx";
@@ -53,41 +66,46 @@ type JobEditModalProps = {
   job: JobPostResponse;
   isOpen: boolean;
   onClose: () => void;
-  onSave:  (updatedJob: Partial<JobPostResponse>) => Promise<void>;
+  onSave: (updatedJob: Partial<JobPostResponse>) => Promise<void>;
 };
 // Job Edit Modal Component
-const JobEditModal: React.FC<JobEditModalProps> = ({ job, isOpen, onClose, onSave }) => {
+const JobEditModal: React.FC<JobEditModalProps> = ({
+  job,
+  isOpen,
+  onClose,
+  onSave,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<Partial<JobPostResponse>>({
-    title: '',
-    description: '',
-    requirements: '',
-    responsibility: '',
-    location: '',
+    title: "",
+    description: "",
+    requirements: "",
+    responsibility: "",
+    location: "",
     employmentType: EmploymentType.REMOTE,
     salaryRange: {
       minimumAmount: 0,
       maximumAmount: 0,
-      currency: '$',
-      frequency: 'per month'
-    }
+      currency: "$",
+      frequency: "per month",
+    },
   });
 
   useEffect(() => {
     if (job) {
       setFormData({
-        title: job.title || '',
-        description: job.description || '',
-        requirements: job.requirements || '',
-        responsibility: job.responsibility || '',
-        location: job.location || '',
-        employmentType: job.employmentType || '',
+        title: job.title || "",
+        description: job.description || "",
+        requirements: job.requirements || "",
+        responsibility: job.responsibility || "",
+        location: job.location || "",
+        employmentType: job.employmentType || "",
         salaryRange: {
           minimumAmount: job.salaryRange?.minimumAmount || 0,
           maximumAmount: job.salaryRange?.maximumAmount || 0,
-          currency: job.salaryRange?.currency || 'USD',
-          frequency: job.salaryRange?.frequency || 'per month'
-        }
+          currency: job.salaryRange?.currency || "USD",
+          frequency: job.salaryRange?.frequency || "per month",
+        },
       });
     }
   }, [job]);
@@ -98,26 +116,29 @@ const JobEditModal: React.FC<JobEditModalProps> = ({ job, isOpen, onClose, onSav
       await onSave(formData);
       onClose();
     } catch (error) {
-      console.error('Failed to update job:', error);
+      console.error("Failed to update job:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleChange = (field: string, value: string|number) => {
-    if (field.startsWith('salaryRange.')) {
-      const salaryField = field.split('.')[1];
-      setFormData(prev => ({
-        ...prev,
-        salaryRange: {
-          ...prev.salaryRange,
-          [salaryField]: value
-        }
-      } as Partial<JobPostResponse>));
+  const handleChange = (field: string, value: string | number) => {
+    if (field.startsWith("salaryRange.")) {
+      const salaryField = field.split(".")[1];
+      setFormData(
+        (prev) =>
+          ({
+            ...prev,
+            salaryRange: {
+              ...prev.salaryRange,
+              [salaryField]: value,
+            },
+          }) as Partial<JobPostResponse>,
+      );
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [field]: value
+        [field]: value,
       }));
     }
   };
@@ -125,52 +146,58 @@ const JobEditModal: React.FC<JobEditModalProps> = ({ job, isOpen, onClose, onSav
   if (!isOpen || !job) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-gray-200">
+    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+      <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-white">
+        <div className="border-b border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-900">Edit Job Post</h2>
             <button
               onClick={onClose}
               disabled={isLoading}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+              className="rounded-lg p-2 transition-colors hover:bg-gray-100 disabled:opacity-50"
             >
-              <X className="w-6 h-6 text-gray-500" />
+              <X className="h-6 w-6 text-gray-500" />
             </button>
           </div>
         </div>
 
         <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Job Title *</label>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Job Title *
+              </label>
               <input
                 type="text"
                 required
                 value={formData.title}
-                onChange={(e) => handleChange('title', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                onChange={(e) => handleChange("title", e.target.value)}
+                className="w-full rounded-lg border border-gray-200 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
                 placeholder="Enter job title"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Location
+              </label>
               <input
                 type="text"
                 value={formData.location}
-                onChange={(e) => handleChange('location', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                onChange={(e) => handleChange("location", e.target.value)}
+                className="w-full rounded-lg border border-gray-200 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
                 placeholder="Enter location"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Employment Type</label>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Employment Type
+              </label>
               <select
                 value={formData.employmentType}
-                onChange={(e) => handleChange('employmentType', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                onChange={(e) => handleChange("employmentType", e.target.value)}
+                className="w-full rounded-lg border border-gray-200 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
               >
                 <option value="">Select employment type</option>
                 <option value="Full-time">Full-time</option>
@@ -182,12 +209,16 @@ const JobEditModal: React.FC<JobEditModalProps> = ({ job, isOpen, onClose, onSav
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Salary Range</label>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Salary Range
+              </label>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <select
                   value={formData?.salaryRange?.currency}
-                  onChange={(e) => handleChange('salaryRange.currency', e.target.value)}
-                  className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  onChange={(e) =>
+                    handleChange("salaryRange.currency", e.target.value)
+                  }
+                  className="rounded-lg border border-gray-200 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
                 >
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
@@ -198,70 +229,86 @@ const JobEditModal: React.FC<JobEditModalProps> = ({ job, isOpen, onClose, onSav
                   type="number"
                   placeholder="Minimum amount"
                   value={formData?.salaryRange?.minimumAmount || 0}
-                  onChange={(e) => handleChange('salaryRange.minimumAmount', parseInt(e.target.value) || 0)}
-                  className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  onChange={(e) =>
+                    handleChange(
+                      "salaryRange.minimumAmount",
+                      parseInt(e.target.value) || 0,
+                    )
+                  }
+                  className="rounded-lg border border-gray-200 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
                 />
                 <input
                   type="number"
                   placeholder="Maximum amount"
                   value={formData?.salaryRange?.maximumAmount || 0}
-                  onChange={(e) => handleChange('salaryRange.maximumAmount', parseInt(e.target.value) || 0)}
-                  className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  onChange={(e) =>
+                    handleChange(
+                      "salaryRange.maximumAmount",
+                      parseInt(e.target.value) || 0,
+                    )
+                  }
+                  className="rounded-lg border border-gray-200 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
                 />
               </div>
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Job Description *</label>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Job Description *
+              </label>
               <textarea
                 required
                 rows={6}
                 value={formData.description}
-                onChange={(e) => handleChange('description', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                onChange={(e) => handleChange("description", e.target.value)}
+                className="w-full resize-none rounded-lg border border-gray-200 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
                 placeholder="Describe the job role..."
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Requirements *</label>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Requirements *
+              </label>
               <textarea
                 required
                 rows={4}
                 value={formData.requirements}
-                onChange={(e) => handleChange('requirements', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                onChange={(e) => handleChange("requirements", e.target.value)}
+                className="w-full resize-none rounded-lg border border-gray-200 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
                 placeholder="List required skills and qualifications..."
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Responsibilities</label>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Responsibilities
+              </label>
               <textarea
                 rows={4}
                 value={formData.responsibility}
-                onChange={(e) => handleChange('responsibility', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                onChange={(e) => handleChange("responsibility", e.target.value)}
+                className="w-full resize-none rounded-lg border border-gray-200 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
                 placeholder="Describe key responsibilities..."
               />
             </div>
           </div>
 
-          <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+          <div className="mt-8 flex justify-end gap-4 border-t border-gray-200 pt-6">
             <button
               onClick={onClose}
               disabled={isLoading}
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+              className="rounded-lg border border-gray-300 px-6 py-3 text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="flex items-center gap-2 rounded-lg bg-purple-600 px-6 py-3 text-white transition-colors hover:bg-purple-700 disabled:opacity-50"
             >
-              {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
-              {isLoading ? 'Updating...' : 'Update Job'}
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {isLoading ? "Updating..." : "Update Job"}
             </button>
           </div>
         </div>
@@ -272,23 +319,23 @@ const JobEditModal: React.FC<JobEditModalProps> = ({ job, isOpen, onClose, onSav
 
 // Define sorting options
 const JOB_SORT_OPTIONS = [
-  { value: 'createdAt-desc', label: 'Latest Posted' },
-  { value: 'createdAt-asc', label: 'Oldest Posted' },
-  { value: 'title-asc', label: 'Title A-Z' },
-  { value: 'title-desc', label: 'Title Z-A' },
-  { value: 'applicantsCount-desc', label: 'Most Applicants' },
-  { value: 'applicantsCount-asc', label: 'Least Applicants' }
+  { value: "createdAt-desc", label: "Latest Posted" },
+  { value: "createdAt-asc", label: "Oldest Posted" },
+  { value: "title-asc", label: "Title A-Z" },
+  { value: "title-desc", label: "Title Z-A" },
+  { value: "applicantsCount-desc", label: "Most Applicants" },
+  { value: "applicantsCount-asc", label: "Least Applicants" },
 ];
 
 const APPLICATION_SORT_OPTIONS = [
-  { value: 'createdAt-desc', label: 'Latest Applied' },
-  { value: 'createdAt-asc', label: 'Oldest Applied' },
-  { value: 'applicant.firstName-asc', label: 'Name A-Z' },
-  { value: 'applicant.firstName-desc', label: 'Name Z-A' },
-  { value: 'cv.yearsOfExperience-desc', label: 'Most Experience' },
-  { value: 'cv.yearsOfExperience-asc', label: 'Least Experience' },
-  { value: 'applicant.rating-desc', label: 'Highest Rated' },
-  { value: 'applicant.rating-asc', label: 'Lowest Rated' }
+  { value: "createdAt-desc", label: "Latest Applied" },
+  { value: "createdAt-asc", label: "Oldest Applied" },
+  { value: "applicant.firstName-asc", label: "Name A-Z" },
+  { value: "applicant.firstName-desc", label: "Name Z-A" },
+  { value: "cv.yearsOfExperience-desc", label: "Most Experience" },
+  { value: "cv.yearsOfExperience-asc", label: "Least Experience" },
+  { value: "applicant.rating-desc", label: "Highest Rated" },
+  { value: "applicant.rating-asc", label: "Lowest Rated" },
 ];
 
 const applicationStatuses: Record<string, ApplicationStatus> = {
@@ -297,8 +344,8 @@ const applicationStatuses: Record<string, ApplicationStatus> = {
   shortlisted: ApplicationStatus.SHORTLISTED,
   interviewed: ApplicationStatus.INTERVIEWED,
   hired: ApplicationStatus.HIRED,
-  rejected: ApplicationStatus.REJECTED
-}
+  rejected: ApplicationStatus.REJECTED,
+};
 
 const ManageJobsAndApplicants: React.FC = () => {
   // Core state
@@ -313,14 +360,16 @@ const ManageJobsAndApplicants: React.FC = () => {
   const [editingJob, setEditingJob] = useState<JobPostResponse | null>(null);
 
   // Application filters and search
-  const [applicationSearchTerm, setApplicationSearchTerm] = useState('');
-  const [applicationStatusFilter, setApplicationStatusFilter] = useState('all');
-  const [applicationSortBy, setApplicationSortBy] = useState('createdAt');
-  const [applicationSortOrder, setApplicationSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [applicationSearchTerm, setApplicationSearchTerm] = useState("");
+  const [applicationStatusFilter, setApplicationStatusFilter] = useState("all");
+  const [applicationSortBy, setApplicationSortBy] = useState("createdAt");
+  const [applicationSortOrder, setApplicationSortOrder] = useState<
+    "asc" | "desc"
+  >("desc");
 
   // Job filters and search
-  const [jobSortBy, setJobSortBy] = useState('createdAt');
-  const [jobSortOrder, setJobSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [jobSortBy, setJobSortBy] = useState("createdAt");
+  const [jobSortOrder, setJobSortOrder] = useState<"asc" | "desc">("desc");
 
   // Pagination
   const [jobPagination, setJobPagination] = useState({
@@ -338,10 +387,13 @@ const ManageJobsAndApplicants: React.FC = () => {
   });
 
   // Modal states
-  const [selectedApplication, setSelectedApplication] = useState<ApplicationResponse | null>(null);
+  const [selectedApplication, setSelectedApplication] =
+    useState<ApplicationResponse | null>(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showCVModal, setShowCVModal] = useState(false);
-  const [showJobActionsDropdown, setShowJobActionsDropdown] = useState<number | null>(null);
+  const [showJobActionsDropdown, setShowJobActionsDropdown] = useState<
+    number | null
+  >(null);
   const { openModal, isModalOpen } = useModalStore();
 
   const [showMatchModal, setShowMatchModal] = useState(false);
@@ -368,15 +420,15 @@ const ManageJobsAndApplicants: React.FC = () => {
   // Check URL parameters on component mount
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const jobId = urlParams.get('jobId');
-    const mode = urlParams.get('mode');
+    const jobId = urlParams.get("jobId");
+    const mode = urlParams.get("mode");
 
     if (jobId) {
       setSelectedJobId(parseInt(jobId));
-      if (mode === 'view') {
-        setViewMode('jobDetail');
-      } else if (mode === 'applications') {
-        setViewMode('applications');
+      if (mode === "view") {
+        setViewMode("jobDetail");
+      } else if (mode === "applications") {
+        setViewMode("applications");
       }
     }
   }, []);
@@ -405,7 +457,7 @@ const ManageJobsAndApplicants: React.FC = () => {
     setSelectedMatchApplicant({
       id: application.applicant.id,
       jobId: application.job.id,
-      name: `${application.applicant.firstName} ${application.applicant.lastName}`
+      name: `${application.applicant.firstName} ${application.applicant.lastName}`,
     });
     setShowMatchModal(true);
   }, []);
@@ -414,16 +466,27 @@ const ManageJobsAndApplicants: React.FC = () => {
   const debouncedJobSearch = useDebounce(searchKeyword, 500);
   const debouncedApplicationSearch = useDebounce(applicationSearchTerm, 500);
 
-  const { data: jobsData, isLoading: jobsLoading, isError: jobsError, error: jobsErrorMessage, refetch: refetchJobs } = useFetchMyJobs({
+  const {
+    data: jobsData,
+    isLoading: jobsLoading,
+    isError: jobsError,
+    error: jobsErrorMessage,
+    refetch: refetchJobs,
+  } = useFetchMyJobs({
     page: jobPagination.page,
     limit: jobPagination.limit,
     jobStatus: activeSection === "draft" ? JobStatus.DRAFT : JobStatus.ALL,
     sortBy: jobSortBy,
     sortOrder: jobSortOrder,
-    search: debouncedJobSearch
+    search: debouncedJobSearch,
   });
 
-  const { data: searchJobsData, isLoading: searchLoading, isError: searchError, error: searchErrorMessage } = useSearchJobs({
+  const {
+    data: searchJobsData,
+    isLoading: searchLoading,
+    isError: searchError,
+    error: searchErrorMessage,
+  } = useSearchJobs({
     page: jobPagination.page,
     limit: jobPagination.limit,
     search: debouncedJobSearch,
@@ -431,46 +494,63 @@ const ManageJobsAndApplicants: React.FC = () => {
     sortOrder: jobSortOrder,
   });
 
-  const shouldFetchApplications = selectedJobId !== null && viewMode === 'applications';
+  const shouldFetchApplications =
+    selectedJobId !== null && viewMode === "applications";
 
-  const { data: applicationsData, refetch: fetchJobApplications } = useFetchJobApplications(
-    shouldFetchApplications ? selectedJobId : 0,
-    applicationPagination.page,
-    applicationPagination.limit,
-    {
-      search: debouncedApplicationSearch,
-      status: applicationStatusFilter,
-      sortBy: applicationSortBy,
-      sortOrder: applicationSortOrder
-    },
-    shouldFetchApplications
-  );
+  const { data: applicationsData, refetch: fetchJobApplications } =
+    useFetchJobApplications(
+      shouldFetchApplications ? selectedJobId : 0,
+      applicationPagination.page,
+      applicationPagination.limit,
+      {
+        search: debouncedApplicationSearch,
+        status: applicationStatusFilter,
+        sortBy: applicationSortBy,
+        sortOrder: applicationSortOrder,
+      },
+      shouldFetchApplications,
+    );
 
-  const currentJobsData = searchKeyword.trim() !== "" ? searchJobsData : jobsData;
+  const currentJobsData =
+    searchKeyword.trim() !== "" ? searchJobsData : jobsData;
   const jobs = useMemo(
     () => currentJobsData?.data || [],
-    [currentJobsData?.data]
+    [currentJobsData?.data],
   );
-  const isCurrentlyLoading = searchKeyword.trim() !== "" ? searchLoading : jobsLoading;
+  const isCurrentlyLoading =
+    searchKeyword.trim() !== "" ? searchLoading : jobsLoading;
 
   // Refetch jobs when job filters change
   useEffect(() => {
     if (jobSortBy || jobSortOrder || searchKeyword || activeSection) {
-      refetchJobs().then(r => r);
+      refetchJobs().then((r) => r);
     }
   }, [jobSortBy, jobSortOrder, searchKeyword, activeSection, refetchJobs]);
 
   // Refetch applications when application filters change
   useEffect(() => {
-    if (selectedJobId && (applicationSortBy || applicationSortOrder || applicationSearchTerm || applicationStatusFilter)) {
-      fetchJobApplications().then(r => r);
+    if (
+      selectedJobId &&
+      (applicationSortBy ||
+        applicationSortOrder ||
+        applicationSearchTerm ||
+        applicationStatusFilter)
+    ) {
+      fetchJobApplications().then((r) => r);
     }
-  }, [selectedJobId, applicationSortBy, applicationSortOrder, applicationSearchTerm, applicationStatusFilter, fetchJobApplications]);
+  }, [
+    selectedJobId,
+    applicationSortBy,
+    applicationSortOrder,
+    applicationSearchTerm,
+    applicationStatusFilter,
+    fetchJobApplications,
+  ]);
 
   // Update pagination when data changes
   useEffect(() => {
     if (currentJobsData?.meta) {
-      setJobPagination(prev => ({
+      setJobPagination((prev) => ({
         ...prev,
         total: currentJobsData?.meta?.total || 0,
         totalPages: currentJobsData?.meta?.totalPages || 0,
@@ -480,7 +560,7 @@ const ManageJobsAndApplicants: React.FC = () => {
 
   useEffect(() => {
     if (applicationsData?.meta) {
-      setApplicationPagination(prev => ({
+      setApplicationPagination((prev) => ({
         ...prev,
         total: applicationsData?.meta?.total || 0,
         totalPages: applicationsData?.meta?.totalPages || 0,
@@ -492,99 +572,121 @@ const ManageJobsAndApplicants: React.FC = () => {
   const handleViewJob = useCallback((job: JobPostResponse) => {
     setSelectedJob(job);
     setSelectedJobId(job.id);
-    setViewMode('jobDetail');
+    setViewMode("jobDetail");
 
     const url = new URL(window.location.href);
-    url.searchParams.set('jobId', job.id.toString());
-    url.searchParams.set('mode', 'view');
-    window.history.pushState({}, '', url.toString());
+    url.searchParams.set("jobId", job.id.toString());
+    url.searchParams.set("mode", "view");
+    window.history.pushState({}, "", url.toString());
   }, []);
 
-  const handleViewApplications = useCallback(async (job: JobPostResponse) => {
-    setSelectedJob(job);
-    setSelectedJobId(job.id);
-    setViewMode('applications');
+  const handleViewApplications = useCallback(
+    async (job: JobPostResponse) => {
+      setSelectedJob(job);
+      setSelectedJobId(job.id);
+      setViewMode("applications");
 
-    const url = new URL(window.location.href);
-    url.searchParams.set('jobId', job.id.toString());
-    url.searchParams.set('mode', 'applications');
-    window.history.pushState({}, '', url.toString());
+      const url = new URL(window.location.href);
+      url.searchParams.set("jobId", job.id.toString());
+      url.searchParams.set("mode", "applications");
+      window.history.pushState({}, "", url.toString());
 
-    fetchJobApplications().then(r => r);
-  }, [fetchJobApplications]);
+      fetchJobApplications().then((r) => r);
+    },
+    [fetchJobApplications],
+  );
 
   const handleBackToJobs = useCallback(() => {
     setSelectedJob(null);
     setSelectedJobId(null);
-    setViewMode('jobs');
+    setViewMode("jobs");
 
     const url = new URL(window.location.href);
-    url.searchParams.delete('jobId');
-    url.searchParams.delete('mode');
-    window.history.pushState({}, '', url.toString());
+    url.searchParams.delete("jobId");
+    url.searchParams.delete("mode");
+    window.history.pushState({}, "", url.toString());
   }, []);
 
   // Load job details when jobId is available
   useEffect(() => {
     if (selectedJobId && jobs.length > 0 && !selectedJob) {
-      const job = jobs.find(j => j.id === selectedJobId);
+      const job = jobs.find((j) => j.id === selectedJobId);
       if (job) {
         setSelectedJob(job);
-        if (viewMode === 'applications') {
-          fetchJobApplications().then(r => r);
+        if (viewMode === "applications") {
+          fetchJobApplications().then((r) => r);
         }
       }
     }
   }, [selectedJobId, jobs, selectedJob, viewMode, fetchJobApplications]);
 
   // Pagination handlers
-  const handleJobPageChange = useCallback((newPage: number) => {
-    if (newPage >= 1 && newPage <= jobPagination.totalPages) {
-      setJobPagination(prev => ({ ...prev, page: newPage }));
-    }
-  }, [jobPagination.totalPages]);
+  const handleJobPageChange = useCallback(
+    (newPage: number) => {
+      if (newPage >= 1 && newPage <= jobPagination.totalPages) {
+        setJobPagination((prev) => ({ ...prev, page: newPage }));
+      }
+    },
+    [jobPagination.totalPages],
+  );
 
-  const handleApplicationPageChange = useCallback((newPage: number) => {
-    if (newPage >= 1 && newPage <= applicationPagination.totalPages) {
-      setApplicationPagination(prev => ({ ...prev, page: newPage }));
-    }
-  }, [applicationPagination.totalPages]);
+  const handleApplicationPageChange = useCallback(
+    (newPage: number) => {
+      if (newPage >= 1 && newPage <= applicationPagination.totalPages) {
+        setApplicationPagination((prev) => ({ ...prev, page: newPage }));
+      }
+    },
+    [applicationPagination.totalPages],
+  );
 
   // Sort handlers
   const handleJobSortChange = useCallback((value: string) => {
-    const [field, order] = value.split('-');
+    const [field, order] = value.split("-");
     setJobSortBy(field);
-    setJobSortOrder(order as 'asc' | 'desc');
-    setJobPagination(prev => ({ ...prev, page: 1 }));
+    setJobSortOrder(order as "asc" | "desc");
+    setJobPagination((prev) => ({ ...prev, page: 1 }));
   }, []);
 
   const handleApplicationSortChange = useCallback((value: string) => {
-    const [field, order] = value.split('-');
+    const [field, order] = value.split("-");
     setApplicationSortBy(field);
-    setApplicationSortOrder(order as 'asc' | 'desc');
-    setApplicationPagination(prev => ({ ...prev, page: 1 }));
+    setApplicationSortOrder(order as "asc" | "desc");
+    setApplicationPagination((prev) => ({ ...prev, page: 1 }));
   }, []);
 
   // Application actions
-  const updateApplicantStatus = useCallback(async (applicationId: number, newStatus: string) => {
-    try {
-      const response = await updateApplicationStatus(applicationId, newStatus);
-      if (response.statusCode === 200) {
-        setSelectedApplication(prev => prev ? {
-          ...prev,
-          status: newStatus as ApplicationStatus
-        } : null);
-        fetchJobApplications().then(r => r);
+  const updateApplicantStatus = useCallback(
+    async (applicationId: number, newStatus: string) => {
+      try {
+        const response = await updateApplicationStatus(
+          applicationId,
+          newStatus,
+        );
+        if (response.statusCode === 200) {
+          setSelectedApplication((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  status: newStatus as ApplicationStatus,
+                }
+              : null,
+          );
+          fetchJobApplications().then((r) => r);
+        }
+      } catch (error) {
+        console.error("Failed to update application status:", error);
       }
-    } catch (error) {
-      console.error('Failed to update application status:', error);
-    }
-  }, [fetchJobApplications]);
+    },
+    [fetchJobApplications],
+  );
 
-  const downloadResume = useCallback(async (id: number, resumeFile: string) => {
-    console.log(`Downloading resume: ${resumeFile}`);
-    await updateApplicantStatus(id, "cv_downloaded");
-  }, [updateApplicantStatus]);
+  const downloadResume = useCallback(
+    async (id: number, resumeFile: string) => {
+      console.log(`Downloading resume: ${resumeFile}`);
+      await updateApplicantStatus(id, "cv_downloaded");
+    },
+    [updateApplicantStatus],
+  );
 
   // Job action handlers
   const handleEditJob = useCallback((job: JobPostResponse) => {
@@ -592,47 +694,56 @@ const ManageJobsAndApplicants: React.FC = () => {
     setShowEditModal(true);
   }, []);
 
-  const handleSaveJob = useCallback(async (updatedJob: Partial<JobPostResponse>) => {
-    if (!editingJob) return;
+  const handleSaveJob = useCallback(
+    async (updatedJob: Partial<JobPostResponse>) => {
+      if (!editingJob) return;
 
-    try {
-      const response = await updateJob(editingJob.id, updatedJob);
-      if (response.statusCode === 200) {
-        await refetchJobs();
-        setShowEditModal(false);
-        setEditingJob(null);
+      try {
+        const response = await updateJob(editingJob.id, updatedJob);
+        if (response.statusCode === 200) {
+          await refetchJobs();
+          setShowEditModal(false);
+          setEditingJob(null);
+        }
+      } catch (error) {
+        console.error("Failed to update job:", error);
       }
-    } catch (error) {
-      console.error('Failed to update job:', error);
-    }
-  }, [editingJob, refetchJobs]);
+    },
+    [editingJob, refetchJobs],
+  );
 
-  const handleJobStatusUpdate = useCallback(async (job: JobPostResponse | null, status: JobStatus, reason: string) => {
-    if (!job) return;
+  const handleJobStatusUpdate = useCallback(
+    async (job: JobPostResponse | null, status: JobStatus, reason: string) => {
+      if (!job) return;
 
-    try {
-      const response = await updateJobStatus(job.id, { status, reason });
-      if (response.statusCode === 200) {
-        refetchJobs().then(r => r);
-        setOpenPromptModals(prev => ({
-          ...prev,
-          pauseJob: false,
-          resumeJob: false,
-          closeJob: false,
-          deleteJob: false
-        }));
+      try {
+        const response = await updateJobStatus(job.id, { status, reason });
+        if (response.statusCode === 200) {
+          refetchJobs().then((r) => r);
+          setOpenPromptModals((prev) => ({
+            ...prev,
+            pauseJob: false,
+            resumeJob: false,
+            closeJob: false,
+            deleteJob: false,
+          }));
+        }
+      } catch (error) {
+        console.error("Failed to update job status:", error);
       }
-    } catch (error) {
-      console.error('Failed to update job status:', error);
-    }
-  }, [refetchJobs]);
+    },
+    [refetchJobs],
+  );
 
   // Modal handlers
-  const viewApplicantProfile = useCallback(async (application: ApplicationResponse) => {
-    setSelectedApplication(application);
-    setShowProfileModal(true);
-    await updateApplicantStatus(application.id, "Viewed");
-  }, [updateApplicantStatus]);
+  const viewApplicantProfile = useCallback(
+    async (application: ApplicationResponse) => {
+      setSelectedApplication(application);
+      setShowProfileModal(true);
+      await updateApplicantStatus(application.id, "Viewed");
+    },
+    [updateApplicantStatus],
+  );
 
   const viewCV = useCallback((applicant: ApplicationResponse) => {
     setSelectedApplication(applicant);
@@ -648,18 +759,18 @@ const ManageJobsAndApplicants: React.FC = () => {
   // Utility functions
   const getStatusColor = useCallback((status: string) => {
     switch (status) {
-      case 'applied':
-        return 'bg-purple-100 text-purple-800';
-      case 'shortlisted':
-        return 'bg-purple-100 text-purple-800';
-      case 'interviewed':
-        return 'bg-orange-100 text-orange-800';
-      case 'hired':
-        return 'bg-green-100 text-green-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
+      case "applied":
+        return "bg-purple-100 text-purple-800";
+      case "shortlisted":
+        return "bg-purple-100 text-purple-800";
+      case "interviewed":
+        return "bg-orange-100 text-orange-800";
+      case "hired":
+        return "bg-green-100 text-green-800";
+      case "rejected":
+        return "bg-red-100 text-red-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   }, []);
 
@@ -670,8 +781,8 @@ const ManageJobsAndApplicants: React.FC = () => {
     };
 
     if (showJobActionsDropdown) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
     }
   }, [showJobActionsDropdown]);
 
@@ -681,24 +792,26 @@ const ManageJobsAndApplicants: React.FC = () => {
       <button
         onClick={(e) => {
           e.stopPropagation();
-          setShowJobActionsDropdown(showJobActionsDropdown === job.id ? null : job.id);
+          setShowJobActionsDropdown(
+            showJobActionsDropdown === job.id ? null : job.id,
+          );
         }}
-        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        className="rounded-lg p-2 transition-colors hover:bg-gray-100"
       >
-        <MoreVertical className="w-4 h-4 text-gray-600" />
+        <MoreVertical className="h-4 w-4 text-gray-600" />
       </button>
 
       {showJobActionsDropdown === job.id && (
-        <div className="absolute right-10 -top-28 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+        <div className="absolute -top-28 right-10 z-10 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
           <div className="py-1">
             <button
               onClick={() => {
                 handleViewJob(job);
                 setShowJobActionsDropdown(null);
               }}
-              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
             >
-              <Eye className="w-4 h-4" />
+              <Eye className="h-4 w-4" />
               View Job Details
             </button>
 
@@ -707,57 +820,73 @@ const ManageJobsAndApplicants: React.FC = () => {
                 handleEditJob(job);
                 setShowJobActionsDropdown(null);
               }}
-              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
             >
-              <Edit className="w-4 h-4" />
+              <Edit className="h-4 w-4" />
               Edit Job Post
             </button>
 
             {job.jobStatus === JobStatus.NEW ? (
               <button
                 onClick={() => {
-                  setOpenPromptModals(prev => ({ ...prev, pauseJob: true, job }));
+                  setOpenPromptModals((prev) => ({
+                    ...prev,
+                    pauseJob: true,
+                    job,
+                  }));
                   setShowJobActionsDropdown(null);
                 }}
-                className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
               >
-                <Pause className="w-4 h-4" />
+                <Pause className="h-4 w-4" />
                 Pause Recruitment
               </button>
             ) : (
               <button
                 onClick={() => {
-                  setOpenPromptModals(prev => ({ ...prev, resumeJob: true, job }));
+                  setOpenPromptModals((prev) => ({
+                    ...prev,
+                    resumeJob: true,
+                    job,
+                  }));
                   setShowJobActionsDropdown(null);
                 }}
-                className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
               >
-                <Play className="w-4 h-4" />
+                <Play className="h-4 w-4" />
                 Resume Recruitment
               </button>
             )}
 
             <button
               onClick={() => {
-                setOpenPromptModals(prev => ({ ...prev, closeJob: true, job }));
+                setOpenPromptModals((prev) => ({
+                  ...prev,
+                  closeJob: true,
+                  job,
+                }));
                 setShowJobActionsDropdown(null);
               }}
-              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
             >
-              <StopCircle className="w-4 h-4" />
+              <StopCircle className="h-4 w-4" />
               Close Recruitment
             </button>
 
-            <div className="border-t border-gray-200 my-1"></div>
+            <div className="my-1 border-t border-gray-200"></div>
 
             <button
               onClick={() => {
-                setOpenPromptModals(prev => ({ ...prev, deleteJob: true, job }));
+                setOpenPromptModals((prev) => ({
+                  ...prev,
+                  deleteJob: true,
+                  job,
+                }));
                 setShowJobActionsDropdown(null);
               }}
-              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="h-4 w-4" />
               Delete Job Post
             </button>
           </div>
@@ -771,16 +900,18 @@ const ManageJobsAndApplicants: React.FC = () => {
     if (!selectedJob) return null;
 
     return (
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
+      <div className="overflow-hidden rounded-xl bg-white shadow-sm">
+        <div className="border-b border-gray-200 px-6 py-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">{selectedJob.title}</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {selectedJob.title}
+            </h2>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handleViewApplications(selectedJob)}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                className="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white transition-colors hover:bg-purple-700"
               >
-                <Users className="w-4 h-4" />
+                <Users className="h-4 w-4" />
                 View Applications ({selectedJob.applicantsCount || 0})
               </button>
               <JobActionsDropdown job={selectedJob} />
@@ -789,27 +920,39 @@ const ManageJobsAndApplicants: React.FC = () => {
         </div>
 
         <div className="p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <div className="prose max-w-none">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Job Description</h3>
+                <h3 className="mb-3 text-lg font-semibold text-gray-900">
+                  Job Description
+                </h3>
                 <div
-                  className="text-gray-700 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: selectedJob?.description || ""}}
+                  className="leading-relaxed text-gray-700"
+                  dangerouslySetInnerHTML={{
+                    __html: selectedJob?.description || "",
+                  }}
                 />
 
-                <h3 className="text-lg font-semibold text-gray-900 mb-3 mt-6">Requirements</h3>
+                <h3 className="mt-6 mb-3 text-lg font-semibold text-gray-900">
+                  Requirements
+                </h3>
                 <div
-                  className="text-gray-700 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: selectedJob?.requirements || "" }}
+                  className="leading-relaxed text-gray-700"
+                  dangerouslySetInnerHTML={{
+                    __html: selectedJob?.requirements || "",
+                  }}
                 />
 
                 {selectedJob.responsibility && (
                   <>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3 mt-6">Responsibilities</h3>
+                    <h3 className="mt-6 mb-3 text-lg font-semibold text-gray-900">
+                      Responsibilities
+                    </h3>
                     <div
-                      className="text-gray-700 leading-relaxed"
-                      dangerouslySetInnerHTML={{ __html: selectedJob.responsibility }}
+                      className="leading-relaxed text-gray-700"
+                      dangerouslySetInnerHTML={{
+                        __html: selectedJob.responsibility,
+                      }}
                     />
                   </>
                 )}
@@ -817,67 +960,89 @@ const ManageJobsAndApplicants: React.FC = () => {
             </div>
 
             <div>
-              <div className="bg-gray-50 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Job Details</h3>
+              <div className="rounded-lg bg-gray-50 p-6">
+                <h3 className="mb-4 text-lg font-semibold text-gray-900">
+                  Job Details
+                </h3>
 
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <MapPin className="w-5 h-5 text-gray-400" />
+                    <MapPin className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">Location</p>
-                      <p className="text-sm text-gray-600">{selectedJob.location || 'Not specified'}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Briefcase className="w-5 h-5 text-gray-400" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">Employment Type</p>
-                      <p className="text-sm text-gray-600">{selectedJob.employmentType || 'Not specified'}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <DollarSign className="w-5 h-5 text-gray-400" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">Salary Range</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        Location
+                      </p>
                       <p className="text-sm text-gray-600">
-                        {selectedJob.salaryRange?.maximumAmount > 0 ? (
-                          `${selectedJob.salaryRange.currency} ${selectedJob.salaryRange.minimumAmount} - ${selectedJob.salaryRange.maximumAmount}`
-                        ) : (
-                          'Not specified'
-                        )}
+                        {selectedJob.location || "Not specified"}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Calendar className="w-5 h-5 text-gray-400" />
+                    <Briefcase className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">Posted</p>
-                      <p className="text-sm text-gray-600">{moment(selectedJob.createdAt).format('MMM DD, YYYY')}</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        Employment Type
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {selectedJob.employmentType || "Not specified"}
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Users className="w-5 h-5 text-gray-400" />
+                    <DollarSign className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">Applications</p>
-                      <p className="text-sm text-gray-600">{selectedJob.applicantsCount || 0} applicants</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        Salary Range
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {selectedJob.salaryRange?.maximumAmount > 0
+                          ? `${selectedJob.salaryRange.currency} ${selectedJob.salaryRange.minimumAmount} - ${selectedJob.salaryRange.maximumAmount}`
+                          : "Not specified"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Calendar className="h-5 w-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        Posted
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {moment(selectedJob.createdAt).format("MMM DD, YYYY")}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Users className="h-5 w-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        Applications
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {selectedJob.applicantsCount || 0} applicants
+                      </p>
                     </div>
                   </div>
 
                   <div className="pt-2">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      selectedJob.jobStatus === JobStatus.NEW
-                        ? 'bg-green-100 text-green-800'
-                        : selectedJob.jobStatus === JobStatus.DRAFT
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : selectedJob.jobStatus === JobStatus.PAUSED
-                            ? 'bg-orange-100 text-orange-800'
-                            : 'bg-gray-100 text-gray-800'
-                    }`}>
-                      {selectedJob.jobStatus === JobStatus.NEW ? 'Active' : selectedJob.jobStatus}
+                    <span
+                      className={`rounded-full px-3 py-1 text-sm font-medium ${
+                        selectedJob.jobStatus === JobStatus.NEW
+                          ? "bg-green-100 text-green-800"
+                          : selectedJob.jobStatus === JobStatus.DRAFT
+                            ? "bg-yellow-100 text-yellow-800"
+                            : selectedJob.jobStatus === JobStatus.PAUSED
+                              ? "bg-orange-100 text-orange-800"
+                              : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {selectedJob.jobStatus === JobStatus.NEW
+                        ? "Active"
+                        : selectedJob.jobStatus}
                     </span>
                   </div>
                 </div>
@@ -898,14 +1063,18 @@ const ManageJobsAndApplicants: React.FC = () => {
           navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
         />
-        <div className="flex items-center justify-center min-h-64 mt-20">
+        <div className="mt-20 flex min-h-64 items-center justify-center">
           <div className="text-center">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Briefcase className="w-8 h-8 text-red-600" />
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+              <Briefcase className="h-8 w-8 text-red-600" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Error Loading Jobs</h3>
+            <h3 className="mb-2 text-lg font-medium text-gray-900">
+              Error Loading Jobs
+            </h3>
             <p className="text-gray-600">
-              {jobsErrorMessage?.message || searchErrorMessage?.message || "Something went wrong. Please try again."}
+              {jobsErrorMessage?.message ||
+                searchErrorMessage?.message ||
+                "Something went wrong. Please try again."}
             </p>
           </div>
         </div>
@@ -914,7 +1083,7 @@ const ManageJobsAndApplicants: React.FC = () => {
   }
 
   // Job Detail View
-  if (viewMode === 'jobDetail') {
+  if (viewMode === "jobDetail") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
         <TopNavBar
@@ -922,17 +1091,19 @@ const ManageJobsAndApplicants: React.FC = () => {
           navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
         />
-        <div className="max-w-7xl mx-auto p-4 lg:p-8 pt-24">
-          <div className="flex items-center mb-8">
+        <div className="mx-auto max-w-7xl p-4 pt-24 lg:p-8">
+          <div className="mb-8 flex items-center">
             <button
               onClick={handleBackToJobs}
-              className="mr-4 p-2 rounded-lg hover:bg-white transition-colors"
+              className="mr-4 rounded-lg p-2 transition-colors hover:bg-white"
             >
-              <ArrowLeft className="w-5 h-5 text-gray-600" />
+              <ArrowLeft className="h-5 w-5 text-gray-600" />
             </button>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Job Details</h1>
-              <p className="text-gray-600 mt-1">View and manage job posting</p>
+              <h1 className="text-2xl font-bold text-gray-900 lg:text-3xl">
+                Job Details
+              </h1>
+              <p className="mt-1 text-gray-600">View and manage job posting</p>
             </div>
           </div>
 
@@ -943,7 +1114,7 @@ const ManageJobsAndApplicants: React.FC = () => {
   }
 
   // Applications View (existing implementation with backend sorting)
-  if (viewMode === 'applications') {
+  if (viewMode === "applications") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
         <TopNavBar
@@ -951,49 +1122,53 @@ const ManageJobsAndApplicants: React.FC = () => {
           navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
         />
-        <div className="max-w-7xl mx-auto p-4 lg:p-8 pt-24">
+        <div className="mx-auto max-w-7xl p-4 pt-24 lg:p-8">
           {/* Header */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8">
-            <div className="flex items-center mb-4 lg:mb-0">
+          <div className="mb-8 flex flex-col justify-between lg:flex-row lg:items-center">
+            <div className="mb-4 flex items-center lg:mb-0">
               <button
                 onClick={handleBackToJobs}
-                className="mr-4 p-2 rounded-lg hover:bg-white transition-colors"
+                className="mr-4 rounded-lg p-2 transition-colors hover:bg-white"
               >
-                <ArrowLeft className="w-5 h-5 text-gray-600" />
+                <ArrowLeft className="h-5 w-5 text-gray-600" />
               </button>
               <div>
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-gray-900 lg:text-3xl">
                   {selectedJob?.title}
                 </h1>
-                <p className="text-gray-600 mt-1">
-                  {applicationsData?.data?.length || 0} applicant{(applicationsData?.data?.length || 0) !== 1 ? 's' : ''}
+                <p className="mt-1 text-gray-600">
+                  {applicationsData?.data?.length || 0} applicant
+                  {(applicationsData?.data?.length || 0) !== 1 ? "s" : ""}
                 </p>
               </div>
             </div>
             <button
               onClick={() => handleViewJob(selectedJob!)}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              className="flex items-center gap-2 rounded-lg bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700"
             >
-              <FileText className="w-4 h-4" />
+              <FileText className="h-4 w-4" />
               View Job Details
             </button>
           </div>
 
           {/* Filters and Search */}
-          <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-            <div className="flex flex-col lg:flex-row gap-4 items-center">
+          <div className="mb-8 rounded-xl bg-white p-6 shadow-sm">
+            <div className="flex flex-col items-center gap-4 lg:flex-row">
               <div className="flex-1">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Search className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
                   <input
                     type="text"
                     placeholder="Search by name, email, or skills..."
                     value={applicationSearchTerm}
                     onChange={(e) => {
                       setApplicationSearchTerm(e.target.value);
-                      setApplicationPagination(prev => ({ ...prev, page: 1 }));
+                      setApplicationPagination((prev) => ({
+                        ...prev,
+                        page: 1,
+                      }));
                     }}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full rounded-lg border border-gray-200 py-3 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
               </div>
@@ -1002,10 +1177,12 @@ const ManageJobsAndApplicants: React.FC = () => {
                 <select
                   value={applicationStatusFilter}
                   onChange={(e) => {
-                    setApplicationStatusFilter(applicationStatuses[e.target.value]);
-                    setApplicationPagination(prev => ({ ...prev, page: 1 }));
+                    setApplicationStatusFilter(
+                      applicationStatuses[e.target.value],
+                    );
+                    setApplicationPagination((prev) => ({ ...prev, page: 1 }));
                   }}
-                  className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="rounded-lg border border-gray-200 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
                 >
                   <option value="all">All Status</option>
                   <option value="applied">Applied</option>
@@ -1019,9 +1196,9 @@ const ManageJobsAndApplicants: React.FC = () => {
                 <select
                   value={`${applicationSortBy}-${applicationSortOrder}`}
                   onChange={(e) => handleApplicationSortChange(e.target.value)}
-                  className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="rounded-lg border border-gray-200 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
                 >
-                  {APPLICATION_SORT_OPTIONS.map(option => (
+                  {APPLICATION_SORT_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
@@ -1032,236 +1209,289 @@ const ManageJobsAndApplicants: React.FC = () => {
           </div>
 
           {/* Applications Table */}
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div className="overflow-hidden rounded-xl bg-white shadow-sm">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Candidate
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Experience
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Skills
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Rating
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Applied
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Match Score
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      Candidate
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      Experience
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      Skills
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      Rating
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      Applied
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      Match Score
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      Actions
+                    </th>
+                  </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                {applicationsData?.data?.map((application) => (
-                  <tr key={application.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <div className="text-sm font-medium text-gray-900 mb-1">
-                          {application?.applicant?.firstName} {application?.applicant?.middleName} {application?.applicant?.lastName}
+                <tbody className="divide-y divide-gray-200 bg-white">
+                  {applicationsData?.data?.map((application) => (
+                    <tr
+                      key={application.id}
+                      className="transition-colors hover:bg-gray-50"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <div className="mb-1 text-sm font-medium text-gray-900">
+                            {application?.applicant?.firstName}{" "}
+                            {application?.applicant?.middleName}{" "}
+                            {application?.applicant?.lastName}
+                          </div>
+                          <div className="mb-1 text-sm text-gray-500">
+                            {application?.applicant?.email}
+                          </div>
+                          <div className="flex items-center gap-1 text-xs text-gray-400">
+                            <MapPin className="h-3 w-3" />
+                            {application?.applicant?.city},{" "}
+                            {application?.applicant?.country}
+                          </div>
+                          <div className="mt-2 flex gap-2">
+                            {application?.applicant?.githubProfile && (
+                              <a
+                                href={application.applicant.githubProfile}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-purple-600 hover:text-purple-800"
+                                title="GitHub Profile"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </a>
+                            )}
+                            {application?.applicant?.linkedInProfile && (
+                              <a
+                                href={application.applicant.linkedInProfile}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-purple-600 hover:text-purple-800"
+                                title="LinkedIn Profile"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </a>
+                            )}
+                          </div>
                         </div>
-                        <div className="text-sm text-gray-500 mb-1">
-                          {application?.applicant?.email}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
+                          {application?.cv?.yearsOfExperience} years
                         </div>
-                        <div className="text-xs text-gray-400 flex items-center gap-1">
-                          <MapPin className="w-3 h-3" />
-                          {application?.applicant?.city}, {application?.applicant?.country}
-                        </div>
-                        <div className="flex gap-2 mt-2">
-                          {application?.applicant?.githubProfile && (
-                            <a
-                              href={application.applicant.githubProfile}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-purple-600 hover:text-purple-800"
-                              title="GitHub Profile"
-                            >
-                              <ExternalLink className="w-4 h-4" />
-                            </a>
-                          )}
-                          {application?.applicant?.linkedInProfile && (
-                            <a
-                              href={application.applicant.linkedInProfile}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-purple-600 hover:text-purple-800"
-                              title="LinkedIn Profile"
-                            >
-                              <ExternalLink className="w-4 h-4" />
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900 font-medium">
-                        {application?.cv?.yearsOfExperience} years
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-1 max-w-xs">
-                        {application?.cv?.skills?.slice(0, 3)?.map((skill: Partial<SkillsResponseDto>, index: number) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
-                          >
-                              {skill.skill}
-                            </span>
-                        ))}
-                        {application?.cv?.skills?.length > 3 && (
-                          <span
-                            className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex max-w-xs flex-wrap gap-1">
+                          {application?.cv?.skills
+                            ?.slice(0, 3)
+                            ?.map(
+                              (
+                                skill: Partial<SkillsResponseDto>,
+                                index: number,
+                              ) => (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center rounded-full bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800"
+                                >
+                                  {skill.skill}
+                                </span>
+                              ),
+                            )}
+                          {application?.cv?.skills?.length > 3 && (
+                            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">
                               +{application?.cv?.skills?.length - 3}
                             </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                        <span className="text-sm font-medium text-gray-900">
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 fill-current text-yellow-400" />
+                          <span className="text-sm font-medium text-gray-900">
                             {application?.applicant?.rating}
                           </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(application?.status || "")}`}>
-                          {(application?.status || "").charAt(0)?.toUpperCase() + application?.status?.slice(1)}
-                        </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {moment(application?.createdAt).format("MMM DD, YYYY - h:mm A")}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => {
-                            viewMatchDetails(application);
-                          }}
-                          className="flex items-center gap-1 px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg transition-colors text-sm font-medium"
-                          title="View detailed match analysis"
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(application?.status || "")}`}
                         >
-                          <TrendingUp className="w-4 h-4" />
-                          View Match
-                        </button>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex gap-1">
+                          {(application?.status || "")
+                            .charAt(0)
+                            ?.toUpperCase() + application?.status?.slice(1)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
+                        {moment(application?.createdAt).format(
+                          "MMM DD, YYYY - h:mm A",
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
                           <button
-                            onClick={() => viewApplicantProfile(application)}
-                            className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700 transition-all"
-                            title="View Profile"
+                            onClick={() => {
+                              viewMatchDetails(application);
+                            }}
+                            className="flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-100"
+                            title="View detailed match analysis"
                           >
-                            <Eye className="w-3 h-3" />
-                            Profile
-                          </button>
-                          <button
-                            onClick={() => viewCV(application)}
-                            className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-purple-600 text-white rounded hover:bg-purple-700 transition-all"
-                            title="View CV"
-                          >
-                            <Eye className="w-3 h-3" />
-                            CV
-                          </button>
-                          <button
-                            onClick={() => downloadResume(application.id, (application?.cv?.cvLink || ""))}
-                            className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 transition-all"
-                            title="Download CV"
-                          >
-                            <Download className="w-3 h-3" />
+                            <TrendingUp className="h-4 w-4" />
+                            View Match
                           </button>
                         </div>
-                        <div className="flex gap-1">
-                          {/* NEW: Match Details Button */}
-                          <button
-                            onClick={() => viewMatchDetails(application)}
-                            className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-all"
-                            title="View Match Details"
-                          >
-                            <TrendingUp className="w-3 h-3" />
-                            Match
-                          </button>
-                          <button
-                            onClick={() => updateApplicantStatus(application.id, "Shortlisted")}
-                            className="inline-flex items-center justify-center w-6 h-6 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors"
-                            title="Shortlist"
-                          >
-                            <Star className="w-3 h-3" />
-                          </button>
-                          <button
-                            onClick={() => updateApplicantStatus(application.id, "Hired")}
-                            className="inline-flex items-center justify-center w-6 h-6 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                            title="Accept"
-                          >
-                            <Check className="w-3 h-3" />
-                          </button>
-                          <button
-                            onClick={() => updateApplicantStatus(application.id, "Rejected")}
-                            className="inline-flex items-center justify-center w-6 h-6 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-                            title="Reject"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex flex-col gap-1">
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => viewApplicantProfile(application)}
+                              className="inline-flex items-center gap-1 rounded bg-gray-600 px-2 py-1 text-xs text-white transition-all hover:bg-gray-700"
+                              title="View Profile"
+                            >
+                              <Eye className="h-3 w-3" />
+                              Profile
+                            </button>
+                            <button
+                              onClick={() => viewCV(application)}
+                              className="inline-flex items-center gap-1 rounded bg-purple-600 px-2 py-1 text-xs text-white transition-all hover:bg-purple-700"
+                              title="View CV"
+                            >
+                              <Eye className="h-3 w-3" />
+                              CV
+                            </button>
+                            <button
+                              onClick={() =>
+                                downloadResume(
+                                  application.id,
+                                  application?.cv?.cvLink || "",
+                                )
+                              }
+                              className="inline-flex items-center gap-1 rounded bg-green-600 px-2 py-1 text-xs text-white transition-all hover:bg-green-700"
+                              title="Download CV"
+                            >
+                              <Download className="h-3 w-3" />
+                            </button>
+                          </div>
+                          <div className="flex gap-1">
+                            {/* NEW: Match Details Button */}
+                            <button
+                              onClick={() => viewMatchDetails(application)}
+                              className="inline-flex items-center gap-1 rounded bg-blue-600 px-2 py-1 text-xs text-white transition-all hover:bg-blue-700"
+                              title="View Match Details"
+                            >
+                              <TrendingUp className="h-3 w-3" />
+                              Match
+                            </button>
+                            <button
+                              onClick={() =>
+                                updateApplicantStatus(
+                                  application.id,
+                                  "Shortlisted",
+                                )
+                              }
+                              className="inline-flex h-6 w-6 items-center justify-center rounded bg-yellow-500 text-white transition-colors hover:bg-yellow-600"
+                              title="Shortlist"
+                            >
+                              <Star className="h-3 w-3" />
+                            </button>
+                            <button
+                              onClick={() =>
+                                updateApplicantStatus(application.id, "Hired")
+                              }
+                              className="inline-flex h-6 w-6 items-center justify-center rounded bg-green-500 text-white transition-colors hover:bg-green-600"
+                              title="Accept"
+                            >
+                              <Check className="h-3 w-3" />
+                            </button>
+                            <button
+                              onClick={() =>
+                                updateApplicantStatus(
+                                  application.id,
+                                  "Rejected",
+                                )
+                              }
+                              className="inline-flex h-6 w-6 items-center justify-center rounded bg-red-500 text-white transition-colors hover:bg-red-600"
+                              title="Reject"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
 
             {/* Application Pagination */}
-            <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-              <div className="flex-1 flex justify-between sm:hidden">
+            <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+              <div className="flex flex-1 justify-between sm:hidden">
                 <button
-                  onClick={() => handleApplicationPageChange(applicationPagination.page - 1)}
+                  onClick={() =>
+                    handleApplicationPageChange(applicationPagination.page - 1)
+                  }
                   disabled={applicationPagination.page === 1}
-                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Previous
                 </button>
                 <button
-                  onClick={() => handleApplicationPageChange(applicationPagination.page + 1)}
-                  disabled={applicationPagination.page === applicationPagination.totalPages}
-                  className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={() =>
+                    handleApplicationPageChange(applicationPagination.page + 1)
+                  }
+                  disabled={
+                    applicationPagination.page ===
+                    applicationPagination.totalPages
+                  }
+                  className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Next
                 </button>
               </div>
-              <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+              <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm text-gray-700">
-                    Showing page {applicationPagination.page} of {applicationPagination.totalPages}
+                    Showing page {applicationPagination.page} of{" "}
+                    {applicationPagination.totalPages}
                   </p>
                 </div>
                 <div>
-                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                  <nav className="relative z-0 inline-flex -space-x-px rounded-md shadow-sm">
                     <button
-                      onClick={() => handleApplicationPageChange(applicationPagination.page - 1)}
+                      onClick={() =>
+                        handleApplicationPageChange(
+                          applicationPagination.page - 1,
+                        )
+                      }
                       disabled={applicationPagination.page === 1}
-                      className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Previous
                     </button>
                     <button
-                      onClick={() => handleApplicationPageChange(applicationPagination.page + 1)}
-                      disabled={applicationPagination.page === applicationPagination.totalPages}
-                      className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      onClick={() =>
+                        handleApplicationPageChange(
+                          applicationPagination.page + 1,
+                        )
+                      }
+                      disabled={
+                        applicationPagination.page ===
+                        applicationPagination.totalPages
+                      }
+                      className="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Next
                     </button>
@@ -1272,111 +1502,199 @@ const ManageJobsAndApplicants: React.FC = () => {
           </div>
 
           {(!applicationsData?.data || applicationsData.data.length === 0) && (
-            <div className="text-center py-12">
-              <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No applicants found</h3>
-              <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
+            <div className="py-12 text-center">
+              <Users className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+              <h3 className="mb-2 text-lg font-medium text-gray-900">
+                No applicants found
+              </h3>
+              <p className="text-gray-500">
+                Try adjusting your search or filter criteria.
+              </p>
             </div>
           )}
 
           {/* Profile and CV Modals */}
           {showProfileModal && selectedApplication && (
-            <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-              <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                <div className="p-6 border-b border-gray-200">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+              <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-white">
+                <div className="border-b border-gray-200 p-6">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-bold text-gray-900">Applicant Profile</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">
+                      Applicant Profile
+                    </h2>
                     <button
                       onClick={closeModals}
-                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                      className="rounded-lg p-2 transition-colors hover:bg-gray-100"
                     >
-                      <X className="w-6 h-6 text-gray-500" />
+                      <X className="h-6 w-6 text-gray-500" />
                     </button>
                   </div>
                 </div>
 
                 <div className="p-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     <div className="lg:col-span-2">
                       <div className="mb-6">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                          {selectedApplication.applicant.firstName} {selectedApplication.applicant.middleName || ""} {selectedApplication.applicant.lastName}
+                        <h3 className="mb-2 text-xl font-semibold text-gray-900">
+                          {selectedApplication.applicant.firstName}{" "}
+                          {selectedApplication.applicant.middleName || ""}{" "}
+                          {selectedApplication.applicant.lastName}
                         </h3>
-                        <div className="flex items-center gap-2 mb-4">
+                        <div className="mb-4 flex items-center gap-2">
                           <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedApplication?.status || "")}`}>
-                            {(selectedApplication?.status || "")?.charAt(0)?.toUpperCase() + selectedApplication?.status?.slice(1)}
+                            className={`rounded-full px-3 py-1 text-sm font-medium ${getStatusColor(selectedApplication?.status || "")}`}
+                          >
+                            {(selectedApplication?.status || "")
+                              ?.charAt(0)
+                              ?.toUpperCase() +
+                              selectedApplication?.status?.slice(1)}
                           </span>
                           <div className="flex items-center gap-1">
                             <Star
-                              className={`w-4 h-4 ${selectedApplication.applicant.rating > 0 ? "text-yellow-400" : "text-gray-400"} fill-current`} />
-                            <span
-                              className="text-sm font-medium text-gray-900">{selectedApplication.applicant.rating}</span>
+                              className={`h-4 w-4 ${selectedApplication.applicant.rating > 0 ? "text-yellow-400" : "text-gray-400"} fill-current`}
+                            />
+                            <span className="text-sm font-medium text-gray-900">
+                              {selectedApplication.applicant.rating}
+                            </span>
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
                           <div className="flex items-center gap-2">
-                            <Mail className="w-4 h-4 text-gray-400" />
-                            <span className="text-sm text-gray-600">{selectedApplication.applicant.email}</span>
+                            <Mail className="h-4 w-4 text-gray-400" />
+                            <span className="text-sm text-gray-600">
+                              {selectedApplication.applicant.email}
+                            </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Phone className="w-4 h-4 text-gray-400" />
-                            <span className="text-sm text-gray-600">{selectedApplication.applicant.phoneNumber}</span>
+                            <Phone className="h-4 w-4 text-gray-400" />
+                            <span className="text-sm text-gray-600">
+                              {selectedApplication.applicant.phoneNumber}
+                            </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <MapPin className="w-4 h-4 text-gray-400" />
-                            <span
-                              className="text-sm text-gray-600">{selectedApplication.applicant.city || ""}, {selectedApplication.applicant.country || ""}</span>
+                            <MapPin className="h-4 w-4 text-gray-400" />
+                            <span className="text-sm text-gray-600">
+                              {selectedApplication.applicant.city || ""},{" "}
+                              {selectedApplication.applicant.country || ""}
+                            </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Clock className="w-4 h-4 text-gray-400" />
-                            <span className="text-sm text-gray-600">{selectedApplication?.cv?.yearsOfExperience} years experience</span>
+                            <Clock className="h-4 w-4 text-gray-400" />
+                            <span className="text-sm text-gray-600">
+                              {selectedApplication?.cv?.yearsOfExperience} years
+                              experience
+                            </span>
                           </div>
-                        </div>
-
-                        <div className="mb-6">
-                          <h4 className="font-medium text-gray-900 mb-2">Bio</h4>
-                          <div className="text-gray-600 text-sm leading-relaxed"
-                               dangerouslySetInnerHTML={{ __html: selectedApplication?.cv?.professionalSummary || "" }}></div>
-                        </div>
-
-                        <div className="mb-6">
-                          <h4 className="font-medium text-gray-900 mb-2">Education</h4>
-                          {selectedApplication?.cv?.educations?.map((education: Partial<EducationResponseDto>, index: number) => (
-                            <div key={index} className="mb-4">
-                              <h3
-                                className="font-medium text-gray-900">{education.degree} {education.fieldOfStudy} at {education.institution}</h3>
-                              <p
-                                className="text-gray-600 text-sm mb-2">{education?.startDate?.toString()?.split("T")[0]} - {education?.endDate?.toString()?.split("T")[0]}</p>
-                              <div className="text-gray-700 text-sm"
-                                   dangerouslySetInnerHTML={{ __html: education?.description || "" }}></div>
-                            </div>
-                          ))}
                         </div>
 
                         <div className="mb-6">
-                          <h4 className="font-medium text-gray-900 mb-2">Experience</h4>
-                          <div className="space-y-4">
-                            {selectedApplication?.cv?.experiences?.map((experience: Partial<ExperienceResponseDto>, index: number) => (
+                          <h4 className="mb-2 font-medium text-gray-900">
+                            Bio
+                          </h4>
+                          <div
+                            className="text-sm leading-relaxed text-gray-600"
+                            dangerouslySetInnerHTML={{
+                              __html:
+                                selectedApplication?.cv?.professionalSummary ||
+                                "",
+                            }}
+                          ></div>
+                        </div>
+
+                        <div className="mb-6">
+                          <h4 className="mb-2 font-medium text-gray-900">
+                            Education
+                          </h4>
+                          {selectedApplication?.cv?.educations?.map(
+                            (
+                              education: Partial<EducationResponseDto>,
+                              index: number,
+                            ) => (
                               <div key={index} className="mb-4">
-                                <h3
-                                  className="font-medium text-gray-900">{experience.position} at {experience.company}</h3>
-                                <p
-                                  className="text-gray-600 text-sm mb-2">{experience?.startDate?.toString()?.split("T")[0]} - {experience?.endDate?.toString()?.split("T")[0]}</p>
-                                <div className="text-gray-700 text-sm"
-                                     dangerouslySetInnerHTML={{ __html: experience?.description || "" }}></div>
+                                <h3 className="font-medium text-gray-900">
+                                  {education.degree} {education.fieldOfStudy} at{" "}
+                                  {education.institution}
+                                </h3>
+                                <p className="mb-2 text-sm text-gray-600">
+                                  {
+                                    education?.startDate
+                                      ?.toString()
+                                      ?.split("T")[0]
+                                  }{" "}
+                                  -{" "}
+                                  {
+                                    education?.endDate
+                                      ?.toString()
+                                      ?.split("T")[0]
+                                  }
+                                </p>
+                                <div
+                                  className="text-sm text-gray-700"
+                                  dangerouslySetInnerHTML={{
+                                    __html: education?.description || "",
+                                  }}
+                                ></div>
                               </div>
-                            ))}
+                            ),
+                          )}
+                        </div>
+
+                        <div className="mb-6">
+                          <h4 className="mb-2 font-medium text-gray-900">
+                            Experience
+                          </h4>
+                          <div className="space-y-4">
+                            {selectedApplication?.cv?.experiences?.map(
+                              (
+                                experience: Partial<ExperienceResponseDto>,
+                                index: number,
+                              ) => (
+                                <div key={index} className="mb-4">
+                                  <h3 className="font-medium text-gray-900">
+                                    {experience.position} at{" "}
+                                    {experience.company}
+                                  </h3>
+                                  <p className="mb-2 text-sm text-gray-600">
+                                    {
+                                      experience?.startDate
+                                        ?.toString()
+                                        ?.split("T")[0]
+                                    }{" "}
+                                    -{" "}
+                                    {
+                                      experience?.endDate
+                                        ?.toString()
+                                        ?.split("T")[0]
+                                    }
+                                  </p>
+                                  <div
+                                    className="text-sm text-gray-700"
+                                    dangerouslySetInnerHTML={{
+                                      __html: experience?.description || "",
+                                    }}
+                                  ></div>
+                                </div>
+                              ),
+                            )}
                           </div>
                         </div>
 
                         <div className="mb-6">
-                          <h4 className="font-medium text-gray-900 mb-2">Key Achievements</h4>
-                          <ul className="list-disc list-inside space-y-1">
-                            {selectedApplication?.cv?.awards?.map((achievement: Partial<AwardResponseDto>, index: number) => (
-                              <li key={index} className="text-gray-700">{achievement?.title}</li>
-                            ))}
+                          <h4 className="mb-2 font-medium text-gray-900">
+                            Key Achievements
+                          </h4>
+                          <ul className="list-inside list-disc space-y-1">
+                            {selectedApplication?.cv?.awards?.map(
+                              (
+                                achievement: Partial<AwardResponseDto>,
+                                index: number,
+                              ) => (
+                                <li key={index} className="text-gray-700">
+                                  {achievement?.title}
+                                </li>
+                              ),
+                            )}
                           </ul>
                         </div>
                       </div>
@@ -1384,38 +1702,52 @@ const ManageJobsAndApplicants: React.FC = () => {
 
                     <div>
                       <div className="mb-6">
-                        <h4 className="font-medium text-gray-900 mb-3">Skills</h4>
+                        <h4 className="mb-3 font-medium text-gray-900">
+                          Skills
+                        </h4>
                         <div className="flex flex-wrap gap-2">
-                          {selectedApplication?.cv?.skills?.map((skill: Partial<SkillsResponseDto>, index: number) => (
-                            <span key={index} className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
-                              {skill.skill}
-                            </span>
-                          ))}
+                          {selectedApplication?.cv?.skills?.map(
+                            (
+                              skill: Partial<SkillsResponseDto>,
+                              index: number,
+                            ) => (
+                              <span
+                                key={index}
+                                className="rounded-full bg-purple-100 px-3 py-1 text-sm text-purple-800"
+                              >
+                                {skill.skill}
+                              </span>
+                            ),
+                          )}
                         </div>
                       </div>
 
                       <div className="mb-6">
-                        <h4 className="font-medium text-gray-900 mb-3">Links</h4>
+                        <h4 className="mb-3 font-medium text-gray-900">
+                          Links
+                        </h4>
                         <div className="space-y-2">
                           {selectedApplication.applicant?.githubProfile && (
                             <a
                               href={selectedApplication.applicant.githubProfile}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 text-purple-600 hover:text-purple-800 text-sm"
+                              className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-800"
                             >
-                              <ExternalLink className="w-4 h-4" />
+                              <ExternalLink className="h-4 w-4" />
                               GitHub Profile
                             </a>
                           )}
                           {selectedApplication.applicant?.linkedInProfile && (
                             <a
-                              href={selectedApplication.applicant.linkedInProfile}
+                              href={
+                                selectedApplication.applicant.linkedInProfile
+                              }
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 text-purple-600 hover:text-purple-800 text-sm"
+                              className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-800"
                             >
-                              <ExternalLink className="w-4 h-4" />
+                              <ExternalLink className="h-4 w-4" />
                               LinkedIn Profile
                             </a>
                           )}
@@ -1428,39 +1760,59 @@ const ManageJobsAndApplicants: React.FC = () => {
                             closeModals();
                             viewCV(selectedApplication);
                           }}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                          className="flex w-full items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white transition-colors hover:bg-purple-700"
                         >
-                          <Eye className="w-4 h-4" />
+                          <Eye className="h-4 w-4" />
                           View CV
                         </button>
                         <button
-                          onClick={() => downloadResume(selectedApplication.id, (selectedApplication.cv?.cvLink || ""))}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all"
+                          onClick={() =>
+                            downloadResume(
+                              selectedApplication.id,
+                              selectedApplication.cv?.cvLink || "",
+                            )
+                          }
+                          className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white transition-all hover:bg-green-700"
                         >
-                          <Download className="w-4 h-4" />
+                          <Download className="h-4 w-4" />
                           Download CV
                         </button>
 
                         <div className="grid grid-cols-3 gap-2">
                           <button
-                            onClick={() => updateApplicantStatus(selectedApplication.id, "shortlisted")}
-                            className="flex items-center justify-center gap-1 px-3 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
+                            onClick={() =>
+                              updateApplicantStatus(
+                                selectedApplication.id,
+                                "shortlisted",
+                              )
+                            }
+                            className="flex items-center justify-center gap-1 rounded-lg bg-yellow-500 px-3 py-2 text-white transition-colors hover:bg-yellow-600"
                           >
-                            <Star className="w-4 h-4" />
+                            <Star className="h-4 w-4" />
                             <span className="text-xs">Shortlist</span>
                           </button>
                           <button
-                            onClick={() => updateApplicantStatus(selectedApplication.id, "hired")}
-                            className="flex items-center justify-center gap-1 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                            onClick={() =>
+                              updateApplicantStatus(
+                                selectedApplication.id,
+                                "hired",
+                              )
+                            }
+                            className="flex items-center justify-center gap-1 rounded-lg bg-green-500 px-3 py-2 text-white transition-colors hover:bg-green-600"
                           >
-                            <Check className="w-4 h-4" />
+                            <Check className="h-4 w-4" />
                             <span className="text-xs">Accept</span>
                           </button>
                           <button
-                            onClick={() => updateApplicantStatus(selectedApplication.id, "rejected")}
-                            className="flex items-center justify-center gap-1 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                            onClick={() =>
+                              updateApplicantStatus(
+                                selectedApplication.id,
+                                "rejected",
+                              )
+                            }
+                            className="flex items-center justify-center gap-1 rounded-lg bg-red-500 px-3 py-2 text-white transition-colors hover:bg-red-600"
                           >
-                            <X className="w-4 h-4" />
+                            <X className="h-4 w-4" />
                             <span className="text-xs">Reject</span>
                           </button>
                         </div>
@@ -1473,93 +1825,135 @@ const ManageJobsAndApplicants: React.FC = () => {
           )}
 
           {showCVModal && selectedApplication && (
-            <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-              <div className="bg-white rounded-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
-                <div className="p-6 border-b border-gray-200">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+              <div className="max-h-[90vh] w-full max-w-6xl overflow-y-auto rounded-xl bg-white">
+                <div className="border-b border-gray-200 p-6">
                   <div className="flex items-center justify-between">
                     <h2 className="text-2xl font-bold text-gray-900">
-                      CV
-                      - {selectedApplication.applicant.firstName} {selectedApplication.applicant?.middleName || ""} {selectedApplication.applicant.lastName}
+                      CV - {selectedApplication.applicant.firstName}{" "}
+                      {selectedApplication.applicant?.middleName || ""}{" "}
+                      {selectedApplication.applicant.lastName}
                     </h2>
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => downloadResume(selectedApplication.id, (selectedApplication?.cv?.cvLink || ""))}
-                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                        onClick={() =>
+                          downloadResume(
+                            selectedApplication.id,
+                            selectedApplication?.cv?.cvLink || "",
+                          )
+                        }
+                        className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700"
                       >
-                        <Download className="w-4 h-4" />
+                        <Download className="h-4 w-4" />
                         Download CV
                       </button>
                       <button
                         onClick={closeModals}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="rounded-lg p-2 transition-colors hover:bg-gray-100"
                       >
-                        <X className="w-6 h-6 text-gray-500" />
+                        <X className="h-6 w-6 text-gray-500" />
                       </button>
                     </div>
                   </div>
                 </div>
                 <div className="p-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     <div className="lg:col-span-2">
                       <div className="space-y-6">
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-3">Experience</h3>
-                          <p className="text-gray-700">{selectedApplication?.cv?.yearsOfExperience} years of professional
-                            experience</p>
+                          <h3 className="mb-3 text-lg font-semibold text-gray-900">
+                            Experience
+                          </h3>
+                          <p className="text-gray-700">
+                            {selectedApplication?.cv?.yearsOfExperience} years
+                            of professional experience
+                          </p>
                         </div>
 
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-3">Skills</h3>
+                          <h3 className="mb-3 text-lg font-semibold text-gray-900">
+                            Skills
+                          </h3>
                           <div className="flex flex-wrap gap-2">
-                            {selectedApplication.cv.skills?.map((skill, index) => (
-                              <span
-                                key={index}
-                                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800"
-                              >
-                                {skill.skill}
-                              </span>
-                            ))}
+                            {selectedApplication.cv.skills?.map(
+                              (skill, index) => (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-purple-800"
+                                >
+                                  {skill.skill}
+                                </span>
+                              ),
+                            )}
                           </div>
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Application Status</h3>
+                      <div className="rounded-lg bg-gray-50 p-4">
+                        <h3 className="mb-4 text-lg font-semibold text-gray-900">
+                          Application Status
+                        </h3>
                         <div className="space-y-3">
                           <div>
-                            <label className="text-sm font-medium text-gray-500">Current Status</label>
+                            <label className="text-sm font-medium text-gray-500">
+                              Current Status
+                            </label>
                             <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(selectedApplication?.status || "")}`}>
-                              {(selectedApplication?.status || "").charAt(0)?.toUpperCase() + selectedApplication?.status?.slice(1)}
+                              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(selectedApplication?.status || "")}`}
+                            >
+                              {(selectedApplication?.status || "")
+                                .charAt(0)
+                                ?.toUpperCase() +
+                                selectedApplication?.status?.slice(1)}
                             </span>
                           </div>
                           <div>
-                            <label className="text-sm font-medium text-gray-500">Applied On</label>
-                            <p
-                              className="text-gray-900">{moment(selectedApplication?.createdAt).format("MMM DD, YYYY - h:mm A")}</p>
+                            <label className="text-sm font-medium text-gray-500">
+                              Applied On
+                            </label>
+                            <p className="text-gray-900">
+                              {moment(selectedApplication?.createdAt).format(
+                                "MMM DD, YYYY - h:mm A",
+                              )}
+                            </p>
                           </div>
-                          <div className="pt-4 space-y-2">
+                          <div className="space-y-2 pt-4">
                             <button
-                              onClick={() => updateApplicantStatus(selectedApplication.id, "Shortlisted")}
-                              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
+                              onClick={() =>
+                                updateApplicantStatus(
+                                  selectedApplication.id,
+                                  "Shortlisted",
+                                )
+                              }
+                              className="flex w-full items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 py-2 text-white transition-colors hover:bg-yellow-600"
                             >
-                              <Star className="w-4 h-4" />
+                              <Star className="h-4 w-4" />
                               Shortlist
                             </button>
                             <button
-                              onClick={() => updateApplicantStatus(selectedApplication.id, "Hired")}
-                              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                              onClick={() =>
+                                updateApplicantStatus(
+                                  selectedApplication.id,
+                                  "Hired",
+                                )
+                              }
+                              className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
                             >
-                              <Check className="w-4 h-4" />
+                              <Check className="h-4 w-4" />
                               Hire
                             </button>
                             <button
-                              onClick={() => updateApplicantStatus(selectedApplication.id, "Rejected")}
-                              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                              onClick={() =>
+                                updateApplicantStatus(
+                                  selectedApplication.id,
+                                  "Rejected",
+                                )
+                              }
+                              className="flex w-full items-center justify-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-white transition-colors hover:bg-red-600"
                             >
-                              <X className="w-4 h-4" />
+                              <X className="h-4 w-4" />
                               Reject
                             </button>
                           </div>
@@ -1597,19 +1991,21 @@ const ManageJobsAndApplicants: React.FC = () => {
         navItemsMobile={employerNavItemsMobile}
         navbarItemsMap={employerNavBarItemMap}
       />
-      <div className="max-w-7xl mx-auto p-4 lg:p-8 pt-24">
+      <div className="mx-auto max-w-7xl p-4 pt-24 lg:p-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8">
+        <div className="mb-8 flex flex-col justify-between lg:flex-row lg:items-center">
           <div>
-            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+            <h1 className="mb-2 text-3xl font-bold text-gray-900 lg:text-4xl">
               Job Management Dashboard
             </h1>
-            <p className="text-gray-600">Manage your job postings and review applicants</p>
+            <p className="text-gray-600">
+              Manage your job postings and review applicants
+            </p>
           </div>
           <div className="mt-4 lg:mt-0">
             <button
               onClick={() => openModal("post-job-modal")}
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all shadow-md hover:shadow-lg"
+              className="rounded-lg bg-purple-600 px-6 py-3 text-white shadow-md transition-all hover:bg-purple-700 hover:shadow-lg"
             >
               Post New Job
             </button>
@@ -1617,65 +2013,77 @@ const ManageJobsAndApplicants: React.FC = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="rounded-xl bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Active Jobs</h3>
-                <p className="text-3xl font-bold text-purple-600 mt-2">
-                  {jobs.filter(job => job.jobStatus === JobStatus.NEW).length}
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Active Jobs
+                </h3>
+                <p className="mt-2 text-3xl font-bold text-purple-600">
+                  {jobs.filter((job) => job.jobStatus === JobStatus.NEW).length}
                 </p>
               </div>
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <Briefcase className="w-8 h-8 text-purple-600" />
+              <div className="rounded-lg bg-purple-100 p-3">
+                <Briefcase className="h-8 w-8 text-purple-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="rounded-xl bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Total Applicants</h3>
-                <p className="text-3xl font-bold text-green-600 mt-2">
-                  {jobs.reduce((total, job) => total + (job.applicantsCount || 0), 0)}
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Total Applicants
+                </h3>
+                <p className="mt-2 text-3xl font-bold text-green-600">
+                  {jobs.reduce(
+                    (total, job) => total + (job.applicantsCount || 0),
+                    0,
+                  )}
                 </p>
               </div>
-              <div className="p-3 bg-green-100 rounded-lg">
-                <Users className="w-8 h-8 text-green-600" />
+              <div className="rounded-lg bg-green-100 p-3">
+                <Users className="h-8 w-8 text-green-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="rounded-xl bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Draft Jobs</h3>
-                <p className="text-3xl font-bold text-orange-600 mt-2">
-                  {jobs.filter(job => job.jobStatus === JobStatus.DRAFT).length}
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Draft Jobs
+                </h3>
+                <p className="mt-2 text-3xl font-bold text-orange-600">
+                  {
+                    jobs.filter((job) => job.jobStatus === JobStatus.DRAFT)
+                      .length
+                  }
                 </p>
               </div>
-              <div className="p-3 bg-orange-100 rounded-lg">
-                <UserCheck className="w-8 h-8 text-orange-600" />
+              <div className="rounded-lg bg-orange-100 p-3">
+                <UserCheck className="h-8 w-8 text-orange-600" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Search and Filter for Jobs */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-          <div className="flex flex-col lg:flex-row gap-4 items-center">
+        <div className="mb-8 rounded-xl bg-white p-6 shadow-sm">
+          <div className="flex flex-col items-center gap-4 lg:flex-row">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search jobs by title, location, or type..."
                   value={searchKeyword}
                   onChange={(e) => {
                     setSearchKeyword(e.target.value);
-                    setJobPagination(prev => ({ ...prev, page: 1 }));
+                    setJobPagination((prev) => ({ ...prev, page: 1 }));
                   }}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full rounded-lg border border-gray-200 py-3 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-purple-500"
                 />
               </div>
             </div>
@@ -1684,9 +2092,9 @@ const ManageJobsAndApplicants: React.FC = () => {
                 value={activeSection}
                 onChange={(e) => {
                   setActiveSection(e.target.value as Section);
-                  setJobPagination(prev => ({ ...prev, page: 1 }));
+                  setJobPagination((prev) => ({ ...prev, page: 1 }));
                 }}
-                className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="rounded-lg border border-gray-200 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
               >
                 <option value="open">Active Jobs</option>
                 <option value="draft">Draft Jobs</option>
@@ -1694,9 +2102,9 @@ const ManageJobsAndApplicants: React.FC = () => {
               <select
                 value={`${jobSortBy}-${jobSortOrder}`}
                 onChange={(e) => handleJobSortChange(e.target.value)}
-                className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="rounded-lg border border-gray-200 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-purple-500"
               >
-                {JOB_SORT_OPTIONS.map(option => (
+                {JOB_SORT_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
@@ -1710,7 +2118,7 @@ const ManageJobsAndApplicants: React.FC = () => {
             </div>
             {isCurrentlyLoading && (
               <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 <span>Loading jobs...</span>
               </div>
             )}
@@ -1718,60 +2126,74 @@ const ManageJobsAndApplicants: React.FC = () => {
         </div>
 
         {/* Jobs List */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Your Job Postings</h2>
+        <div className="overflow-hidden rounded-xl bg-white shadow-sm">
+          <div className="border-b border-gray-200 px-6 py-4">
+            <h2 className="text-xl font-semibold text-gray-900">
+              Your Job Postings
+            </h2>
           </div>
 
           <div className="divide-y divide-gray-200">
             {jobs.map((job, index) => (
-              <div key={`${job.id}-${index}`} className="p-6 hover:bg-gray-50 transition-colors">
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between">
-                  <div className="flex-1 mb-4 lg:mb-0">
-                    <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+              <div
+                key={`${job.id}-${index}`}
+                className="p-6 transition-colors hover:bg-gray-50"
+              >
+                <div className="flex flex-col justify-between lg:flex-row lg:items-center">
+                  <div className="mb-4 flex-1 lg:mb-0">
+                    <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
                       <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                        <h3 className="mb-2 text-xl font-semibold text-gray-900">
                           {job.title}
                         </h3>
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
+                        <div className="mb-3 flex flex-wrap items-center gap-4 text-sm text-gray-600">
                           <div className="flex items-center gap-1">
-                            <MapPin className="w-4 h-4" />
-                            <span>{job.location || 'Not specified'}</span>
+                            <MapPin className="h-4 w-4" />
+                            <span>{job.location || "Not specified"}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Briefcase className="w-4 h-4" />
-                            <span>{job.employmentType || 'Not specified'}</span>
+                            <Briefcase className="h-4 w-4" />
+                            <span>{job.employmentType || "Not specified"}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <DollarSign className="w-4 h-4" />
+                            <DollarSign className="h-4 w-4" />
                             {job.salaryRange?.maximumAmount > 0 ? (
                               <span>
-                                {job.salaryRange.currency} {job.salaryRange.minimumAmount} - {job.salaryRange.maximumAmount}
+                                {job.salaryRange.currency}{" "}
+                                {job.salaryRange.minimumAmount} -{" "}
+                                {job.salaryRange.maximumAmount}
                               </span>
                             ) : (
                               <span>Not specified</span>
                             )}
                           </div>
                           <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>Posted {new Date(job.createdAt).toLocaleDateString()}</span>
+                            <Calendar className="h-4 w-4" />
+                            <span>
+                              Posted{" "}
+                              {new Date(job.createdAt).toLocaleDateString()}
+                            </span>
                           </div>
                         </div>
                         <div className="flex items-center gap-4">
-                          <span className="flex items-center gap-1 text-purple-600 font-medium">
-                            <Users className="w-4 h-4" />
+                          <span className="flex items-center gap-1 font-medium text-purple-600">
+                            <Users className="h-4 w-4" />
                             {job.applicantsCount || 0} applicants
                           </span>
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                            job.jobStatus === JobStatus.NEW
-                              ? 'bg-green-100 text-green-800'
-                              : job.jobStatus === JobStatus.DRAFT
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : job.jobStatus === JobStatus.PAUSED
-                                  ? 'bg-orange-100 text-orange-800'
-                                  : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {job.jobStatus === JobStatus.NEW ? 'Active' : job.jobStatus}
+                          <span
+                            className={`rounded-full px-3 py-1 text-sm font-medium ${
+                              job.jobStatus === JobStatus.NEW
+                                ? "bg-green-100 text-green-800"
+                                : job.jobStatus === JobStatus.DRAFT
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : job.jobStatus === JobStatus.PAUSED
+                                    ? "bg-orange-100 text-orange-800"
+                                    : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {job.jobStatus === JobStatus.NEW
+                              ? "Active"
+                              : job.jobStatus}
                           </span>
                         </div>
                       </div>
@@ -1781,21 +2203,21 @@ const ManageJobsAndApplicants: React.FC = () => {
                   <div className="flex items-center gap-3 lg:ml-6">
                     <button
                       onClick={() => handleViewJob(job)}
-                      className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all shadow-md hover:shadow-lg"
+                      className="flex items-center justify-center gap-2 rounded-lg bg-gray-600 px-6 py-3 text-white shadow-md transition-all hover:bg-gray-700 hover:shadow-lg"
                     >
-                      <Eye className="w-4 h-4" />
+                      <Eye className="h-4 w-4" />
                       <span>View Job</span>
                     </button>
 
                     <button
                       onClick={() => handleViewApplications(job)}
                       disabled={isCurrentlyLoading}
-                      className="flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50"
+                      className="flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-6 py-3 text-white shadow-md transition-all hover:bg-purple-700 hover:shadow-lg disabled:opacity-50"
                     >
                       {isCurrentlyLoading && selectedJobId === job.id ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
-                        <Users className="w-4 h-4" />
+                        <Users className="h-4 w-4" />
                       )}
                       <span>Applications</span>
                     </button>
@@ -1817,39 +2239,53 @@ const ManageJobsAndApplicants: React.FC = () => {
             <button
               onClick={() => handleJobPageChange(jobPagination.page - 1)}
               disabled={jobPagination.page === 1 || isCurrentlyLoading}
-              className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 flex items-center gap-2"
+              className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isCurrentlyLoading && jobPagination.page > 1 && <Loader2 className="w-4 h-4 animate-spin" />}
+              {isCurrentlyLoading && jobPagination.page > 1 && (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              )}
               Previous
             </button>
             <button
               onClick={() => handleJobPageChange(jobPagination.page + 1)}
-              disabled={jobPagination.page === jobPagination.totalPages || isCurrentlyLoading}
-              className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 flex items-center gap-2"
+              disabled={
+                jobPagination.page === jobPagination.totalPages ||
+                isCurrentlyLoading
+              }
+              className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
-              {isCurrentlyLoading && jobPagination.page < jobPagination.totalPages && <Loader2 className="w-4 h-4 animate-spin" />}
+              {isCurrentlyLoading &&
+                jobPagination.page < jobPagination.totalPages && (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                )}
             </button>
           </div>
         </div>
 
         {/* Empty States */}
         {jobs.length === 0 && searchKeyword && !isCurrentlyLoading && (
-          <div className="text-center py-12">
-            <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No jobs found</h3>
+          <div className="py-12 text-center">
+            <Search className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+            <h3 className="mb-2 text-lg font-medium text-gray-900">
+              No jobs found
+            </h3>
             <p className="text-gray-500">Try adjusting your search criteria.</p>
           </div>
         )}
 
         {jobs.length === 0 && !searchKeyword && !isCurrentlyLoading && (
-          <div className="text-center py-12">
-            <Briefcase className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No jobs posted yet</h3>
-            <p className="text-gray-500 mb-6">Start by posting your first job to attract top talent.</p>
+          <div className="py-12 text-center">
+            <Briefcase className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+            <h3 className="mb-2 text-lg font-medium text-gray-900">
+              No jobs posted yet
+            </h3>
+            <p className="mb-6 text-gray-500">
+              Start by posting your first job to attract top talent.
+            </p>
             <button
               onClick={() => openModal("post-job-modal")}
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all"
+              className="rounded-lg bg-purple-600 px-6 py-3 text-white transition-all hover:bg-purple-700"
             >
               Post Your First Job
             </button>
@@ -1871,17 +2307,26 @@ const ManageJobsAndApplicants: React.FC = () => {
       )}
 
       {/* Modals */}
-      {isModalOpen("post-job-modal") && <EmployerJobMultistepForm modalId="post-job-modal" />}
-
+      {isModalOpen("post-job-modal") && (
+        <EmployerJobMultistepForm modalId="post-job-modal" />
+      )}
 
       {/* Confirmation Dialogs */}
       {openPromptModals.closeJob && (
         <ConfirmationDialog
           message="Are you sure you want to close this job"
-          onConfirm={() => handleJobStatusUpdate(openPromptModals.job, JobStatus.CLOSED, "Closed by employer")}
+          onConfirm={() =>
+            handleJobStatusUpdate(
+              openPromptModals.job,
+              JobStatus.CLOSED,
+              "Closed by employer",
+            )
+          }
           isOpen={openPromptModals.closeJob}
           title="Close recruitment"
-          onClose={() => setOpenPromptModals(prev => ({...prev, closeJob: false}))}
+          onClose={() =>
+            setOpenPromptModals((prev) => ({ ...prev, closeJob: false }))
+          }
           confirmationText="Are you sure you want to close this job"
           confirmText="Yes"
         />
@@ -1890,10 +2335,18 @@ const ManageJobsAndApplicants: React.FC = () => {
       {openPromptModals.deleteJob && (
         <ConfirmationDialog
           message="This action cannot be undone. This will permanently delete the job and remove all associated applications."
-          onConfirm={() => handleJobStatusUpdate(openPromptModals.job, JobStatus.DELETED, "Deleted by employer")}
+          onConfirm={() =>
+            handleJobStatusUpdate(
+              openPromptModals.job,
+              JobStatus.DELETED,
+              "Deleted by employer",
+            )
+          }
           isOpen={openPromptModals.deleteJob}
           title="Delete Job"
-          onClose={() => setOpenPromptModals(prev => ({...prev, deleteJob: false}))}
+          onClose={() =>
+            setOpenPromptModals((prev) => ({ ...prev, deleteJob: false }))
+          }
           confirmationText="delete job"
           confirmText="Delete"
           requiresTyping
@@ -1904,10 +2357,18 @@ const ManageJobsAndApplicants: React.FC = () => {
       {openPromptModals.resumeJob && (
         <ConfirmationDialog
           message="Are you sure you want to publish this job"
-          onConfirm={() => handleJobStatusUpdate(openPromptModals.job, JobStatus.NEW, "Resumed by employer")}
+          onConfirm={() =>
+            handleJobStatusUpdate(
+              openPromptModals.job,
+              JobStatus.NEW,
+              "Resumed by employer",
+            )
+          }
           isOpen={openPromptModals.resumeJob}
           title="Publish Job"
-          onClose={() => setOpenPromptModals(prev => ({...prev, resumeJob: false}))}
+          onClose={() =>
+            setOpenPromptModals((prev) => ({ ...prev, resumeJob: false }))
+          }
           confirmationText="Are you sure you want to publish this job"
           confirmText="Yes"
         />
@@ -1916,10 +2377,18 @@ const ManageJobsAndApplicants: React.FC = () => {
       {openPromptModals.pauseJob && (
         <ConfirmationDialog
           message="Are you sure you want to pause this job"
-          onConfirm={() => handleJobStatusUpdate(openPromptModals.job, JobStatus.PAUSED, "Paused by employer")}
+          onConfirm={() =>
+            handleJobStatusUpdate(
+              openPromptModals.job,
+              JobStatus.PAUSED,
+              "Paused by employer",
+            )
+          }
           isOpen={openPromptModals.pauseJob}
           title="Pause Recruitment"
-          onClose={() => setOpenPromptModals(prev => ({...prev, pauseJob: false}))}
+          onClose={() =>
+            setOpenPromptModals((prev) => ({ ...prev, pauseJob: false }))
+          }
           confirmationText="Are you sure you want to pause this job"
           confirmText="Yes"
         />

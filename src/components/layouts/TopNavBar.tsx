@@ -285,8 +285,7 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
 
           {/* Auto Apply Section */}
           <div className="mt-4">
-            <div
-              className="mb-6 flex cursor-pointer items-center gap-3 rounded-[16px] bg-gradient-to-r from-[#6438C2] to-[#FA4E09] p-4 text-white">
+            <div className="mb-6 flex cursor-pointer items-center gap-3 rounded-[16px] bg-gradient-to-r from-[#6438C2] to-[#FA4E09] p-4 text-white">
               <span className="text-xl">👑</span>
               <Link to="/subscriptions">
                 {USER_TYPE === UserType.APPLICANT ? (
@@ -297,7 +296,9 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                 ) : (
                   <>
                     <p className="text-sm font-bold">Smart Match</p>
-                    <p className="text-xs">AI finds perfect candidates for you</p>
+                    <p className="text-xs">
+                      AI finds perfect candidates for you
+                    </p>
                   </>
                 )}
               </Link>
@@ -323,11 +324,9 @@ const TopNavBar: FC<ApplicantNavBarProps> = ({
                 {item === "Find Jobs" && (
                   <MdOutlineContentPasteSearch className="text-lg" />
                 )}
-                {
-                  item ==='Companies' && (
-                    <AiOutlineDashboard className="text-lg" />
-                  )
-                }
+                {item === "Companies" && (
+                  <AiOutlineDashboard className="text-lg" />
+                )}
                 {item === "Applications" && <GrWorkshop className="text-lg" />}
                 {item === "My Networks" && <GrGroup className="text-lg" />}
                 {item === "My Schedules" && <GrSchedules className="text-lg" />}

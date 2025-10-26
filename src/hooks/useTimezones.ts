@@ -3,106 +3,105 @@ import { Option } from "../utils/types";
 
 const TIMEZONES: Option[] = [
   {
-    "label": "UTC - Coordinated Universal Time",
-    "value": "UTC"
+    label: "UTC - Coordinated Universal Time",
+    value: "UTC",
   },
   {
-    "label": "GMT - Greenwich Mean Time",
-    "value": "GMT"
+    label: "GMT - Greenwich Mean Time",
+    value: "GMT",
   },
   {
-    "label": "EST - Eastern Standard Time",
-    "value": "EST"
+    label: "EST - Eastern Standard Time",
+    value: "EST",
   },
   {
-    "label": "EDT - Eastern Daylight Time",
-    "value": "EDT"
+    label: "EDT - Eastern Daylight Time",
+    value: "EDT",
   },
   {
-    "label": "CST - Central Standard Time",
-    "value": "CST"
+    label: "CST - Central Standard Time",
+    value: "CST",
   },
   {
-    "label": "CDT - Central Daylight Time",
-    "value": "CDT"
+    label: "CDT - Central Daylight Time",
+    value: "CDT",
   },
   {
-    "label": "MST - Mountain Standard Time",
-    "value": "MST"
+    label: "MST - Mountain Standard Time",
+    value: "MST",
   },
   {
-    "label": "MDT - Mountain Daylight Time",
-    "value": "MDT"
+    label: "MDT - Mountain Daylight Time",
+    value: "MDT",
   },
   {
-    "label": "PST - Pacific Standard Time",
-    "value": "PST"
+    label: "PST - Pacific Standard Time",
+    value: "PST",
   },
   {
-    "label": "PDT - Pacific Daylight Time",
-    "value": "PDT"
+    label: "PDT - Pacific Daylight Time",
+    value: "PDT",
   },
   {
-    "label": "WAT - West Africa Time",
-    "value": "WAT"
+    label: "WAT - West Africa Time",
+    value: "WAT",
   },
   {
-    "label": "CAT - Central Africa Time",
-    "value": "CAT"
+    label: "CAT - Central Africa Time",
+    value: "CAT",
   },
   {
-    "label": "EAT - East Africa Time",
-    "value": "EAT"
+    label: "EAT - East Africa Time",
+    value: "EAT",
   },
   {
-    "label": "IST - India Standard Time",
-    "value": "IST"
+    label: "IST - India Standard Time",
+    value: "IST",
   },
   {
-    "label": "CET - Central European Time",
-    "value": "CET"
+    label: "CET - Central European Time",
+    value: "CET",
   },
   {
-    "label": "CEST - Central European Summer Time",
-    "value": "CEST"
+    label: "CEST - Central European Summer Time",
+    value: "CEST",
   },
   {
-    "label": "EET - Eastern European Time",
-    "value": "EET"
+    label: "EET - Eastern European Time",
+    value: "EET",
   },
   {
-    "label": "EEST - Eastern European Summer Time",
-    "value": "EEST"
+    label: "EEST - Eastern European Summer Time",
+    value: "EEST",
   },
   {
-    "label": "JST - Japan Standard Time",
-    "value": "JST"
+    label: "JST - Japan Standard Time",
+    value: "JST",
   },
   {
-    "label": "KST - Korea Standard Time",
-    "value": "KST"
+    label: "KST - Korea Standard Time",
+    value: "KST",
   },
   {
-    "label": "AEST - Australian Eastern Standard Time",
-    "value": "AEST"
+    label: "AEST - Australian Eastern Standard Time",
+    value: "AEST",
   },
   {
-    "label": "AEDT - Australian Eastern Daylight Time",
-    "value": "AEDT"
+    label: "AEDT - Australian Eastern Daylight Time",
+    value: "AEDT",
   },
   {
-    "label": "ACST - Australian Central Standard Time",
-    "value": "ACST"
+    label: "ACST - Australian Central Standard Time",
+    value: "ACST",
   },
   {
-    "label": "ACDT - Australian Central Daylight Time",
-    "value": "ACDT"
+    label: "ACDT - Australian Central Daylight Time",
+    value: "ACDT",
   },
   {
-    "label": "AWST - Australian Western Standard Time",
-    "value": "AWST"
-  }
+    label: "AWST - Australian Western Standard Time",
+    value: "AWST",
+  },
 ];
 
-export const useTimezones = (): Option[] =>
-  useMemo(() => TIMEZONES, []);
+export const useTimezones = (): Option[] => useMemo(() => TIMEZONES, []);

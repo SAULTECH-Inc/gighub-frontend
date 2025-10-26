@@ -21,7 +21,7 @@ import {
   applicantNavItemsMobile,
   employerNavBarItemMap,
   employerNavItems,
-  employerNavItemsMobile,
+  employerNavItemsMobile, LEGAL_TEAM_EMAIL, SUPPORT_EMAIL, SUPPORT_PHONE_NUMBER
 } from "../../utils/constants.ts";
 import MainFooter from "../../components/layouts/MainFooter.tsx";
 
@@ -622,15 +622,15 @@ const TermsAndConditions: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
               <Mail size={18} style={{ color: "#6438C2" }} />
-              <span>legal@gighub.com</span>
+              <span>{LEGAL_TEAM_EMAIL}</span>
             </div>
             <div className="flex items-center space-x-3">
               <Phone size={18} style={{ color: "#FA4E09" }} />
-              <span>+1 (555) GIG-JOBS</span>
+              <span>{SUPPORT_PHONE_NUMBER}</span>
             </div>
             <div className="flex items-center space-x-3">
               <Users size={18} style={{ color: "#51FF00" }} />
-              <span>Support Center: help.gighub.com</span>
+              <span>Support Center: {SUPPORT_EMAIL}</span>
             </div>
           </div>
 

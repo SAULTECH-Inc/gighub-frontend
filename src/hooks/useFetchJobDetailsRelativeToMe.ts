@@ -8,7 +8,7 @@ interface UseFetchJobDetailsRelativeToMeOptions {
 }
 export const useFetchJobDetailsRelativeToMe = (
   jobId: number,
-  options?: UseFetchJobDetailsRelativeToMeOptions
+  options?: UseFetchJobDetailsRelativeToMeOptions,
 ) => {
   const {
     enabled = true,
@@ -17,7 +17,7 @@ export const useFetchJobDetailsRelativeToMe = (
   } = options || {};
 
   return useQuery({
-    queryKey: ['jobDetailsRelativeToMe', jobId],
+    queryKey: ["jobDetailsRelativeToMe", jobId],
     queryFn: () => fetchJobDetailsRelativeToMe(jobId),
     enabled: enabled && !!jobId,
     staleTime: staleTime,

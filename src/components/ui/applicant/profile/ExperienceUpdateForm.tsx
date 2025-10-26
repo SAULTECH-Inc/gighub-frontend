@@ -17,7 +17,7 @@ const ExperienceUpdateForm: React.FC<ExperienceUpdateFormProps> = ({
   experienceData,
   isEditable,
 }) => {
-  const {cities} = useCities();
+  const { cities } = useCities();
   const jobRoles = useJobRoles();
   const { experience, setExperience } = useApplicantJobProfile();
   const [description, setDescription] = useState(

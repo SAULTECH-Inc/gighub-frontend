@@ -50,6 +50,8 @@ export const removeFromLocalStorage = async (nodeEnv: string) => {
     localStorage.removeItem("application-metrics");
     //subscription-store
     localStorage.removeItem("subscription-store");
+    //application-view-storage
+    localStorage.removeItem("application-view-storage");
   } else {
     secureLocalStorage.removeItem("auth-storage");
     secureLocalStorage.removeItem("chat-store");
@@ -72,7 +74,7 @@ export const removeFromLocalStorage = async (nodeEnv: string) => {
     secureLocalStorage.removeItem("application-metrics");
     //subscription-store
     secureLocalStorage.removeItem("subscription-store");
-
+    secureLocalStorage.removeItem("application-view-storage");
   }
 };
 
@@ -83,9 +85,11 @@ export interface LoginRequest {
 
 export interface AuthData {
   isAuthenticated: boolean;
-  setIsAuthenticated: (value: boolean)=>void;
-  getUserByEmail: (email: string)=>Promise<APIResponse<ApplicantData | EmployerData>>;
-  setSignupMethod: (value: string)=>void;
+  setIsAuthenticated: (value: boolean) => void;
+  getUserByEmail: (
+    email: string,
+  ) => Promise<APIResponse<ApplicantData | EmployerData>>;
+  setSignupMethod: (value: string) => void;
   redirectPath: string | "";
   employer: EmployerData | null;
   setEmployerData: (employer: EmployerData) => void;
@@ -150,11 +154,15 @@ export interface AuthData {
   ) => Promise<boolean>;
   verifyPassword: (password: string) => Promise<boolean>;
   updateApplicantSocial: (socials: Socials) => Promise<Socials>;
-  handleGoogleLogin: ()=>void;
-  handleOutlookLogin: ()=>void;
-  handleLinkedinLogin: ()=>void;
-  validateEmailAssociationToAnAccount: (email: string)=>Promise<APIResponse<any>>;
-  updateVerificationDetails: (verificationDetails: VerificationDetails)=>Promise<APIResponse<any>>
+  handleGoogleLogin: () => void;
+  handleOutlookLogin: () => void;
+  handleLinkedinLogin: () => void;
+  validateEmailAssociationToAnAccount: (
+    email: string,
+  ) => Promise<APIResponse<any>>;
+  updateVerificationDetails: (
+    verificationDetails: VerificationDetails,
+  ) => Promise<APIResponse<any>>;
 }
 
 export const useAuth = create<AuthData>()(
@@ -181,18 +189,20 @@ export const useAuth = create<AuthData>()(
       applicantEducation: {} as EducationResponseDto,
       loading: false,
       error: null,
-      setIsAuthenticated: (value: boolean)=>{
-        set((state)=>{
+      setIsAuthenticated: (value: boolean) => {
+        set((state) => {
           state.isAuthenticated = value;
         });
       },
-      setSignupMethod: (value: string)=>{
-        set((state)=>{
-          state.signupMethod = value
-        })
+      setSignupMethod: (value: string) => {
+        set((state) => {
+          state.signupMethod = value;
+        });
       },
-      getUserByEmail: async(email: string)=>{
-        const response = await privateApiClient.get<APIResponse<ApplicantData | EmployerData >>(`${API_BASE_URL}/users/get-user/by-email?email=${email}`);
+      getUserByEmail: async (email: string) => {
+        const response = await privateApiClient.get<
+          APIResponse<ApplicantData | EmployerData>
+        >(`${API_BASE_URL}/users/get-user/by-email?email=${email}`);
         return response?.data;
       },
       setAuthToken: (authToken: string) => {
@@ -274,8 +284,8 @@ export const useAuth = create<AuthData>()(
       },
 
       signup: async (
-          userType,
-          request: EmployerSignupRequest | ApplicantSignupRequest,
+        userType,
+        request: EmployerSignupRequest | ApplicantSignupRequest,
       ) => {
         set((state) => {
           state.loading = true;
@@ -286,9 +296,9 @@ export const useAuth = create<AuthData>()(
         try {
           const form = new FormData();
           const formData =
-              userType === UserType.EMPLOYER
-                  ? (request as EmployerSignupRequest)
-                  : request;
+            userType === UserType.EMPLOYER
+              ? (request as EmployerSignupRequest)
+              : request;
 
           Object.entries(formData).forEach(([key, value]) => {
             if (key !== "otp" && key !== "confirmPassword") {
@@ -297,9 +307,9 @@ export const useAuth = create<AuthData>()(
           });
 
           const response = await publicApiClient.post(
-              `${API_BASE_URL}/auth/${userType}/signup`,
-              form,
-              { headers: { "Content-Type": "multipart/form-data" } },
+            `${API_BASE_URL}/auth/${userType}/signup`,
+            form,
+            { headers: { "Content-Type": "multipart/form-data" } },
           );
 
           const userData: ApplicantData | EmployerData = response.data.data;
@@ -806,43 +816,48 @@ export const useAuth = create<AuthData>()(
           return {} as Socials;
         }
       },
-      handleGoogleLogin: async ()=>{
+      handleGoogleLogin: async () => {
         window.location.href = `${API_BASE_URL}/auth/google`;
       },
-      handleOutlookLogin: async ()=>{
-
-      },
-      handleLinkedinLogin: async ()=>{
+      handleOutlookLogin: async () => {},
+      handleLinkedinLogin: async () => {
         window.location.href = `${API_BASE_URL}/auth/linkedin`;
       },
-      validateEmailAssociationToAnAccount: async(email: string) => {
+      validateEmailAssociationToAnAccount: async (email: string) => {
         try {
-          const response = await publicApiClient.get<APIResponse<any>>(`${API_BASE_URL}/auth/verify-account?email=${email}`);
+          const response = await publicApiClient.get<APIResponse<any>>(
+            `${API_BASE_URL}/auth/verify-account?email=${email}`,
+          );
           return response?.data;
-        }catch (e) {
+        } catch (e) {
           handleError(e);
         }
         return {
           statusCode: 500,
           message: "Verification failed",
           data: null,
-          meta: null
+          meta: null,
         } as APIResponse<any>;
       },
-      updateVerificationDetails: async(verificationDetails: VerificationDetails)=>{
+      updateVerificationDetails: async (
+        verificationDetails: VerificationDetails,
+      ) => {
         try {
-          const response = await privateApiClient.post<APIResponse<any>>(`${API_BASE_URL}/users/update-verification-details`,verificationDetails);
+          const response = await privateApiClient.post<APIResponse<any>>(
+            `${API_BASE_URL}/users/update-verification-details`,
+            verificationDetails,
+          );
           return response?.data;
-        }catch (e) {
+        } catch (e) {
           handleError(e);
         }
         return {
           statusCode: 500,
           message: "Update failed",
           data: null,
-          meta: null
+          meta: null,
         } as APIResponse<any>;
-      }
+      },
     })),
     {
       name: "auth-storage",

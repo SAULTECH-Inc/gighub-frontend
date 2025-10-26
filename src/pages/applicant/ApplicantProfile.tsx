@@ -19,10 +19,13 @@ import {
 } from "../../utils/constants.ts";
 import { useApplicantJobProfile } from "../../store/useApplicantJobProfile.ts";
 import ResumeAndCoverLetter from "../../components/ui/applicant/profile/ResumeAndCoverLetter.tsx";
+import { useProfileCompletionDetails } from "../../hooks/useProfileCompletionDetails.ts";
+import { ProfileCompletionResponse } from "../../utils/types";
 
 const ApplicantProfile: FC = () => {
   const { applicant } = useAuth();
   const { setCvDetails, fetchCvDetails } = useApplicantJobProfile();
+  const {data: completionDetails} = useProfileCompletionDetails();
 
   useEffect(() => {
     const doFetchCvDetails = async () => {
@@ -44,35 +47,35 @@ const ApplicantProfile: FC = () => {
 
       {/* Main Container */}
       <div className="container mx-auto px-4 py-6 lg:px-6 xl:px-8">
-        <div className="flex flex-col lg:flex-row gap-6 xl:gap-8 min-h-[calc(100vh-120px)]">
-
+        <div className="flex min-h-[calc(100vh-120px)] flex-col gap-6 lg:flex-row xl:gap-8">
           {/* Sidebar - Hidden on mobile, visible on large screens */}
-          <div className="hidden lg:block lg:w-80 xl:w-76 flex-shrink-0">
+          <div className="hidden flex-shrink-0 lg:block lg:w-80 xl:w-76">
             <div className="sticky top-6">
-              <ApplicantProfileSidebar />
+              <ApplicantProfileSidebar completionDetails={completionDetails || {} as ProfileCompletionResponse} />
             </div>
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 max-w-4xl">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-
+          <div className="max-w-4xl flex-1">
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
               {/* Progress Header */}
-              <div className="bg-white px-6 py-4 border-b border-gray-100">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="border-b border-gray-100 bg-white px-6 py-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-[#6438C2] rounded-full"></div>
+                    <div className="h-2 w-2 rounded-full bg-[#6438C2]"></div>
                     <p className="text-lg font-semibold text-[#6438C2]">
-                      Your Profile is 80% completed
+                      Your Profile is {completionDetails?.percentage}% completed
                     </p>
                   </div>
 
                   {/* Progress Bar */}
                   <div className="flex items-center gap-3">
-                    <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="w-4/5 h-full bg-gradient-to-r from-[#6438C2] to-[#8B5CF6] rounded-full transition-all duration-500"></div>
+                    <div className="h-2 w-32 overflow-hidden rounded-full bg-gray-200">
+                      <div className="h-full rounded-full bg-gradient-to-r from-[#6438C2] to-[#8B5CF6] transition-all duration-500" style={{width: completionDetails?.percentage}}></div>
                     </div>
-                    <span className="text-sm font-medium text-gray-600">80%</span>
+                    <span className="text-sm font-medium text-gray-600">
+                      {completionDetails?.percentage}%
+                    </span>
                   </div>
                 </div>
               </div>
@@ -96,24 +99,24 @@ const ApplicantProfile: FC = () => {
 
                   {/* Bottom Summary */}
                   <div className="border-t-2 border-gray-100 pt-8">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                        <div className="h-3 w-3 animate-pulse rounded-full bg-green-500"></div>
                         <p className="text-xl font-semibold text-[#6438C2]">
-                          Your profile is 80% Done
+                          Your profile is {completionDetails?.percentage}% Done
                         </p>
                       </div>
 
-                      <div className="flex flex-col sm:flex-row gap-3">
+                      <div className="flex flex-col gap-3 sm:flex-row">
                         <button
                           type="button"
-                          className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                          className="rounded-lg bg-gray-100 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-200"
                         >
                           Save Draft
                         </button>
                         <button
                           type="button"
-                          className="px-6 py-3 bg-[#6438C2] text-white rounded-lg hover:bg-[#5931A9] transition-colors font-medium shadow-sm"
+                          className="rounded-lg bg-[#6438C2] px-6 py-3 font-medium text-white shadow-sm transition-colors hover:bg-[#5931A9]"
                         >
                           Complete Profile
                         </button>

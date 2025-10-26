@@ -39,15 +39,15 @@ const PaymentModal: React.FC<ModalProps> = ({ modalId }) => {
           <p className="mt-8 text-center text-[13px] text-gray-600">
             {USER_TYPE === UserType.APPLICANT ? (
               <>
-                Our payment was successful, and your Auto Apply Monthly Subscription
-                is now active—enjoy 200 Automatic Applications Per Month and
-                effortless opportunity management!
+                Our payment was successful, and your Auto Apply Monthly
+                Subscription is now active—enjoy 200 Automatic Applications Per
+                Month and effortless opportunity management!
               </>
             ) : (
               <>
-                Our payment was successful, and your Smart Match Monthly Subscription
-                is now active—enjoy AI-powered candidate matching and streamlined
-                hiring management!
+                Our payment was successful, and your Smart Match Monthly
+                Subscription is now active—enjoy AI-powered candidate matching
+                and streamlined hiring management!
               </>
             )}
           </p>

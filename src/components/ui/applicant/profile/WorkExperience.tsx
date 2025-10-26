@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import WorkExperienceDetails from "./WorkExperienceDetails.tsx";
 import useModalStore from "../../../../store/modalStateStores.ts";
@@ -9,89 +8,96 @@ import { Briefcase, Plus, TrendingUp } from "lucide-react";
 const WorkExperience: React.FC = () => {
   const { openModal } = useModalStore();
   const { experiences, setExperiences, fetchExperiences } =
-      useApplicantJobProfile();
+    useApplicantJobProfile();
 
   useEffect(() => {
     const doFetch = async () =>
-        await fetchExperiences().then((res) => setExperiences(res));
-    doFetch().then(r=>r);
+      await fetchExperiences().then((res) => setExperiences(res));
+    doFetch().then((r) => r);
   }, []);
 
   return (
-      <section id="work-experience" className="relative">
-        {/* Section Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Briefcase className="w-5 h-5 text-orange-600" />
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900">Work Experience</h3>
-              <p className="text-sm text-gray-500">Highlight your professional experience and achievements</p>
-            </div>
+    <section id="work-experience" className="relative">
+      {/* Section Header */}
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="rounded-lg bg-orange-100 p-2">
+            <Briefcase className="h-5 w-5 text-orange-600" />
           </div>
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900">
+              Work Experience
+            </h3>
+            <p className="text-sm text-gray-500">
+              Highlight your professional experience and achievements
+            </p>
+          </div>
+        </div>
 
-          {/* Add Button */}
-          <button
+        {/* Add Button */}
+        <button
+          type="button"
+          onClick={() => openModal("add-experience-modal")}
+          className="flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-orange-700"
+        >
+          <Plus className="h-4 w-4" />
+          Add Experience
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="rounded-xl bg-gray-50 p-6">
+        {Array.isArray(experiences) && experiences.length > 0 ? (
+          <div className="space-y-4">
+            {experiences.map((experience, index) => (
+              <div key={experience.id || index}>
+                <WorkExperienceDetails experienceData={experience} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          /* Empty State */
+          <div className="py-12 text-center">
+            <div className="mb-4 flex justify-center">
+              <div className="rounded-full bg-orange-100 p-4">
+                <TrendingUp className="h-8 w-8 text-orange-600" />
+              </div>
+            </div>
+            <h4 className="mb-2 text-lg font-medium text-gray-900">
+              No work experience added yet
+            </h4>
+            <p className="mx-auto mb-6 max-w-md text-gray-500">
+              Add your work experience to showcase your professional background,
+              skills, and career progression to potential employers.
+            </p>
+            <button
               type="button"
               onClick={() => openModal("add-experience-modal")}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg text-sm font-medium hover:bg-orange-700 transition-colors duration-200"
-          >
-            <Plus className="w-4 h-4" />
-            Add Experience
-          </button>
-        </div>
+              className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-6 py-3 font-medium text-white transition-colors duration-200 hover:bg-orange-700"
+            >
+              <Plus className="h-5 w-5" />
+              Add Your First Experience
+            </button>
+          </div>
+        )}
 
-        {/* Content */}
-        <div className="bg-gray-50 rounded-xl p-6">
-          {Array.isArray(experiences) && experiences.length > 0 ? (
-              <div className="space-y-4">
-                {experiences.map((experience, index) => (
-                    <div key={experience.id || index}>
-                      <WorkExperienceDetails experienceData={experience} />
-                    </div>
-                ))}
-              </div>
-          ) : (
-              /* Empty State */
-              <div className="text-center py-12">
-                <div className="flex justify-center mb-4">
-                  <div className="p-4 bg-orange-100 rounded-full">
-                    <TrendingUp className="w-8 h-8 text-orange-600" />
-                  </div>
-                </div>
-                <h4 className="text-lg font-medium text-gray-900 mb-2">No work experience added yet</h4>
-                <p className="text-gray-500 mb-6 max-w-md mx-auto">
-                  Add your work experience to showcase your professional background, skills, and career progression to potential employers.
-                </p>
-                <button
-                    type="button"
-                    onClick={() => openModal("add-experience-modal")}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-colors duration-200"
-                >
-                  <Plus className="w-5 h-5" />
-                  Add Your First Experience
-                </button>
-              </div>
-          )}
+        {/* Add Another Button (when there are existing entries) */}
+        {Array.isArray(experiences) && experiences.length > 0 && (
+          <div className="mt-6 border-t border-gray-200 pt-6">
+            <button
+              type="button"
+              onClick={() => openModal("add-experience-modal")}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-orange-300 px-4 py-2 font-medium text-orange-600 transition-all duration-200 hover:border-orange-400 hover:bg-orange-50"
+            >
+              <Plus className="h-4 w-4" />
+              Add Another Experience
+            </button>
+          </div>
+        )}
+      </div>
 
-          {/* Add Another Button (when there are existing entries) */}
-          {Array.isArray(experiences) && experiences.length > 0 && (
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <button
-                    type="button"
-                    onClick={() => openModal("add-experience-modal")}
-                    className="flex items-center gap-2 px-4 py-2 border-2 border-dashed border-orange-300 text-orange-600 rounded-lg font-medium hover:border-orange-400 hover:bg-orange-50 transition-all duration-200 w-full justify-center"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Another Experience
-                </button>
-              </div>
-          )}
-        </div>
-
-        <AddExperienceModal modalId="add-experience-modal" />
-      </section>
+      <AddExperienceModal modalId="add-experience-modal" />
+    </section>
   );
 };
 

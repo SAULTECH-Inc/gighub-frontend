@@ -1,5 +1,15 @@
-import { fetchJobApplications, fetchJobs, fetchMyJobPosts, searchMyJobs } from "../services/api";
-import { APIResponse, ApplicationResponse, FetchMyJobParam, JobPostResponse } from "../utils/types";
+import {
+  fetchJobApplications,
+  fetchJobs,
+  fetchMyJobPosts,
+  searchMyJobs,
+} from "../services/api";
+import {
+  APIResponse,
+  ApplicationResponse,
+  FetchMyJobParam,
+  JobPostResponse,
+} from "../utils/types";
 import { useQuery } from "@tanstack/react-query";
 
 export const useFetchMyJobs = (fetchParams: FetchMyJobParam) => {
@@ -25,18 +35,30 @@ export const useFetchJobs = (page: number, limit: number) => {
   return useQuery<APIResponse<JobPostResponse[]>>({
     queryKey: ["Jobs", page, limit],
     queryFn: () => fetchJobs(page, limit),
+    enabled: !!page && !!limit,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    retry: 1,
+    refetchOnWindowFocus: false,
+
   });
 };
-export const useFetchJobApplications = (jobId: number, page: number, limit: number, params:     {
-  search: string,
-  status: string,
-  sortBy: string,
-  sortOrder: string
-}, shouldFetchApplications: boolean) => {
+export const useFetchJobApplications = (
+  jobId: number,
+  page: number,
+  limit: number,
+  params: {
+    search: string;
+    status: string;
+    sortBy: string;
+    sortOrder: string;
+  },
+  shouldFetchApplications: boolean,
+) => {
   return useQuery<APIResponse<ApplicationResponse[]>>({
     queryKey: ["jobApplications", jobId, page, limit],
     queryFn: () => fetchJobApplications(jobId, page, limit, params),
     staleTime: 5 * 1000,
-    enabled: shouldFetchApplications
+    enabled: shouldFetchApplications,
   });
-}
+};

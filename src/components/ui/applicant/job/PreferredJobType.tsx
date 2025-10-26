@@ -34,7 +34,7 @@ export const PreferredJobType: React.FC = () => {
     <div className="space-y-4">
       <CustomSelect
         options={JobTypes}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none"
+        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-500 focus:outline-none"
         placeholder="Select Job Type"
         disabled={!isEditable}
         onChange={(option: Option) => {
@@ -50,16 +50,16 @@ export const PreferredJobType: React.FC = () => {
             {preferences.jobTypes.map((type, index) => (
               <div
                 key={index}
-                className="flex items-center gap-2 px-3 py-2 bg-purple-100 border border-purple-200 rounded-lg text-sm font-medium text-purple-800"
+                className="flex items-center gap-2 rounded-lg border border-purple-200 bg-purple-100 px-3 py-2 text-sm font-medium text-purple-800"
               >
                 <span>{type}</span>
                 <button
                   type="button"
                   disabled={!isEditable}
                   onClick={() => removeJobType(index)}
-                  className="p-1 text-purple-600 hover:text-red-600 transition-colors duration-200 disabled:opacity-50"
+                  className="p-1 text-purple-600 transition-colors duration-200 hover:text-red-600 disabled:opacity-50"
                 >
-                  <X className="w-3 h-3" />
+                  <X className="h-3 w-3" />
                 </button>
               </div>
             ))}
@@ -68,11 +68,12 @@ export const PreferredJobType: React.FC = () => {
       )}
 
       {/* Empty State */}
-      {(!preferences?.jobTypes || preferences.jobTypes.length === 0) && !isEditable && (
-        <div className="text-center py-6 text-gray-500">
-          <p className="text-sm">No job types selected</p>
-        </div>
-      )}
+      {(!preferences?.jobTypes || preferences.jobTypes.length === 0) &&
+        !isEditable && (
+          <div className="py-6 text-center text-gray-500">
+            <p className="text-sm">No job types selected</p>
+          </div>
+        )}
     </div>
   );
 };

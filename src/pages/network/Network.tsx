@@ -35,16 +35,16 @@ const Network: React.FC = () => {
       )}
 
       {/* Enhanced Tab Navigation */}
-      <div className="sticky top-0 z-10 mt-12 bg-white/80 backdrop-blur-md border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="sticky top-0 z-10 mt-12 border-b border-gray-200 bg-white/80 backdrop-blur-md">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex justify-center py-4">
-            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+            <div className="flex space-x-1 rounded-lg bg-gray-100 p-1">
               <button
                 onClick={() => setActiveTab("find-new-connections")}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-md font-medium text-sm transition-all duration-200 ${
+                className={`flex items-center space-x-2 rounded-md px-6 py-3 text-sm font-medium transition-all duration-200 ${
                   activeTab === "find-new-connections"
                     ? "bg-white text-purple-600 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
               >
                 <UserPlus size={18} />
@@ -52,10 +52,10 @@ const Network: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab("my-connections")}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-md font-medium text-sm transition-all duration-200 ${
+                className={`flex items-center space-x-2 rounded-md px-6 py-3 text-sm font-medium transition-all duration-200 ${
                   activeTab === "my-connections"
                     ? "bg-white text-purple-600 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
               >
                 <Users size={18} />
@@ -67,7 +67,7 @@ const Network: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {activeTab === "find-new-connections" ? (
           <FindConnections />
         ) : (

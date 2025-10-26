@@ -26,21 +26,21 @@ export enum Action {
 }
 
 export enum UserStatus {
-  ACTIVE = 'Active',
-  INACTIVE = 'Inactive',
-  BLOCKED = 'Blocked',
-  DELETED = 'Deleted',
-  PENDING = 'Pending',
-  VERIFIED = 'Verified',
-  UNVERIFIED = 'Unverified',
-  SUSPENDED = 'Suspended',
-  DEACTIVATED = 'Deactivated',
-  ARCHIVED = 'Archived',
-  BANNED = 'Banned',
-  RESTRICTED = 'Restricted',
-  PENDING_VERIFICATION = 'Pending Verification',
-  PENDING_APPROVAL = 'Pending Approval',
-  APPROVED = 'Approved',
+  ACTIVE = "Active",
+  INACTIVE = "Inactive",
+  BLOCKED = "Blocked",
+  DELETED = "Deleted",
+  PENDING = "Pending",
+  VERIFIED = "Verified",
+  UNVERIFIED = "Unverified",
+  SUSPENDED = "Suspended",
+  DEACTIVATED = "Deactivated",
+  ARCHIVED = "Archived",
+  BANNED = "Banned",
+  RESTRICTED = "Restricted",
+  PENDING_VERIFICATION = "Pending Verification",
+  PENDING_APPROVAL = "Pending Approval",
+  APPROVED = "Approved",
 }
 
 export enum SubscriptionType {
@@ -98,11 +98,11 @@ export enum InterviewType {
   GROUP_INTERVIEW = "group-interview",
 }
 export enum ScreeningQuestionType {
-  SHORT_TEXT = 'short_text',
-  LONG_TEXT = 'long_text',
-  YES_NO = 'yes_no',
-  OPTIONS = 'options',
-  DROPDOWN = 'dropdown',
+  SHORT_TEXT = "short_text",
+  LONG_TEXT = "long_text",
+  YES_NO = "yes_no",
+  OPTIONS = "options",
+  DROPDOWN = "dropdown",
 }
 
 export enum InterviewStatus {
@@ -118,7 +118,7 @@ export enum RateeType {
   USER = "USER",
 }
 
-export enum Priority{
+export enum Priority {
   LOW = "LOW",
   MEDIUM = "MEDIUM",
   HIGH = "HIGH",
@@ -133,11 +133,11 @@ export enum ApplicationStatus {
   REJECTED = "Rejected",
   SHORTLISTED = "Shortlisted",
   WITHDRAWN = "Withdrawn",
-  ACCEPTED="Accepted",
-  OFFER_ACCEPTED="Offer Accepted",
-  OFFER_DECLINED="Offer Declined",
-  OFFER_EXTENDED="Offer Extended",
-  ALL="All",
+  ACCEPTED = "Accepted",
+  OFFER_ACCEPTED = "Offer Accepted",
+  OFFER_DECLINED = "Offer Declined",
+  OFFER_EXTENDED = "Offer Extended",
+  ALL = "All",
 }
 
 export enum EmploymentType {

@@ -3,7 +3,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import code from "../../../../assets/icons/code.svg";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../../store/useAuth.ts";
-import { ArrowLeft, Mail, RefreshCw, Shield, AlertCircle, CheckCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Mail,
+  RefreshCw,
+  Shield,
+  AlertCircle,
+  CheckCircle,
+} from "lucide-react";
 
 interface StepThreeProp {
   handleNext: () => void;
@@ -11,16 +18,11 @@ interface StepThreeProp {
 }
 
 const EmployerSignupStepThree: React.FC<StepThreeProp> = ({
-                                                            handleNext,
-                                                            handlePrev,
-                                                          }) => {
-  const {
-    otp,
-    setOtp,
-    verifyOtp,
-    employerSignupRequest,
-    sendVerificationOtp,
-  } = useAuth();
+  handleNext,
+  handlePrev,
+}) => {
+  const { otp, setOtp, verifyOtp, employerSignupRequest, sendVerificationOtp } =
+    useAuth();
 
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [isInvalid, setIsInvalid] = useState(false);
@@ -133,7 +135,7 @@ const EmployerSignupStepThree: React.FC<StepThreeProp> = ({
     } catch (error: any) {
       setIsInvalid(true);
       setLoading(false);
-      toast.error("Verification failed. Please try again."+error.message);
+      toast.error("Verification failed. Please try again." + error.message);
     }
   };
 
@@ -144,7 +146,7 @@ const EmployerSignupStepThree: React.FC<StepThreeProp> = ({
     try {
       const success = await sendVerificationOtp(
         employerSignupRequest?.email as string,
-        "SIGNUP"
+        "SIGNUP",
       );
 
       if (success) {
@@ -155,7 +157,7 @@ const EmployerSignupStepThree: React.FC<StepThreeProp> = ({
         toast.error("Failed to resend code. Please try again.");
       }
     } catch (error: any) {
-      toast.error("Failed to resend code. Please try again."+error.message);
+      toast.error("Failed to resend code. Please try again." + error.message);
     } finally {
       setResending(false);
     }
@@ -172,24 +174,24 @@ const EmployerSignupStepThree: React.FC<StepThreeProp> = ({
 
   return (
     <motion.div
-      className="w-full max-w-md mx-auto space-y-8"
+      className="mx-auto w-full max-w-md space-y-8"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
       {/* Header */}
-      <div className="text-center space-y-4">
+      <div className="space-y-4 text-center">
         <motion.div
-          className="mx-auto w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center"
+          className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-purple-100"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <Shield className="w-8 h-8 text-[#6438C2]" />
+          <Shield className="h-8 w-8 text-[#6438C2]" />
         </motion.div>
 
         <motion.h2
-          className="text-2xl sm:text-3xl font-semibold text-gray-900"
+          className="text-2xl font-semibold text-gray-900 sm:text-3xl"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
@@ -203,12 +205,12 @@ const EmployerSignupStepThree: React.FC<StepThreeProp> = ({
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <p className="text-gray-600 text-sm sm:text-base">
+          <p className="text-sm text-gray-600 sm:text-base">
             We've sent a 6-digit verification code to
           </p>
           <div className="flex items-center justify-center gap-2 text-sm sm:text-base">
-            <Mail className="w-4 h-4 text-[#6438C2]" />
-            <span className="font-medium text-[#6438C2] break-all">
+            <Mail className="h-4 w-4 text-[#6438C2]" />
+            <span className="font-medium break-all text-[#6438C2]">
               {formatEmail(employerSignupRequest?.email || "")}
             </span>
           </div>
@@ -232,7 +234,7 @@ const EmployerSignupStepThree: React.FC<StepThreeProp> = ({
                 inputMode="numeric"
                 maxLength={1}
                 value={otp?.[index] || ""}
-                className={`w-12 h-12 sm:w-14 sm:h-14 text-center text-lg sm:text-xl font-semibold border-2 rounded-lg transition-all duration-200 focus:outline-none ${
+                className={`h-12 w-12 rounded-lg border-2 text-center text-lg font-semibold transition-all duration-200 focus:outline-none sm:h-14 sm:w-14 sm:text-xl ${
                   isInvalid
                     ? "border-red-500 bg-red-50 text-red-600"
                     : showSuccess
@@ -257,24 +259,24 @@ const EmployerSignupStepThree: React.FC<StepThreeProp> = ({
         <AnimatePresence>
           {isInvalid && (
             <motion.div
-              className="flex items-center justify-center gap-2 text-red-600 text-sm"
+              className="flex items-center justify-center gap-2 text-sm text-red-600"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <AlertCircle className="w-4 h-4" />
+              <AlertCircle className="h-4 w-4" />
               Invalid verification code. Please try again.
             </motion.div>
           )}
 
           {showSuccess && (
             <motion.div
-              className="flex items-center justify-center gap-2 text-green-600 text-sm"
+              className="flex items-center justify-center gap-2 text-sm text-green-600"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <CheckCircle className="w-4 h-4" />
+              <CheckCircle className="h-4 w-4" />
               Email verified successfully!
             </motion.div>
           )}
@@ -282,13 +284,13 @@ const EmployerSignupStepThree: React.FC<StepThreeProp> = ({
 
         {/* Resend Section */}
         <motion.div
-          className="text-center space-y-3"
+          className="space-y-3 text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.7 }}
         >
           <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-            <img src={code} alt="Code icon" className="w-4 h-4" />
+            <img src={code} alt="Code icon" className="h-4 w-4" />
             <span>Didn't receive the code?</span>
           </div>
 
@@ -298,17 +300,18 @@ const EmployerSignupStepThree: React.FC<StepThreeProp> = ({
             disabled={resending || resendTimer > 0}
             className={`inline-flex items-center gap-2 text-sm font-medium transition-colors ${
               resending || resendTimer > 0
-                ? "text-gray-400 cursor-not-allowed"
+                ? "cursor-not-allowed text-gray-400"
                 : "text-[#6438C2] hover:text-[#5931A9]"
             }`}
           >
-            <RefreshCw className={`w-4 h-4 ${resending ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`h-4 w-4 ${resending ? "animate-spin" : ""}`}
+            />
             {resending
               ? "Sending..."
               : resendTimer > 0
                 ? `Resend in ${resendTimer}s`
-                : "Send new code"
-            }
+                : "Send new code"}
           </button>
         </motion.div>
       </div>
@@ -324,15 +327,15 @@ const EmployerSignupStepThree: React.FC<StepThreeProp> = ({
           type="button"
           onClick={handleContinue}
           disabled={loading || showSuccess}
-          className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-all duration-200 ${
+          className={`w-full rounded-lg px-4 py-3 font-medium text-white transition-all duration-200 ${
             loading || showSuccess
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#6438C2] hover:bg-[#5931A9] active:transform active:scale-[0.98]"
+              ? "cursor-not-allowed bg-gray-400"
+              : "bg-[#6438C2] hover:bg-[#5931A9] active:scale-[0.98] active:transform"
           } focus:ring-2 focus:ring-purple-100 focus:ring-offset-2`}
         >
           {loading ? (
             <div className="flex items-center justify-center gap-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
               {showSuccess ? "Verified!" : "Verifying..."}
             </div>
           ) : (
@@ -344,16 +347,16 @@ const EmployerSignupStepThree: React.FC<StepThreeProp> = ({
           type="button"
           onClick={handlePrev}
           disabled={loading}
-          className="w-full py-3 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 px-4 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="h-4 w-4" />
           Back
         </button>
       </motion.div>
 
       {/* Security Note */}
       <motion.div
-        className="text-center text-xs text-gray-500 border-t pt-4"
+        className="border-t pt-4 text-center text-xs text-gray-500"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 1 }}

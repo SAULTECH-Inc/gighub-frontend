@@ -1,6 +1,10 @@
 import { useNavMenuStore } from "../../../../store/useNavMenuStore.ts";
 import { RiNotification2Line, RiAccountCircleLine } from "react-icons/ri";
-import { MdOutlinePrivacyTip, MdOutlineUnsubscribe, MdAutoMode } from "react-icons/md";
+import {
+  MdOutlinePrivacyTip,
+  MdOutlineUnsubscribe,
+  MdAutoMode,
+} from "react-icons/md";
 import { useAuth } from "../../../../store/useAuth.ts";
 import { UserType } from "../../../../utils/enums.ts";
 
@@ -27,7 +31,8 @@ const NotificationSettingsHeader = () => {
       key: "autoApply",
       title: "Auto Apply Settings",
       icon: MdAutoMode,
-      description: "Configure automatic job application preferences and criteria",
+      description:
+        "Configure automatic job application preferences and criteria",
       userTypes: [UserType.APPLICANT], // Only show for applicants
     },
     {
@@ -51,12 +56,15 @@ const NotificationSettingsHeader = () => {
   ];
 
   // Filter settings config based on user type
-  const settingsConfig = allSettingsConfig.filter(setting =>
-    !setting.userTypes || setting.userTypes.includes(userType as UserType)
+  const settingsConfig = allSettingsConfig.filter(
+    (setting) =>
+      !setting.userTypes || setting.userTypes.includes(userType as UserType),
   );
 
   const getCurrentSetting = (): SettingConfig | undefined => {
-    return settingsConfig.find((setting) => settings[setting.key as keyof typeof settings]);
+    return settingsConfig.find(
+      (setting) => settings[setting.key as keyof typeof settings],
+    );
   };
 
   const currentSetting = getCurrentSetting();
@@ -74,18 +82,20 @@ const NotificationSettingsHeader = () => {
           <IconComponent className="h-6 w-6 text-white" />
         </div>
         <div>
-          <h1 className="text-[28px] font-bold text-white leading-tight">
+          <h1 className="text-[28px] leading-tight font-bold text-white">
             {currentSetting.title}
           </h1>
-          <p className="text-purple-100 text-sm font-medium mt-1">
+          <p className="mt-1 text-sm font-medium text-purple-100">
             {currentSetting.description}
           </p>
           {/* Auto apply status indicator */}
           {currentSetting.key === "autoApply" && (
-            <div className="flex items-center mt-2 space-x-2">
+            <div className="mt-2 flex items-center space-x-2">
               <div className="flex items-center space-x-1">
-                <div className="h-2 w-2 rounded-full bg-purple-300 animate-pulse"></div>
-                <span className="text-xs text-purple-100 font-medium">Auto Apply Active</span>
+                <div className="h-2 w-2 animate-pulse rounded-full bg-purple-300"></div>
+                <span className="text-xs font-medium text-purple-100">
+                  Auto Apply Active
+                </span>
               </div>
             </div>
           )}
@@ -93,7 +103,7 @@ const NotificationSettingsHeader = () => {
       </div>
 
       {/* Status indicator for auto apply or decorative element for others */}
-      <div className="hidden lg:flex items-center space-x-2">
+      <div className="hidden items-center space-x-2 lg:flex">
         {currentSetting.key === "autoApply" ? (
           <div className="flex flex-col items-end">
             <div className="flex items-center space-x-2 text-purple-100">
@@ -101,7 +111,7 @@ const NotificationSettingsHeader = () => {
                 <p className="text-xs font-medium">Match Threshold</p>
                 <p className="text-sm font-bold">75%</p>
               </div>
-              <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
                 <span className="text-xs font-bold text-white">75</span>
               </div>
             </div>

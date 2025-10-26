@@ -57,7 +57,7 @@ interface MetricCard {
   title: string;
   value: string | number;
   change: number;
-  trend: 'up' | 'down' | 'neutral';
+  trend: "up" | "down" | "neutral";
   icon: string;
   color: string;
   bgColor: string;
@@ -66,19 +66,19 @@ interface MetricCard {
 
 // Error Display Component
 const ErrorDisplay: React.FC<{ message: string; onRetry?: () => void }> = ({
-                                                                             message,
-                                                                             onRetry
-                                                                           }) => (
-  <div className="rounded-xl bg-red-50 border border-red-200 p-4">
+  message,
+  onRetry,
+}) => (
+  <div className="rounded-xl border border-red-200 bg-red-50 p-4">
     <div className="flex items-start gap-3">
-      <AlertCircle className="h-5 w-5 text-red-600 mt-0.5" />
+      <AlertCircle className="mt-0.5 h-5 w-5 text-red-600" />
       <div className="flex-1">
         <p className="text-sm font-medium text-red-800">Error Loading Data</p>
-        <p className="text-sm text-red-700 mt-1">{message}</p>
+        <p className="mt-1 text-sm text-red-700">{message}</p>
         {onRetry && (
           <button
             onClick={onRetry}
-            className="text-sm text-red-600 hover:text-red-800 font-medium mt-2"
+            className="mt-2 text-sm font-medium text-red-600 hover:text-red-800"
           >
             Try Again
           </button>
@@ -89,16 +89,16 @@ const ErrorDisplay: React.FC<{ message: string; onRetry?: () => void }> = ({
 );
 
 // Updated Modern Metric Card Component
-const ModernMetricCard: React.FC<{ metric: MetricCard; isLoading?: boolean }> = ({
-                                                                                   metric,
-                                                                                   isLoading = false
-                                                                                 }) => {
+const ModernMetricCard: React.FC<{
+  metric: MetricCard;
+  isLoading?: boolean;
+}> = ({ metric, isLoading = false }) => {
   const IconComponent = iconMap[metric.icon as keyof typeof iconMap] || Users;
 
   if (isLoading) {
     return (
       <div className="animate-pulse">
-        <div className="rounded-3xl bg-gradient-to-br from-white to-gray-50 p-6 shadow-lg border border-gray-100">
+        <div className="rounded-3xl border border-gray-100 bg-gradient-to-br from-white to-gray-50 p-6 shadow-lg">
           <div className="flex items-start justify-between">
             <div className="space-y-3">
               <div className="h-4 w-24 rounded-full bg-gray-200" />
@@ -113,36 +113,48 @@ const ModernMetricCard: React.FC<{ metric: MetricCard; isLoading?: boolean }> = 
   }
 
   return (
-    <div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-white to-gray-50 p-6 shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl hover:scale-105 hover:-translate-y-1">
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-blue-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    <div className="group relative overflow-hidden rounded-3xl border border-gray-100 bg-gradient-to-br from-white via-white to-gray-50 p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-xl">
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-blue-50/30 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
       <div className="relative flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600 mb-1">{metric.title}</p>
-          <p className="text-3xl font-bold text-gray-900 mb-2">{metric.value}</p>
+          <p className="mb-1 text-sm font-medium text-gray-600">
+            {metric.title}
+          </p>
+          <p className="mb-2 text-3xl font-bold text-gray-900">
+            {metric.value}
+          </p>
           <div className="flex items-center gap-2">
-            {metric.trend === 'up' && (
+            {metric.trend === "up" && (
               <div className="flex items-center gap-1 rounded-full bg-green-100 px-2 py-1">
                 <TrendingUp className="h-3 w-3 text-green-600" />
-                <span className="text-xs font-semibold text-green-600">+{metric.change}%</span>
+                <span className="text-xs font-semibold text-green-600">
+                  +{metric.change}%
+                </span>
               </div>
             )}
-            {metric.trend === 'down' && (
+            {metric.trend === "down" && (
               <div className="flex items-center gap-1 rounded-full bg-red-100 px-2 py-1">
                 <TrendingDown className="h-3 w-3 text-red-600" />
-                <span className="text-xs font-semibold text-red-600">-{metric.change}%</span>
+                <span className="text-xs font-semibold text-red-600">
+                  -{metric.change}%
+                </span>
               </div>
             )}
-            {metric.trend === 'neutral' && (
+            {metric.trend === "neutral" && (
               <div className="flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1">
-                <span className="text-xs font-semibold text-gray-600">{metric.change}%</span>
+                <span className="text-xs font-semibold text-gray-600">
+                  {metric.change}%
+                </span>
               </div>
             )}
           </div>
-          <p className="text-xs text-gray-500 mt-2">{metric.description}</p>
+          <p className="mt-2 text-xs text-gray-500">{metric.description}</p>
         </div>
 
-        <div className={`rounded-2xl p-4 ${metric.bgColor} group-hover:scale-110 transition-transform duration-300`}>
+        <div
+          className={`rounded-2xl p-4 ${metric.bgColor} transition-transform duration-300 group-hover:scale-110`}
+        >
           <IconComponent className={`h-6 w-6 ${metric.color}`} />
         </div>
       </div>
@@ -154,36 +166,41 @@ const ModernMetricCard: React.FC<{ metric: MetricCard; isLoading?: boolean }> = 
 const CandidateCard: React.FC<{ candidate: any }> = ({ candidate }) => {
   const getStatusColor = (status: string) => {
     const colors = {
-      new: 'bg-blue-100 text-blue-700 border-blue-200',
-      reviewing: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      interviewing: 'bg-purple-100 text-purple-700 border-purple-200',
-      hired: 'bg-green-100 text-green-700 border-green-200',
-      rejected: 'bg-red-100 text-red-700 border-red-200',
+      new: "bg-blue-100 text-blue-700 border-blue-200",
+      reviewing: "bg-yellow-100 text-yellow-700 border-yellow-200",
+      interviewing: "bg-purple-100 text-purple-700 border-purple-200",
+      hired: "bg-green-100 text-green-700 border-green-200",
+      rejected: "bg-red-100 text-red-700 border-red-200",
     };
     return colors[status as keyof typeof colors] || colors.new;
   };
 
   return (
-    <div className="group rounded-2xl bg-white p-6 shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-blue-200">
+    <div className="group rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:border-blue-200 hover:shadow-lg">
       <div className="flex items-start gap-4">
         <div className="relative">
           <img
-            src={candidate.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(candidate.name)}&background=random`}
+            src={
+              candidate.avatar ||
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(candidate.name)}&background=random`
+            }
             alt={candidate.name}
-            className="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow-sm"
+            className="h-12 w-12 rounded-full object-cover shadow-sm ring-2 ring-white"
           />
-          <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-green-400 border-2 border-white" />
+          <div className="absolute -right-1 -bottom-1 h-4 w-4 rounded-full border-2 border-white bg-green-400" />
         </div>
 
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between">
             <div>
-              <h4 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+              <h4 className="font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
                 {candidate.name}
               </h4>
               <p className="text-sm text-gray-600">{candidate.position}</p>
             </div>
-            <span className={`inline-flex items-center rounded-full border px-2 py-1 text-xs font-medium ${getStatusColor(candidate.status)}`}>
+            <span
+              className={`inline-flex items-center rounded-full border px-2 py-1 text-xs font-medium ${getStatusColor(candidate.status)}`}
+            >
               {candidate.status}
             </span>
           </div>
@@ -201,18 +218,27 @@ const CandidateCard: React.FC<{ candidate: any }> = ({ candidate }) => {
 
           <div className="mt-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Star className="h-4 w-4 text-yellow-400 fill-current" />
-              <span className="text-sm font-medium text-gray-900">{candidate.matchScore}% match</span>
+              <Star className="h-4 w-4 fill-current text-yellow-400" />
+              <span className="text-sm font-medium text-gray-900">
+                {candidate.matchScore}% match
+              </span>
             </div>
-            <span className="text-sm font-semibold text-green-600">{candidate.salary}</span>
+            <span className="text-sm font-semibold text-green-600">
+              {candidate.salary}
+            </span>
           </div>
 
           <div className="mt-3 flex flex-wrap gap-1">
-            {candidate.skills?.slice(0, 3).map((skill: string, index: number) => (
-              <span key={index} className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-700">
-                {skill}
-              </span>
-            ))}
+            {candidate.skills
+              ?.slice(0, 3)
+              .map((skill: string, index: number) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-700"
+                >
+                  {skill}
+                </span>
+              ))}
             {candidate.skills?.length > 3 && (
               <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-700">
                 +{candidate.skills.length - 3} more
@@ -231,7 +257,7 @@ const InterviewCard: React.FC<{ interview: any }> = ({ interview }) => {
     const icons = {
       video: Video,
       phone: Phone,
-      'in-person': Users,
+      "in-person": Users,
     };
     return icons[type as keyof typeof icons] || Video;
   };
@@ -239,18 +265,23 @@ const InterviewCard: React.FC<{ interview: any }> = ({ interview }) => {
   const TypeIcon = getTypeIcon(interview.type);
 
   return (
-    <div className="rounded-xl bg-white p-4 border border-gray-100 hover:border-blue-200 transition-colors">
+    <div className="rounded-xl border border-gray-100 bg-white p-4 transition-colors hover:border-blue-200">
       <div className="flex items-start gap-3">
         <img
-          src={interview.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(interview.candidateName)}&background=random`}
+          src={
+            interview.avatar ||
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(interview.candidateName)}&background=random`
+          }
           alt={interview.candidateName}
           className="h-10 w-10 rounded-full object-cover"
         />
 
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between">
             <div>
-              <h4 className="font-medium text-gray-900">{interview.candidateName}</h4>
+              <h4 className="font-medium text-gray-900">
+                {interview.candidateName}
+              </h4>
               <p className="text-sm text-gray-600">{interview.position}</p>
             </div>
             <div className="flex items-center gap-1 text-blue-600">
@@ -282,16 +313,16 @@ const InterviewCard: React.FC<{ interview: any }> = ({ interview }) => {
 const JobPostingCard: React.FC<{ job: any }> = ({ job }) => {
   const getUrgencyColor = (urgency: string) => {
     const colors = {
-      high: 'bg-red-100 text-red-700 border-red-200',
-      medium: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      low: 'bg-green-100 text-green-700 border-green-200',
+      high: "bg-red-100 text-red-700 border-red-200",
+      medium: "bg-yellow-100 text-yellow-700 border-yellow-200",
+      low: "bg-green-100 text-green-700 border-green-200",
     };
     return colors[urgency as keyof typeof colors];
   };
 
   return (
-    <div className="rounded-xl bg-white p-4 border border-gray-100 hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between mb-3">
+    <div className="rounded-xl border border-gray-100 bg-white p-4 transition-shadow hover:shadow-md">
+      <div className="mb-3 flex items-start justify-between">
         <div>
           <h4 className="font-semibold text-gray-900">{job.title}</h4>
           <p className="text-sm text-gray-600">{job.department}</p>
@@ -299,22 +330,24 @@ const JobPostingCard: React.FC<{ job: any }> = ({ job }) => {
         <div className="flex items-center gap-2">
           {job.remote && (
             <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-700">
-              <Globe className="h-3 w-3 mr-1" />
+              <Globe className="mr-1 h-3 w-3" />
               Remote
             </span>
           )}
-          <span className={`inline-flex items-center rounded-full border px-2 py-1 text-xs font-medium ${getUrgencyColor(job.urgency)}`}>
+          <span
+            className={`inline-flex items-center rounded-full border px-2 py-1 text-xs font-medium ${getUrgencyColor(job.urgency)}`}
+          >
             {job.urgency}
           </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-3">
-        <div className="text-center p-2 bg-gray-50 rounded-lg">
+      <div className="mb-3 grid grid-cols-2 gap-4">
+        <div className="rounded-lg bg-gray-50 p-2 text-center">
           <p className="text-lg font-bold text-gray-900">{job.applications}</p>
           <p className="text-xs text-gray-600">Applications</p>
         </div>
-        <div className="text-center p-2 bg-gray-50 rounded-lg">
+        <div className="rounded-lg bg-gray-50 p-2 text-center">
           <p className="text-lg font-bold text-gray-900">{job.views}</p>
           <p className="text-xs text-gray-600">Views</p>
         </div>
@@ -342,29 +375,34 @@ const QuickActionButton: React.FC<{
       className={`group relative overflow-hidden rounded-2xl p-6 text-left transition-all duration-300 hover:scale-105 hover:shadow-lg ${color}`}
     >
       <div className="flex items-start gap-4">
-        <div className="rounded-xl bg-white/20 p-3 group-hover:scale-110 transition-transform">
+        <div className="rounded-xl bg-white/20 p-3 transition-transform group-hover:scale-110">
           <Icon className="h-6 w-6 text-white" />
         </div>
         <div>
           <h3 className="font-semibold text-white">{label}</h3>
-          <p className="text-sm text-white/80 mt-1">{description}</p>
+          <p className="mt-1 text-sm text-white/80">{description}</p>
         </div>
       </div>
-      <div className="absolute top-0 right-0 h-20 w-20 transform translate-x-10 -translate-y-10 rounded-full bg-white/10" />
+      <div className="absolute top-0 right-0 h-20 w-20 translate-x-10 -translate-y-10 transform rounded-full bg-white/10" />
     </button>
   );
 };
 
 // Main Dashboard Component
 const EmployerDashboard: React.FC = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'quarter' | 'year'>('month');
+  const [selectedPeriod, setSelectedPeriod] = useState<
+    "week" | "month" | "quarter" | "year"
+  >("month");
   const { openModal, isModalOpen } = useModalStore();
 
   // Dashboard filters
-  const dashboardFilters: DashboardFilters = useMemo(() => ({
-    period: selectedPeriod,
-    limit: 10,
-  }), [selectedPeriod]);
+  const dashboardFilters: DashboardFilters = useMemo(
+    () => ({
+      period: selectedPeriod,
+      limit: 10,
+    }),
+    [selectedPeriod],
+  );
 
   // Use the dashboard hook with single API call approach
   const {
@@ -377,14 +415,16 @@ const EmployerDashboard: React.FC = () => {
     refreshCandidates,
     refreshInterviews,
     refreshJobs,
-  } = useDashboardData('single', dashboardFilters);
+  } = useDashboardData("single", dashboardFilters);
 
-  const handlePeriodChange = (newPeriod: 'week' | 'month' | 'quarter' | 'year') => {
+  const handlePeriodChange = (
+    newPeriod: "week" | "month" | "quarter" | "year",
+  ) => {
     setSelectedPeriod(newPeriod);
   };
 
   const handleRefresh = () => {
-    loadDashboard().then(r=>r);
+    loadDashboard().then((r) => r);
   };
 
   return (
@@ -404,13 +444,19 @@ const EmployerDashboard: React.FC = () => {
             className="absolute inset-0 bg-repeat opacity-30"
             style={{
               backgroundImage: `radial-gradient(circle at 30px 30px, rgba(255,255,255,0.1) 2px, transparent 2px)`,
-              backgroundSize: '60px 60px'
+              backgroundSize: "60px 60px",
             }}
           />
         </div>
-        <div className="absolute top-10 left-10 h-20 w-20 rounded-full bg-white/5 animate-pulse" />
-        <div className="absolute top-32 right-20 h-16 w-16 rounded-lg bg-white/5 animate-bounce" style={{ animationDelay: '1s' }} />
-        <div className="absolute bottom-20 left-32 h-12 w-12 rounded-full bg-white/5 animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-10 left-10 h-20 w-20 animate-pulse rounded-full bg-white/5" />
+        <div
+          className="absolute top-32 right-20 h-16 w-16 animate-bounce rounded-lg bg-white/5"
+          style={{ animationDelay: "1s" }}
+        />
+        <div
+          className="absolute bottom-20 left-32 h-12 w-12 animate-pulse rounded-full bg-white/5"
+          style={{ animationDelay: "2s" }}
+        />
         <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
@@ -420,8 +466,7 @@ const EmployerDashboard: React.FC = () => {
               <p className="mt-2 text-xl text-blue-100">
                 {data.upcomingInterviews.length > 0
                   ? `You have ${data.topCandidates.length} new applications and ${data.upcomingInterviews.length} interviews scheduled today`
-                  : 'Your dashboard is ready with the latest updates'
-                }
+                  : "Your dashboard is ready with the latest updates"}
               </p>
               <div className="mt-4 flex items-center gap-6 text-blue-100">
                 <div className="flex items-center gap-2">
@@ -435,8 +480,8 @@ const EmployerDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="hidden lg:flex items-center gap-4">
-              <button className="rounded-2xl bg-white/10 backdrop-blur-sm px-6 py-3 text-white transition-colors hover:bg-white/20">
+            <div className="hidden items-center gap-4 lg:flex">
+              <button className="rounded-2xl bg-white/10 px-6 py-3 text-white backdrop-blur-sm transition-colors hover:bg-white/20">
                 <div className="flex items-center gap-2">
                   <Download className="h-4 w-4" />
                   <span>Export Report</span>
@@ -445,10 +490,12 @@ const EmployerDashboard: React.FC = () => {
               <button
                 onClick={handleRefresh}
                 disabled={loading.isLoading}
-                className="rounded-2xl bg-white/20 backdrop-blur-sm px-6 py-3 text-white transition-colors hover:bg-white/30 disabled:opacity-50"
+                className="rounded-2xl bg-white/20 px-6 py-3 text-white backdrop-blur-sm transition-colors hover:bg-white/30 disabled:opacity-50"
               >
                 <div className="flex items-center gap-2">
-                  <RefreshCw className={`h-4 w-4 ${loading.isLoading ? 'animate-spin' : ''}`} />
+                  <RefreshCw
+                    className={`h-4 w-4 ${loading.isLoading ? "animate-spin" : ""}`}
+                  />
                   <span>Refresh</span>
                 </div>
               </button>
@@ -468,7 +515,9 @@ const EmployerDashboard: React.FC = () => {
 
         {/* Quick Actions */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+          <h2 className="mb-6 text-2xl font-bold text-gray-900">
+            Quick Actions
+          </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <QuickActionButton
               icon={Plus}
@@ -501,12 +550,16 @@ const EmployerDashboard: React.FC = () => {
 
         {/* Key Metrics */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
+          <div className="mb-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-900">Key Metrics</h2>
             <select
               value={selectedPeriod}
-              onChange={(e) => handlePeriodChange(e.target.value as 'week' | 'month' | 'quarter' | 'year')}
-              className="rounded-xl border border-gray-200 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+              onChange={(e) =>
+                handlePeriodChange(
+                  e.target.value as "week" | "month" | "quarter" | "year",
+                )
+              }
+              className="rounded-xl border border-gray-200 px-4 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
             >
               <option value="week">This Week</option>
               <option value="month">This Month</option>
@@ -517,7 +570,10 @@ const EmployerDashboard: React.FC = () => {
 
           {errors.metricsError && (
             <div className="mb-4">
-              <ErrorDisplay message={errors.metricsError} onRetry={refreshMetrics} />
+              <ErrorDisplay
+                message={errors.metricsError}
+                onRetry={refreshMetrics}
+              />
             </div>
           )}
 
@@ -535,41 +591,47 @@ const EmployerDashboard: React.FC = () => {
         {/* Main Dashboard Grid */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Left Column */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="space-y-8 lg:col-span-2">
             {/* Top Candidates */}
-            <div className="rounded-3xl bg-white p-8 shadow-lg border border-gray-100">
-              <div className="flex items-center justify-between mb-6">
+            <div className="rounded-3xl border border-gray-100 bg-white p-8 shadow-lg">
+              <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="rounded-xl bg-blue-50 p-2">
                     <Star className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900">Top Candidates</h3>
+                    <h3 className="text-xl font-bold text-gray-900">
+                      Top Candidates
+                    </h3>
                     <p className="text-sm text-gray-600">
                       {data.topCandidates.length > 0
                         ? `${data.topCandidates.length} highest-rated candidates this ${selectedPeriod}`
-                        : 'Loading candidates...'
-                      }
+                        : "Loading candidates..."}
                     </p>
                   </div>
                 </div>
                 <button
-                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-700"
                   onClick={refreshCandidates}
                 >
-                  {loading.candidatesLoading ? 'Loading...' : 'View All Candidates'}
+                  {loading.candidatesLoading
+                    ? "Loading..."
+                    : "View All Candidates"}
                 </button>
               </div>
 
               {errors.candidatesError && (
-                <ErrorDisplay message={errors.candidatesError} onRetry={refreshCandidates} />
+                <ErrorDisplay
+                  message={errors.candidatesError}
+                  onRetry={refreshCandidates}
+                />
               )}
 
               <div className="space-y-4">
                 {loading.candidatesLoading ? (
                   Array.from({ length: 3 }).map((_, index) => (
                     <div key={index} className="animate-pulse">
-                      <div className="rounded-2xl bg-gray-100 h-32" />
+                      <div className="h-32 rounded-2xl bg-gray-100" />
                     </div>
                   ))
                 ) : data.topCandidates.length > 0 ? (
@@ -577,7 +639,7 @@ const EmployerDashboard: React.FC = () => {
                     <CandidateCard key={candidate.id} candidate={candidate} />
                   ))
                 ) : (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="py-8 text-center text-gray-500">
                     No candidates available
                   </div>
                 )}
@@ -585,18 +647,22 @@ const EmployerDashboard: React.FC = () => {
             </div>
 
             {/* Hiring Funnel */}
-            <div className="rounded-3xl bg-white p-8 shadow-lg border border-gray-100">
-              <div className="flex items-center justify-between mb-6">
+            <div className="rounded-3xl border border-gray-100 bg-white p-8 shadow-lg">
+              <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="rounded-xl bg-purple-50 p-2">
                     <BarChart3 className="h-6 w-6 text-purple-600" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900">Hiring Funnel</h3>
-                    <p className="text-sm text-gray-600">Application to hire conversion</p>
+                    <h3 className="text-xl font-bold text-gray-900">
+                      Hiring Funnel
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Application to hire conversion
+                    </p>
                   </div>
                 </div>
-                <button className="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                <button className="text-sm font-medium text-purple-600 hover:text-purple-700">
                   View Details
                 </button>
               </div>
@@ -604,40 +670,53 @@ const EmployerDashboard: React.FC = () => {
               {/* Funnel Visualization */}
               {data.hiringFunnel ? (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-blue-50 border border-blue-100">
+                  <div className="flex items-center justify-between rounded-xl border border-blue-100 bg-blue-50 p-4">
                     <div className="flex items-center gap-3">
                       <div className="h-3 w-3 rounded-full bg-blue-500" />
                       <span className="font-medium text-gray-900">Hired</span>
                     </div>
                     <div className="text-right">
-                      <span className="text-2xl font-bold text-gray-900">{data.hiringFunnel.hired.toLocaleString()}</span>
+                      <span className="text-2xl font-bold text-gray-900">
+                        {data.hiringFunnel.hired.toLocaleString()}
+                      </span>
                       <span className="block text-sm text-gray-600">
-                        {Math.round((data.hiringFunnel.hired / data.hiringFunnel.applications) * 100)}%
+                        {Math.round(
+                          (data.hiringFunnel.hired /
+                            data.hiringFunnel.applications) *
+                            100,
+                        )}
+                        %
                       </span>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">
-                  {loading.funnelLoading ? 'Loading funnel data...' : 'No funnel data available'}
+                <div className="py-8 text-center text-gray-500">
+                  {loading.funnelLoading
+                    ? "Loading funnel data..."
+                    : "No funnel data available"}
                 </div>
               )}
             </div>
 
             {/* Recent Activity Feed */}
-            <div className="rounded-3xl bg-white p-8 shadow-lg border border-gray-100">
-              <div className="flex items-center justify-between mb-6">
+            <div className="rounded-3xl border border-gray-100 bg-white p-8 shadow-lg">
+              <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="rounded-xl bg-orange-50 p-2">
                     <Activity className="h-6 w-6 text-orange-600" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900">Recent Activity</h3>
-                    <p className="text-sm text-gray-600">Latest updates from your team</p>
+                    <h3 className="text-xl font-bold text-gray-900">
+                      Recent Activity
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Latest updates from your team
+                    </p>
                   </div>
                 </div>
                 <button
-                  className="text-sm text-orange-600 hover:text-orange-700 font-medium"
+                  className="text-sm font-medium text-orange-600 hover:text-orange-700"
                   onClick={refreshJobs}
                 >
                   View All Activity
@@ -653,36 +732,56 @@ const EmployerDashboard: React.FC = () => {
                   Array.from({ length: 4 }).map((_, index) => (
                     <div key={index} className="animate-pulse">
                       <div className="flex items-start gap-4 p-4">
-                        <div className="rounded-full bg-gray-200 h-8 w-8" />
+                        <div className="h-8 w-8 rounded-full bg-gray-200" />
                         <div className="flex-1 space-y-2">
-                          <div className="h-4 bg-gray-200 rounded w-3/4" />
-                          <div className="h-3 bg-gray-200 rounded w-1/2" />
+                          <div className="h-4 w-3/4 rounded bg-gray-200" />
+                          <div className="h-3 w-1/2 rounded bg-gray-200" />
                         </div>
                       </div>
                     </div>
                   ))
                 ) : data.recentActivity.length > 0 ? (
                   data.recentActivity.map((activity) => (
-                    <div key={activity.id} className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                      <div className={`rounded-full p-2 ${
-                        activity.type === 'hire' ? 'bg-green-100' :
-                          activity.type === 'interview_scheduled' ? 'bg-blue-100' :
-                            activity.type === 'application_received' ? 'bg-purple-100' :
-                              'bg-yellow-100'
-                      }`}>
-                        {activity.type === 'hire' && <UserCheck className="h-4 w-4 text-green-600" />}
-                        {activity.type === 'interview_scheduled' && <Calendar className="h-4 w-4 text-blue-600" />}
-                        {activity.type === 'application_received' && <Users className="h-4 w-4 text-purple-600" />}
-                        {activity.type === 'job_posted' && <Briefcase className="h-4 w-4 text-yellow-600" />}
+                    <div
+                      key={activity.id}
+                      className="flex items-start gap-4 rounded-xl p-4 transition-colors hover:bg-gray-50"
+                    >
+                      <div
+                        className={`rounded-full p-2 ${
+                          activity.type === "hire"
+                            ? "bg-green-100"
+                            : activity.type === "interview_scheduled"
+                              ? "bg-blue-100"
+                              : activity.type === "application_received"
+                                ? "bg-purple-100"
+                                : "bg-yellow-100"
+                        }`}
+                      >
+                        {activity.type === "hire" && (
+                          <UserCheck className="h-4 w-4 text-green-600" />
+                        )}
+                        {activity.type === "interview_scheduled" && (
+                          <Calendar className="h-4 w-4 text-blue-600" />
+                        )}
+                        {activity.type === "application_received" && (
+                          <Users className="h-4 w-4 text-purple-600" />
+                        )}
+                        {activity.type === "job_posted" && (
+                          <Briefcase className="h-4 w-4 text-yellow-600" />
+                        )}
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium text-gray-900">{activity.title}</p>
-                        <p className="text-sm text-gray-600">{activity.description}</p>
+                        <p className="font-medium text-gray-900">
+                          {activity.title}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {activity.description}
+                        </p>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="py-8 text-center text-gray-500">
                     No recent activity
                   </div>
                 )}
@@ -693,21 +792,23 @@ const EmployerDashboard: React.FC = () => {
           {/* Right Column */}
           <div className="space-y-6">
             {/* Today's Interviews */}
-            <div className="rounded-3xl bg-white p-6 shadow-lg border border-gray-100">
-              <div className="flex items-center justify-between mb-6">
+            <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-lg">
+              <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="rounded-xl bg-green-50 p-2">
                     <Calendar className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900">Today's Interviews</h3>
+                    <h3 className="text-lg font-bold text-gray-900">
+                      Today's Interviews
+                    </h3>
                     <p className="text-sm text-gray-600">
                       {data.upcomingInterviews.length} scheduled
                     </p>
                   </div>
                 </div>
                 <button
-                  className="text-sm text-green-600 hover:text-green-700 font-medium"
+                  className="text-sm font-medium text-green-600 hover:text-green-700"
                   onClick={() => openModal("schedule-interview-modal")}
                 >
                   Schedule More
@@ -715,14 +816,17 @@ const EmployerDashboard: React.FC = () => {
               </div>
 
               {errors.interviewsError && (
-                <ErrorDisplay message={errors.interviewsError} onRetry={refreshInterviews} />
+                <ErrorDisplay
+                  message={errors.interviewsError}
+                  onRetry={refreshInterviews}
+                />
               )}
 
               <div className="space-y-3">
                 {loading.interviewsLoading ? (
                   Array.from({ length: 3 }).map((_, index) => (
                     <div key={index} className="animate-pulse">
-                      <div className="rounded-xl bg-gray-100 h-20" />
+                      <div className="h-20 rounded-xl bg-gray-100" />
                     </div>
                   ))
                 ) : data.upcomingInterviews.length > 0 ? (
@@ -730,7 +834,7 @@ const EmployerDashboard: React.FC = () => {
                     <InterviewCard key={interview.id} interview={interview} />
                   ))
                 ) : (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="py-8 text-center text-gray-500">
                     No interviews scheduled
                   </div>
                 )}
@@ -738,21 +842,23 @@ const EmployerDashboard: React.FC = () => {
             </div>
 
             {/* Active Job Postings */}
-            <div className="rounded-3xl bg-white p-6 shadow-lg border border-gray-100">
-              <div className="flex items-center justify-between mb-6">
+            <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-lg">
+              <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="rounded-xl bg-blue-50 p-2">
                     <Briefcase className="h-5 w-5 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900">Active Jobs</h3>
+                    <h3 className="text-lg font-bold text-gray-900">
+                      Active Jobs
+                    </h3>
                     <p className="text-sm text-gray-600">
                       {data.activeJobs.length} open positions
                     </p>
                   </div>
                 </div>
                 <button
-                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-700"
                   onClick={refreshJobs}
                 >
                   Manage All
@@ -760,14 +866,17 @@ const EmployerDashboard: React.FC = () => {
               </div>
 
               {errors.jobsError && (
-                <ErrorDisplay message={errors.jobsError} onRetry={refreshJobs} />
+                <ErrorDisplay
+                  message={errors.jobsError}
+                  onRetry={refreshJobs}
+                />
               )}
 
               <div className="space-y-4">
                 {loading.jobsLoading ? (
                   Array.from({ length: 3 }).map((_, index) => (
                     <div key={index} className="animate-pulse">
-                      <div className="rounded-xl bg-gray-100 h-32" />
+                      <div className="h-32 rounded-xl bg-gray-100" />
                     </div>
                   ))
                 ) : data.activeJobs.length > 0 ? (
@@ -775,7 +884,7 @@ const EmployerDashboard: React.FC = () => {
                     <JobPostingCard key={job.id} job={job} />
                   ))
                 ) : (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="py-8 text-center text-gray-500">
                     No active jobs
                   </div>
                 )}
@@ -784,7 +893,7 @@ const EmployerDashboard: React.FC = () => {
 
             {/* Weekly Goals */}
             <div className="rounded-3xl bg-gradient-to-br from-indigo-500 to-purple-600 p-6 text-white shadow-lg">
-              <div className="flex items-center gap-3 mb-4">
+              <div className="mb-4 flex items-center gap-3">
                 <div className="rounded-xl bg-white/20 p-2">
                   <Target className="h-5 w-5" />
                 </div>
@@ -794,72 +903,81 @@ const EmployerDashboard: React.FC = () => {
               {data.weeklyGoals ? (
                 <div className="space-y-4">
                   <div>
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="mb-2 flex items-center justify-between">
                       <span className="text-sm">Interview candidates</span>
                       <span className="text-sm font-medium">
-                        {data.weeklyGoals.interviewsCompleted}/{data.weeklyGoals.interviewsTarget}
+                        {data.weeklyGoals.interviewsCompleted}/
+                        {data.weeklyGoals.interviewsTarget}
                       </span>
                     </div>
-                    <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                    <div className="h-2 overflow-hidden rounded-full bg-white/20">
                       <div
-                        className="h-full bg-white rounded-full transition-all duration-500"
+                        className="h-full rounded-full bg-white transition-all duration-500"
                         style={{
-                          width: `${Math.min(100, (data.weeklyGoals.interviewsCompleted / data.weeklyGoals.interviewsTarget) * 100)}%`
+                          width: `${Math.min(100, (data.weeklyGoals.interviewsCompleted / data.weeklyGoals.interviewsTarget) * 100)}%`,
                         }}
                       />
                     </div>
                   </div>
 
                   <div>
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="mb-2 flex items-center justify-between">
                       <span className="text-sm">Send job offers</span>
                       <span className="text-sm font-medium">
-                        {data.weeklyGoals.offersCompleted}/{data.weeklyGoals.offersTarget}
+                        {data.weeklyGoals.offersCompleted}/
+                        {data.weeklyGoals.offersTarget}
                       </span>
                     </div>
-                    <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                    <div className="h-2 overflow-hidden rounded-full bg-white/20">
                       <div
-                        className="h-full bg-white rounded-full transition-all duration-500"
+                        className="h-full rounded-full bg-white transition-all duration-500"
                         style={{
-                          width: `${Math.min(100, (data.weeklyGoals.offersCompleted / data.weeklyGoals.offersTarget) * 100)}%`
+                          width: `${Math.min(100, (data.weeklyGoals.offersCompleted / data.weeklyGoals.offersTarget) * 100)}%`,
                         }}
                       />
                     </div>
                   </div>
 
                   <div>
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="mb-2 flex items-center justify-between">
                       <span className="text-sm">Review applications</span>
                       <span className="text-sm font-medium">
-                        {data.weeklyGoals.applicationsReviewCompleted}/{data.weeklyGoals.applicationsReviewTarget}
+                        {data.weeklyGoals.applicationsReviewCompleted}/
+                        {data.weeklyGoals.applicationsReviewTarget}
                       </span>
                     </div>
-                    <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                    <div className="h-2 overflow-hidden rounded-full bg-white/20">
                       <div
-                        className="h-full bg-white rounded-full transition-all duration-500"
+                        className="h-full rounded-full bg-white transition-all duration-500"
                         style={{
-                          width: `${Math.min(100, (data.weeklyGoals.applicationsReviewCompleted / data.weeklyGoals.applicationsReviewTarget) * 100)}%`
+                          width: `${Math.min(100, (data.weeklyGoals.applicationsReviewCompleted / data.weeklyGoals.applicationsReviewTarget) * 100)}%`,
                         }}
                       />
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-4 text-white/70">
-                  {loading.goalsLoading ? 'Loading goals...' : 'No goals set for this week'}
+                <div className="py-4 text-center text-white/70">
+                  {loading.goalsLoading
+                    ? "Loading goals..."
+                    : "No goals set for this week"}
                 </div>
               )}
             </div>
 
             {/* AI Insights */}
-            <div className="rounded-3xl bg-white p-6 shadow-lg border border-gray-100">
-              <div className="flex items-center gap-3 mb-6">
+            <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-lg">
+              <div className="mb-6 flex items-center gap-3">
                 <div className="rounded-xl bg-teal-50 p-2">
                   <Lightbulb className="h-5 w-5 text-teal-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">AI Insights</h3>
-                  <p className="text-sm text-gray-600">Personalized recommendations</p>
+                  <h3 className="text-lg font-bold text-gray-900">
+                    AI Insights
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Personalized recommendations
+                  </p>
                 </div>
               </div>
 
@@ -867,44 +985,62 @@ const EmployerDashboard: React.FC = () => {
                 {loading.insightsLoading ? (
                   Array.from({ length: 3 }).map((_, index) => (
                     <div key={index} className="animate-pulse">
-                      <div className="p-4 rounded-xl bg-gray-100 h-20" />
+                      <div className="h-20 rounded-xl bg-gray-100 p-4" />
                     </div>
                   ))
                 ) : data.aiInsights.length > 0 ? (
                   data.aiInsights.map((insight) => (
                     <div
                       key={insight.id}
-                      className={`p-4 rounded-xl border ${
-                        insight.type === 'optimization' ? 'bg-blue-50 border-blue-100' :
-                          insight.type === 'performance' ? 'bg-green-50 border-green-100' :
-                            insight.type === 'alert' ? 'bg-red-50 border-red-100' :
-                              'bg-purple-50 border-purple-100'
+                      className={`rounded-xl border p-4 ${
+                        insight.type === "optimization"
+                          ? "border-blue-100 bg-blue-50"
+                          : insight.type === "performance"
+                            ? "border-green-100 bg-green-50"
+                            : insight.type === "alert"
+                              ? "border-red-100 bg-red-50"
+                              : "border-purple-100 bg-purple-50"
                       }`}
                     >
                       <div className="flex items-start gap-3">
-                        <div className={`rounded-full p-1 mt-1 ${
-                          insight.type === 'optimization' ? 'bg-blue-500' :
-                            insight.type === 'performance' ? 'bg-green-500' :
-                              insight.type === 'alert' ? 'bg-red-500' :
-                                'bg-purple-500'
-                        }`}>
+                        <div
+                          className={`mt-1 rounded-full p-1 ${
+                            insight.type === "optimization"
+                              ? "bg-blue-500"
+                              : insight.type === "performance"
+                                ? "bg-green-500"
+                                : insight.type === "alert"
+                                  ? "bg-red-500"
+                                  : "bg-purple-500"
+                          }`}
+                        >
                           <Sparkles className="h-3 w-3 text-white" />
                         </div>
                         <div>
-                          <p className={`font-medium mb-1 ${
-                            insight.type === 'optimization' ? 'text-blue-900' :
-                              insight.type === 'performance' ? 'text-green-900' :
-                                insight.type === 'alert' ? 'text-red-900' :
-                                  'text-purple-900'
-                          }`}>
+                          <p
+                            className={`mb-1 font-medium ${
+                              insight.type === "optimization"
+                                ? "text-blue-900"
+                                : insight.type === "performance"
+                                  ? "text-green-900"
+                                  : insight.type === "alert"
+                                    ? "text-red-900"
+                                    : "text-purple-900"
+                            }`}
+                          >
                             {insight.title}
                           </p>
-                          <p className={`text-sm ${
-                            insight.type === 'optimization' ? 'text-blue-700' :
-                              insight.type === 'performance' ? 'text-green-700' :
-                                insight.type === 'alert' ? 'text-red-700' :
-                                  'text-purple-700'
-                          }`}>
+                          <p
+                            className={`text-sm ${
+                              insight.type === "optimization"
+                                ? "text-blue-700"
+                                : insight.type === "performance"
+                                  ? "text-green-700"
+                                  : insight.type === "alert"
+                                    ? "text-red-700"
+                                    : "text-purple-700"
+                            }`}
+                          >
                             {insight.description}
                           </p>
                         </div>
@@ -912,7 +1048,7 @@ const EmployerDashboard: React.FC = () => {
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="py-8 text-center text-gray-500">
                     No insights available
                   </div>
                 )}
@@ -923,8 +1059,12 @@ const EmployerDashboard: React.FC = () => {
       </div>
 
       {/* Modals */}
-      {isModalOpen("post-job-modal") && <EmployerJobMultistepForm modalId="post-job-modal" />}
-      {isModalOpen("schedule-interview-modal") && <InterviewScheduleMultiStepForm modalId="schedule-interview-modal" />}
+      {isModalOpen("post-job-modal") && (
+        <EmployerJobMultistepForm modalId="post-job-modal" />
+      )}
+      {isModalOpen("schedule-interview-modal") && (
+        <InterviewScheduleMultiStepForm modalId="schedule-interview-modal" />
+      )}
     </div>
   );
 };

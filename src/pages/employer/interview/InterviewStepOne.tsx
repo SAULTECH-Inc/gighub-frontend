@@ -85,7 +85,10 @@ const InterviewStepOne: React.FC = () => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
 
-      if (candidateDropdownRef.current && !candidateDropdownRef.current.contains(target)) {
+      if (
+        candidateDropdownRef.current &&
+        !candidateDropdownRef.current.contains(target)
+      ) {
         setShowCandidateDropdown(false);
       }
 
@@ -153,59 +156,79 @@ const InterviewStepOne: React.FC = () => {
   }, [debouncedJobQuery, pagination.page, pagination.limit]);
 
   // Enhanced candidate selection handler
-  const handleCandidateSelection = useCallback((candidate: ApplicantData) => {
-    const isSelected = selectedCandidates.some(c => c.id === candidate.id);
+  const handleCandidateSelection = useCallback(
+    (candidate: ApplicantData) => {
+      const isSelected = selectedCandidates.some((c) => c.id === candidate.id);
 
-    const updated = isSelected
-      ? selectedCandidates.filter(c => c.id !== candidate.id)
-      : [...selectedCandidates, candidate];
+      const updated = isSelected
+        ? selectedCandidates.filter((c) => c.id !== candidate.id)
+        : [...selectedCandidates, candidate];
 
-    setSelectedCandidates(updated);
+      setSelectedCandidates(updated);
 
-    // Update interview details with selected candidate IDs
-    setInterviewDetails({
-      ...interviewDetails,
-      applicantId: updated.map(c => c.id),
-    } as InterviewScheduleDetails);
+      // Update interview details with selected candidate IDs
+      setInterviewDetails({
+        ...interviewDetails,
+        applicantId: updated.map((c) => c.id),
+      } as InterviewScheduleDetails);
 
-    // Clear search and close dropdown after selection
-    setCandidateSearchQuery("");
-    setShowCandidateDropdown(false);
+      // Clear search and close dropdown after selection
+      setCandidateSearchQuery("");
+      setShowCandidateDropdown(false);
 
-    // Clear any previous errors
-    if (errors.applicantId) {
-      setErrors(prev => ({ ...prev, applicantId: "" }));
-    }
-  }, [selectedCandidates, setSelectedCandidates, interviewDetails, setInterviewDetails, errors.applicantId]);
+      // Clear any previous errors
+      if (errors.applicantId) {
+        setErrors((prev) => ({ ...prev, applicantId: "" }));
+      }
+    },
+    [
+      selectedCandidates,
+      setSelectedCandidates,
+      interviewDetails,
+      setInterviewDetails,
+      errors.applicantId,
+    ],
+  );
 
   // Enhanced candidate removal handler
-  const handleCandidateRemoval = useCallback((candidateId: string | number) => {
-    const updated = selectedCandidates.filter(c => c.id !== candidateId);
-    setSelectedCandidates(updated);
+  const handleCandidateRemoval = useCallback(
+    (candidateId: string | number) => {
+      const updated = selectedCandidates.filter((c) => c.id !== candidateId);
+      setSelectedCandidates(updated);
 
-    setInterviewDetails({
-      ...interviewDetails,
-      applicantId: updated.map(c => c.id),
-    } as InterviewScheduleDetails);
-  }, [selectedCandidates, setSelectedCandidates, interviewDetails, setInterviewDetails]);
+      setInterviewDetails({
+        ...interviewDetails,
+        applicantId: updated.map((c) => c.id),
+      } as InterviewScheduleDetails);
+    },
+    [
+      selectedCandidates,
+      setSelectedCandidates,
+      interviewDetails,
+      setInterviewDetails,
+    ],
+  );
 
   // Enhanced job selection handler
-  const handleJobSelection = useCallback((job: JobPostResponse) => {
-    setSelectedJob(job);
-    setJobSearchQuery("");
-    setShowJobDropdown(false);
+  const handleJobSelection = useCallback(
+    (job: JobPostResponse) => {
+      setSelectedJob(job);
+      setJobSearchQuery("");
+      setShowJobDropdown(false);
 
-    setInterviewDetails({
-      ...interviewDetails,
-      jobId: job.id,
-      title: job.title,
-    } as InterviewScheduleDetails);
+      setInterviewDetails({
+        ...interviewDetails,
+        jobId: job.id,
+        title: job.title,
+      } as InterviewScheduleDetails);
 
-    // Clear any previous errors
-    if (errors.jobId) {
-      setErrors(prev => ({ ...prev, jobId: "" }));
-    }
-  }, [setSelectedJob, interviewDetails, setInterviewDetails, errors.jobId]);
+      // Clear any previous errors
+      if (errors.jobId) {
+        setErrors((prev) => ({ ...prev, jobId: "" }));
+      }
+    },
+    [setSelectedJob, interviewDetails, setInterviewDetails, errors.jobId],
+  );
 
   // Enhanced validation and next step handler
   const handleNextStep = useCallback(() => {
@@ -235,9 +258,12 @@ const InterviewStepOne: React.FC = () => {
   }, [selectedCandidates, selectedJob, interviewDetails?.title, nextStep]);
 
   // Keyboard navigation for dropdowns
-  const handleKeyDown = (event: React.KeyboardEvent, type: 'candidate' | 'job') => {
-    if (event.key === 'Escape') {
-      if (type === 'candidate') {
+  const handleKeyDown = (
+    event: React.KeyboardEvent,
+    type: "candidate" | "job",
+  ) => {
+    if (event.key === "Escape") {
+      if (type === "candidate") {
         setShowCandidateDropdown(false);
         candidateInputRef.current?.blur();
       } else {
@@ -251,7 +277,6 @@ const InterviewStepOne: React.FC = () => {
     <div className="flex w-full flex-col items-center">
       <div className="flex h-auto min-h-[400px] w-full max-w-[900px] flex-col items-center justify-start rounded-[10px] bg-white px-4 py-6">
         <div className="flex w-full flex-col gap-6 sm:w-[95%]">
-
           {/* Candidates Section */}
           <section className="space-y-4">
             <div className="flex items-center gap-2">
@@ -262,7 +287,8 @@ const InterviewStepOne: React.FC = () => {
             </div>
 
             <p className="text-sm text-gray-600 sm:text-base">
-              Choose the candidates you would like to interview. You can select multiple candidates.
+              Choose the candidates you would like to interview. You can select
+              multiple candidates.
             </p>
 
             <div className="rounded-[10px] border border-[#E6E6E6] bg-[#F7F7F7] p-6">
@@ -281,12 +307,12 @@ const InterviewStepOne: React.FC = () => {
                     value={candidateSearchQuery}
                     onFocus={() => setShowCandidateDropdown(true)}
                     onChange={(e) => setCandidateSearchQuery(e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(e, 'candidate')}
+                    onKeyDown={(e) => handleKeyDown(e, "candidate")}
                     placeholder="Search by name, email, or phone number"
-                    className="w-full rounded-[10px] border border-[#E6E6E6] bg-white py-3 pl-4 pr-10 text-sm transition-colors focus:border-[#6438C2] focus:outline-none focus:ring-2 focus:ring-[#6438C2]/20"
+                    className="w-full rounded-[10px] border border-[#E6E6E6] bg-white py-3 pr-10 pl-4 text-sm transition-colors focus:border-[#6438C2] focus:ring-2 focus:ring-[#6438C2]/20 focus:outline-none"
                     aria-label="Search candidates"
                   />
-                  <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <Search className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 </div>
 
                 {/* Candidates Dropdown */}
@@ -302,32 +328,38 @@ const InterviewStepOne: React.FC = () => {
                     ) : applicants.length > 0 ? (
                       <div className="max-h-60 overflow-y-auto">
                         {applicants.map((candidate) => {
-                          const isSelected = selectedCandidates.some(c => c.id === candidate.id);
+                          const isSelected = selectedCandidates.some(
+                            (c) => c.id === candidate.id,
+                          );
                           return (
                             <div
                               key={candidate.id}
                               className="flex cursor-pointer items-center gap-3 p-4 transition-colors hover:bg-[#F7F7F7]"
-                              onClick={() => handleCandidateSelection(candidate)}
+                              onClick={() =>
+                                handleCandidateSelection(candidate)
+                              }
                               role="option"
                               aria-selected={isSelected}
                             >
                               <div className="relative">
                                 <img
-                                  src={candidate.profilePicture || candidateImage}
+                                  src={
+                                    candidate.profilePicture || candidateImage
+                                  }
                                   alt=""
                                   className="h-10 w-10 rounded-full object-cover"
                                 />
                                 {isSelected && (
-                                  <div className="absolute -bottom-1 -right-1 rounded-full bg-[#56E5A1] p-1">
+                                  <div className="absolute -right-1 -bottom-1 rounded-full bg-[#56E5A1] p-1">
                                     <Check className="h-3 w-3 text-white" />
                                   </div>
                                 )}
                               </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="font-medium text-gray-900 truncate">
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate font-medium text-gray-900">
                                   {candidate.firstName} {candidate.lastName}
                                 </p>
-                                <p className="text-sm text-gray-500 truncate">
+                                <p className="truncate text-sm text-gray-500">
                                   {candidate.email}
                                 </p>
                               </div>
@@ -347,7 +379,9 @@ const InterviewStepOne: React.FC = () => {
               {/* Selected Candidates */}
               {selectedCandidates.length > 0 && (
                 <div className="space-y-2">
-                  <h6 className="text-sm font-medium text-gray-700">Selected Candidates:</h6>
+                  <h6 className="text-sm font-medium text-gray-700">
+                    Selected Candidates:
+                  </h6>
                   <div className="flex flex-wrap gap-2">
                     {selectedCandidates.map((candidate) => (
                       <div
@@ -393,7 +427,8 @@ const InterviewStepOne: React.FC = () => {
             </div>
 
             <p className="text-sm text-gray-600 sm:text-base">
-              Choose the job position for which you are scheduling the interview.
+              Choose the job position for which you are scheduling the
+              interview.
             </p>
 
             <div className="relative">
@@ -403,12 +438,12 @@ const InterviewStepOne: React.FC = () => {
                   value={jobSearchQuery}
                   onFocus={() => setShowJobDropdown(true)}
                   onChange={(e) => setJobSearchQuery(e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(e, 'job')}
+                  onKeyDown={(e) => handleKeyDown(e, "job")}
                   placeholder="Search job by title, department, or company"
-                  className="w-full rounded-[10px] border border-[#E6E6E6] bg-white py-3 pl-4 pr-10 text-sm transition-colors focus:border-[#6438C2] focus:outline-none focus:ring-2 focus:ring-[#6438C2]/20"
+                  className="w-full rounded-[10px] border border-[#E6E6E6] bg-white py-3 pr-10 pl-4 text-sm transition-colors focus:border-[#6438C2] focus:ring-2 focus:ring-[#6438C2]/20 focus:outline-none"
                   aria-label="Search jobs"
                 />
-                <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <Search className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
               </div>
 
               {/* Jobs Dropdown */}
@@ -430,7 +465,9 @@ const InterviewStepOne: React.FC = () => {
                           onClick={() => handleJobSelection(job)}
                           role="option"
                         >
-                          <p className="font-medium text-gray-900">{job.title}</p>
+                          <p className="font-medium text-gray-900">
+                            {job.title}
+                          </p>
                           <p className="text-sm text-gray-500">
                             {job.company} • {job.department}
                           </p>
@@ -450,7 +487,9 @@ const InterviewStepOne: React.FC = () => {
               <div className="rounded-[10px] border border-[#C1D3EC] bg-[#E8F0FE] p-4">
                 <div className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-[#6438C2]" />
-                  <span className="font-medium text-[#6438C2]">Selected Job:</span>
+                  <span className="font-medium text-[#6438C2]">
+                    Selected Job:
+                  </span>
                 </div>
                 <p className="mt-1 text-sm text-gray-700">
                   {selectedJob.title} @ {selectedJob.company}
@@ -485,7 +524,7 @@ const InterviewStepOne: React.FC = () => {
 
                 // Clear any previous errors
                 if (errors.title) {
-                  setErrors(prev => ({ ...prev, title: "" }));
+                  setErrors((prev) => ({ ...prev, title: "" }));
                 }
               }}
               value={interviewDetails?.title}
@@ -504,7 +543,7 @@ const InterviewStepOne: React.FC = () => {
         <div className="mt-8 flex w-full justify-end sm:w-[95%]">
           <button
             onClick={handleNextStep}
-            className="rounded-[15px] bg-[#6438C2] px-8 py-3 font-medium text-white transition-colors hover:bg-[#5329a8] focus:outline-none focus:ring-2 focus:ring-[#6438C2] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-[15px] bg-[#6438C2] px-8 py-3 font-medium text-white transition-colors hover:bg-[#5329a8] focus:ring-2 focus:ring-[#6438C2] focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             disabled={selectedCandidates.length === 0 || !selectedJob}
           >
             Continue

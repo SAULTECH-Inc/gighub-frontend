@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import {
   applicantNavBarItemMap,
@@ -14,16 +14,13 @@ import JobSearchSidebarMobile from "../../components/ui/JobSearchSidebarMobile.t
 import JobSearchTopBar from "../../components/ui/JobSearchTopBar.tsx";
 import { AnimatePresence, motion } from "framer-motion";
 import { useJobSearchSettings } from "../../store/useJobSearchSettings.ts";
-import {
-  BulkSearchParams,
-  JobPostResponse,
-  TopHiringCompanyDto,
-} from "../../utils/types";
+import { JobPostResponse, TopHiringCompanyDto } from "../../utils/types";
 import { useFetchJobs } from "../../hooks/useJobQuery.ts";
-import { JobAndCompanyDetails } from "../../components/ui/job/JobAndCompanyDetails.tsx";
-import { bulkSearchJobs, getTopHiringCompanies } from "../../services/api";
+import {  getTopHiringCompanies } from "../../services/api";
 import { calculateDaysLeft } from "../../utils/helpers.ts";
 import MainFooter from "../../components/layouts/MainFooter.tsx";
+import { useBulkJobSearch } from "../../hooks/useBulkJobSearch.ts";
+import { JobAndCompanyDetails } from "../../components/ui/job/JobAndCompanyDetails.tsx";
 
 const JobSearch: React.FC = () => {
   const [pagination, setPagination] = useState({
@@ -32,73 +29,76 @@ const JobSearch: React.FC = () => {
   });
   const [jobId, setJobId] = useState<number | null>(null);
   const [viewingJob, setViewingJob] = useState<boolean>(false);
-
-  const [totalPages, setTotalPages] = useState(1);
-
-  const { data } = useFetchJobs(pagination.page, pagination.limit);
   const [jobs, setJobs] = useState<JobPostResponse[]>([]);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [topHiringCompanies, setTopHiringCompanies] = useState<TopHiringCompanyDto[]>([]);
   const [showSideBarMenu, setShowSideBarMenu] = useState(false);
+
   const { settings } = useJobSearchSettings();
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-  const [topHiringCompanies, setTopHiringCompanies] = useState<
-    TopHiringCompanyDto[]
-  >([]);
+  // ✅ Default fetch (no filters)
+  const { data: defaultJobsData, isLoading: defaultLoading } = useFetchJobs(
+    pagination.page,
+    pagination.limit
+  );
 
+  // ✅ Build bulk search params
+  const searchParams = useMemo(
+    () => ({
+      ...settings,
+      page: pagination.page,
+      limit: pagination.limit,
+    }),
+    [settings, pagination]
+  );
+
+  // ✅ Determine if we should run bulk search
+  const shouldSearch =
+    settings.jobType.length > 0 ||
+    settings.experienceLevel.length > 0 ||
+    settings.sortBy.trim() !== "" ||
+    settings.location.trim() !== "" ||
+    settings.sortOrder.trim() !== "" ||
+    settings.salaryRange.max > 0;
+
+  // ✅ Bulk search (only runs if filters applied)
+  const {
+    data: bulkData,
+    isLoading: bulkLoading,
+  } = useBulkJobSearch(searchParams, shouldSearch);
+
+  // ✅ Update job list depending on mode
+  useEffect(() => {
+    if (shouldSearch && bulkData) {
+      setJobs(bulkData.data ?? []);
+      setTotalPages(bulkData.meta?.totalPages || 1);
+    } else if (!shouldSearch && defaultJobsData) {
+      setJobs(defaultJobsData.data ?? []);
+      setTotalPages(defaultJobsData.meta?.totalPages || 1);
+    }
+  }, [shouldSearch, bulkData, defaultJobsData]);
+
+  // ✅ Top hiring companies
   useEffect(() => {
     const fetchTopHiringCompanies = async () => {
       const response = await getTopHiringCompanies();
       setTopHiringCompanies(response?.data || []);
     };
-    fetchTopHiringCompanies().then((r) => r);
-  }, [settings]);
-
-  useEffect(() => {
-    if (data) {
-      setJobs(data.data);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    const doSearchJobs = async () => {
-      const response = await bulkSearchJobs({
-        ...settings,
-        page: pagination.page,
-        limit: pagination.limit,
-      } as BulkSearchParams);
-      setJobs(response?.data ?? []);
-      setTotalPages(response?.meta?.totalPages || 1);
-    };
-
-    const shouldSearch =
-      settings.jobType.length > 0 ||
-      settings.experienceLevel.length > 0 ||
-      settings.sortBy.trim() !== "" ||
-      settings.location.trim() !== "" ||
-      settings.sortOrder.trim() !== "" ||
-      settings.salaryRange.max > 0;
-
-    if (shouldSearch) {
-      doSearchJobs().then((r) => r);
-    }
-  }, [settings, pagination]);
+    fetchTopHiringCompanies().then(r=>r);
+  }, []);
 
   const updateJobRating = (jobId: number, newRating: number) => {
-    setJobs((prev) =>
-      prev.map((job) =>
-        job.id === jobId
-          ? ({
-            ...job,
-            rating: { ...job.rating, averageScore: newRating },
-          } as JobPostResponse)
-          : job,
-      ),
+    const updated = jobs.map((job) =>
+      job.id === jobId
+        ? { ...job, rating: { ...job.rating, averageScore: newRating } } as JobPostResponse
+        : job
     );
+    setJobs(updated);
   };
 
-  const handleToggleSidebar = () => {
-    setShowSideBarMenu((prev) => !prev);
-  };
+
+  const handleToggleSidebar = () => setShowSideBarMenu((prev) => !prev);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -110,11 +110,8 @@ const JobSearch: React.FC = () => {
         setShowSideBarMenu(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showSideBarMenu]);
 
   return (
@@ -155,12 +152,12 @@ const JobSearch: React.FC = () => {
       />
 
       <div
-        className={`grid w-full grid-cols-1 gap-y-6 overflow-y-auto lg:grid-cols-[30%_70%] ${!viewingJob && "xl:grid-cols-[20%_45%_30%]"} justify-evenly gap-x-4 bg-[#F7F8FA] md:p-4`}
+        className={`grid w-full grid-cols-1 gap-y-6 overflow-y-auto lg:grid-cols-[30%_70%] ${
+          !viewingJob && "xl:grid-cols-[20%_45%_30%]"
+        } justify-evenly gap-x-4 bg-[#F7F8FA] md:p-4`}
       >
         {!viewingJob && (
-          <div
-            className={`hidden h-auto w-full overflow-y-auto md:w-full lg:flex`}
-          >
+          <div className={`hidden h-auto w-full overflow-y-auto md:w-full lg:flex`}>
             <JobSearchSidebar
               jobType={settings?.jobType || []}
               experience={settings?.experienceLevel || []}
@@ -171,25 +168,25 @@ const JobSearch: React.FC = () => {
           </div>
         )}
 
-        <div
-          className={`w-full h-auto flex flex-col gap-y-8 overflow-y-auto rounded-[16px] md:gap-y-4`}
-        >
-          {jobs.map((job, index) => (
+        <div className="flex h-auto w-full flex-col gap-y-8 overflow-y-auto rounded-[16px] md:gap-y-4 py-4">
+          {(bulkLoading || defaultLoading) && <p className="text-center py-6">Loading jobs...</p>}
+
+          {jobs.map((job) => (
             <JobDetails
+              key={job.id}
               updateJobRating={updateJobRating}
               job={job}
               setJobId={setJobId}
               viewingJob={viewingJob}
               setViewingJob={setViewingJob}
-              viewingJobId={jobId} // Pass the specific job ID being viewed
-              key={`${job.id}-${index}-${job.rating?.averageScore || 0}`}
+              viewingJobId={jobId}
               title={job.title}
               company={job.company}
               tags={job.skillSet}
               description={job.description}
               location={job.location}
               type={job.jobType}
-              applicants={job?.applicantsCount as number}
+              applicants={job.applicantsCount as number}
               daysLeft={calculateDaysLeft(job.endDate)}
               companyLogo={
                 job?.employer?.companyLogo || AVATAR_API_URL.concat(job.company)
@@ -201,44 +198,39 @@ const JobSearch: React.FC = () => {
           <div className="mt-6 flex items-center justify-center gap-4">
             <button
               disabled={pagination.page === 1}
-              onClick={() => {
-                if (pagination.page > 1) {
-                  setPagination((prev) => ({
-                    ...prev,
-                    page: prev.page - 1,
-                  }));
-                }
-              }}
+              onClick={() =>
+                setPagination((prev) => ({ ...prev, page: Math.max(prev.page - 1, 1) }))
+              }
               className="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300 disabled:opacity-50"
             >
               Previous
             </button>
             <span className="font-medium">Page {pagination.page}</span>
             <button
-              onClick={() => {
-                if (pagination.page < totalPages) {
-                  setPagination((prev) => ({
-                    ...prev,
-                    page: prev.page + 1,
-                  }));
-                }
-              }}
-              className="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300"
+              disabled={pagination.page >= totalPages}
+              onClick={() =>
+                setPagination((prev) => ({
+                  ...prev,
+                  page: Math.min(prev.page + 1, totalPages),
+                }))
+              }
+              className="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300 disabled:opacity-50"
             >
               Next
             </button>
           </div>
         </div>
 
-        {viewingJob && jobId && <JobAndCompanyDetails jobId={jobId}/>}
+        {viewingJob && jobId && <JobAndCompanyDetails jobId={jobId} />}
 
         {!viewingJob && (
-          <div className="col-span-2 flex w-full flex-col gap-y-4 md:flex md:flex-row lg:w-full xl:col-span-1 xl:flex-col h-screen lg:overflow-y-auto">
+          <div className="col-span-2 flex h-screen w-full flex-col gap-y-4 md:flex md:flex-row lg:w-full lg:overflow-y-auto xl:col-span-1 xl:flex-col">
             <ApplicantSchedules />
             <TopHiringCompanies topHiringCompanies={topHiringCompanies} />
           </div>
         )}
       </div>
+
       <MainFooter />
     </div>
   );

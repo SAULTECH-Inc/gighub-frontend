@@ -9,7 +9,6 @@ interface ISettingsNavItems {
   autoApply: boolean; // Add this
   privacy: boolean;
   subscription: boolean;
-
 }
 
 interface NavMenuStore {

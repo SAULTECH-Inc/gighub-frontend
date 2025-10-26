@@ -18,14 +18,14 @@ interface MultiSelectProps {
 }
 
 const MultiSelect: React.FC<MultiSelectProps> = ({
-                                                   label,
-                                                   placeholder = "Select options...",
-                                                   options,
-                                                   selectedItems,
-                                                   setSelectedItems,
-                                                   requiredAsterisk = false,
-                                                   disabled = false,
-                                                 }) => {
+  label,
+  placeholder = "Select options...",
+  options,
+  selectedItems,
+  setSelectedItems,
+  requiredAsterisk = false,
+  disabled = false,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
@@ -33,9 +33,10 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 
   useEffect(() => {
     setFilteredOptions(
-      options.filter((option) =>
-        option.label.toLowerCase().includes(search.toLowerCase()) &&
-        !selectedItems.some((selected) => selected.value === option.value)
+      options.filter(
+        (option) =>
+          option.label.toLowerCase().includes(search.toLowerCase()) &&
+          !selectedItems.some((selected) => selected.value === option.value),
       ),
     );
   }, [search, options, selectedItems]);
@@ -86,49 +87,55 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     setSelectedItems(updatedItems);
   };
 
-  const canAddNew = search.trim() !== "" &&
-    !options.some(option => option.label.toLowerCase() === search.toLowerCase()) &&
-    !selectedItems.some(item => item.label.toLowerCase() === search.toLowerCase());
+  const canAddNew =
+    search.trim() !== "" &&
+    !options.some(
+      (option) => option.label.toLowerCase() === search.toLowerCase(),
+    ) &&
+    !selectedItems.some(
+      (item) => item.label.toLowerCase() === search.toLowerCase(),
+    );
 
   return (
     <div className="w-full space-y-3" ref={dropdownRef}>
       {/* Label */}
       <label className="flex items-center gap-2 text-sm font-medium text-gray-900">
         {label}
-        {requiredAsterisk && <FaAsterisk className="w-2 h-2 text-red-500" />}
+        {requiredAsterisk && <FaAsterisk className="h-2 w-2 text-red-500" />}
       </label>
 
       {/* Input Area */}
       <div className="relative">
         <button
           type="button"
-          className={`
-            w-full flex items-center justify-between p-4 text-left border-2 rounded-xl transition-all duration-200
-            ${disabled
-            ? 'cursor-not-allowed bg-gray-100 border-gray-200 text-gray-400'
-            : 'bg-white border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-50'
-          }
-          `}
+          className={`flex w-full items-center justify-between rounded-xl border-2 p-4 text-left transition-all duration-200 ${
+            disabled
+              ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
+              : "border-gray-200 bg-white hover:border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
+          } `}
           onClick={() => !disabled && setIsOpen(!isOpen)}
           disabled={disabled}
         >
-          <span className={`
-            ${selectedItems.length > 0 ? 'text-gray-700 font-medium' : 'text-gray-500'}
-            ${disabled ? 'text-gray-400' : ''}
-          `}>
-            {selectedItems.length > 0 ? `${selectedItems.length} item${selectedItems.length > 1 ? 's' : ''} selected` : placeholder}
+          <span
+            className={` ${selectedItems.length > 0 ? "font-medium text-gray-700" : "text-gray-500"} ${disabled ? "text-gray-400" : ""} `}
+          >
+            {selectedItems.length > 0
+              ? `${selectedItems.length} item${selectedItems.length > 1 ? "s" : ""} selected`
+              : placeholder}
           </span>
-          <RiArrowDownSLine className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+          <RiArrowDownSLine
+            className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+          />
         </button>
 
         {/* Dropdown */}
         {isOpen && !disabled && (
-          <div className="absolute z-20 w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl max-h-64 overflow-hidden">
+          <div className="absolute z-20 mt-2 max-h-64 w-full overflow-hidden rounded-xl border-2 border-gray-200 bg-white shadow-xl">
             {/* Search Input */}
-            <div className="p-3 border-b border-gray-100">
+            <div className="border-b border-gray-100 p-3">
               <input
                 type="text"
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-50"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-50 focus:outline-none"
                 placeholder="Search or type to add new..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -143,18 +150,18 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                   <button
                     key={option.value}
                     type="button"
-                    className="w-full text-left px-4 py-3 text-sm hover:bg-blue-50 transition-colors duration-150 border-b border-gray-50 last:border-b-0"
+                    className="w-full border-b border-gray-50 px-4 py-3 text-left text-sm transition-colors duration-150 last:border-b-0 hover:bg-blue-50"
                     onClick={() => handleSelect(option)}
                   >
                     {option.label}
                   </button>
                 ))
               ) : search.trim() === "" ? (
-                <div className="px-4 py-6 text-sm text-gray-500 text-center">
+                <div className="px-4 py-6 text-center text-sm text-gray-500">
                   Start typing to search options
                 </div>
               ) : (
-                <div className="px-4 py-6 text-sm text-gray-500 text-center">
+                <div className="px-4 py-6 text-center text-sm text-gray-500">
                   No matching options found
                 </div>
               )}
@@ -163,7 +170,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
               {canAddNew && (
                 <button
                   type="button"
-                  className="w-full flex items-center gap-2 px-4 py-3 text-sm text-blue-600 hover:bg-blue-50 transition-colors duration-150 border-t border-gray-100 font-medium"
+                  className="flex w-full items-center gap-2 border-t border-gray-100 px-4 py-3 text-sm font-medium text-blue-600 transition-colors duration-150 hover:bg-blue-50"
                   onClick={handleAddOption}
                 >
                   <RiAddLine className="h-4 w-4" />
@@ -177,18 +184,18 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 
       {/* Selected Items Display - Now Below */}
       {selectedItems.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-3">
+        <div className="mt-3 flex flex-wrap gap-2">
           {selectedItems.map((item) => (
             <div
               key={item.value}
-              className="flex items-center gap-1 bg-orange-500 text-white px-3 py-1.5 rounded-full text-sm font-medium shadow-sm"
+              className="flex items-center gap-1 rounded-full bg-orange-500 px-3 py-1.5 text-sm font-medium text-white shadow-sm"
             >
               <span>{item.label}</span>
               {!disabled && (
                 <button
                   type="button"
                   onClick={() => handleRemove(item.value)}
-                  className="ml-1 hover:bg-orange-600 rounded-full p-0.5 transition-colors duration-150"
+                  className="ml-1 rounded-full p-0.5 transition-colors duration-150 hover:bg-orange-600"
                 >
                   <RiCloseLine className="h-3 w-3" />
                 </button>
@@ -200,7 +207,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 
       {/* Disabled State Message */}
       {disabled && (
-        <div className="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 p-2 rounded-lg">
+        <div className="flex items-center gap-2 rounded-lg bg-gray-50 p-2 text-xs text-gray-500">
           <span>🔒</span>
           <span>This feature requires a premium subscription</span>
         </div>

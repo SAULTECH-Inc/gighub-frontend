@@ -99,14 +99,18 @@ const SkillsAndCompetences: React.FC = () => {
   return (
     <section id="skills-competences" className="relative">
       {/* Section Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <Zap className="w-5 h-5 text-blue-600" />
+          <div className="rounded-lg bg-blue-100 p-2">
+            <Zap className="h-5 w-5 text-blue-600" />
           </div>
           <div>
-            <h3 className="text-xl font-semibold text-gray-900">Skills and Competences</h3>
-            <p className="text-sm text-gray-500">Showcase your technical skills and professional certifications</p>
+            <h3 className="text-xl font-semibold text-gray-900">
+              Skills and Competences
+            </h3>
+            <p className="text-sm text-gray-500">
+              Showcase your technical skills and professional certifications
+            </p>
           </div>
         </div>
 
@@ -115,23 +119,23 @@ const SkillsAndCompetences: React.FC = () => {
           <button
             onClick={handleToggleEdit}
             type="button"
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
               isEditable
-                ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
+                ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                : "bg-blue-50 text-blue-700 hover:bg-blue-100"
             }`}
           >
-            <Edit3 className="w-4 h-4" />
-            {isEditable ? 'Cancel' : 'Edit'}
+            <Edit3 className="h-4 w-4" />
+            {isEditable ? "Cancel" : "Edit"}
           </button>
 
           {isEditable && (
             <button
               onClick={handleUpdateSkillsAndCompetences}
               type="button"
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors duration-200"
+              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700"
             >
-              <Save className="w-4 h-4" />
+              <Save className="h-4 w-4" />
               Save Changes
             </button>
           )}
@@ -139,12 +143,12 @@ const SkillsAndCompetences: React.FC = () => {
       </div>
 
       {/* Form Content */}
-      <div className="bg-gray-50 rounded-xl p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="rounded-xl bg-gray-50 p-6">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Skills Section */}
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <h4 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+          <div className="rounded-lg border border-gray-200 bg-white p-6">
+            <h4 className="mb-4 flex items-center gap-2 text-lg font-medium text-gray-900">
+              <div className="h-2 w-2 rounded-full bg-blue-500"></div>
               Technical Skills
             </h4>
             <Skills
@@ -160,15 +164,17 @@ const SkillsAndCompetences: React.FC = () => {
           </div>
 
           {/* Certification Section */}
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <h4 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+          <div className="rounded-lg border border-gray-200 bg-white p-6">
+            <h4 className="mb-4 flex items-center gap-2 text-lg font-medium text-gray-900">
+              <div className="h-2 w-2 rounded-full bg-green-500"></div>
               Professional Certifications
             </h4>
             <Certifications
               isEditable={isEditable}
               handleCertificationRemove={handleCertificationRemove}
-              certifications={cvDetails?.certifications as CertificationResponseDto[]}
+              certifications={
+                cvDetails?.certifications as CertificationResponseDto[]
+              }
               addCertification={addCertification}
             />
           </div>
@@ -176,11 +182,19 @@ const SkillsAndCompetences: React.FC = () => {
 
         {/* Tips Section */}
         {isEditable && (
-          <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="text-sm font-medium text-blue-800 mb-2">💡 Tips for skills and certifications:</h4>
-            <ul className="text-sm text-blue-700 space-y-1">
-              <li>• Include both technical and soft skills relevant to your target roles</li>
-              <li>• Add industry-recognized certifications to strengthen your profile</li>
+          <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <h4 className="mb-2 text-sm font-medium text-blue-800">
+              💡 Tips for skills and certifications:
+            </h4>
+            <ul className="space-y-1 text-sm text-blue-700">
+              <li>
+                • Include both technical and soft skills relevant to your target
+                roles
+              </li>
+              <li>
+                • Add industry-recognized certifications to strengthen your
+                profile
+              </li>
               <li>• Keep skills current and remove outdated technologies</li>
               <li>• Include the institution and year for certifications</li>
             </ul>
@@ -189,9 +203,11 @@ const SkillsAndCompetences: React.FC = () => {
 
         {/* Status Indicator */}
         {!isEditable && (
-          <div className="flex items-center gap-2 pt-4 border-t border-gray-200 mt-6">
-            <CheckCircle2 className="w-5 h-5 text-green-500" />
-            <span className="text-sm text-green-600 font-medium">Skills and competences saved successfully</span>
+          <div className="mt-6 flex items-center gap-2 border-t border-gray-200 pt-4">
+            <CheckCircle2 className="h-5 w-5 text-green-500" />
+            <span className="text-sm font-medium text-green-600">
+              Skills and competences saved successfully
+            </span>
           </div>
         )}
       </div>

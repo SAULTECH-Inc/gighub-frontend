@@ -14,8 +14,8 @@ interface EmployerJobMultistepFormProps {
 }
 
 const EmployerJobMultistepForm: React.FC<EmployerJobMultistepFormProps> = ({
-                                                                             modalId,
-                                                                           }) => {
+  modalId,
+}) => {
   const { step } = useJobFormStore();
   const { modals, closeModal } = useModalStore();
   const isOpen = modals[modalId];
@@ -33,7 +33,7 @@ const EmployerJobMultistepForm: React.FC<EmployerJobMultistepFormProps> = ({
     2: "Job Details",
     3: "Skills & Preferences",
     4: "Final Preferences",
-    5: "AI & Screening"
+    5: "AI & Screening",
   };
 
   const stepIcons = {
@@ -41,17 +41,18 @@ const EmployerJobMultistepForm: React.FC<EmployerJobMultistepFormProps> = ({
     2: RiBriefcase4Line,
     3: RiBriefcase4Line,
     4: RiBriefcase4Line,
-    5: RiRobotLine
+    5: RiRobotLine,
   };
 
-  const CurrentIcon = stepIcons[step as keyof typeof stepIcons] || RiBriefcase4Line;
+  const CurrentIcon =
+    stepIcons[step as keyof typeof stepIcons] || RiBriefcase4Line;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 backdrop-blur-sm p-2">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 p-2 backdrop-blur-sm">
       <div className="flex max-h-[95vh] w-full max-w-[920px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
         {/* Modern Header */}
         <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-6 text-white">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
                 <CurrentIcon className="h-5 w-5 text-white" />
@@ -59,15 +60,17 @@ const EmployerJobMultistepForm: React.FC<EmployerJobMultistepFormProps> = ({
               <div>
                 <h1 className="text-xl font-bold">Create New Job</h1>
                 <div className="flex items-center gap-2">
-                  <p className="text-purple-100 text-sm">Step {step} of 5</p>
-                  <span className="text-purple-200 text-xs">•</span>
-                  <p className="text-purple-100 text-sm">{stepTitles[step as keyof typeof stepTitles]}</p>
+                  <p className="text-sm text-purple-100">Step {step} of 5</p>
+                  <span className="text-xs text-purple-200">•</span>
+                  <p className="text-sm text-purple-100">
+                    {stepTitles[step as keyof typeof stepTitles]}
+                  </p>
                 </div>
               </div>
             </div>
             <button
               onClick={handleClose}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-all duration-200"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 transition-all duration-200 hover:bg-white/30"
             >
               <RiCloseLine className="h-5 w-5 text-white" />
             </button>
@@ -82,25 +85,25 @@ const EmployerJobMultistepForm: React.FC<EmployerJobMultistepFormProps> = ({
 
             {/* Modern Progress Bar */}
             <div className="flex items-center gap-4">
-              <div className="relative h-2 w-48 bg-white/20 rounded-full overflow-hidden">
+              <div className="relative h-2 w-48 overflow-hidden rounded-full bg-white/20">
                 <div
-                  className="absolute top-0 left-0 h-full bg-white rounded-full transition-all duration-700 ease-out"
+                  className="absolute top-0 left-0 h-full rounded-full bg-white transition-all duration-700 ease-out"
                   style={{ width: `${progressPercentage}%` }}
                 />
               </div>
-              <span className="text-sm font-medium text-white/90 min-w-[3rem]">
+              <span className="min-w-[3rem] text-sm font-medium text-white/90">
                 {step}/5
               </span>
             </div>
           </div>
 
           {/* Step Indicators */}
-          <div className="flex items-center justify-center gap-2 mt-4">
+          <div className="mt-4 flex items-center justify-center gap-2">
             {[1, 2, 3, 4, 5].map((stepNumber) => (
               <div
                 key={stepNumber}
                 className={`h-2 w-2 rounded-full transition-all duration-300 ${
-                  stepNumber <= step ? 'bg-white' : 'bg-white/30'
+                  stepNumber <= step ? "bg-white" : "bg-white/30"
                 }`}
               />
             ))}

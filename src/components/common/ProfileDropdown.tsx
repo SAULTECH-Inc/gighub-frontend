@@ -63,8 +63,7 @@ const ProfileDropdown: FC<ProfileDropdownProps> = ({ onClose, isMobile }) => {
       </div>
 
       {/* Auto Apply Section */}
-      <div
-        className="mb-6 flex cursor-pointer items-center gap-3 rounded-[16px] bg-gradient-to-r from-[#6438C2] to-[#FA4E09] p-4 text-white">
+      <div className="mb-6 flex cursor-pointer items-center gap-3 rounded-[16px] bg-gradient-to-r from-[#6438C2] to-[#FA4E09] p-4 text-white">
         <span className="text-xl">👑</span>
         <Link to="/subscriptions">
           {USER_TYPE === UserType.APPLICANT ? (

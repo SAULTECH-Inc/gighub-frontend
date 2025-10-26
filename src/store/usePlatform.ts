@@ -9,7 +9,9 @@ interface PlatformState {
   isSubscribed: boolean;
   subscribe: (email: string) => Promise<void>;
   unsubscribe: (email: string) => Promise<void>;
-  contactCustomerSupport: (supportRequest: SupportRequest) => Promise<APIResponse<void>>;
+  contactCustomerSupport: (
+    supportRequest: SupportRequest,
+  ) => Promise<APIResponse<void>>;
 }
 
 export const usePlatform = create<PlatformState>()(
@@ -19,7 +21,7 @@ export const usePlatform = create<PlatformState>()(
       subscribe: async (email: string) => {
         try {
           const response = await publicApiClient.get(
-            `${API_BASE_URL}/platform/subscribe?email=${email}`
+            `${API_BASE_URL}/platform/subscribe?email=${email}`,
           );
           if (response.status === 200) {
             set((state) => {
@@ -35,7 +37,7 @@ export const usePlatform = create<PlatformState>()(
       unsubscribe: async (email: string) => {
         try {
           const response = await publicApiClient.get(
-            `${API_BASE_URL}/platform/unsubscribe?email=${email}`
+            `${API_BASE_URL}/platform/unsubscribe?email=${email}`,
           );
           if (response.status === 200) {
             set((state) => {
@@ -50,7 +52,10 @@ export const usePlatform = create<PlatformState>()(
       },
       contactCustomerSupport: async (supportRequest: SupportRequest) => {
         try {
-          const response = await publicApiClient.post<APIResponse<void>>(`${API_BASE_URL}/support`, supportRequest);
+          const response = await publicApiClient.post<APIResponse<void>>(
+            `${API_BASE_URL}/support`,
+            supportRequest,
+          );
           return response.data;
         } catch (error) {
           console.error("Error submitting support request:", error);
@@ -59,11 +64,13 @@ export const usePlatform = create<PlatformState>()(
             statusCode: 500,
           } as APIResponse<void>;
         }
-      }
+      },
     })),
-    { name: "platform-storage",
+    {
+      name: "platform-storage",
       partialize: (state) => ({
-        isSubscribed: state.isSubscribed
-      }) }
-  )
+        isSubscribed: state.isSubscribed,
+      }),
+    },
+  ),
 );
