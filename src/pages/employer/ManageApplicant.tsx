@@ -6,8 +6,6 @@ import {
   Teams,
   Calendar,
   Work,
-  Eye,
-  Download,
 } from "../../assets/icons.ts";
 import {
   Person7,
@@ -21,12 +19,10 @@ import ManageApplicantModal from "../../components/ui/ManageApplicantModal.tsx";
 import MatchDetailsModal from "../../components/ui/MatchDetailsModal.tsx";
 import {
   employerNavBarItemMap,
-  employerNavItems,
-  employerNavItemsMobile,
 } from "../../utils/constants.ts";
 import {
   ApplicantData,
-  ApplicationResponse, handleDownload,
+  ApplicationResponse,
   NetworkDetails
 } from "../../utils/types";
 import {
@@ -44,6 +40,9 @@ import { useChatStore } from "../../store/useChatStore.ts";
 import { ApplicationStatus } from "../../utils/enums.ts";
 import { useFetchJobMatchResult } from "../../hooks/useFetchJobMatchResult.tsx";
 import { X } from "lucide-react";
+import { FileActionButtons } from "../../components/ui/FileActionButtons.tsx";
+
+
 
 // Match percentage component for applicant list
 const MatchPercentage: FC<{
@@ -665,9 +664,8 @@ const ManageApplicant: FC = () => {
   return (
     <div className="min-h-screen w-full bg-[#F7F8FA]">
       <TopNavBar
-        navItems={employerNavItems}
-        navItemsMobile={employerNavItemsMobile}
         navbarItemsMap={employerNavBarItemMap}
+        userType="employer"
       />
 
       <div className="flex w-full flex-col items-center">
@@ -1253,63 +1251,41 @@ const ManageApplicant: FC = () => {
                     <h2 className="text-[18px] font-medium text-[#000000]">
                       File Attachment
                     </h2>
-                    {
-                      !selectedApplication?.cv?.cvLink && !selectedApplication?.cv?.coverLetterLink && (
-                        <p className="self-center rounded-sm p-5">No File Uploaded</p>
-                      )
-                    }
-                    {
-                      selectedApplication?.cv?.cvLink && (
+                    {!selectedApplication?.cv?.cvLink && !selectedApplication?.cv?.coverLetterLink && (
+                        <p className="self-center rounded-sm p-5 text-gray-500">No File Uploaded</p>
+                    )}
+
+                    {selectedApplication?.cv?.cvLink && (
                         <div className="flex justify-between rounded-[10px] bg-white px-4 py-2">
                           <div>
-                            <p className="text-[13px] font-medium text-[#8E8E8E]">
-                              Cv File
+                            <p className="text-[13px] font-medium text-[#000000]">CV File</p>
+                            <p className="text-[11px] text-[#8E8E8E]">
+                              {selectedApplication?.applicant?.firstName} {selectedApplication?.applicant?.lastName}
                             </p>
-                            {/*<p className="text-[13px] font-medium text-[#8E8E8E]">*/}
-                            {/*  File Pdf - 9.3 MB*/}
-                            {/*</p>*/}
                           </div>
-                          <div className="flex items-center gap-2">
-                            <img src={Eye} alt="Eye Icon" className="h-6 w-6" />
-                            <img
-                              onClick={() => handleDownload({
-                                fileUrl: selectedApplication?.cv?.cvLink || "#",
-                                fileName: (selectedApplication?.applicant?.firstName || "").concat("_").concat(selectedApplication?.applicant?.firstName || "").concat("_cv") || "applicant_cv"
-                              })}
-                              src={Download}
-                              alt="Download Icon"
-                              className="h-6 w-6"
-                            />
-                          </div>
-                        </div>)
-                    }
+                          <FileActionButtons
+                              fileUrl={selectedApplication.cv.cvLink}
+                              fileName={`${selectedApplication.applicant.firstName}_${selectedApplication.applicant.lastName}_CV.pdf`}
+                              fileType="pdf"
+                          />
+                        </div>
+                    )}
 
-                    {
-                      selectedApplication?.cv?.coverLetterLink && (
+                    {selectedApplication?.cv?.coverLetterLink && (
                         <div className="flex justify-between rounded-[10px] bg-white px-4 py-2">
                           <div>
-                            <p className="text-[13px] font-medium text-[#8E8E8E]">
-                              Cover Letter
+                            <p className="text-[13px] font-medium text-[#000000]">Cover Letter</p>
+                            <p className="text-[11px] text-[#8E8E8E]">
+                              {selectedApplication?.applicant?.firstName} {selectedApplication?.applicant?.lastName}
                             </p>
-                            {/*<p className="text-[13px] font-medium text-[#8E8E8E]">*/}
-                            {/*  File Pdf - 9.3 MB*/}
-                            {/*</p>*/}
                           </div>
-                          <div className="flex items-center gap-2">
-                            <img src={Eye} alt="Eye Icon" className="h-6 w-6" />
-                            <img
-                              onClick={() => handleDownload({
-                                fileUrl: selectedApplication?.cv?.coverLetterLink || "#",
-                                fileName: (selectedApplication?.applicant?.firstName || "").concat("_").concat(selectedApplication?.applicant?.firstName || "").concat("_cv") || "applicant_cv"
-                              })}
-                              src={Download}
-                              alt="Download Icon"
-                              className="h-6 w-6"
-                            />
-                          </div>
-                        </div>)
-                    }
-
+                          <FileActionButtons
+                              fileUrl={selectedApplication.cv.coverLetterLink}
+                              fileName={`${selectedApplication.applicant.firstName}_${selectedApplication.applicant.lastName}_CoverLetter.pdf`}
+                              fileType="pdf"
+                          />
+                        </div>
+                    )}
                   </div>
                 </div>
               </div>

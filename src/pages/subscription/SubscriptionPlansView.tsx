@@ -5,11 +5,7 @@ import { UserType } from "../../utils/enums.ts";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import {
   applicantNavBarItemMap,
-  applicantNavItems,
-  applicantNavItemsMobile,
   employerNavBarItemMap,
-  employerNavItems,
-  employerNavItemsMobile,
 } from "../../utils/constants.ts";
 import { USER_TYPE } from "../../utils/helpers.ts";
 import MainFooter from "../../components/layouts/MainFooter.tsx";
@@ -404,15 +400,13 @@ const SubscriptionPlansView: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-[#F7F7F7] to-[#E8E8FF]">
       {USER_TYPE === UserType.EMPLOYER ? (
         <TopNavBar
-          navItems={employerNavItems}
-          navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
+          userType={"employer"}
         />
       ) : (
         <TopNavBar
-          navItems={applicantNavItems}
-          navItemsMobile={applicantNavItemsMobile}
           navbarItemsMap={applicantNavBarItemMap}
+          userType={"applicant"}
         />
       )}
 

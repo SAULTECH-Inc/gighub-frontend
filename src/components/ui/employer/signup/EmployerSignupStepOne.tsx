@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { calculatePasswordStrength } from "../../../../utils/helpers.ts";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link } from "react-router-dom";
@@ -50,6 +50,7 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
+    control
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -215,29 +216,41 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
           <label className="block text-sm font-medium text-gray-700">
             Password <span className="text-red-500">*</span>
           </label>
-          <div className="relative">
-            <input
-              type={passwordVisible ? "text" : "password"}
-              {...register("password")}
-              onChange={handlePasswordChange}
-              className={`w-full rounded-lg border px-4 py-3 pr-12 transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
-                errors.password
-                  ? "border-red-500 bg-red-50"
-                  : "border-gray-300 hover:border-gray-400"
-              }`}
-              placeholder="Create a strong password"
-            />
-            <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className="absolute top-1/2 right-3 -translate-y-1/2 transform p-1 text-gray-500 transition-colors hover:text-gray-700"
-            >
-              {passwordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <div className="relative">
+                <input
+                  {...field}
+                  key={passwordVisible ? "text" : "password"} // preserve value on toggle
+                  type={passwordVisible ? "text" : "password"}
+                  autoComplete="new-password"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    handlePasswordChange(e);
+                  }}
+                  className={`w-full rounded-lg border px-4 py-3 pr-12 transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
+                    errors.password
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300 hover:border-gray-400"
+                  }`}
+                  placeholder="Create a strong password"
+                />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 transform p-1 text-gray-500 transition-colors hover:text-gray-700"
+                >
+                  {passwordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+            )}
+          />
           {errors.password && (
             <p className="text-sm text-red-600">{errors.password.message}</p>
           )}
+
         </div>
 
         {/* Password Strength Indicator */}
@@ -272,16 +285,24 @@ const EmployerSignupStepOne: React.FC<StepOneProp> = ({ handleNext }) => {
             Confirm Password <span className="text-red-500">*</span>
           </label>
           <div className="relative">
-            <input
-              type={confirmPasswordVisible ? "text" : "password"}
-              {...register("confirmPassword")}
-              disabled={!password}
-              className={`w-full rounded-lg border px-4 py-3 pr-12 transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
-                errors.confirmPassword
-                  ? "border-red-500 bg-red-50"
-                  : "border-gray-300 hover:border-gray-400"
-              } ${!password ? "cursor-not-allowed bg-gray-100" : ""}`}
-              placeholder="Confirm your password"
+            <Controller
+              name="confirmPassword"
+              control={control}
+              render={({ field }) => (
+                <input
+                  {...field}
+                  type={confirmPasswordVisible ? "text" : "password"}
+                  onChange={(e) => field.onChange(e)}
+                  autoComplete="new-password"
+                  className={`w-full rounded-lg border px-4 py-3 pr-12 transition-colors focus:border-transparent focus:ring-2 focus:ring-[#6438C2] ${
+                    errors.confirmPassword
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300 hover:border-gray-400"
+                  } ${!password ? "cursor-not-allowed bg-gray-100" : ""}`}
+                  placeholder="Confirm your password"
+                  disabled={!password}
+                />
+              )}
             />
             <button
               type="button"

@@ -15,11 +15,7 @@ import { UserType } from "../../utils/enums.ts";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import {
   applicantNavBarItemMap,
-  applicantNavItems,
-  applicantNavItemsMobile,
   employerNavBarItemMap,
-  employerNavItems,
-  employerNavItemsMobile,
 } from "../../utils/constants.ts";
 
 // Lazy load components for better performance
@@ -111,15 +107,13 @@ const EmployerPublicProfile: FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
         {USER_TYPE === UserType.EMPLOYER ? (
           <TopNavBar
-            navItems={employerNavItems}
-            navItemsMobile={employerNavItemsMobile}
             navbarItemsMap={employerNavBarItemMap}
+            userType={"employer"}
           />
         ) : (
           <TopNavBar
-            navItems={applicantNavItems}
-            navItemsMobile={applicantNavItemsMobile}
             navbarItemsMap={applicantNavBarItemMap}
+            userType={"applicant"}
           />
         )}
 
@@ -191,15 +185,13 @@ const EmployerPublicProfile: FC = () => {
       {/* Navigation */}
       {USER_TYPE === UserType.EMPLOYER ? (
         <TopNavBar
-          navItems={employerNavItems}
-          navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
+          userType={"employer"}
         />
       ) : (
         <TopNavBar
-          navItems={applicantNavItems}
-          navItemsMobile={applicantNavItemsMobile}
           navbarItemsMap={applicantNavBarItemMap}
+          userType={"applicant"}
         />
       )}
 

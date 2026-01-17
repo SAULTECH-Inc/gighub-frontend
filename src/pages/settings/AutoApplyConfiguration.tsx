@@ -45,7 +45,7 @@ const AutoApplyConfiguration: FC = () => {
       handleSettingChange("blacklistedCompanies", [
         ...autoApplySettings.blacklistedCompanies,
         newCompany.trim(),
-      ]);
+      ]).then(r => r);
       setNewCompany("");
     }
   };
@@ -54,7 +54,7 @@ const AutoApplyConfiguration: FC = () => {
     handleSettingChange(
       "blacklistedCompanies",
       autoApplySettings.blacklistedCompanies.filter((c) => c !== company),
-    );
+    ).then(r => r);
   };
 
   const addBlacklistedKeyword = () => {
@@ -65,7 +65,7 @@ const AutoApplyConfiguration: FC = () => {
       handleSettingChange("blacklistedKeywords", [
         ...autoApplySettings.blacklistedKeywords,
         newKeyword.trim(),
-      ]);
+      ]).then(r => r);
       setNewKeyword("");
     }
   };
@@ -74,7 +74,7 @@ const AutoApplyConfiguration: FC = () => {
     handleSettingChange(
       "blacklistedKeywords",
       autoApplySettings.blacklistedKeywords.filter((k) => k !== keyword),
-    );
+    ).then(r => r);
   };
 
   const timezones = [

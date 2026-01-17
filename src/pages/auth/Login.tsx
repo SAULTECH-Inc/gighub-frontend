@@ -9,7 +9,11 @@ import { useAuth } from "../../store/useAuth";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import CustomCheckbox from "../../components/common/CustomCheckbox";
 import { useChatStore } from "../../store/useChatStore";
-import { ApplicantData, EmployerData, Role } from "../../utils/types";
+import {
+  ApplicantData,
+  EmployerData,
+  Role,
+} from "../../utils/types";
 import { UserType } from "../../utils/enums.ts";
 import { useSubscriptionStore } from "../../store/useSubscriptionStore.ts";
 import {
@@ -58,7 +62,7 @@ const LoginPage = () => {
     handleOutlookLogin,
     handleLinkedinLogin,
     isAuthenticated,
-    profileData,
+      
   } = useAuth();
 
   const navigate = useNavigate();
@@ -92,8 +96,8 @@ const LoginPage = () => {
     }
 
     // If user has profile data with valid userType, redirect to their profile
-    if (profileData?.userType && isValidUserType(profileData.userType)) {
-      return `/${profileData.userType}/profile`;
+    if (USER_TYPE && isValidUserType(USER_TYPE)) {
+      return `/${USER_TYPE}/profile`;
     }
 
     // Default fallback routes
@@ -104,14 +108,14 @@ const LoginPage = () => {
   useEffect(() => {
     if (
       isAuthenticated &&
-      profileData?.userType &&
-      isValidUserType(profileData.userType)
+      USER_TYPE &&
+      isValidUserType(USER_TYPE)
     ) {
       const redirectPath = getRedirectPath();
       console.log("Redirecting authenticated user to:", redirectPath);
       navigate(redirectPath, { replace: true });
     }
-  }, [isAuthenticated, profileData?.userType, navigate]);
+  }, [isAuthenticated, USER_TYPE, navigate]);
 
   // Validation function
   const validateForm = (): boolean => {
@@ -140,71 +144,83 @@ const LoginPage = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    try {
-      const response: ApplicantData | EmployerData | null =
-        await login(credentials);
 
-      if (response) {
-        console.log("Login response:", response);
-
-        // Validate the response has required data
-        if (!response.userType || !isValidUserType(response.userType)) {
-          console.error("Invalid userType in response:", response.userType);
-          setErrors({
-            general: "Invalid user data received. Please contact support.",
-          });
-          return;
-        }
-
-        // Set authentication data
-        setAuthToken(response.token as string);
-        setAuthRole(response.role as Role);
-        setSender(credentials.email);
-        setProfileData(response);
-        setEmail(credentials.email);
-        setUserType(response.userType as UserType);
-
-        // Handle user type specific data
-        if (
-          "userType" in response &&
-          response.userType === UserType.APPLICANT
-        ) {
-          setApplicantData(response as ApplicantData);
-        } else {
-          setEmployerData(response as EmployerData);
-        }
-
-        // Fetch subscription data if user ID exists
-        if (response.id) {
-          try {
-            await Promise.all([
-              getUserSubscription(response.id),
-              getUserSubscriptionHistory(response.id),
-            ]);
-          } catch (subscriptionError) {
-            console.warn(
-              "Failed to fetch subscription data:",
-              subscriptionError,
-            );
-            // Don't block login for subscription errors
+    await login(credentials)
+        .then(async (response: any) => {
+          if (!response) {
+            setErrors({ general: "Login failed. Please try again." });
+            return;
           }
-        }
 
-        // Navigate with proper userType validation
-        const redirectPath = getRedirectPath(response.userType);
-        console.log("Login successful, redirecting to:", redirectPath);
-        navigate(redirectPath, { replace: true });
-      } else {
-        setErrors({ general: "Login failed. Please try again." });
-      }
-    } catch (error) {
-      console.error("Login failed:", error);
-      setErrors({ general: "Invalid email or password. Please try again." });
-    } finally {
-      setIsLoading(false);
-    }
+          console.log("Login response:", response);
+
+          // Check if 2FA is required
+          if (response.requires2FA) {
+            console.log("2FA required, redirecting to verification page");
+
+            // Navigate to 2FA verification page with necessary data
+            navigate("/auth/verify-2fa", {
+              state: {
+                userData: response,
+                email: credentials.email,
+                from: location.state?.from,
+                rememberMe: credentials.rememberMe
+              },
+              replace: true,
+            });
+            return;
+          }
+
+          // Normal login flow (no 2FA required)
+          if (!response.userType || !isValidUserType(response.userType)) {
+            console.error("Invalid userType in response:", response.userType);
+            setErrors({
+              general: "Invalid user data received. Please contact support.",
+            });
+            return;
+          }
+
+          // Auth setup
+          setAuthToken(response.token as string);
+          setAuthRole(response.role as Role);
+          setSender(credentials.email);
+          setProfileData(response);
+          setEmail(credentials.email);
+          setUserType(response.userType as UserType);
+
+          // User-specific data
+          if (response.userType === UserType.APPLICANT) {
+            setApplicantData(response as ApplicantData);
+          } else {
+            setEmployerData(response as EmployerData);
+          }
+
+          // Fetch subscription info (non-blocking)
+          if (response.id) {
+            try {
+              await Promise.all([
+                getUserSubscription(response.id),
+                getUserSubscriptionHistory(response.id),
+              ]);
+            } catch (err) {
+              console.warn("Subscription fetch failed:", err);
+            }
+          }
+
+          const redirectPath = getRedirectPath(response.userType);
+          console.log("Login successful, redirecting to:", redirectPath);
+          navigate(redirectPath, { replace: true });
+        })
+        .catch((error) => {
+          console.error("Login failed:", error);
+          setErrors({
+            general: "Invalid email or password. Please try again.",
+          });
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
   };
-
   // Handle input changes
   const handleInputChange =
     (field: keyof LoginCredentials) =>
@@ -218,7 +234,8 @@ const LoginPage = () => {
       // Clear errors when user starts typing
       if (errors[field]) {
         setErrors((prev) => {
-          const { [field]: _, ...rest } = prev;
+          const { [field]: p,...rest } = prev;
+          console.log(p);
           return rest;
         });
       }
@@ -264,10 +281,10 @@ const LoginPage = () => {
 
   // Check if we're waiting for complete profile data
   const isWaitingForProfileData =
-    isAuthenticated && (!profileData || !isValidUserType(profileData.userType));
+    isAuthenticated && (!isValidUserType(USER_TYPE));
 
   // Show loading state while checking authentication or waiting for profile data
-  if (isAuthenticated && isValidUserType(profileData?.userType)) {
+  if (isAuthenticated && isValidUserType(USER_TYPE)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">

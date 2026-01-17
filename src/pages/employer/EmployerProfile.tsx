@@ -10,8 +10,6 @@ import ProfileCard from "../../components/ui/employer/profile/ProfileCard.tsx";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import {
   employerNavBarItemMap,
-  employerNavItems,
-  employerNavItemsMobile,
 } from "../../utils/constants.ts";
 import { useAuth } from "../../store/useAuth.ts";
 import { useEmployerProfile } from "../../store/useEmployerProfile.ts";
@@ -116,12 +114,11 @@ const EmployerProfile: FC = () => {
   return (
     <div className="relative mx-auto w-screen bg-gray-50">
       <TopNavBar
-        navItems={employerNavItems}
-        navItemsMobile={employerNavItemsMobile}
         navbarItemsMap={employerNavBarItemMap}
+        userType="employer"
       />
 
-      <div className="mx-auto flex min-h-screen w-full items-start justify-center gap-x-6 bg-gray-50 pt-6 md:px-5 lg:px-10">
+      <div className="mx-auto flex min-h-screen max-w-7xl items-start justify-center gap-x-6 bg-gray-50 pt-6">
         {/* Sidebar */}
         <EmployerProfileSidebar completionDetails={completionDetails || {} as ProfileCompletionResponse} />
 

@@ -14,8 +14,6 @@ import ApplicantProfileSidebar from "../../components/ui/applicant/profile/Appli
 import { useAuth } from "../../store/useAuth.ts";
 import {
   applicantNavBarItemMap,
-  applicantNavItems,
-  applicantNavItemsMobile,
 } from "../../utils/constants.ts";
 import { useApplicantJobProfile } from "../../store/useApplicantJobProfile.ts";
 import ResumeAndCoverLetter from "../../components/ui/applicant/profile/ResumeAndCoverLetter.tsx";
@@ -40,23 +38,22 @@ const ApplicantProfile: FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <TopNavBar
-        navItems={applicantNavItems}
-        navItemsMobile={applicantNavItemsMobile}
         navbarItemsMap={applicantNavBarItemMap}
+        userType="applicant"
       />
 
       {/* Main Container */}
-      <div className="container mx-auto px-4 py-6 lg:px-6 xl:px-8">
+      <div className="container max-w-full mx-auto px-4 py-6 lg:px-6 xl:px-8">
         <div className="flex min-h-[calc(100vh-120px)] flex-col gap-6 lg:flex-row xl:gap-8">
           {/* Sidebar - Hidden on mobile, visible on large screens */}
-          <div className="hidden flex-shrink-0 lg:block lg:w-80 xl:w-76">
+          <div className="hidden flex-shrink-0 lg:block lg:w-70 xl:w-76">
             <div className="sticky top-6">
               <ApplicantProfileSidebar completionDetails={completionDetails || {} as ProfileCompletionResponse} />
             </div>
           </div>
 
           {/* Main Content */}
-          <div className="max-w-4xl flex-1">
+          <div className="flex-1">
             <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
               {/* Progress Header */}
               <div className="border-b border-gray-100 bg-white px-6 py-4">

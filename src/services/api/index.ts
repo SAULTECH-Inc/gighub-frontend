@@ -5,24 +5,35 @@ import {
   ApplicationRequest,
   ApplicationResponse,
   BulkSearchParams,
-  CategoryInfo, ChangePasswordRequest,
+  CategoryInfo,
+  ChangePasswordRequest,
+  CvResponseDto,
   EmployerData,
   FeatureJob,
   FetchMyJobParam,
-  FileUploadResponse, GenerateQrcodeResponse,
+  FileUploadResponse,
+  GenerateQrcodeResponse,
   InterviewScheduleDetails,
   InterviewScheduleDetailsResponse,
   JobPostResponse,
+  JobRatingRequest,
   JobStatus,
-  NetworkDetails, ProfileCompletionResponse,
-  RatingResponseDTO, Review, ScreeningQuestion,
+  NetworkDetails,
+  ProfileCompletionResponse,
+  RatingResponseDTO,
+  RequestDemo,
+  Review,
+  ScreeningQuestion,
   SortBy,
   SubscriptionResponse,
   SubscriptionType,
-  TopHiringCompanyDto, TwoFactorEnabledResponse
+  TopHiringCompanyDto,
+  TutorialResponse,
+  TwoFactorEnabledResponse,
 } from "../../utils/types";
 import { privateApiClient, publicApiClient } from "../../client/axios.ts";
 import {
+  AI_SERVICE_BASE_URL,
   API_BASE_URL,
   CHAT_API_BASE_URL,
   NOTIFICATION_API_URL,
@@ -31,7 +42,6 @@ import {
 } from "../../utils/constants.ts";
 import { Action, UserType } from "../../utils/enums.ts";
 import { PaginationParams } from "../../pages/company list/CompanyList.tsx";
-import { JobRatingRequest } from "../../components/features/JobDetails.tsx";
 import { JobMatchResult } from "../../components/ui/MatchDetailsModal.tsx";
 
 export async function fetchPrivateMessages(user: string, otherUser: string) {
@@ -1009,3 +1019,37 @@ export const fetchUserReviews = async (userId: number): Promise<Review[]> => {
   return res?.data?.data || [];
 };
 
+export const generateCvFromTextOrFileTextInput = async (input: string): Promise<APIResponse<CvResponseDto>> => {
+  console.log("Fetching...");
+  const res= await privateApiClient.post<APIResponse<CvResponseDto>>(`${AI_SERVICE_BASE_URL}/cv/generate`,{input});
+  return res?.data;
+};
+
+
+export const submitDemoRequest = async (req: RequestDemo): Promise<APIResponse<void>> => {
+  console.log("Submitting demo request...");
+  const res= await publicApiClient.post<APIResponse<void>>(`${API_BASE_URL}/demos`,req);
+  return res?.data;
+};
+
+export const fetchTutorials = async()=>{
+  console.log("Submitting demo request...");
+  const res= await publicApiClient.get<APIResponse<TutorialResponse[]>>(`${API_BASE_URL}/tutorials`);
+  return res?.data;
+}
+
+export const fetchTutorialById = async (id: number) => {
+  console.log("Submitting demo request...");
+  const res = await publicApiClient.get<APIResponse<TutorialResponse>>(
+    `${API_BASE_URL}/tutorials/${id}`,
+  );
+  return res?.data;
+};
+
+export const setInterviewReminder = async(interviewId: number, reminder: string)=>{
+  const res = await privateApiClient.patch<APIResponse<any>>(
+    `${API_BASE_URL}/interviews/${interviewId}/set-reminder`,
+    {reminderTime: reminder},
+  );
+  return res?.data;
+}

@@ -51,7 +51,7 @@ const EmployerJobMultistepForm: React.FC<EmployerJobMultistepFormProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 p-2 backdrop-blur-sm">
       <div className="flex max-h-[95vh] w-full max-w-[920px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
         {/* Modern Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-6 text-white">
+        <div className="bg-gradient-to-r from-[#6438C2] to-[#FA4E09] px-6 py-6 text-white">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">

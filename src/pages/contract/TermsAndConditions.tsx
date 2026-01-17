@@ -17,11 +17,8 @@ import { UserType } from "../../utils/enums.ts";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import {
   applicantNavBarItemMap,
-  applicantNavItems,
-  applicantNavItemsMobile,
   employerNavBarItemMap,
-  employerNavItems,
-  employerNavItemsMobile, LEGAL_TEAM_EMAIL, SUPPORT_EMAIL, SUPPORT_PHONE_NUMBER
+LEGAL_TEAM_EMAIL, SUPPORT_EMAIL, SUPPORT_PHONE_NUMBER
 } from "../../utils/constants.ts";
 import MainFooter from "../../components/layouts/MainFooter.tsx";
 
@@ -129,15 +126,13 @@ const TermsAndConditions: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       {USER_TYPE === UserType.EMPLOYER ? (
         <TopNavBar
-          navItems={employerNavItems}
-          navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
+          userType={"employer"}
         />
       ) : (
         <TopNavBar
-          navItems={applicantNavItems}
-          navItemsMobile={applicantNavItemsMobile}
           navbarItemsMap={applicantNavBarItemMap}
+          userType={"applicant"}
         />
       )}
       {/* Header */}

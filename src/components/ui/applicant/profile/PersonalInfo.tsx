@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import CustomDropdown from "../../../common/CustomDropdown.tsx";
 import { useAuth } from "../../../../store/useAuth.ts";
 import { ApplicantPersonalInfo } from "../../../../utils/types";
@@ -39,6 +39,8 @@ const PersonalInfo: React.FC = () => {
     applicantPersonalInfo?.address || "",
     300,
   );
+
+  console.log("APPLICANT NULL ::: ",applicantPersonalInfo.firstName === undefined);
   const { isEditable, toggleEdit } = useSectionEditable("personal-info");
 
   const handleChange = async (e: {
@@ -340,4 +342,4 @@ const PersonalInfo: React.FC = () => {
   );
 };
 
-export default PersonalInfo;
+export default memo(PersonalInfo);

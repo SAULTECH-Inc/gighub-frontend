@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import TopNavBar from "../../../components/layouts/TopNavBar";
 import {
   employerNavBarItemMap,
-  employerNavItems,
-  employerNavItemsMobile,
 } from "../../../utils/constants";
 import { InterviewType } from "../../../utils/enums";
 import {
@@ -67,9 +65,8 @@ const ScheduledInterviews: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <TopNavBar
-        navItems={employerNavItems}
-        navItemsMobile={employerNavItemsMobile}
         navbarItemsMap={employerNavBarItemMap}
+        userType={"employer"}
       />
 
       <div className="mx-auto mt-10 max-w-4xl rounded-2xl border border-[#E6E6E6] bg-white p-8 shadow-md">

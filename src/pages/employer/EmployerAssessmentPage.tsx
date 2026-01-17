@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Filter, ChevronDown, ChevronRight, Clock, Users, CheckCircle, XCircle, AlertCircle, Send, Eye, Download, BarChart3, Plus, Target, Flag, ThumbsUp, ThumbsDown, TrendingUp, Award, X } from 'lucide-react';
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
-import { employerNavBarItemMap, employerNavItems, employerNavItemsMobile } from "../../utils/constants.ts";
+import { employerNavBarItemMap} from "../../utils/constants.ts";
 
 interface Assessment {
   id: number;
@@ -1297,9 +1297,8 @@ const EmployerAssessmentPage = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
       <TopNavBar
-        navItems={employerNavItems}
-        navItemsMobile={employerNavItemsMobile}
         navbarItemsMap={employerNavBarItemMap}
+        userType="employer"
       />
       <div className="max-w-7xl mx-auto p-6 mt-15">
         <div className="mb-8">

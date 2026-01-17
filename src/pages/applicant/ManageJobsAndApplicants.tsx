@@ -31,8 +31,6 @@ import {
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import {
   employerNavBarItemMap,
-  employerNavItems,
-  employerNavItemsMobile,
 } from "../../utils/constants.ts";
 import {
   useFetchJobApplications,
@@ -1059,9 +1057,8 @@ const ManageJobsAndApplicants: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
         <TopNavBar
-          navItems={employerNavItems}
-          navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
+          userType={"employer"}
         />
         <div className="mt-20 flex min-h-64 items-center justify-center">
           <div className="text-center">
@@ -1087,9 +1084,8 @@ const ManageJobsAndApplicants: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
         <TopNavBar
-          navItems={employerNavItems}
-          navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
+          userType={"employer"}
         />
         <div className="mx-auto max-w-7xl p-4 pt-24 lg:p-8">
           <div className="mb-8 flex items-center">
@@ -1118,9 +1114,8 @@ const ManageJobsAndApplicants: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
         <TopNavBar
-          navItems={employerNavItems}
-          navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
+          userType={"employer"}
         />
         <div className="mx-auto max-w-7xl p-4 pt-24 lg:p-8">
           {/* Header */}
@@ -1987,9 +1982,8 @@ const ManageJobsAndApplicants: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
       <TopNavBar
-        navItems={employerNavItems}
-        navItemsMobile={employerNavItemsMobile}
         navbarItemsMap={employerNavBarItemMap}
+        userType={"employer"}
       />
       <div className="mx-auto max-w-7xl p-4 pt-24 lg:p-8">
         {/* Header */}

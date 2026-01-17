@@ -14,6 +14,7 @@ import {
   Circle,
 } from "lucide-react";
 import { ProfileCompletionResponse } from "../../../../utils/types";
+import { useAuth } from "../../../../store/useAuth.ts";
 
 interface SidebarItem {
   id: string;
@@ -29,6 +30,7 @@ interface Props{
 
 const EmployerProfileSidebar: FC<Props> = ({completionDetails}) => {
   const [activeSection, setActiveSection] = useState("company-info");
+  const {employer} = useAuth();
 
   // Define sidebar navigation items with icons and completion status
   const sidebarItems: SidebarItem[] = [
@@ -108,7 +110,9 @@ const EmployerProfileSidebar: FC<Props> = ({completionDetails}) => {
             </div>
 
             <p className="text-xs text-gray-600">
-              {(completionDetails?.sections?.filter(p=>p.isComplete)?.length || 0)} of 6 sections completed
+              {completionDetails?.sections?.filter((p) => p.isComplete)
+                ?.length || 0}{" "}
+              of 6 sections completed
             </p>
           </div>
 
@@ -172,7 +176,7 @@ const EmployerProfileSidebar: FC<Props> = ({completionDetails}) => {
             </Link>
 
             <Link
-              to="/employer/profile"
+              to={`/employers/${employer?.id}/${employer?.companyName}/profile`}
               className="group flex w-full items-center justify-center gap-2 rounded-lg border border-purple-200 px-4 py-3 text-sm font-medium text-purple-700 transition-colors duration-200 hover:bg-purple-50"
             >
               <Eye className="h-4 w-4" />
@@ -201,7 +205,7 @@ const EmployerProfileSidebar: FC<Props> = ({completionDetails}) => {
               Complete your profile and start attracting top talent today
             </p>
             <Link
-              to="/employer/dashboard"
+              to="/employer/manage-jobs"
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-medium text-purple-700 transition-colors duration-200 hover:bg-gray-50"
             >
               <LayoutDashboard className="h-4 w-4" />

@@ -132,7 +132,7 @@ const ApplicantDashboardSchedules: React.FC = memo(() => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="h-full rounded-2xl border border-slate-200 bg-white shadow-sm"
+        className="h-auto rounded-2xl border border-slate-200 bg-white shadow-sm"
       >
         {/* Header */}
         <div className="border-b border-slate-100 p-4 sm:p-6">

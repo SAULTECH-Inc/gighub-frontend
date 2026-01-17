@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useModalStore from "../../store/modalStateStores.ts";
+import Modal from "../common/Modal.tsx";
 
 interface ShareModalProps {
   modalId: string;
@@ -7,7 +7,6 @@ interface ShareModalProps {
 }
 
 const ShareModal: React.FC<ShareModalProps> = ({ modalId, url }) => {
-  const { isModalOpen, closeModal } = useModalStore();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -17,22 +16,18 @@ const ShareModal: React.FC<ShareModalProps> = ({ modalId, url }) => {
     });
   };
 
-  if (!isModalOpen(modalId)) return null;
-
   const encodedUrl = encodeURIComponent(url);
 
   return (
-    <div
-      className="bg-opacity-20 fixed inset-0 z-50 flex items-center justify-center bg-black"
-      onClick={() => closeModal(modalId)}
-    >
-      <div
-        className="relative flex h-[279px] w-[314px] flex-col justify-center rounded-[10px] bg-white p-6 shadow-lg"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <Modal modalId={modalId}>
+      <div className="relative flex h-[299px] w-[364px] flex-col justify-center rounded-[10px] bg-white p-6 shadow-lg">
         {/* Close Button */}
         <button
-          onClick={() => closeModal(modalId)}
+          onClick={() =>
+            import("../../store/modalStateStores.ts").then(({ default: store }) =>
+              store.getState().closeModal(modalId)
+            )
+          }
           className="absolute top-2 right-2 p-2 text-[24px] text-gray-500 hover:text-gray-700"
         >
           ✕
@@ -63,52 +58,39 @@ const ShareModal: React.FC<ShareModalProps> = ({ modalId, url }) => {
         <div>
           <p className="mb-2 text-left text-sm text-gray-600">Share Link</p>
           <div className="flex justify-between gap-3">
-            {/* WhatsApp */}
             <a
               href={`https://wa.me/?text=${encodedUrl}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex flex-col items-center text-sm text-gray-600 hover:text-purple-600"
             >
-              <img
-                src="https://img.icons8.com/color/48/whatsapp.png"
-                alt="WhatsApp"
-                className="h-8 w-8"
-              />
+              <img src="https://img.icons8.com/color/48/whatsapp.png" />
               WhatsApp
             </a>
-            {/* LinkedIn */}
+
             <a
               href={`https://www.linkedin.com/shareArticle?url=${encodedUrl}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex flex-col items-center text-sm text-gray-600 hover:text-purple-600"
             >
-              <img
-                src="https://img.icons8.com/color/48/linkedin.png"
-                alt="LinkedIn"
-                className="h-8 w-8"
-              />
+              <img src="https://img.icons8.com/color/48/linkedin.png" />
               LinkedIn
             </a>
-            {/* X (Twitter) */}
+
             <a
               href={`https://twitter.com/intent/tweet?url=${encodedUrl}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex flex-col items-center text-sm text-gray-600 hover:text-purple-600"
             >
-              <img
-                src="https://img.icons8.com/ios-glyphs/48/000000/twitter.png"
-                alt="X.com"
-                className="h-8 w-8"
-              />
+              <img src="https://img.icons8.com/ios-glyphs/48/000000/twitter.png" />
               X.com
             </a>
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 

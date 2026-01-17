@@ -44,14 +44,14 @@ interface MessageMenuProps {
 }
 
 const MessageMenu: React.FC<MessageMenuProps> = ({
-  message,
-  isVisible,
-  onClose,
-  onDelete,
-  onReply,
-  onDownload,
-  isSender,
-}) => {
+                                                   message,
+                                                   isVisible,
+                                                   onClose,
+                                                   onDelete,
+                                                   onReply,
+                                                   onDownload,
+                                                   isSender,
+                                                 }) => {
   if (!isVisible) return null;
 
   const handleDelete = () => {
@@ -130,14 +130,16 @@ const ChatWindow: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const [activeMessageMenu, setActiveMessageMenu] = useState<string | null>(
-    null,
-  );
-  const [replyingTo, setReplyingTo] = useState<ExtendedChatMessage | null>(
-    null,
-  );
+  const [activeMessageMenu, setActiveMessageMenu] = useState<string | null>(null);
+  const [replyingTo, setReplyingTo] = useState<ExtendedChatMessage | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadedFileData, setUploadedFileData] = useState<{
+    fileUrl: string;
+    fileName: string;
+    fileType: string;
+    fileSize: number;
+  } | null>(null);
 
   const {
     messages,
@@ -158,7 +160,7 @@ const ChatWindow: React.FC = () => {
   } = useChatStore();
   const { email } = useAuth();
 
-  const { sendMessage } = useChatActions();
+  const { sendMessage: sendMessageAction } = useChatActions();
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
@@ -186,9 +188,7 @@ const ChatWindow: React.FC = () => {
     setIsEmojiPickerVisible(!isEmojiPickerVisible);
   };
 
-  const handleFileSelect = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (!selectedFile) return;
 
@@ -197,6 +197,7 @@ const ChatWindow: React.FC = () => {
     setUploadProgress(0);
 
     try {
+      // Simulate progress
       const progressInterval = setInterval(() => {
         setUploadProgress((prev) => {
           if (prev >= 90) {
@@ -207,33 +208,75 @@ const ChatWindow: React.FC = () => {
         });
       }, 100);
 
+      // Upload file to cloud
       const uploadResponse = await uploadFileGeneral(
         recipientDetails?.applicant?.id || recipientDetails?.employer?.id || 0,
         selectedFile,
         Action.FILE_UPLOAD,
         USER_TYPE,
-        "chat-file",
+        "chat-file"
       );
 
       clearInterval(progressInterval);
       setUploadProgress(100);
 
-      if (uploadResponse.statusCode === 200) {
-        const fileMessageContent = selectedFile.name;
-        setMessage(fileMessageContent);
+      if (uploadResponse.statusCode === 200 && uploadResponse.data?.url) {
+        // Store file metadata for sending
+        setUploadedFileData({
+          fileUrl: uploadResponse.data.url,
+          fileName: selectedFile.name,
+          fileType: selectedFile.type,
+          fileSize: selectedFile.size,
+        });
+
+        // Set message content to file name
+        setMessage(`📎 ${selectedFile.name}`);
       } else {
-        throw new Error("Upload failed");
+        throw new Error("Upload failed - no file URL returned");
       }
     } catch (error) {
       console.error("File upload error:", error);
       alert("Failed to upload file. Please try again.");
+      setUploadedFileData(null);
     } finally {
-      setIsUploading(false);
-      setUploadProgress(0);
+      setTimeout(() => {
+        setIsUploading(false);
+        setUploadProgress(0);
+      }, 500);
+
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
     }
+  };
+
+  const sendMessage = () => {
+    if (!message.trim() && !uploadedFileData) return;
+
+    // If there's an uploaded file, send it as a file message
+    if (uploadedFileData) {
+      sendMessageAction({
+        isFile: true,
+        fileUrl: uploadedFileData.fileUrl,
+        fileName: uploadedFileData.fileName,
+        fileType: uploadedFileData.fileType,
+        fileSize: uploadedFileData.fileSize,
+        content: message.replace(`📎 ${uploadedFileData.fileName}`, "").trim() || uploadedFileData.fileName,
+        replyTo: replyingTo || undefined,
+      });
+
+      // Clear file data after sending
+      setUploadedFileData(null);
+    } else {
+      // Send regular text message
+      sendMessageAction({
+        content: message,
+        replyTo: replyingTo || undefined,
+      });
+    }
+    // Clear message and reply state
+    setMessage("");
+    setReplyingTo(null);
   };
 
   const handleDeleteMessage = async (messageId: string) => {
@@ -255,17 +298,43 @@ const ChatWindow: React.FC = () => {
     setReplyingTo(msg);
   };
 
-  const handleDownloadFile = (fileUrl: string, fileName: string) => {
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownloadFile = async (fileUrl: string, fileName: string) => {
+    try {
+      // Fetch the file
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download error:", error);
+      // Fallback to direct link if fetch fails (CORS issues)
+      const link = document.createElement("a");
+      link.href = fileUrl;
+      link.download = fileName;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   const cancelReply = () => {
     setReplyingTo(null);
+  };
+
+  const cancelFileUpload = () => {
+    setUploadedFileData(null);
+    setMessage("");
   };
 
   const isImageFile = (fileType: string) => {
@@ -295,7 +364,6 @@ const ChatWindow: React.FC = () => {
       return <FaFileAudio className="text-purple-500" size={20} />;
     }
 
-    // Document types
     if (["pdf"].includes(extension)) {
       return <FaFilePdf className="text-red-600" size={20} />;
     }
@@ -389,7 +457,7 @@ const ChatWindow: React.FC = () => {
       setMessages,
       decrementUnread,
       messages,
-    ],
+    ]
   );
 
   useEffect(() => {
@@ -414,7 +482,7 @@ const ChatWindow: React.FC = () => {
       {
         threshold: 0.5,
         rootMargin: "0px 0px -50px 0px",
-      },
+      }
     );
 
     const refsSnapshot = [...messageRefs.current];
@@ -429,33 +497,50 @@ const ChatWindow: React.FC = () => {
     };
   }, [handleOpenMessage, messages, sender]);
 
-  let name: string | null | undefined;
-  let profilePics: string | null | undefined;
-  let userLocation: string | null | undefined;
-  let profession: string | null | undefined;
+  const cleanValue = (value?: string | null) => {
+    if (!value) return null;
 
-  if (recipientDetails?.userType === UserType.APPLICANT) {
-    name =
-      recipientDetails?.applicant?.firstName +
-      " " +
-      recipientDetails?.applicant?.lastName;
-    profilePics = recipientDetails?.applicant?.profilePicture;
-    userLocation =
-      recipientDetails?.applicant?.city +
-      " " +
-      recipientDetails?.applicant?.country;
-    profession =
-      recipientDetails?.applicant?.cv?.professionalTitle ||
-      recipientDetails?.applicant?.professionalTitle;
-  } else {
-    name = recipientDetails?.employer?.companyName;
-    profilePics = recipientDetails?.employer?.companyLogo;
-    userLocation =
-      recipientDetails?.employer?.city +
-      " " +
-      recipientDetails?.employer?.country;
-    profession = recipientDetails?.employer?.industry;
-  }
+    const v = value.trim().toLowerCase();
+    if (v === "null" || v === "undefined" || v === "") return null;
+
+    return value;
+  };
+
+  const isApplicant = recipientDetails?.userType === UserType.APPLICANT;
+
+  const name = isApplicant
+    ? [
+      cleanValue(recipientDetails?.applicant?.firstName),
+      cleanValue(recipientDetails?.applicant?.lastName),
+    ]
+      .filter(Boolean)
+      .join(" ")
+    : cleanValue(recipientDetails?.employer?.companyName);
+
+  const profilePics = isApplicant
+    ? cleanValue(recipientDetails?.applicant?.profilePicture)
+    : cleanValue(recipientDetails?.employer?.companyLogo);
+
+  const profession = isApplicant
+    ? cleanValue(
+      recipientDetails?.applicant?.cv?.professionalTitle ??
+      recipientDetails?.applicant?.professionalTitle
+    )
+    : cleanValue(recipientDetails?.employer?.industry);
+
+  const userLocation = isApplicant
+    ? [
+      cleanValue(recipientDetails?.applicant?.city),
+      cleanValue(recipientDetails?.applicant?.country),
+    ]
+      .filter(Boolean)
+      .join(", ")
+    : [
+      cleanValue(recipientDetails?.employer?.city),
+      cleanValue(recipientDetails?.employer?.country),
+    ]
+      .filter(Boolean)
+      .join(", ");
 
   if (isClosed) return null;
 
@@ -463,38 +548,42 @@ const ChatWindow: React.FC = () => {
     <Draggable handle=".drag-handle">
       <div
         className={`fixed right-5 bottom-8 z-[999999] w-[90%] md:bottom-5 md:w-[420px] ${
-          isMinimized ? "h-16" : "h-[650px]"
+          isMinimized ? "h-16" : "h-[calc(100vh-120px)] max-h-[650px]"
         } flex flex-col rounded-t-2xl border border-gray-200 bg-white shadow-2xl`}
       >
         {/* Header */}
-        <div className="drag-handle relative flex h-[100px] w-full cursor-move items-center justify-between rounded-t-2xl bg-gradient-to-r from-purple-600 to-blue-600 p-4 text-lg font-semibold text-white">
-          <div className="absolute -top-1 right-2 flex items-center gap-x-1">
+        <div className="drag-handle relative flex h-[70px] w-full cursor-move items-center justify-between rounded-t-2xl bg-gradient-to-r from-purple-600 to-blue-600 p-3 text-lg font-semibold text-white">
+          <div className="absolute top-2 right-2 flex items-center gap-x-1">
             <FaWindowMinimize
               onClick={() => setIsMinimized(!isMinimized)}
               onTouchStart={() => setIsMinimized(!isMinimized)}
-              className="mb-1 cursor-pointer rounded px-2 text-[30px] text-white"
+              className="cursor-pointer rounded p-1.5 text-[20px] text-white hover:bg-white/20 transition-colors"
             />
             <button
               onClick={() => setIsClosed(true)}
               onTouchStart={() => setIsClosed(true)}
-              className="rounded px-2 py-1 text-[30px] text-white cursor-pointer"
+              className="rounded p-1 text-[28px] leading-none text-white cursor-pointer hover:bg-white/20 transition-colors"
             >
               &times;
             </button>
           </div>
-          <div className="flex items-center gap-x-3">
-            <div className="relative h-[60px] w-[60px] overflow-hidden rounded-full bg-gray-300 ring-2 ring-white/30">
+          <div className="flex items-center gap-x-2">
+            <div className="relative h-[45px] w-[45px] overflow-hidden rounded-full bg-gray-300 ring-2 ring-white/30">
               <img
                 src={profilePics || avatarIcon}
                 alt="Profile"
                 className="h-full w-full object-cover"
               />
-              <div className="absolute -right-1 -bottom-1 h-4 w-4 rounded-full border-2 border-white bg-green-400"></div>
+              <div className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-white bg-green-400"></div>
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-semibold">{name}</span>
-              <span className="text-xs text-white/80">{profession}</span>
-              <span className="text-xs text-white/60">{userLocation}</span>
+              {name && <span className="text-sm font-semibold">{name}</span>}
+              {profession && (
+                <span className="text-xs text-white/80">{profession}</span>
+              )}
+              {userLocation && (
+                <span className="text-xs text-white/60">{userLocation}</span>
+              )}
             </div>
           </div>
         </div>
@@ -570,7 +659,7 @@ const ChatWindow: React.FC = () => {
                                     e.stopPropagation();
                                     handleDownloadFile(
                                       extendedMsg.fileUrl!,
-                                      extendedMsg.fileName!,
+                                      extendedMsg.fileName!
                                     );
                                   }}
                                   className="bg-opacity-90 hover:bg-opacity-100 rounded-full bg-white p-2 opacity-0 transition-all group-hover:opacity-100"
@@ -600,7 +689,7 @@ const ChatWindow: React.FC = () => {
                                 onClick={() =>
                                   handleDownloadFile(
                                     extendedMsg.fileUrl!,
-                                    extendedMsg.fileName!,
+                                    extendedMsg.fileName!
                                   )
                                 }
                                 className="bg-opacity-50 hover:bg-opacity-70 absolute top-2 right-2 rounded-full bg-black p-2 transition-all"
@@ -619,7 +708,7 @@ const ChatWindow: React.FC = () => {
                               <div className="flex-shrink-0">
                                 {getFileIcon(
                                   extendedMsg.fileName || "",
-                                  extendedMsg.fileType || "",
+                                  extendedMsg.fileType || ""
                                 )}
                               </div>
                               <div className="min-w-0 flex-1">
@@ -646,7 +735,7 @@ const ChatWindow: React.FC = () => {
                                 onClick={() =>
                                   handleDownloadFile(
                                     extendedMsg.fileUrl!,
-                                    extendedMsg.fileName!,
+                                    extendedMsg.fileName!
                                   )
                                 }
                                 className={`flex-shrink-0 rounded-full p-2 transition-colors ${
@@ -676,7 +765,7 @@ const ChatWindow: React.FC = () => {
                           setActiveMessageMenu(
                             activeMessageMenu === msg._id
                               ? null
-                              : msg._id || null,
+                              : msg._id || null
                           );
                         }}
                         className={`absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full opacity-0 shadow-md transition-opacity group-hover:opacity-100 ${
@@ -742,7 +831,9 @@ const ChatWindow: React.FC = () => {
             {isUploading && (
               <div className="flex justify-center">
                 <div className="rounded-lg border bg-white p-4 shadow-lg">
-                  <div className="mb-2 text-sm text-gray-600">Uploading...</div>
+                  <div className="mb-2 text-sm text-gray-600">
+                    Uploading file...
+                  </div>
                   <div className="h-2 w-48 rounded-full bg-gray-200">
                     <div
                       className="h-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-300"
@@ -783,6 +874,33 @@ const ChatWindow: React.FC = () => {
               </div>
             )}
 
+            {/* File upload preview */}
+            {uploadedFileData && (
+              <div className="mb-3 flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-3">
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                  {getFileIcon(
+                    uploadedFileData.fileName,
+                    uploadedFileData.fileType
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-medium text-gray-900">
+                      {uploadedFileData.fileName}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {formatFileSize(uploadedFileData.fileSize)} • Ready to send
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={cancelFileUpload}
+                  className="ml-2 text-gray-400 hover:text-gray-600"
+                  title="Cancel file upload"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
             <div className="flex items-center space-x-3">
               <button
                 onClick={toggleEmojiPicker}
@@ -812,16 +930,18 @@ const ChatWindow: React.FC = () => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     sendMessage();
-                    setReplyingTo(null);
                   }
                 }}
                 rows={1}
                 className="flex-1 resize-none rounded-xl border border-gray-300 bg-gray-50 p-3 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
                 placeholder={
-                  replyingTo
-                    ? `Reply to ${replyingTo.sender}...`
-                    : "Type a message..."
+                  uploadedFileData
+                    ? "Add a caption (optional)..."
+                    : replyingTo
+                      ? `Reply to ${replyingTo.sender}...`
+                      : "Type a message..."
                 }
+                disabled={isUploading}
               />
 
               <input
@@ -831,23 +951,31 @@ const ChatWindow: React.FC = () => {
                 className="hidden"
                 id="file-input"
                 accept="*/*"
+                disabled={isUploading}
               />
               <label
                 htmlFor="file-input"
-                className="cursor-pointer text-2xl transition-transform hover:scale-110"
+                className={`text-2xl transition-transform ${
+                  isUploading
+                    ? "cursor-not-allowed opacity-50"
+                    : "cursor-pointer hover:scale-110"
+                }`}
                 title="Attach file"
               >
                 📎
               </label>
 
               <button
-                onClick={() => {
-                  sendMessage();
-                  setReplyingTo(null);
-                }}
-                disabled={isUploading || !message.trim()}
-                className="flex h-[44px] w-[44px] items-center justify-center rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg transition-all hover:from-purple-700 hover:to-blue-700 hover:shadow-xl disabled:opacity-50"
-                title={replyingTo ? "Send reply" : "Send message"}
+                onClick={sendMessage}
+                disabled={isUploading || (!message.trim() && !uploadedFileData)}
+                className="flex h-[44px] w-[44px] items-center justify-center rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg transition-all hover:from-purple-700 hover:to-blue-700 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                title={
+                  uploadedFileData
+                    ? "Send file"
+                    : replyingTo
+                      ? "Send reply"
+                      : "Send message"
+                }
               >
                 <img src={sendIcon} alt="send" className="h-5 w-5" />
               </button>

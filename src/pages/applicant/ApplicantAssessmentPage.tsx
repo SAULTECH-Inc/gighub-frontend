@@ -305,9 +305,8 @@ const ApplicantAssessmentPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <TopNavBar
-        navItems={applicantNavItems}
-        navItemsMobile={applicantNavItemsMobile}
-        navbarItemsMap={applicantNavBarItemMap}
+                navbarItemsMap={applicantNavBarItemMap}
+                userType="applicant"
       />
       <div className="max-w-7xl mx-auto p-6">
         {/* Header */}

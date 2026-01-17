@@ -79,7 +79,7 @@ const ChatSocketHandler = ({
       }
     };
 
-    loadMessages();
+    loadMessages().then((r)=>r);
   }, [userId, recipientId, setMessages]);
 
   /** Handle user status updates **/

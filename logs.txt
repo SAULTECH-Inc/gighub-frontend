@@ -1,10 +1,3 @@
-madapi-mtn-customer-promotion-infinity-system-b84c48d65-554js     1/1     Running            0                56d
-madapi-mtn-customer-promotion-infinity-system-b84c48d65-8l9vk     1/1     Running            0                56d
-madapi-mtn-customer-promotion-infinity-system-b84c48d65-8wqcc     1/1     Running            0                56d
-madapi-mtn-customer-promotion-infinity-system-b84c48d65-94ks4     1/1     Running            0                56d
-madapi-mtn-customer-promotion-infinity-system-b84c48d65-9khbx     1/1     Running            0                56d
-madapi-mtn-customer-promotion-infinity-system-b84c48d65-d8fgb     1/1     Running            0                56d
-madapi-mtn-customer-promotion-infinity-system-b84c48d65-jxn2g     1/1     Running            0                56d
-madapi-mtn-customer-promotion-infinity-system-b84c48d65-w52sp     1/1     Running            0                56d
-madapi-mtn-customer-promotion-infinity-system-b84c48d65-xl89z     1/1     Running            4 (56d ago)      56d
-madapi-mtn-customer-promotion-infinity-system-b84c48d65-zf28s     1/1     Running            0                57d
+sudo apt install -y php8.4-cli php8.4-common php8.4-fpm php8.4-mysql php8.4-pgsql \
+php8.4-xml php8.4-mbstring php8.4-curl php8.4-zip php8.4-gd php8.4-bcmath php8.4-intl \
+php8.4-readline php8.4-soap php8.4-dom php8.4-tokenizer

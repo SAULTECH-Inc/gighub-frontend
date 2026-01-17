@@ -2,6 +2,7 @@ import React from "react";
 import useModalStore from "../../store/modalStateStores.ts";
 import { X, CheckCircle, Calendar, Mail, Bell, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
+import Modal from "../common/Modal.tsx";
 
 interface SuccessModalProps {
   modalId: string;
@@ -17,10 +18,8 @@ const ApplicationSuccessModal: React.FC<SuccessModalProps> = ({ modalId }) => {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 p-4 backdrop-blur-xs">
+    <Modal modalId={modalId} backdropClassName="bg-black/20">
       <div className="relative max-h-[95vh] w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
         {/* Close Button */}
         <button
@@ -146,7 +145,7 @@ const ApplicationSuccessModal: React.FC<SuccessModalProps> = ({ modalId }) => {
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 

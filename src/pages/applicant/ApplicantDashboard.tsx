@@ -5,8 +5,6 @@ import ApplicantRecentApplications from "../../components/ui/ApplicantRecentAppl
 import ApplicantMessages from "../../components/ui/ApplicantMessages.tsx";
 import {
   applicantNavBarItemMap,
-  applicantNavItems,
-  applicantNavItemsMobile,
 } from "../../utils/constants.ts";
 import { useEffect } from "react";
 import { ApplicationMetrics } from "../../utils/types";
@@ -32,7 +30,7 @@ export const LAYOUT = {
   cardRadius: "rounded-2xl",
   containerGap: "gap-6",
   gridGap: "gap-6",
-  sectionGap: "space-y-6",
+  sectionGap: "space-y-14",
 } as const;
 
 export const ApplicantDashboard = () => {
@@ -72,9 +70,8 @@ export const ApplicantDashboard = () => {
       {/* Navigation */}
       <div className="sticky top-0 z-50 border-b border-slate-200/50 bg-white/90 backdrop-blur-sm">
         <TopNavBar
-          navItems={applicantNavItems}
-          navItemsMobile={applicantNavItemsMobile}
           navbarItemsMap={applicantNavBarItemMap}
+          userType={"applicant"}
         />
       </div>
 
@@ -82,7 +79,7 @@ export const ApplicantDashboard = () => {
       <div className="relative pt-8 pb-6">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div
-            className={`bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-700 ${LAYOUT.cardRadius} p-8 text-white ${SHADOWS.xl} relative overflow-hidden`}
+            className={`bg-gradient-to-r from-[#6438C2] to-[#FA4E09] ${LAYOUT.cardRadius} p-8 text-white ${SHADOWS.xl} relative overflow-hidden`}
           >
             {/* Background pattern */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent" />

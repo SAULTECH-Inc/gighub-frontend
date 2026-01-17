@@ -429,9 +429,8 @@ const PublicProfileView: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <TopNavBar
-        navItems={applicantNavItems}
-        navItemsMobile={applicantNavItemsMobile}
-        navbarItemsMap={applicantNavBarItemMap}
+                navbarItemsMap={applicantNavBarItemMap}
+                userType="applicant"
       />
 
       <div className="container mx-auto max-w-6xl px-4 py-8">

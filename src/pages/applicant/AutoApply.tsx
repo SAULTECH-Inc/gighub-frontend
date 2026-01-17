@@ -35,9 +35,8 @@ const AutoApply = () => {
   return (
     <div>
       <TopNavBar
-        navItems={applicantNavItems}
-        navItemsMobile={applicantNavItemsMobile}
-        navbarItemsMap={applicantNavBarItemMap}
+                navbarItemsMap={applicantNavBarItemMap}
+                userType="applicant"
       />
       <div className="mt-5 flex flex-col bg-[#F7F8FA] p-6">
         <JobSearchBar />

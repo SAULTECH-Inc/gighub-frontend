@@ -138,9 +138,8 @@ const MyApplications: React.FC = memo(() => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Navigation */}
       <TopNavBar
-        navItems={applicantNavItems}
-        navItemsMobile={applicantNavItemsMobile}
-        navbarItemsMap={applicantNavBarItemMap}
+                navbarItemsMap={applicantNavBarItemMap}
+                userType="applicant"
       />
 
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">

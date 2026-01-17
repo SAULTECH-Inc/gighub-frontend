@@ -472,13 +472,13 @@ const PaymentModal: React.FC<ModalProps> = ({
               Selected Plan
             </span>
             <span className="text-2xl font-bold text-indigo-600">
-              {selectedPlan.currency}
-              {numeral(selectedPlan.price).format("0,0")}
+              {selectedPlan?.currency || "N"}
+              {numeral(selectedPlan?.price || "0").format("0,0")}
             </span>
           </div>
           <div className="flex items-center justify-center rounded-lg border border-indigo-200 bg-white px-4 py-2">
             <span className="text-sm font-medium text-slate-800">
-              {selectedPlan.name} / {selectedPlan.billingCycle}
+              {selectedPlan?.name} / {selectedPlan?.billingCycle}
             </span>
           </div>
         </div>
@@ -705,8 +705,8 @@ const PaymentModal: React.FC<ModalProps> = ({
                   <>
                     <Shield className="h-4 w-4" />
                     <span>
-                      Pay {selectedPlan.currency}
-                      {numeral(selectedPlan.price).format("0,0")} Securely
+                      Pay {selectedPlan?.currency || "N"}
+                      {numeral(selectedPlan?.price || 0).format("0,0")} Securely
                     </span>
                   </>
                 )}

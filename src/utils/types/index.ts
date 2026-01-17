@@ -186,6 +186,12 @@ export interface EmployerData {
   noMutualConnections?: number;
 }
 
+export interface TwoFactorLoginResponse {
+  status: "2FA_REQUIRED";
+  tempToken: string;
+  email?: string;
+}
+
 export interface ApplicantPersonalInfo {
   firstName?: string;
   lastName?: string;
@@ -1188,3 +1194,48 @@ export interface Review {
   replies: number;
   liked: boolean;
 }
+
+
+export interface RequestDemo{
+  name: string;
+  email: string;
+  company: string;
+  phone: string;
+  preferredDate: string;
+  preferredTime: string;
+  interests: any[];
+}
+
+export interface JobRatingRequest{
+  score: number;
+  comment?: string;
+  rateeId: number;
+  rateeType: RateeType;
+}
+export enum TutorialCategory {
+  GETTING_STARTED = "GETTING_STARTED",
+  AUTO_APPLY = "AUTO_APPLY",
+  NETWORKING = "NETWORKING",
+  PROFILE = "PROFILE",
+  ADVANCED = "ADVANCED",
+}
+export interface TutorialResponse{
+  id: string;                 // UUID or string representation
+  title: string;
+  description: string;
+  duration: string;
+  thumbnail?: string;
+  videoUrl: string;
+  category: TutorialCategory;
+  views: number;
+  likes?: number;
+  isPublished?: boolean;
+  tags?: string[];
+  createdAt?: string;          // ISO date string
+  updatedAt?: string;          // ISO date string
+}
+
+export const normalizeUrl = (url?: string) => {
+  if (!url) return "#";
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+};

@@ -12,9 +12,8 @@ const ApplicantShortList = () => {
   return (
     <div>
       <TopNavBar
-        navItems={applicantNavItems}
-        navItemsMobile={applicantNavItemsMobile}
-        navbarItemsMap={applicantNavBarItemMap}
+                navbarItemsMap={applicantNavBarItemMap}
+                userType="applicant"
       />
       <div className="grid min-h-screen grid-cols-[1024px_396px] gap-6 bg-[#F7F8FA] px-6 max-lg:grid-cols-1">
         {/* first column */}

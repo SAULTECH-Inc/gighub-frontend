@@ -6,7 +6,8 @@ import {
   Save, Plus, Trash2, X
 } from 'lucide-react';
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
-import { applicantNavBarItemMap, applicantNavItems, applicantNavItemsMobile } from "../../utils/constants.ts";
+import { applicantNavBarItemMap } from "../../utils/constants.ts";
+import {generateCvFromTextOrFileTextInput} from "../../services/api";
 
 interface PersonalInfo {
   name: string;
@@ -92,6 +93,7 @@ const ResumeBuilder: React.FC = () => {
     if (!aiInput.trim()) return;
 
     setIsProcessing(true);
+    const response = await generateCvFromTextOrFileTextInput(aiInput);
     setTimeout(() => {
       setCvData({
         personalInfo: {
@@ -202,10 +204,10 @@ const ResumeBuilder: React.FC = () => {
       ].map((step, idx) => (
         <React.Fragment key={step.key}>
           <div className={`flex items-center gap-2 ${
-            currentStep === step.key ? 'text-blue-600' : 'text-gray-400'
+            currentStep === step.key ? 'text-purple-600' : 'text-gray-400'
           }`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              currentStep === step.key ? 'bg-blue-600 text-white' : 'bg-gray-200'
+              currentStep === step.key ? 'bg-purple-600 text-white' : 'bg-gray-200'
             }`}>
               {idx + 1}
             </div>
@@ -228,7 +230,7 @@ const ResumeBuilder: React.FC = () => {
             setBuildMethod('manual');
             setCurrentStep('select-template');
           }}
-          className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all border-2 border-gray-200 hover:border-blue-500 text-left"
+          className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all border-2 border-gray-200 hover:border-purple-500 text-left"
         >
           <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
             <Edit3 className="w-6 h-6 text-blue-600" />
@@ -256,7 +258,7 @@ const ResumeBuilder: React.FC = () => {
             setBuildMethod('ai');
             setShowAIModal(true);
           }}
-          className="bg-gradient-to-br from-purple-500 to-blue-600 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all text-left text-white relative overflow-hidden"
+          className="bg-gradient-to-br from-[#6438C2] to-[#FA4E09] p-8 rounded-xl shadow-lg hover:shadow-xl transition-all text-left text-white relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
           <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mb-4">
@@ -665,7 +667,7 @@ const ResumeBuilder: React.FC = () => {
   );
 
   const AIModal = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-2xl w-full p-8 relative">
         <button
           onClick={() => setShowAIModal(false)}
@@ -721,7 +723,7 @@ const ResumeBuilder: React.FC = () => {
   );
 
   const ReviewModal = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-xl w-full p-8 relative">
         <button
           onClick={() => setShowReviewModal(false)}
@@ -800,7 +802,7 @@ const ResumeBuilder: React.FC = () => {
   );
 
   const PaymentModal = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-md w-full p-8 relative">
         <button
           onClick={() => setShowPaymentModal(false)}
@@ -877,9 +879,8 @@ const ResumeBuilder: React.FC = () => {
   return (
     <div>
       <TopNavBar
-        navItems={applicantNavItems}
-        navItemsMobile={applicantNavItemsMobile}
-        navbarItemsMap={applicantNavBarItemMap}
+                navbarItemsMap={applicantNavBarItemMap}
+                userType="applicant"
       />
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8 px-4">

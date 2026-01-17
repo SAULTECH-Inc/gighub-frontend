@@ -118,7 +118,7 @@ const GigHubAIAssistant = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group hover:scale-110"
+          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group hover:scale-110 z-[999999]"
         >
           <MessageCircle className="w-7 h-7 text-white" />
           <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-pulse"></span>
@@ -127,15 +127,15 @@ const GigHubAIAssistant = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
+        <div className="fixed bottom-6 right-6 w-[90%] md:w-96 h-[calc(100vh-120px)] max-h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 z-[999999]">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex items-center justify-between">
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-3 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                <Bot className="w-6 h-6 text-blue-600" />
+              <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center">
+                <Bot className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h3 className="text-white font-semibold">GigHub AI</h3>
+                <h3 className="text-white font-semibold text-sm">GigHub AI</h3>
                 <p className="text-blue-100 text-xs">Always here to help</p>
               </div>
             </div>
@@ -149,7 +149,7 @@ const GigHubAIAssistant = () => {
 
           {/* User Type Selection */}
           {!userType && messages.length === 1 && (
-            <div className="p-4 bg-gray-50 border-b">
+            <div className="p-4 bg-gray-50 border-b flex-shrink-0">
               <p className="text-sm text-gray-600 mb-3">I'm here to help you:</p>
               <div className="flex gap-2">
                 <button
@@ -236,7 +236,7 @@ const GigHubAIAssistant = () => {
           </div>
 
           {/* Input Area */}
-          <div className="p-4 bg-white border-t border-gray-200">
+          <div className="p-4 bg-white border-t border-gray-200 flex-shrink-0">
             {userType && (
               <button
                 onClick={resetChat}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Search, Filter, MessageCircle, Eye, Heart, Download,
   MapPin, Briefcase, Calendar, DollarSign, Award,
@@ -6,7 +6,7 @@ import {
   Mail, Phone, Linkedin, Github, Globe, Clock, CheckCircle
 } from 'lucide-react';
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
-import { employerNavBarItemMap, employerNavItems, employerNavItemsMobile } from "../../utils/constants.ts";
+import { employerNavBarItemMap} from "../../utils/constants.ts";
 
 const CandidateMatchResults = () => {
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -78,9 +78,8 @@ const CandidateMatchResults = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <TopNavBar
-        navItems={employerNavItems}
-        navItemsMobile={employerNavItemsMobile}
         navbarItemsMap={employerNavBarItemMap}
+        userType={"employer"}
       />
       {/* Header */}
       <div className="bg-white border-b sticky top-0 z-40 shadow-sm">

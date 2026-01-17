@@ -33,13 +33,13 @@ const Freq: Option[] = [
 ];
 
 export default function SalaryRangeSelector({
-  label = "Salary Range",
-  baseMin = 0,
-  baseMax = 0,
-  currency = "NGN",
-  frequency = "month",
-  onChange,
-}: SalaryRangeProps) {
+                                              label,
+                                              baseMin = 0,
+                                              baseMax = 0,
+                                              currency = "NGN",
+                                              frequency = "month",
+                                              onChange,
+                                            }: SalaryRangeProps) {
   const [selectedCurrencySymbol, setSelectedCurrencySymbol] = useState<string>(
     () => {
       const found = currencies.find((c) => c.label === currency);
@@ -55,7 +55,7 @@ export default function SalaryRangeSelector({
 
   useEffect(() => {
     onChangeDebounced({
-      currency: selectedCurrencySymbol, // symbol, not abbreviation
+      currency: selectedCurrencySymbol,
       min: Math.round(minValue),
       max: Math.round(maxValue),
       frequency: selectedFrequency,
@@ -66,76 +66,80 @@ export default function SalaryRangeSelector({
   }, [selectedCurrencySymbol, selectedFrequency, minValue, maxValue]);
 
   return (
-    <div className="my-4 max-w-md rounded-xl bg-white">
-      {label && <h3 className="mb-4">{label}</h3>}
+    <div className="space-y-4">
+      {label && <h3 className="text-sm font-semibold text-gray-900">{label}</h3>}
 
-      <div className="mb-4 flex gap-3">
+      {/* Currency and Frequency Selectors */}
+      <div className="grid grid-cols-2 gap-3">
         <CustomSelect
-          className="w-1/2 rounded-lg border border-[#E6E6E6] bg-white p-2 text-sm focus:outline-none"
+          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none"
           options={currencies}
           placeholder="NGN"
           onChange={(v) => setSelectedCurrencySymbol(v.value)}
         />
 
         <CustomSelect
-          className="w-1/2 rounded-lg border border-[#E6E6E6] bg-white p-2 text-sm focus:outline-none"
+          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none"
           options={Freq}
           placeholder="Monthly"
           onChange={(v) => setSelectedFrequency(v.value)}
         />
       </div>
 
-      <div className="mb-4">
-        <label className="mb-2 block text-sm font-medium text-gray-600">
-          <span className="mr-2">Range:</span>
-          <span className="font-bold text-gray-800">
-            {selectedCurrencySymbol} {Math.round(minValue).toLocaleString()} -{" "}
-            {selectedCurrencySymbol} {Math.round(maxValue).toLocaleString()}{" "}
-            {frequencyLabels[selectedFrequency]}
-          </span>
-        </label>
+      {/* Range Display */}
+      <div className="rounded-lg bg-purple-50 p-3">
+        <p className="text-xs font-medium text-purple-900">
+          {selectedCurrencySymbol} {Math.round(minValue).toLocaleString()} -{" "}
+          {selectedCurrencySymbol} {Math.round(maxValue).toLocaleString()}{" "}
+          <span className="text-purple-700">{frequencyLabels[selectedFrequency]}</span>
+        </p>
+      </div>
 
-        <div className="mt-2 flex gap-4">
-          <div className="flex-1">
-            <label className="mb-1 block text-sm text-gray-600">Minimum</label>
-            <div className="relative">
-              <span className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-500">
-                {selectedCurrencySymbol}
-              </span>
-              <input
-                type="number"
-                min={0}
-                value={Math.round(minValue)}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  const clamped = Math.max(0, Math.min(value, maxValue));
-                  setMinValue(clamped);
-                }}
-                className="w-full rounded-lg border border-[#E6E6E6] py-2 pr-3 pl-8 focus:border-transparent focus:ring-2 focus:ring-purple-300"
-                step="100"
-              />
-            </div>
+      {/* Min and Max Inputs */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-gray-700">
+            Minimum
+          </label>
+          <div className="relative">
+            <span className="absolute top-1/2 left-3 -translate-y-1/2 text-sm text-gray-500">
+              {selectedCurrencySymbol}
+            </span>
+            <input
+              type="number"
+              min={0}
+              value={Math.round(minValue)}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                const clamped = Math.max(0, Math.min(value, maxValue));
+                setMinValue(clamped);
+              }}
+              className="w-full rounded-lg border border-gray-300 py-2 pr-3 pl-8 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none"
+              step="100"
+            />
           </div>
+        </div>
 
-          <div className="flex-1">
-            <label className="mb-1 block text-sm text-gray-600">Maximum</label>
-            <div className="relative">
-              <span className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-500">
-                {selectedCurrencySymbol}
-              </span>
-              <input
-                type="number"
-                min={minValue}
-                value={Math.round(maxValue)}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  const clamped = Math.max(minValue, value);
-                  setMaxValue(clamped);
-                }}
-                className="w-full rounded-lg border border-[#E6E6E6] py-2 pr-3 pl-8 focus:border-transparent focus:ring-2 focus:ring-purple-300"
-                step="100"
-              />
-            </div>
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-gray-700">
+            Maximum
+          </label>
+          <div className="relative">
+            <span className="absolute top-1/2 left-3 -translate-y-1/2 text-sm text-gray-500">
+              {selectedCurrencySymbol}
+            </span>
+            <input
+              type="number"
+              min={minValue}
+              value={Math.round(maxValue)}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                const clamped = Math.max(minValue, value);
+                setMaxValue(clamped);
+              }}
+              className="w-full rounded-lg border border-gray-300 py-2 pr-3 pl-8 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none"
+              step="100"
+            />
           </div>
         </div>
       </div>

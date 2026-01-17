@@ -146,11 +146,11 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = memo(
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", duration: 0.3 }}
-            className="relative max-h-[90vh] w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl"
+            className="relative h-auto w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header with gradient background */}
-            <div className="relative h-32 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-800">
+            <div className="relative h-32 bg-gradient-to-r from-[#6438C2] to-[#FA4E09]">
               {/* Close Button */}
               <motion.button
                 whileHover={{ scale: 1.1 }}
@@ -211,14 +211,14 @@ const ViewApplicationMethodModal: React.FC<ModalProps> = memo(
                   className={`inline-flex items-center rounded-lg border px-4 py-2 text-sm font-medium ${statusStyles[statusVariant]}`}
                 >
                   <div
-                    className={`mr-2 h-2 w-2 rounded-full ${statusVariant === "warning" ? "bg-amber-500" : statusVariant === "success" ? "bg-emerald-500" : statusVariant === "error" ? "bg-red-500" : statusVariant === "info" ? "bg-blue-500" : "bg-slate-500"}`}
+                    className={`mr-2 h-2 w-2 rounded-full ${statusVariant === "warning" ? "bg-amber-500" : statusVariant === "success" ? "bg-emerald-500" : statusVariant === "error" ? "bg-red-500" : statusVariant === "info" ? "bg-purple-500" : "bg-slate-500"}`}
                   />
                   {myApplication?.status}
                 </div>
 
                 <Link
                   to={profilePath}
-                  className="inline-flex items-center space-x-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
+                  className="inline-flex items-center space-x-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:outline-none"
                 >
                   <span>View Profile</span>
                   <ExternalLink className="h-4 w-4" />

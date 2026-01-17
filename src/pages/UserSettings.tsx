@@ -25,11 +25,7 @@ import {
 import TopNavBar from "../components/layouts/TopNavBar.tsx";
 import {
   applicantNavBarItemMap,
-  applicantNavItems,
-  applicantNavItemsMobile,
   employerNavBarItemMap,
-  employerNavItems,
-  employerNavItemsMobile,
 } from "../utils/constants.ts";
 import ManageJobNotification from "./settings/notification/employer/ManageJobNotification.tsx";
 import JobPostingStatus from "./settings/notification/employer/JobPostingStatus.tsx";
@@ -81,16 +77,14 @@ const UserSettings: FC = () => {
     <div className="mx-auto h-auto w-full bg-[#F7F8FA]">
       {userType === UserType.EMPLOYER ? (
         <TopNavBar
-          navItems={employerNavItems}
-          navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
+          userType="employer"
         />
       ) : (
         <TopNavBar
-          navItems={applicantNavItems}
-          navItemsMobile={applicantNavItemsMobile}
-          navbarItemsMap={applicantNavBarItemMap}
-        />
+        navbarItemsMap={applicantNavBarItemMap}
+      userType="applicant"
+    />
       )}
       <div className="mt-10 grid w-full grid-cols-1 justify-center gap-x-[5%] px-2 md:px-10 lg:grid-cols-[20%_70%]">
         {/* Sidebar */}

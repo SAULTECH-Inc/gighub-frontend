@@ -13,6 +13,7 @@ import {
   ProfessionalSummaryData,
   Role,
   Socials,
+  TwoFactorLoginResponse,
   VerificationDetails,
 } from "../utils/types";
 import { privateApiClient, publicApiClient } from "../client/axios.ts";
@@ -25,6 +26,7 @@ import {
 } from "../utils/constants.ts";
 import { UserType } from "../utils/enums.ts";
 import { handleError, storage } from "../utils/helpers.ts";
+import axios from "axios";
 
 export const removeFromLocalStorage = async (nodeEnv: string) => {
   if (nodeEnv === "development") {
@@ -52,6 +54,11 @@ export const removeFromLocalStorage = async (nodeEnv: string) => {
     localStorage.removeItem("subscription-store");
     //application-view-storage
     localStorage.removeItem("application-view-storage");
+    localStorage.removeItem("userIdentity");
+    localStorage.removeItem("schedule-interview-storage");
+    localStorage.removeItem("platform-storage");
+    localStorage.removeItem("current_ua");
+    localStorage.removeItem("current_ip");
   } else {
     secureLocalStorage.removeItem("auth-storage");
     secureLocalStorage.removeItem("chat-store");
@@ -75,6 +82,12 @@ export const removeFromLocalStorage = async (nodeEnv: string) => {
     //subscription-store
     secureLocalStorage.removeItem("subscription-store");
     secureLocalStorage.removeItem("application-view-storage");
+    //userIdentity
+    secureLocalStorage.removeItem("userIdentity");
+    secureLocalStorage.removeItem("schedule-interview-storage");
+    secureLocalStorage.removeItem("platform-storage");
+    secureLocalStorage.removeItem("current_ua");
+    secureLocalStorage.removeItem("current_ip");
   }
 };
 
@@ -116,6 +129,8 @@ export interface AuthData {
   error: string | null;
   signupSuccess: boolean;
   login: (data: LoginRequest) => Promise<ApplicantData | EmployerData | null>;
+  verify2FA: (code: string, tempToken: string, rememberMe?: boolean)=>Promise<any>,
+  resend2FACode: (email: string)=>Promise<any>,
   signup: (
     userType: UserType,
     request: EmployerSignupRequest | ApplicantSignupRequest,
@@ -224,11 +239,27 @@ export const useAuth = create<AuthData>()(
 
         try {
           const response = await publicApiClient.post<
-            APIResponse<ApplicantData | EmployerData>
+              APIResponse<ApplicantData | EmployerData | TwoFactorLoginResponse>
           >(`${API_BASE_URL}/auth/login`, data);
-          const userData: ApplicantData | EmployerData = response.data.data;
 
-          // Extract token from response
+          const responseData = response.data.data;
+
+          // Check if 2FA is required
+          if ('status' in responseData && responseData.status === '2FA_REQUIRED') {
+            set((state) => {
+              state.loading = false;
+            });
+
+            // Return a special object indicating 2FA is needed
+            return {
+              requires2FA: true,
+              tempToken: responseData.tempToken,
+              email: data.email,
+            } as any;
+          }
+
+          // Normal login flow (no 2FA)
+          const userData = responseData as ApplicantData | EmployerData;
           const token = userData.token;
 
           set((state) => {
@@ -274,15 +305,122 @@ export const useAuth = create<AuthData>()(
           set((state) => {
             state.error = err.response?.data?.message || "Login failed";
             state.loading = false;
-            state.isAuthenticated = false; // Ensure auth state is false on error
-            state.authToken = null; // Clear token on error
+            state.isAuthenticated = false;
+            state.authToken = null;
           });
 
           toast.error(err.response?.data?.message || "Login failed");
+          return null;
         }
-        return null;
       },
 
+// Update verify2FA to handle the complete authentication flow
+      verify2FA: async (code: string, tempToken: string, rememberMe?: boolean) => {
+        set((state) => {
+          state.loading = true;
+          state.error = null;
+        });
+
+        try {
+          console.log('🔐 Verifying 2FA code...');
+
+          const response = await axios.post<
+              APIResponse<ApplicantData | EmployerData>
+          >(`${API_BASE_URL}/auth/verify-2fa`, {
+            code,
+            tempToken,
+            rememberMe
+          });
+
+          console.log('✅ 2FA Response:', response.data);
+
+          const userData: ApplicantData | EmployerData = response.data.data;
+          const token = userData.token;
+
+          console.log('📝 Setting auth state...');
+
+          set((state) => {
+            state.isAuthenticated = true;
+            state.role = userData.role as Role;
+            state.userType = userData.userType;
+            storage.setItem("authToken", token || "");
+
+            if (userData.userType === UserType.EMPLOYER) {
+              const employer = userData as EmployerData;
+              state.employer = employer;
+              state.applicant = {} as ApplicantData;
+              state.authRole = employer.role as Role;
+              state.userType = employer.userType;
+            } else {
+              const appData = userData as ApplicantData;
+              state.applicant = appData;
+              state.authRole = appData.role as Role;
+              state.userType = appData.userType;
+              state.applicantPersonalInfo = {
+                firstName: appData?.firstName,
+                lastName: appData?.lastName,
+                middleName: appData?.middleName,
+                email: appData?.email,
+                phoneNumber: appData?.phoneNumber,
+                country: appData?.country,
+                city: appData?.city,
+                dateOfBirth: appData?.dateOfBirth,
+                address: appData?.address,
+              } as ApplicantPersonalInfo;
+              state.professionalSummaryData = {
+                professionalTitle: appData?.cv?.professionalTitle as string,
+                professionalSummary: appData?.cv?.professionalSummary as string,
+              };
+              state.employer = {} as EmployerData;
+            }
+
+            state.loading = false;
+          });
+
+          console.log('✅ Auth state set successfully');
+          toast.success("Verification successful!");
+          return userData;
+        } catch (err: any) {
+          console.error('❌ 2FA Verification Error:', err);
+          console.error('Error details:', {
+            message: err.message,
+            response: err.response?.data,
+            status: err.response?.status,
+            config: {
+              url: err.config?.url,
+              method: err.config?.method,
+              headers: err.config?.headers,
+            }
+          });
+
+          const errorMessage = err.response?.data?.message || "2FA verification failed";
+
+          set((state) => {
+            state.error = errorMessage;
+            state.loading = false;
+            state.isAuthenticated = false;
+            state.authToken = null;
+          });
+
+          toast.error(errorMessage);
+          throw new Error(errorMessage);
+        }
+      },
+
+      resend2FACode: async (email: string) => {
+        try {
+          const response = await publicApiClient.post(
+              `${API_BASE_URL}/auth/resend-2fa`,
+              { email }
+          );
+          toast.success("A new verification code has been sent to your email");
+          return response.data;
+        } catch (err: any) {
+          const errorMessage = err.response?.data?.message || "Failed to resend code";
+          toast.error(errorMessage);
+          throw new Error(errorMessage);
+        }
+      },
       signup: async (
         userType,
         request: EmployerSignupRequest | ApplicantSignupRequest,

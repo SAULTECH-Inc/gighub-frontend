@@ -155,7 +155,8 @@ const EmployerSignupStepTwo: React.FC<StepTwoProp> = ({
           error || "Failed to send verification OTP. Please try again later.",
         );
       }
-    } catch (err) {
+    } catch (err: any) {
+      console.log(err);
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);

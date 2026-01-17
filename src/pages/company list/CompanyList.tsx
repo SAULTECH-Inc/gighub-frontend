@@ -556,9 +556,8 @@ const CompanyList = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <TopNavBar
-        navItems={applicantNavItems}
-        navItemsMobile={applicantNavItemsMobile}
-        navbarItemsMap={applicantNavBarItemMap}
+                navbarItemsMap={applicantNavBarItemMap}
+                userType="applicant"
       />
 
       <div className="bg-[#F7F8FA] p-4">

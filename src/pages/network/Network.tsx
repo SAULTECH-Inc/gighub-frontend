@@ -4,11 +4,7 @@ import { UserType } from "../../utils/enums.ts";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import {
   applicantNavBarItemMap,
-  applicantNavItems,
-  applicantNavItemsMobile,
   employerNavBarItemMap,
-  employerNavItems,
-  employerNavItemsMobile,
 } from "../../utils/constants.ts";
 import { useNetworkTab } from "../../store/useNetworkTab.ts";
 import MyNetwork from "./MyNetwork.tsx";
@@ -20,17 +16,15 @@ const Network: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-      {USER_TYPE === UserType.APPLICANT ? (
+      {USER_TYPE === UserType.EMPLOYER ? (
         <TopNavBar
-          navItems={applicantNavItems}
-          navItemsMobile={applicantNavItemsMobile}
-          navbarItemsMap={applicantNavBarItemMap}
+          navbarItemsMap={employerNavBarItemMap}
+          userType={"employer"}
         />
       ) : (
         <TopNavBar
-          navItems={employerNavItems}
-          navItemsMobile={employerNavItemsMobile}
-          navbarItemsMap={employerNavBarItemMap}
+          navbarItemsMap={applicantNavBarItemMap}
+          userType={"applicant"}
         />
       )}
 

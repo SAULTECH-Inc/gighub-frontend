@@ -1,6 +1,7 @@
 import React from "react";
-import useModalStore from "../../store/modalStateStores.ts";
 import { Link } from "react-router-dom";
+import useModalStore from "../../store/modalStateStores.ts";
+
 
 interface SuccessModalProps {
   modalId: string;
@@ -8,9 +9,9 @@ interface SuccessModalProps {
 }
 
 const InterviewScheduleSuccessModal: React.FC<SuccessModalProps> = ({
-  modalId,
-  interviewId,
-}) => {
+                                                                      modalId,
+                                                                      interviewId,
+                                                                    }) => {
   const { modals, closeModal } = useModalStore();
   const isOpen = modals[modalId];
 
@@ -24,11 +25,11 @@ const InterviewScheduleSuccessModal: React.FC<SuccessModalProps> = ({
 
   return (
     <div
-      className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
       onClick={handleCloseApplicationSuccessModal}
     >
       <div
-        className="relative flex h-[600px] w-[492px] flex-col items-center justify-center rounded-[12px] bg-white p-5 shadow-lg"
+        className="relative flex w-full max-w-[492px] max-h-[90vh] flex-col items-center justify-center rounded-[12px] bg-white p-5 shadow-lg overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -57,7 +58,7 @@ const InterviewScheduleSuccessModal: React.FC<SuccessModalProps> = ({
           </svg>
         </button>
 
-        <div className="mb-5 flex h-fit w-fit items-center justify-center rounded-full">
+        <div className="mb-5 flex h-fit w-fit items-center justify-center rounded-full mt-8">
           <svg
             width="100"
             height="100"
@@ -91,7 +92,7 @@ const InterviewScheduleSuccessModal: React.FC<SuccessModalProps> = ({
           Congratulations!
         </h2>
 
-        <p className="mb-6 w-[360px] text-center text-[13px] text-gray-600">
+        <p className="mb-6 w-full max-w-[360px] text-center text-[13px] text-gray-600 px-4">
           Your interview has been successfully scheduled. Both you and the
           candidate will receive a confirmation email with all the details. Good
           luck with your meeting!
@@ -105,7 +106,7 @@ const InterviewScheduleSuccessModal: React.FC<SuccessModalProps> = ({
         </Link>
         <button
           onClick={handleCloseApplicationSuccessModal}
-          className="mt-4 w-[186px] rounded-[8px] border-none bg-white px-6 py-2 text-[16px] font-medium text-[#6438C2]"
+          className="mt-4 mb-4 w-[186px] rounded-[8px] border-none bg-white px-6 py-2 text-[16px] font-medium text-[#6438C2]"
         >
           Close
         </button>

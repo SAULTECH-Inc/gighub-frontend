@@ -20,7 +20,15 @@ export const useChatActions = () => {
   const { applicant, employer } = useAuth();
   const socket = useSocket(sender);
 
-  const sendMessage = () => {
+  const sendMessage = (p0: {
+    isFile?: boolean;
+    fileUrl?: string;
+    fileName?: string;
+    fileType?: string;
+    fileSize?: number;
+    content?: string;
+    replyTo?: ExtendedChatMessage | undefined;
+  }) => {
     if (!message.trim() || !recipient?.trim() || !socket) {
       console.warn("Cannot send: missing data or socket");
       return;

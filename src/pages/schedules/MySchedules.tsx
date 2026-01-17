@@ -4,11 +4,7 @@ import { UserType } from "../../utils/enums.ts";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import {
   applicantNavBarItemMap,
-  applicantNavItems,
-  applicantNavItemsMobile,
   employerNavBarItemMap,
-  employerNavItems,
-  employerNavItemsMobile,
 } from "../../utils/constants.ts";
 import Schedules from "../employer/Schedules.tsx";
 import MainFooter from "../../components/layouts/MainFooter.tsx";
@@ -18,15 +14,13 @@ const MySchedules: React.FC = () => {
     <>
       {USER_TYPE === UserType.EMPLOYER ? (
         <TopNavBar
-          navItems={employerNavItems}
-          navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
+          userType={"employer"}
         />
       ) : (
         <TopNavBar
-          navItems={applicantNavItems}
-          navItemsMobile={applicantNavItemsMobile}
           navbarItemsMap={applicantNavBarItemMap}
+          userType={"applicant"}
         />
       )}
       <Schedules />

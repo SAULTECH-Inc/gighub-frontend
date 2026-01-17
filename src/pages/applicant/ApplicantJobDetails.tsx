@@ -1,8 +1,6 @@
 import TopNavBar from "../../components/layouts/TopNavBar";
 import {
   applicantNavBarItemMap,
-  applicantNavItems,
-  applicantNavItemsMobile,
 } from "../../utils/constants";
 import JobSearchTopBar from "../../components/ui/JobSearchTopBar";
 import JobDetailsSidebar from "../../components/ui/applicant/job/JobDetailsSidebar.tsx";
@@ -17,9 +15,8 @@ const ApplicantJobDetails = () => {
   return (
     <div>
       <TopNavBar
-        navItems={applicantNavItems}
-        navItemsMobile={applicantNavItemsMobile}
-        navbarItemsMap={applicantNavBarItemMap}
+                navbarItemsMap={applicantNavBarItemMap}
+                userType="applicant"
       />
       <div className="hidden sm:block">
         <JobSearchTopBar

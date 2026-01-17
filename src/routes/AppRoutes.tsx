@@ -45,6 +45,8 @@ import ApplicantAssessmentPage from "../pages/applicant/ApplicantAssessmentPage.
 import EmployerAssessmentPage from "../pages/employer/EmployerAssessmentPage.tsx";
 import GigHubEmployerDashboard from "../pages/employer/dashboard-v2/DashboardV2.tsx";
 import CandidateMatchResults from "../pages/employer/CandidateMatchResults.tsx";
+import SignDocx from "../pages/SignDocx.tsx";
+import TwoFactorAuth from "../pages/auth/TwoFaAuth.tsx";
 
 const AppRoutes = () => {
   return (
@@ -99,6 +101,12 @@ const AppRoutes = () => {
           <PrivateRoute allowedRoles={[UserType.APPLICANT]}>
             <ApplicantProfile />
           </PrivateRoute>
+        }
+      />
+      <Route
+        path="/sign/docx"
+        element={
+          <SignDocx/>
         }
       />
       <Route
@@ -279,6 +287,11 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
       />
+
+      <Route
+        path="/auth/verify-2fa"
+        element={<TwoFactorAuth/>}
+        />
     </Routes>
   );
 };
