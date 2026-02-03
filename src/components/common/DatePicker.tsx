@@ -162,7 +162,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
       </button>
 
       {isOpen && !disabled && (
-        <div className="animate-fade-in-down absolute z-10 mt-2 w-full rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
+        <div className="animate-fade-in-down absolute z-100 mt-2 w-full rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
           <style>{`
             @keyframes fade-in-down {
               from { opacity: 0; transform: translateY(-10px); }

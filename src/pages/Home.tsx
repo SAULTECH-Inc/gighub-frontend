@@ -29,6 +29,7 @@ import {
 import useFetchFeaturedJobs from "../hooks/useFetchFeaturedJobs.ts";
 import useFetchCategories from "../hooks/useFetchCategories.ts";
 import { usePlatform } from "../store/usePlatform.ts";
+import { useNavigate } from "react-router-dom";
 
 // Success Toast Component
 const SuccessToast = ({
@@ -299,7 +300,7 @@ const FullPlatformHome: React.FC<{
 
           {/* Enhanced Search Bar */}
           <motion.div
-            className="mx-4 mx-auto mb-8 max-w-4xl rounded-2xl bg-white p-4 shadow-xl sm:mb-12 sm:p-6"
+            className="mx-auto mb-8 max-w-4xl rounded-2xl bg-white p-4 shadow-xl sm:mb-12 sm:p-6"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
@@ -638,6 +639,7 @@ const LaunchStateHome: React.FC<{
     hasContent: boolean;
   };
 }> = ({ data }) => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const { isSubscribed, subscribe } = usePlatform();
   const [showSuccess, setShowSuccess] = useState(false);
@@ -722,6 +724,12 @@ const LaunchStateHome: React.FC<{
       badge: "Beta Tester",
     },
   ];
+
+  useEffect(() => {
+    if(isSubscribed) {
+        navigate("/login");
+    }
+  },[isSubscribed]);
 
   // Simulate growing user count
   useEffect(() => {

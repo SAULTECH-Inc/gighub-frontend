@@ -57,6 +57,7 @@ import {
 import { ApplicationStatus, EmploymentType } from "../../utils/enums.ts";
 import ConfirmationDialog from "../../components/ui/Prompts.tsx";
 import MatchDetailsModal from "../../components/ui/MatchDetailsModal.tsx";
+import numeral from "numeral";
 
 type Section = "open" | "draft";
 type ViewMode = "jobs" | "applications" | "jobDetail";
@@ -996,7 +997,7 @@ const ManageJobsAndApplicants: React.FC = () => {
                       </p>
                       <p className="text-sm text-gray-600">
                         {selectedJob.salaryRange?.maximumAmount > 0
-                          ? `${selectedJob.salaryRange.currency} ${selectedJob.salaryRange.minimumAmount} - ${selectedJob.salaryRange.maximumAmount}`
+                          ? `${selectedJob.salaryRange.currency} ${numeral(selectedJob.salaryRange.minimumAmount).format('0.[0]a')} - ${numeral(selectedJob.salaryRange.maximumAmount).format('0.[0]a')}`
                           : "Not specified"}
                       </p>
                     </div>
@@ -2154,8 +2155,8 @@ const ManageJobsAndApplicants: React.FC = () => {
                             {job.salaryRange?.maximumAmount > 0 ? (
                               <span>
                                 {job.salaryRange.currency}{" "}
-                                {job.salaryRange.minimumAmount} -{" "}
-                                {job.salaryRange.maximumAmount}
+                                {numeral(job.salaryRange.minimumAmount).format('0.[0]a')} -{" "}
+                                {numeral(job.salaryRange.maximumAmount).format('0.[0]a')}
                               </span>
                             ) : (
                               <span>Not specified</span>

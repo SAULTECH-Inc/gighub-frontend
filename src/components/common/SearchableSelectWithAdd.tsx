@@ -129,7 +129,7 @@ const SearchableSelectWithAdd: React.FC<SearchableSelectWithAddProps> = ({
 
       {/* Dropdown menu */}
       {isOpen && !disabled && (
-        <div className="animate-in slide-in-from-top-2 absolute z-100 mt-2 w-full rounded-lg border-2 border-gray-200 bg-white shadow-lg duration-200">
+        <div className="animate-in slide-in-from-top-2 absolute z-20 mt-2 w-full rounded-lg border-2 border-gray-200 bg-white shadow-lg duration-200">
           {/* Search input */}
           <div className="border-b border-gray-100 p-3">
             <div className="relative">

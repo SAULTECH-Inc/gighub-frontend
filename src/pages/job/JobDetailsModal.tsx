@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { JobPostResponse } from "../../utils/types";
 import moment from "moment";
+import numeral from "numeral";
 
 interface JobDetailsModalProps {
   job: JobPostResponse | null;
@@ -127,7 +128,7 @@ const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                       {job.salaryRange && (
                         <div className="flex items-center space-x-1">
                           <DollarSign size={16} />
-                          <span>{job?.salaryRange?.maximumAmount}</span>
+                          <span>{numeral(job?.salaryRange?.maximumAmount).format("0.[0]a")}</span>
                         </div>
                       )}
                     </div>

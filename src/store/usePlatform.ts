@@ -1,8 +1,8 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import {createJSONStorage, persist} from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { APIResponse, SupportRequest } from "../utils/types";
-import { API_BASE_URL } from "../utils/constants";
+import {API_BASE_URL, NODE_ENV, secureStorageWrapper} from "../utils/constants";
 import { publicApiClient } from "../client/axios";
 
 interface PlatformState {
@@ -68,6 +68,9 @@ export const usePlatform = create<PlatformState>()(
     })),
     {
       name: "platform-storage",
+      storage: createJSONStorage(() =>
+          NODE_ENV === "development" ? localStorage : secureStorageWrapper,
+      ),
       partialize: (state) => ({
         isSubscribed: state.isSubscribed,
       }),
