@@ -3,11 +3,12 @@ import {
   FileText, Wand2, UserCheck, Download, Share2, Mail,
   ChevronRight, ChevronLeft, Eye, Edit3, Sparkles,
   CheckCircle, Lock, CreditCard, MessageSquare,
-  Save, Plus, Trash2, X
+  Save, Plus, Trash2, X, Upload
 } from 'lucide-react';
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import { applicantNavBarItemMap } from "../../utils/constants.ts";
-import {generateCvFromTextOrFileTextInput} from "../../services/api";
+import { generateCvFromTextOrFileTextInput } from "../../services/api";
+import { toast } from "react-toastify";
 
 interface PersonalInfo {
   name: string;
@@ -93,53 +94,161 @@ const ResumeBuilder: React.FC = () => {
     if (!aiInput.trim()) return;
 
     setIsProcessing(true);
-    const response = await generateCvFromTextOrFileTextInput(aiInput);
-    setTimeout(() => {
-      setCvData({
-        personalInfo: {
-          name: 'Sarah Johnson',
-          title: 'Senior Product Manager',
-          email: 'sarah.johnson@email.com',
-          phone: '+1 (555) 987-6543',
-          location: 'New York, NY',
-          linkedin: 'linkedin.com/in/sarahjohnson',
-          github: 'github.com/sarahjohnson',
-          website: 'sarahjohnson.com'
-        },
-        summary: 'Results-driven Product Manager with 8+ years of experience leading cross-functional teams to deliver innovative solutions.',
-        experience: [
-          {
-            id: '1',
-            title: 'Senior Product Manager',
-            company: 'Tech Solutions Inc.',
-            location: 'New York, NY',
-            startDate: '2021-01',
-            endDate: '',
-            current: true,
-            achievements: [
-              'Led product strategy for flagship product serving 500K+ users',
-              'Increased user retention by 45% through data-driven improvements'
-            ]
-          }
-        ],
-        education: [
-          {
-            id: '1',
-            degree: 'MBA in Business Administration',
-            institution: 'Harvard Business School',
-            location: 'Boston, MA',
-            startDate: '2013-09',
-            endDate: '2015-05',
-            gpa: '3.9'
-          }
-        ],
-        skills: ['Product Strategy', 'Agile/Scrum', 'Data Analysis', 'User Research'],
-        certifications: ['Certified Scrum Product Owner (CSPO)']
-      });
+    try {
+      const response = await generateCvFromTextOrFileTextInput(aiInput);
+      const cv = response?.data;
+
+      if (cv) {
+        setCvData({
+          personalInfo: {
+            name: cv.contact?.email ? '' : '',
+            title: cv.professionalTitle || '',
+            email: cv.contact?.email || '',
+            phone: cv.contact?.phone || '',
+            location: cv.addresses?.[0] ? `${cv.addresses[0].city || ''}, ${cv.addresses[0].country || ''}`.replace(/^, |, $/, '') : '',
+            linkedin: cv.socials?.find(s => s.platform?.toLowerCase() === 'linkedin')?.link || '',
+            github: cv.socials?.find(s => s.platform?.toLowerCase() === 'github')?.link || '',
+            website: cv.contact?.website || '',
+          },
+          summary: cv.professionalSummary || '',
+          experience: (cv.experiences || []).map((exp, idx) => ({
+            id: String(exp.id || idx),
+            title: exp.position || '',
+            company: exp.company || '',
+            location: exp.location || exp.city || '',
+            startDate: exp.startDate ? new Date(exp.startDate).toISOString().slice(0, 7) : '',
+            endDate: exp.endDate ? new Date(exp.endDate).toISOString().slice(0, 7) : '',
+            current: !exp.endDate,
+            achievements: exp.description ? [exp.description] : [],
+          })),
+          education: (cv.educations || []).map((edu, idx) => ({
+            id: String(edu.id || idx),
+            degree: edu.degree || '',
+            institution: edu.institution || '',
+            location: edu.country ? `${edu.city || ''}, ${edu.country}`.replace(/^, /, '') : '',
+            startDate: edu.startDate ? new Date(edu.startDate).toISOString().slice(0, 7) : '',
+            endDate: edu.endDate ? new Date(edu.endDate).toISOString().slice(0, 7) : '',
+            gpa: edu.grade || '',
+          })),
+          skills: (cv.skills || []).map(s => s.skill || '').filter(Boolean),
+          certifications: (cv.certifications || []).map(c => c.certification || '').filter(Boolean),
+        });
+      }
+
       setIsProcessing(false);
       setShowAIModal(false);
       setCurrentStep('select-template');
-    }, 2000);
+    } catch (error) {
+      console.error('AI generation failed:', error);
+      toast.error('AI generation failed. Please try again.');
+      setIsProcessing(false);
+    }
+  };
+
+  const handleSaveCV = () => {
+    try {
+      localStorage.setItem('gighub_saved_cv', JSON.stringify(cvData));
+      localStorage.setItem('gighub_saved_template', selectedTemplate);
+      toast.success('CV saved successfully!');
+    } catch (error) {
+      toast.error('Failed to save CV');
+    }
+  };
+
+  const handleLoadCV = () => {
+    try {
+      const saved = localStorage.getItem('gighub_saved_cv');
+      const savedTemplate = localStorage.getItem('gighub_saved_template');
+      if (saved) {
+        setCvData(JSON.parse(saved));
+        if (savedTemplate) setSelectedTemplate(savedTemplate as Template);
+        setCurrentStep('edit-cv');
+        toast.success('Saved CV loaded!');
+      } else {
+        toast.info('No saved CV found');
+      }
+    } catch (error) {
+      toast.error('Failed to load saved CV');
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target?.result as string;
+      if (text) {
+        setAiInput(prev => prev ? `${prev}\n\n${text}` : text);
+        toast.success(`File "${file.name}" loaded`);
+      }
+    };
+    reader.onerror = () => toast.error('Failed to read file');
+    reader.readAsText(file);
+  };
+
+  const handlePrintExport = () => {
+    document.body.classList.add('printing-resume');
+    setTimeout(() => {
+      window.print();
+      document.body.classList.remove('printing-resume');
+    }, 100);
+  };
+
+  const handleTextExport = () => {
+    const lines: string[] = [];
+    const { personalInfo, summary, experience, education, skills, certifications } = cvData;
+
+    lines.push(personalInfo.name || 'Name');
+    lines.push(personalInfo.title || '');
+    if (personalInfo.email) lines.push(`Email: ${personalInfo.email}`);
+    if (personalInfo.phone) lines.push(`Phone: ${personalInfo.phone}`);
+    if (personalInfo.location) lines.push(`Location: ${personalInfo.location}`);
+    lines.push('');
+
+    if (summary) {
+      lines.push('PROFESSIONAL SUMMARY');
+      lines.push(summary);
+      lines.push('');
+    }
+
+    if (experience.length > 0) {
+      lines.push('EXPERIENCE');
+      experience.forEach(exp => {
+        lines.push(`${exp.title} at ${exp.company}`);
+        lines.push(`${exp.startDate} - ${exp.current ? 'Present' : exp.endDate} | ${exp.location}`);
+        exp.achievements.forEach(a => lines.push(`  • ${a}`));
+        lines.push('');
+      });
+    }
+
+    if (education.length > 0) {
+      lines.push('EDUCATION');
+      education.forEach(edu => {
+        lines.push(`${edu.degree} — ${edu.institution}`);
+        lines.push(`${edu.startDate} - ${edu.endDate} | ${edu.location}`);
+        lines.push('');
+      });
+    }
+
+    if (skills.length > 0) {
+      lines.push('SKILLS');
+      lines.push(skills.join(', '));
+      lines.push('');
+    }
+
+    if (certifications.length > 0) {
+      lines.push('CERTIFICATIONS');
+      certifications.forEach(c => lines.push(`  • ${c}`));
+    }
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${personalInfo.name || 'resume'}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   const addExperience = () => {
@@ -203,12 +312,10 @@ const ResumeBuilder: React.FC = () => {
         { key: 'export', label: 'Export' }
       ].map((step, idx) => (
         <React.Fragment key={step.key}>
-          <div className={`flex items-center gap-2 ${
-            currentStep === step.key ? 'text-purple-600' : 'text-gray-400'
-          }`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              currentStep === step.key ? 'bg-purple-600 text-white' : 'bg-gray-200'
+          <div className={`flex items-center gap-2 ${currentStep === step.key ? 'text-purple-600' : 'text-gray-400'
             }`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === step.key ? 'bg-purple-600 text-white' : 'bg-gray-200'
+              }`}>
               {idx + 1}
             </div>
             <span className="text-sm font-medium hidden md:inline">{step.label}</span>
@@ -286,6 +393,19 @@ const ResumeBuilder: React.FC = () => {
         </button>
       </div>
 
+      {/* Load saved CV option */}
+      {localStorage.getItem('gighub_saved_cv') && (
+        <div className="mt-6 text-center">
+          <button
+            onClick={handleLoadCV}
+            className="px-6 py-3 border-2 border-purple-500 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors flex items-center gap-2 mx-auto"
+          >
+            <FileText className="w-5 h-5" />
+            Load Previously Saved CV
+          </button>
+        </div>
+      )}
+
       <div className="mt-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
         <div className="flex items-start gap-3">
           <Lock className="w-5 h-5 text-yellow-600 mt-0.5" />
@@ -310,11 +430,10 @@ const ResumeBuilder: React.FC = () => {
           <button
             key={template.id}
             onClick={() => setSelectedTemplate(template.id as Template)}
-            className={`relative p-6 rounded-xl transition-all ${
-              selectedTemplate === template.id
-                ? 'ring-4 ring-blue-500 shadow-xl'
-                : 'border-2 border-gray-200 hover:border-blue-300 shadow-md'
-            }`}
+            className={`relative p-6 rounded-xl transition-all ${selectedTemplate === template.id
+              ? 'ring-4 ring-blue-500 shadow-xl'
+              : 'border-2 border-gray-200 hover:border-blue-300 shadow-md'
+              }`}
           >
             <div className={`${template.color} h-48 rounded-lg mb-4 flex items-center justify-center text-6xl`}>
               {template.preview}
@@ -362,11 +481,10 @@ const ResumeBuilder: React.FC = () => {
             <button
               key={section}
               onClick={() => setActiveSection(section)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${
-                activeSection === section
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${activeSection === section
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
             >
               {section.charAt(0).toUpperCase() + section.slice(1)}
             </button>
@@ -553,7 +671,7 @@ const ResumeBuilder: React.FC = () => {
         )}
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-6 sticky top-6">
+      <div className="bg-white rounded-xl shadow-lg p-6 sticky top-6 printable-resume">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-bold">Live Preview</h3>
           <Eye className="w-5 h-5 text-blue-600" />
@@ -615,15 +733,28 @@ const ResumeBuilder: React.FC = () => {
 
       <div className="grid md:grid-cols-2 gap-6 mb-8">
         <button
-          onClick={() => setShowPaymentModal(true)}
+          onClick={handlePrintExport}
           className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all border-2 border-gray-200 hover:border-blue-500"
         >
           <Download className="w-8 h-8 text-blue-600 mb-3" />
-          <h3 className="font-bold text-lg mb-2">Download CV</h3>
-          <p className="text-sm text-gray-600 mb-3">Export as PDF, DOCX, or TXT</p>
+          <h3 className="font-bold text-lg mb-2">Print / Save as PDF</h3>
+          <p className="text-sm text-gray-600 mb-3">Use your browser's print dialog to save as PDF</p>
           <div className="flex items-center gap-2 text-green-600 text-sm">
-            <Lock className="w-4 h-4" />
-            <span className="font-medium">$4.99</span>
+            <CheckCircle className="w-4 h-4" />
+            <span className="font-medium">Free</span>
+          </div>
+        </button>
+
+        <button
+          onClick={handleTextExport}
+          className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all border-2 border-gray-200 hover:border-blue-500"
+        >
+          <FileText className="w-8 h-8 text-indigo-600 mb-3" />
+          <h3 className="font-bold text-lg mb-2">Download as Text</h3>
+          <p className="text-sm text-gray-600 mb-3">Export as plain text file (.txt)</p>
+          <div className="flex items-center gap-2 text-green-600 text-sm">
+            <CheckCircle className="w-4 h-4" />
+            <span className="font-medium">Free</span>
           </div>
         </button>
 
@@ -663,6 +794,99 @@ const ResumeBuilder: React.FC = () => {
           <span className="font-medium">$19.99</span>
         </button>
       </div>
+
+      {/* Full printable CV preview for export */}
+      <div className="mt-8 max-w-3xl mx-auto">
+        <h3 className="text-xl font-bold text-center mb-4">Preview</h3>
+        <div className="printable-resume bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className={`${selectedTemplate === 'modern' ? 'bg-slate-800' : selectedTemplate === 'classic' ? 'bg-blue-900' : selectedTemplate === 'minimal' ? 'bg-gray-700' : 'bg-purple-800'} text-white p-8`}>
+            <h1 className="text-3xl font-bold">{cvData.personalInfo.name || 'Your Name'}</h1>
+            <p className="text-lg mt-1 opacity-90">{cvData.personalInfo.title || 'Your Title'}</p>
+            <div className="mt-4 text-sm space-y-1 opacity-80">
+              {cvData.personalInfo.email && <p>📧 {cvData.personalInfo.email}</p>}
+              {cvData.personalInfo.phone && <p>📱 {cvData.personalInfo.phone}</p>}
+              {cvData.personalInfo.location && <p>📍 {cvData.personalInfo.location}</p>}
+              {cvData.personalInfo.linkedin && <p>🔗 {cvData.personalInfo.linkedin}</p>}
+              {cvData.personalInfo.github && <p>💻 {cvData.personalInfo.github}</p>}
+            </div>
+          </div>
+          <div className="p-8 bg-white">
+            {cvData.summary && (
+              <div className="mb-6">
+                <h2 className="text-lg font-bold mb-2 border-b-2 border-gray-800 pb-1">Summary</h2>
+                <p className="text-sm text-gray-700 leading-relaxed">{cvData.summary}</p>
+              </div>
+            )}
+            {cvData.experience.length > 0 && (
+              <div className="mb-6">
+                <h2 className="text-lg font-bold mb-3 border-b-2 border-gray-800 pb-1">Experience</h2>
+                {cvData.experience.map((exp) => (
+                  <div key={exp.id} className="mb-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-bold text-sm">{exp.title || 'Job Title'}</h3>
+                        <p className="text-xs text-gray-600">{exp.company || 'Company'} {exp.location ? `• ${exp.location}` : ''}</p>
+                      </div>
+                      <p className="text-xs text-gray-500">{exp.startDate} - {exp.current ? 'Present' : exp.endDate}</p>
+                    </div>
+                    {exp.achievements.filter(Boolean).length > 0 && (
+                      <ul className="mt-2 text-xs text-gray-700 list-disc pl-4 space-y-1">
+                        {exp.achievements.filter(Boolean).map((a, i) => <li key={i}>{a}</li>)}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            {cvData.education.length > 0 && (
+              <div className="mb-6">
+                <h2 className="text-lg font-bold mb-3 border-b-2 border-gray-800 pb-1">Education</h2>
+                {cvData.education.map((edu) => (
+                  <div key={edu.id} className="mb-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-bold text-sm">{edu.degree || 'Degree'}</h3>
+                        <p className="text-xs text-gray-600">{edu.institution || 'Institution'} {edu.location ? `• ${edu.location}` : ''}</p>
+                      </div>
+                      <p className="text-xs text-gray-500">{edu.startDate} - {edu.endDate}</p>
+                    </div>
+                    {edu.gpa && <p className="text-xs text-gray-600 mt-1">GPA: {edu.gpa}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
+            {cvData.skills.length > 0 && (
+              <div className="mb-6">
+                <h2 className="text-lg font-bold mb-2 border-b-2 border-gray-800 pb-1">Skills</h2>
+                <div className="flex flex-wrap gap-2">
+                  {cvData.skills.map((skill, i) => (
+                    <span key={i} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">{skill}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {cvData.certifications.length > 0 && (
+              <div>
+                <h2 className="text-lg font-bold mb-2 border-b-2 border-gray-800 pb-1">Certifications</h2>
+                <ul className="text-sm text-gray-700 list-disc pl-4 space-y-1">
+                  {cvData.certifications.map((cert, i) => <li key={i}>{cert}</li>)}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Save CV button */}
+      <div className="mt-6 text-center">
+        <button
+          onClick={handleSaveCV}
+          className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 mx-auto"
+        >
+          <Save className="w-5 h-5" />
+          Save CV for Later
+        </button>
+      </div>
     </div>
   );
 
@@ -682,14 +906,37 @@ const ResumeBuilder: React.FC = () => {
           </div>
           <div>
             <h3 className="text-2xl font-bold">AI CV Generator</h3>
-            <p className="text-gray-600">Paste your existing CV or LinkedIn profile</p>
+            <p className="text-gray-600">Paste text or upload a file</p>
           </div>
+        </div>
+
+        {/* File Upload */}
+        <div className="mb-4">
+          <label className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 cursor-pointer transition-colors">
+            <Upload className="w-6 h-6 text-gray-400" />
+            <div>
+              <p className="font-medium text-gray-700">Upload CV or Resume file</p>
+              <p className="text-xs text-gray-500">Supports .txt, .pdf, .doc, .docx (text will be extracted)</p>
+            </div>
+            <input
+              type="file"
+              accept=".txt,.pdf,.doc,.docx"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+          </label>
+        </div>
+
+        <div className="flex items-center gap-3 mb-4">
+          <hr className="flex-1 border-gray-200" />
+          <span className="text-sm text-gray-500">or paste text</span>
+          <hr className="flex-1 border-gray-200" />
         </div>
 
         <textarea
           value={aiInput}
           onChange={(e) => setAiInput(e.target.value)}
-          className="w-full h-64 p-4 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+          className="w-full h-48 p-4 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
           placeholder="Paste your old CV, resume, or LinkedIn profile text here...&#10;&#10;Our AI will extract the information and create a professional CV for you."
         />
 
@@ -879,8 +1126,8 @@ const ResumeBuilder: React.FC = () => {
   return (
     <div>
       <TopNavBar
-                navbarItemsMap={applicantNavBarItemMap}
-                userType="applicant"
+        navbarItemsMap={applicantNavBarItemMap}
+        userType="applicant"
       />
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8 px-4">

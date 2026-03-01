@@ -135,11 +135,10 @@ const ContactInformation: React.FC<ContactInformationProp> = memo(
                       {item.copyable && (
                         <button
                           onClick={() => handleCopy(item.value!, item.id)}
-                          className={`flex items-center justify-center space-x-2 rounded-lg px-4 py-3 text-sm font-medium transition-all ${
-                            isCopied
+                          className={`flex items-center justify-center space-x-2 rounded-lg px-4 py-3 text-sm font-medium transition-all ${isCopied
                               ? "bg-green-100 text-green-700"
                               : "bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300"
-                          }`}
+                            }`}
                           disabled={isCopied}
                         >
                           {isCopied ? (
@@ -211,11 +210,10 @@ const ContactInformation: React.FC<ContactInformationProp> = memo(
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => handleCopy(item.value!, item.id)}
-                          className={`flex items-center space-x-1 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
-                            isCopied
+                          className={`flex items-center space-x-1 rounded-lg px-3 py-2 text-sm font-medium transition-all ${isCopied
                               ? "bg-green-100 text-green-700"
                               : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                          }`}
+                            }`}
                           disabled={isCopied}
                         >
                           {isCopied ? (
@@ -264,7 +262,7 @@ const ContactInformation: React.FC<ContactInformationProp> = memo(
             })}
           </div>
 
-          {/* Additional Information */}
+          {/* Get in Touch */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -281,54 +279,31 @@ const ContactInformation: React.FC<ContactInformationProp> = memo(
             </p>
 
             <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-3">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center space-x-2 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 text-sm font-medium text-white shadow-sm transition-all hover:from-indigo-700 hover:to-purple-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
-              >
-                <Mail className="h-4 w-4" />
-                <span>Send Message</span>
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center space-x-2 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:outline-none"
-              >
-                <Building2 className="h-4 w-4" />
-                <span>Schedule Visit</span>
-              </motion.button>
-            </div>
-          </motion.div>
-
-          {/* Business Hours */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="mt-4 rounded-xl border border-slate-200 bg-white p-4 sm:mt-6 sm:p-6"
-          >
-            <h3 className="mb-3 text-lg font-semibold text-slate-900 sm:mb-4">
-              Business Hours
-            </h3>
-            <div className="space-y-2 sm:space-y-1">
-              {[
-                { day: "Monday - Friday", hours: "9:00 AM - 6:00 PM" },
-                { day: "Saturday", hours: "10:00 AM - 4:00 PM" },
-                { day: "Sunday", hours: "Closed" },
-              ].map((schedule, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col space-y-1 py-1 sm:flex-row sm:justify-between sm:space-y-0 sm:py-0.5"
+              {user?.email && (
+                <motion.a
+                  href={`mailto:${user.email}`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center justify-center space-x-2 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 text-sm font-medium text-white shadow-sm transition-all hover:from-indigo-700 hover:to-purple-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                 >
-                  <span className="text-sm font-medium text-slate-700 sm:text-base">
-                    {schedule.day}
-                  </span>
-                  <span className="text-sm text-slate-600 sm:text-base">
-                    {schedule.hours}
-                  </span>
-                </div>
-              ))}
+                  <Mail className="h-4 w-4" />
+                  <span>Send Message</span>
+                </motion.a>
+              )}
+
+              {user?.companyAddress && (
+                <motion.a
+                  href={`https://maps.google.com?q=${encodeURIComponent(user.companyAddress)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center justify-center space-x-2 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:outline-none"
+                >
+                  <MapPin className="h-4 w-4" />
+                  <span>View on Map</span>
+                </motion.a>
+              )}
             </div>
           </motion.div>
         </motion.div>

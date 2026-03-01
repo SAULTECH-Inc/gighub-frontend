@@ -9,9 +9,6 @@ import {
 } from "../../assets/icons.ts";
 import {
   Person7,
-  Referrer1,
-  Referrer2,
-  Referrer3,
 } from "../../assets/images.ts";
 import { FaCheck } from "react-icons/fa";
 import { FC, useEffect, useState } from "react";
@@ -39,7 +36,7 @@ import { useScheduleInterview } from "../../store/useScheduleInterview.ts";
 import { useChatStore } from "../../store/useChatStore.ts";
 import { ApplicationStatus } from "../../utils/enums.ts";
 import { useFetchJobMatchResult } from "../../hooks/useFetchJobMatchResult.tsx";
-import { X } from "lucide-react";
+import { Users, X } from "lucide-react";
 import { FileActionButtons } from "../../components/ui/FileActionButtons.tsx";
 
 
@@ -272,14 +269,13 @@ const MatchSummary: FC<{ applicantId: number; jobId: number }> = ({
           <div className="flex items-center justify-between text-xs">
             <span className="font-medium">AI Recommendation:</span>
             <span
-              className={`rounded px-2 py-1 ${
-                breakdown.ai_enhancements.ai_decision.decision === "AUTO_ACCEPT"
+              className={`rounded px-2 py-1 ${breakdown.ai_enhancements.ai_decision.decision === "AUTO_ACCEPT"
                   ? "bg-green-100 text-green-800"
                   : breakdown.ai_enhancements.ai_decision.decision ===
-                      "AUTO_REJECT"
+                    "AUTO_REJECT"
                     ? "bg-red-100 text-red-800"
                     : "bg-yellow-100 text-yellow-800"
-              }`}
+                }`}
             >
               {breakdown.ai_enhancements.ai_decision.decision.replace("_", " ")}
             </span>
@@ -439,79 +435,6 @@ const ManageApplicant: FC = () => {
 
   // Referrer modal component
   const ReferrerModal: FC = () => {
-    const referrers = [
-      {
-        id: 1,
-        name: "John Smith",
-        image: Referrer1,
-        role: "Senior Developer",
-        company: "Tech Corp",
-      },
-      {
-        id: 2,
-        name: "Sarah Johnson",
-        image: Referrer2,
-        role: "Product Manager",
-        company: "StartupXYZ",
-      },
-      {
-        id: 3,
-        name: "Mike Chen",
-        image: Referrer3,
-        role: "Designer",
-        company: "Creative Agency",
-      },
-      {
-        id: 4,
-        name: "Emma Wilson",
-        image: Referrer1,
-        role: "HR Director",
-        company: "Big Tech",
-      },
-      {
-        id: 5,
-        name: "David Brown",
-        image: Referrer2,
-        role: "Engineering Manager",
-        company: "Scale Inc",
-      },
-      {
-        id: 6,
-        name: "Lisa Garcia",
-        image: Referrer3,
-        role: "Recruiter",
-        company: "Talent Solutions",
-      },
-      {
-        id: 7,
-        name: "Alex Taylor",
-        image: Referrer1,
-        role: "Team Lead",
-        company: "Innovation Labs",
-      },
-      {
-        id: 8,
-        name: "Rachel Davis",
-        image: Referrer2,
-        role: "VP Engineering",
-        company: "Growth Co",
-      },
-      {
-        id: 9,
-        name: "Tom Anderson",
-        image: Referrer3,
-        role: "CTO",
-        company: "Future Tech",
-      },
-      {
-        id: 10,
-        name: "Maria Rodriguez",
-        image: Referrer1,
-        role: "Senior Recruiter",
-        company: "Elite Hiring",
-      },
-    ];
-
     return (
       <div
         className="fixed inset-0 flex items-center justify-center bg-black/50 p-4"
@@ -536,38 +459,14 @@ const ManageApplicant: FC = () => {
           </div>
 
           <div className="p-6">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {referrers.map((referrer) => (
-                <div
-                  key={referrer.id}
-                  className="rounded-lg bg-gray-50 p-4 transition-colors hover:bg-gray-100"
-                >
-                  <div className="mb-3 flex items-center gap-3">
-                    <img
-                      src={referrer.image}
-                      alt={referrer.name}
-                      className="h-12 w-12 rounded-full object-cover"
-                    />
-                    <div>
-                      <h3 className="font-medium text-gray-900">
-                        {referrer.name}
-                      </h3>
-                      <p className="text-sm text-gray-600">{referrer.role}</p>
-                    </div>
-                  </div>
-                  <div className="mb-3 text-sm text-gray-500">
-                    <p className="font-medium">{referrer.company}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="flex-1 rounded bg-purple-100 px-3 py-1 text-xs text-purple-700 transition-colors hover:bg-purple-200">
-                      View Profile
-                    </button>
-                    <button className="flex-1 rounded bg-gray-200 px-3 py-1 text-xs text-gray-700 transition-colors hover:bg-gray-300">
-                      Contact
-                    </button>
-                  </div>
-                </div>
-              ))}
+            <div className="py-12 text-center">
+              <Users className="mx-auto mb-4 h-12 w-12 text-gray-300" />
+              <h3 className="mb-2 text-lg font-semibold text-gray-600">
+                No referral data available yet
+              </h3>
+              <p className="text-sm text-gray-400">
+                Referral information will appear here when candidates are referred by your network.
+              </p>
             </div>
           </div>
         </div>
@@ -702,21 +601,19 @@ const ManageApplicant: FC = () => {
             <div className="flex items-center justify-between gap-4 p-5">
               <button
                 onClick={handleCloseJob}
-                className={`rounded-[10px] px-5 py-[9px] text-white transition-all duration-300 ease-out active:scale-95 ${
-                  isJobClosed
+                className={`rounded-[10px] px-5 py-[9px] text-white transition-all duration-300 ease-out active:scale-95 ${isJobClosed
                     ? "bg-green-600 hover:bg-green-700"
                     : "bg-red-600 hover:bg-red-700"
-                }`}
+                  }`}
               >
                 {isJobClosed ? "Reopen job" : "Close job"}
               </button>
               <button
                 onClick={handleListJob}
-                className={`rounded-[10px] px-5 py-[9px] text-white transition-all duration-300 ease-out active:scale-95 ${
-                  isJobListed
+                className={`rounded-[10px] px-5 py-[9px] text-white transition-all duration-300 ease-out active:scale-95 ${isJobListed
                     ? "bg-orange-600 hover:bg-orange-700"
                     : "bg-[#6438C2] hover:bg-[#5429a8]"
-                }`}
+                  }`}
               >
                 {isJobListed ? "Unlist job" : "List job"}
               </button>
@@ -734,8 +631,8 @@ const ManageApplicant: FC = () => {
                   filters.experience ||
                   filters.applicationDate ||
                   filters.location) && (
-                  <div className="absolute -top-2 -right-2 h-3 w-3 rounded-full bg-red-500"></div>
-                )}
+                    <div className="absolute -top-2 -right-2 h-3 w-3 rounded-full bg-red-500"></div>
+                  )}
               </button>
               {showFilterMenu && <FilterMenu />}
             </div>
@@ -745,21 +642,19 @@ const ManageApplicant: FC = () => {
           <div className="flex items-center justify-between gap-4 p-5">
             <button
               onClick={handleCloseJob}
-              className={`rounded-[10px] px-5 py-[9px] text-[14px] text-white transition-all duration-300 ease-out active:scale-95 sm:text-base ${
-                isJobClosed
+              className={`rounded-[10px] px-5 py-[9px] text-[14px] text-white transition-all duration-300 ease-out active:scale-95 sm:text-base ${isJobClosed
                   ? "bg-green-600 hover:bg-green-700"
                   : "bg-red-600 hover:bg-red-700"
-              }`}
+                }`}
             >
               {isJobClosed ? "Reopen job" : "Close job"}
             </button>
             <button
               onClick={handleListJob}
-              className={`rounded-[10px] px-5 py-[9px] text-[14px] text-white transition-all duration-300 ease-out active:scale-95 sm:text-base ${
-                isJobListed
+              className={`rounded-[10px] px-5 py-[9px] text-[14px] text-white transition-all duration-300 ease-out active:scale-95 sm:text-base ${isJobListed
                   ? "bg-orange-600 hover:bg-orange-700"
                   : "bg-[#6438C2] hover:bg-[#5429a8]"
-              }`}
+                }`}
             >
               {isJobListed ? "Unlist job" : "List job"}
             </button>
@@ -777,8 +672,8 @@ const ManageApplicant: FC = () => {
                 filters.experience ||
                 filters.applicationDate ||
                 filters.location) && (
-                <div className="absolute -top-2 -right-2 h-3 w-3 rounded-full bg-red-500"></div>
-              )}
+                  <div className="absolute -top-2 -right-2 h-3 w-3 rounded-full bg-red-500"></div>
+                )}
             </button>
             {showFilterMenu && <FilterMenu />}
           </div>
@@ -817,11 +712,10 @@ const ManageApplicant: FC = () => {
                   return (
                     <div
                       key={application.id}
-                      className={`group relative cursor-pointer ${
-                        application.id === selectedApplication?.id
+                      className={`group relative cursor-pointer ${application.id === selectedApplication?.id
                           ? "bg-[#6438C2]"
                           : "bg-[#F7F8FA]"
-                      } flex flex-col rounded-[10px] p-3 transition-all duration-300 ease-out hover:bg-[#6438C2] active:scale-95`}
+                        } flex flex-col rounded-[10px] p-3 transition-all duration-300 ease-out hover:bg-[#6438C2] active:scale-95`}
                     >
                       {/* Main applicant info */}
                       <div
@@ -832,8 +726,8 @@ const ManageApplicant: FC = () => {
                           <div className="relative">
                             {application.status ===
                               ApplicationStatus.VIEWED && (
-                              <div className="absolute right-0 h-[10px] w-[10px] rounded-full bg-[#FA4E09]"></div>
-                            )}
+                                <div className="absolute right-0 h-[10px] w-[10px] rounded-full bg-[#FA4E09]"></div>
+                              )}
                             <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full">
                               <img
                                 className="h-full w-full rounded-full"
@@ -847,21 +741,19 @@ const ManageApplicant: FC = () => {
                           </div>
                           <div className="flex flex-col items-start">
                             <p
-                              className={`text-[13px] ${
-                                application.id === selectedApplication?.id
+                              className={`text-[13px] ${application.id === selectedApplication?.id
                                   ? "text-white"
                                   : "text-[#000000] group-hover:text-white"
-                              }`}
+                                }`}
                             >
                               {application.applicant.firstName}{" "}
                               {application.applicant.lastName}
                             </p>
                             <p
-                              className={`text-[11px] ${
-                                application.id === selectedApplication?.id
+                              className={`text-[11px] ${application.id === selectedApplication?.id
                                   ? "text-white"
                                   : "text-[#8E8E8E] group-hover:text-white"
-                              }`}
+                                }`}
                             >
                               {moment(application.createdAt).format("lll")}
                             </p>
@@ -877,11 +769,10 @@ const ManageApplicant: FC = () => {
                             } as NetworkDetails);
                             setIsClosed(false);
                           }}
-                          className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-[#E6E6E6] shadow-sm transition-all duration-300 ${
-                            application.id === selectedApplication?.id
+                          className={`relative flex h-9 w-9 items-center justify-center rounded-full border border-[#E6E6E6] shadow-sm transition-all duration-300 ${application.id === selectedApplication?.id
                               ? "bg-white shadow-md"
                               : "bg-[#F7F8FA] group-hover:bg-white group-hover:shadow-md"
-                          }`}
+                            }`}
                         >
                           {/* Message Icon */}
                           <img
@@ -896,8 +787,8 @@ const ManageApplicant: FC = () => {
                               message.sender === application.applicant.email &&
                               !message.read,
                           ).length > 0 && (
-                            <span className="absolute top-0 right-0 h-2.5 w-2.5 rounded-full border border-white bg-purple-600"></span>
-                          )}
+                              <span className="absolute top-0 right-0 h-2.5 w-2.5 rounded-full border border-white bg-purple-600"></span>
+                            )}
                         </div>
                       </div>
 
@@ -915,11 +806,10 @@ const ManageApplicant: FC = () => {
                             e.stopPropagation();
                             handleOpenMatchDetails(application);
                           }}
-                          className={`rounded px-2 py-1 text-xs transition-all ${
-                            application.id === selectedApplication?.id
-                              ? "bg-opacity-20 hover:bg-opacity-30 bg-white text-white"
-                              : "group-hover:bg-opacity-20 bg-gray-200 text-gray-600 group-hover:bg-white group-hover:text-white"
-                          }`}
+                          className={`rounded px-2 py-1 text-xs transition-all ${application.id === selectedApplication?.id
+                              ? "bg-opacity-20 hover:bg-opacity-30 bg-white text-black"
+                              : "group-hover:bg-opacity-20 bg-gray-200 text-gray-600 group-hover:bg-white group-hover:text-black"
+                            }`}
                         >
                           Details
                         </button>
@@ -1086,8 +976,8 @@ const ManageApplicant: FC = () => {
                                     " - " +
                                     (experience.endDate
                                       ? moment(experience.endDate).format(
-                                          "MMM YYYY",
-                                        )
+                                        "MMM YYYY",
+                                      )
                                       : "Present")}
                                 </p>
                               </div>
@@ -1131,8 +1021,8 @@ const ManageApplicant: FC = () => {
                                     " - " +
                                     (education.endDate
                                       ? moment(education.endDate).format(
-                                          "MMM YYYY",
-                                        )
+                                        "MMM YYYY",
+                                      )
                                       : "Present")}
                                 </p>
                               </div>
@@ -1252,39 +1142,39 @@ const ManageApplicant: FC = () => {
                       File Attachment
                     </h2>
                     {!selectedApplication?.cv?.cvLink && !selectedApplication?.cv?.coverLetterLink && (
-                        <p className="self-center rounded-sm p-5 text-gray-500">No File Uploaded</p>
+                      <p className="self-center rounded-sm p-5 text-gray-500">No File Uploaded</p>
                     )}
 
                     {selectedApplication?.cv?.cvLink && (
-                        <div className="flex justify-between rounded-[10px] bg-white px-4 py-2">
-                          <div>
-                            <p className="text-[13px] font-medium text-[#000000]">CV File</p>
-                            <p className="text-[11px] text-[#8E8E8E]">
-                              {selectedApplication?.applicant?.firstName} {selectedApplication?.applicant?.lastName}
-                            </p>
-                          </div>
-                          <FileActionButtons
-                              fileUrl={selectedApplication.cv.cvLink}
-                              fileName={`${selectedApplication.applicant.firstName}_${selectedApplication.applicant.lastName}_CV.pdf`}
-                              fileType="pdf"
-                          />
+                      <div className="flex justify-between rounded-[10px] bg-white px-4 py-2">
+                        <div>
+                          <p className="text-[13px] font-medium text-[#000000]">CV File</p>
+                          <p className="text-[11px] text-[#8E8E8E]">
+                            {selectedApplication?.applicant?.firstName} {selectedApplication?.applicant?.lastName}
+                          </p>
                         </div>
+                        <FileActionButtons
+                          fileUrl={selectedApplication.cv.cvLink}
+                          fileName={`${selectedApplication.applicant.firstName}_${selectedApplication.applicant.lastName}_CV.pdf`}
+                          fileType="pdf"
+                        />
+                      </div>
                     )}
 
                     {selectedApplication?.cv?.coverLetterLink && (
-                        <div className="flex justify-between rounded-[10px] bg-white px-4 py-2">
-                          <div>
-                            <p className="text-[13px] font-medium text-[#000000]">Cover Letter</p>
-                            <p className="text-[11px] text-[#8E8E8E]">
-                              {selectedApplication?.applicant?.firstName} {selectedApplication?.applicant?.lastName}
-                            </p>
-                          </div>
-                          <FileActionButtons
-                              fileUrl={selectedApplication.cv.coverLetterLink}
-                              fileName={`${selectedApplication.applicant.firstName}_${selectedApplication.applicant.lastName}_CoverLetter.pdf`}
-                              fileType="pdf"
-                          />
+                      <div className="flex justify-between rounded-[10px] bg-white px-4 py-2">
+                        <div>
+                          <p className="text-[13px] font-medium text-[#000000]">Cover Letter</p>
+                          <p className="text-[11px] text-[#8E8E8E]">
+                            {selectedApplication?.applicant?.firstName} {selectedApplication?.applicant?.lastName}
+                          </p>
                         </div>
+                        <FileActionButtons
+                          fileUrl={selectedApplication.cv.coverLetterLink}
+                          fileName={`${selectedApplication.applicant.firstName}_${selectedApplication.applicant.lastName}_CoverLetter.pdf`}
+                          fileType="pdf"
+                        />
+                      </div>
                     )}
                   </div>
                 </div>

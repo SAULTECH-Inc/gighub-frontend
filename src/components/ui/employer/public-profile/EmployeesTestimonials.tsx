@@ -1,59 +1,20 @@
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Quote, Star, ChevronRight } from "lucide-react";
+import { Quote, Star, ChevronRight, MessageSquare } from "lucide-react";
+import { fetchUserReviews } from "../../../../services/api";
+import { Review } from "../../../../utils/types";
 
-interface Testimonial {
-  id: number;
-  initials: string;
-  name: string;
-  position: string;
-  avatar?: string;
-  rating: number;
-  message: string;
-  tenure: string;
+interface EmployeesTestimonialsProps {
+  employerId: number;
 }
-
-const testimonials: Testimonial[] = [
-  {
-    id: 1,
-    initials: "MU",
-    name: "Maryam Umar",
-    position: "Senior Product Designer",
-    rating: 5,
-    message:
-      "Working at this company has been an amazing experience, with a culture that encourages innovation and personal growth. I'm proud to be part of a team that's transforming the industry landscape.",
-    tenure: "2 years",
-  },
-  {
-    id: 2,
-    initials: "AB",
-    name: "Ahmed Bello",
-    position: "Software Engineer",
-    rating: 5,
-    message:
-      "The collaborative environment and cutting-edge technology stack make this an ideal place for any developer looking to grow their career. The mentorship here is exceptional.",
-    tenure: "1.5 years",
-  },
-  {
-    id: 3,
-    initials: "FK",
-    name: "Fatima Kano",
-    position: "Data Scientist",
-    rating: 4,
-    message:
-      "The company's commitment to work-life balance and professional development is remarkable. I've learned more in my time here than anywhere else in my career.",
-    tenure: "3 years",
-  },
-];
 
 const StarRating = memo(({ rating }: { rating: number }) => (
   <div className="flex items-center space-x-1">
     {[...Array(5)].map((_, starIndex) => (
       <Star
         key={starIndex}
-        className={`h-4 w-4 ${
-          starIndex < rating ? "fill-current text-yellow-400" : "text-slate-300"
-        }`}
+        className={`h-4 w-4 ${starIndex < rating ? "fill-current text-yellow-400" : "text-slate-300"
+          }`}
       />
     ))}
   </div>
@@ -62,7 +23,7 @@ const StarRating = memo(({ rating }: { rating: number }) => (
 StarRating.displayName = "StarRating";
 
 const TestimonialCard = memo(
-  ({ testimonial, index }: { testimonial: Testimonial; index: number }) => (
+  ({ review, index }: { review: Review; index: number }) => (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -83,15 +44,22 @@ const TestimonialCard = memo(
         <div className="flex items-start space-x-4">
           {/* Avatar */}
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 font-semibold text-white shadow-lg">
-            {testimonial.avatar ? (
+            {review.authorImage ? (
               <img
-                src={testimonial.avatar}
-                alt={testimonial.name}
+                src={review.authorImage}
+                alt={review.authorName}
                 className="h-full w-full rounded-full object-cover"
                 loading="lazy"
               />
             ) : (
-              <span className="text-sm">{testimonial.initials}</span>
+              <span className="text-sm">
+                {review.authorName
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .slice(0, 2)
+                  .toUpperCase()}
+              </span>
             )}
           </div>
 
@@ -100,19 +68,21 @@ const TestimonialCard = memo(
             <div className="flex items-start justify-between">
               <div className="min-w-0 flex-1">
                 <h3 className="truncate font-semibold text-slate-900">
-                  {testimonial.name}
+                  {review.authorName}
                 </h3>
                 <p className="truncate text-sm font-medium text-indigo-600">
-                  {testimonial.position}
+                  {review.authorTitle}
                 </p>
-                <p className="mt-1 text-xs text-slate-500">
-                  {testimonial.tenure} at company
-                </p>
+                {review.time && (
+                  <p className="mt-1 text-xs text-slate-500">
+                    {new Date(review.time).toLocaleDateString()}
+                  </p>
+                )}
               </div>
 
               {/* Rating */}
               <div className="ml-2 shrink-0">
-                <StarRating rating={testimonial.rating} />
+                <StarRating rating={review.rating} />
               </div>
             </div>
           </div>
@@ -121,7 +91,7 @@ const TestimonialCard = memo(
         {/* Testimonial Message */}
         <div className="relative">
           <p className="text-sm leading-relaxed text-slate-700 italic sm:text-base">
-            "{testimonial.message}"
+            "{review.content}"
           </p>
         </div>
       </div>
@@ -134,7 +104,47 @@ const TestimonialCard = memo(
 
 TestimonialCard.displayName = "TestimonialCard";
 
-const EmployeesTestimonial = memo(() => {
+const EmployeesTestimonial = memo(({ employerId }: EmployeesTestimonialsProps) => {
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!employerId) return;
+    setIsLoading(true);
+    fetchUserReviews(employerId)
+      .then((data) => setReviews(data || []))
+      .catch((err) => console.error("Failed to fetch testimonials:", err))
+      .finally(() => setIsLoading(false));
+  }, [employerId]);
+
+  if (isLoading) {
+    return (
+      <div className="p-6 sm:p-8">
+        <h2 className="mb-6 text-2xl font-bold text-slate-900">Employee Testimonials</h2>
+        <div className="space-y-4">
+          {[1, 2].map((i) => (
+            <div key={i} className="animate-pulse rounded-xl bg-slate-100 p-6">
+              <div className="mb-3 h-4 w-1/3 rounded bg-slate-200"></div>
+              <div className="h-3 w-2/3 rounded bg-slate-200"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (reviews.length === 0) {
+    return (
+      <div className="p-6 sm:p-8">
+        <h2 className="mb-6 text-2xl font-bold text-slate-900">Employee Testimonials</h2>
+        <div className="py-8 text-center">
+          <MessageSquare className="mx-auto mb-4 h-12 w-12 text-slate-300" />
+          <p className="text-slate-500">No testimonials yet</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 sm:p-8">
       <motion.div
@@ -146,31 +156,34 @@ const EmployeesTestimonial = memo(() => {
           <h2 className="text-2xl font-bold text-slate-900">
             Employee Testimonials
           </h2>
-          <p className="text-sm text-slate-500">What our team says</p>
+          <p className="text-sm text-slate-500">
+            {reviews.length} {reviews.length === 1 ? "review" : "reviews"}
+          </p>
         </div>
 
         <div className="space-y-6">
-          {testimonials.map((testimonial, index) => (
+          {reviews.slice(0, 5).map((review, index) => (
             <TestimonialCard
-              key={testimonial.id}
-              testimonial={testimonial}
+              key={index}
+              review={review}
               index={index}
             />
           ))}
         </div>
 
-        {/* View More Button */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="mt-8 text-center"
-        >
-          <button className="inline-flex items-center space-x-2 rounded-lg border border-slate-200 bg-white px-6 py-3 text-sm font-medium text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:outline-none">
-            <span>View More Testimonials</span>
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </motion.div>
+        {reviews.length > 5 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="mt-8 text-center"
+          >
+            <button className="inline-flex items-center space-x-2 rounded-lg border border-slate-200 bg-white px-6 py-3 text-sm font-medium text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:outline-none">
+              <span>View More Testimonials</span>
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );

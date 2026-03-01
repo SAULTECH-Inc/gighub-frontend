@@ -237,12 +237,12 @@ const EmployerPublicProfile: FC = () => {
           <div className="grid gap-6 xl:grid-cols-2">
             <Suspense fallback={<SectionSkeleton />}>
               <div className="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-slate-200">
-                <EmployeesTestimonials />
+                <EmployeesTestimonials employerId={Number(employerId)} />
               </div>
             </Suspense>
             <Suspense fallback={<SectionSkeleton />}>
               <div className="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-slate-200">
-                <ReviewsAndRatings />
+                <ReviewsAndRatings employerId={Number(employerId)} />
               </div>
             </Suspense>
           </div>

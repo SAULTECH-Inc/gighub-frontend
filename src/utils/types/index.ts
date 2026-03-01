@@ -184,6 +184,8 @@ export interface EmployerData {
   registrationNumber?: string;
   isFollowed?: boolean;
   noMutualConnections?: number;
+  followersCount?: number;
+  noOfFollowers?: number;
 }
 
 export interface TwoFactorLoginResponse {
@@ -1112,14 +1114,14 @@ export interface CreatePayment {
 }
 
 
-export interface GenerateQrcodeResponse{secret: string, qrCode: string}
+export interface GenerateQrcodeResponse { secret: string, qrCode: string }
 
-export interface TwoFactorEnabledResponse{
+export interface TwoFactorEnabledResponse {
   backupCodes: string[],
   warning: string
 }
 
-export interface ChangePasswordRequest{
+export interface ChangePasswordRequest {
   oldPassword: string,
   newPassword: string,
   confirmPassword: string,
@@ -1176,7 +1178,7 @@ interface DownloadButtonProps {
 export const handleDownload = (param: DownloadButtonProps) => {
   const link = document.createElement('a');
   link.href = param.fileUrl;
-  link.download = param.fileName || 'download-'+moment().format('YYYY-MM-DD-HH-mm-ss');
+  link.download = param.fileName || 'download-' + moment().format('YYYY-MM-DD-HH-mm-ss');
   link.target = '_blank';
   document.body.appendChild(link);
   link.click();
@@ -1196,7 +1198,7 @@ export interface Review {
 }
 
 
-export interface RequestDemo{
+export interface RequestDemo {
   name: string;
   email: string;
   company: string;
@@ -1206,7 +1208,7 @@ export interface RequestDemo{
   interests: any[];
 }
 
-export interface JobRatingRequest{
+export interface JobRatingRequest {
   score: number;
   comment?: string;
   rateeId: number;
@@ -1219,7 +1221,7 @@ export enum TutorialCategory {
   PROFILE = "PROFILE",
   ADVANCED = "ADVANCED",
 }
-export interface TutorialResponse{
+export interface TutorialResponse {
   id: string;                 // UUID or string representation
   title: string;
   description: string;

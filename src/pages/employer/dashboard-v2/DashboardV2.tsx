@@ -34,20 +34,61 @@ import {
   Mail,
   Edit3,
   Save,
-  CheckCircle2
+  CheckCircle2,
+  ArrowUpRight
 } from 'lucide-react';
+import { useDashboardData } from "../../../hooks/useDashboardData";
+import { fetchMetrics } from "../../../services/api";
+import { getMyApplications, getRecentApplications } from "../../../services/api";
 
 // Import our created components (in real implementation, these would be separate files)
 // For this demo, I'll include simplified versions inline
 
 const ApplicationStats = () => {
-  const [metrics] = useState({
-    activeJobs: 18,
-    totalApplications: 342,
-    successfulHires: 8,
-    recruitmentSpend: 12500,
-    budgetTotal: 25000
+  const [metrics, setMetrics] = useState({
+    activeJobs: 0,
+    totalApplications: 0,
+    successfulHires: 0,
+    recruitmentSpend: 0,
+    budgetTotal: 1
   });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadMetrics = async () => {
+      try {
+        const response = await fetchMetrics();
+        const data = response?.data;
+        if (data) {
+          setMetrics({
+            activeJobs: data.activeJobs || data.totalActiveJobs || 0,
+            totalApplications: data.totalApplications || data.applications || 0,
+            successfulHires: data.successfulHires || data.hires || 0,
+            recruitmentSpend: data.recruitmentSpend || 0,
+            budgetTotal: data.budgetTotal || data.recruitmentSpend || 1,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load dashboard metrics:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadMetrics();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className="bg-white p-6 rounded-xl border border-gray-200 animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-20 mb-2"></div>
+            <div className="h-4 bg-gray-200 rounded w-32"></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -56,11 +97,9 @@ const ApplicationStats = () => {
           <div className="p-2 bg-blue-100 rounded-lg">
             <Briefcase className="w-5 h-5 text-blue-600" />
           </div>
-          <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">+12%</span>
         </div>
         <h3 className="text-2xl font-bold text-gray-900 mb-1">{metrics.activeJobs}</h3>
         <p className="text-gray-600 text-sm">Active Jobs</p>
-        <div className="mt-3 text-xs text-gray-500">24 total positions</div>
       </div>
 
       <div className="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-all">
@@ -68,11 +107,9 @@ const ApplicationStats = () => {
           <div className="p-2 bg-green-100 rounded-lg">
             <Users className="w-5 h-5 text-green-600" />
           </div>
-          <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">+28</span>
         </div>
         <h3 className="text-2xl font-bold text-gray-900 mb-1">{metrics.totalApplications}</h3>
         <p className="text-gray-600 text-sm">Total Applications</p>
-        <div className="mt-3 text-xs text-gray-500">28 new this week</div>
       </div>
 
       <div className="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-all">
@@ -80,11 +117,9 @@ const ApplicationStats = () => {
           <div className="p-2 bg-purple-100 rounded-lg">
             <UserCheck className="w-5 h-5 text-purple-600" />
           </div>
-          <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full">85%</span>
         </div>
         <h3 className="text-2xl font-bold text-gray-900 mb-1">{metrics.successfulHires}</h3>
         <p className="text-gray-600 text-sm">Successful Hires</p>
-        <div className="mt-3 text-xs text-gray-500">Avg. 14 days to hire</div>
       </div>
 
       <div className="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-all">
@@ -92,12 +127,12 @@ const ApplicationStats = () => {
           <div className="p-2 bg-orange-100 rounded-lg">
             <DollarSign className="w-5 h-5 text-orange-600" />
           </div>
-          <span className="text-xs text-gray-600">{Math.round((metrics.recruitmentSpend/metrics.budgetTotal)*100)}% used</span>
+          <span className="text-xs text-gray-600">{metrics.budgetTotal > 0 ? Math.round((metrics.recruitmentSpend / metrics.budgetTotal) * 100) : 0}% used</span>
         </div>
-        <h3 className="text-2xl font-bold text-gray-900 mb-1">${(metrics.recruitmentSpend/1000).toFixed(1)}k</h3>
+        <h3 className="text-2xl font-bold text-gray-900 mb-1">${(metrics.recruitmentSpend / 1000).toFixed(1)}k</h3>
         <p className="text-gray-600 text-sm">Recruitment Spend</p>
         <div className="mt-3 w-full bg-gray-200 rounded-full h-2">
-          <div className="bg-orange-500 h-2 rounded-full" style={{width: `${(metrics.recruitmentSpend/metrics.budgetTotal)*100}%`}}></div>
+          <div className="bg-orange-500 h-2 rounded-full" style={{ width: `${metrics.budgetTotal > 0 ? (metrics.recruitmentSpend / metrics.budgetTotal) * 100 : 0}%` }}></div>
         </div>
       </div>
     </div>
@@ -225,7 +260,7 @@ const ApplicantRecentApplications = () => {
   ];
 
   const getStatusColor = (status) => {
-    switch(status) {
+    switch (status) {
       case 'new': return 'bg-blue-100 text-blue-800';
       case 'reviewing': return 'bg-yellow-100 text-yellow-800';
       case 'shortlisted': return 'bg-green-100 text-green-800';
@@ -461,33 +496,29 @@ const GigHubEmployerDashboard = () => {
               <nav className="hidden md:flex items-center gap-6">
                 <button
                   onClick={() => setActiveTab('overview')}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    activeTab === 'overview' ? 'bg-purple-100 text-purple-700' : 'text-gray-600 hover:text-gray-900'
-                  }`}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'overview' ? 'bg-purple-100 text-purple-700' : 'text-gray-600 hover:text-gray-900'
+                    }`}
                 >
                   Overview
                 </button>
                 <button
                   onClick={() => setActiveTab('jobs')}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    activeTab === 'jobs' ? 'bg-purple-100 text-purple-700' : 'text-gray-600 hover:text-gray-900'
-                  }`}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'jobs' ? 'bg-purple-100 text-purple-700' : 'text-gray-600 hover:text-gray-900'
+                    }`}
                 >
                   Jobs
                 </button>
                 <button
                   onClick={() => setActiveTab('candidates')}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    activeTab === 'candidates' ? 'bg-purple-100 text-purple-700' : 'text-gray-600 hover:text-gray-900'
-                  }`}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'candidates' ? 'bg-purple-100 text-purple-700' : 'text-gray-600 hover:text-gray-900'
+                    }`}
                 >
                   Candidates
                 </button>
                 <button
                   onClick={() => setActiveTab('analytics')}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    activeTab === 'analytics' ? 'bg-purple-100 text-purple-700' : 'text-gray-600 hover:text-gray-900'
-                  }`}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'analytics' ? 'bg-purple-100 text-purple-700' : 'text-gray-600 hover:text-gray-900'
+                    }`}
                 >
                   Analytics
                 </button>

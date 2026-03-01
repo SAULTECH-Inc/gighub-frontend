@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Filter, ChevronDown, ChevronRight, Clock, Users, CheckCircle, XCircle, AlertCircle, Send, Eye, Download, BarChart3, Plus, Target, Flag, ThumbsUp, ThumbsDown, TrendingUp, Award, X } from 'lucide-react';
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
-import { employerNavBarItemMap} from "../../utils/constants.ts";
+import { employerNavBarItemMap } from "../../utils/constants.ts";
+import { useFetchMyJobs } from "../../hooks/useJobQuery.ts";
+import { fetchScreeningQuestions, fetchJobApplications, updateApplicationStatus, addScreeningQuestions } from "../../services/api";
+import { toast } from "react-toastify";
+import { ScreeningQuestionType } from "../../utils/enums.ts";
+import { ScreeningQuestion } from "../../utils/types";
 
 interface Assessment {
   id: number;
@@ -22,7 +27,7 @@ interface AssessmentPool {
 interface Question {
   id: number;
   text: string;
-  type: 'multiple_choice' | 'coding' | 'essay';
+  type: ScreeningQuestionType | 'true_false';
   options?: string[];
   correctAnswer?: string | number;
   maxScore: number;
@@ -66,16 +71,16 @@ interface ConfirmationDialogProps {
 }
 
 const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
-                                                                 isOpen,
-                                                                 onClose,
-                                                                 onConfirm,
-                                                                 title,
-                                                                 message,
-                                                                 confirmText = 'Confirm',
-                                                                 cancelText = 'Cancel',
-                                                                 type = 'info',
-                                                                 loading = false,
-                                                               }) => {
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
+  type = 'info',
+  loading = false,
+}) => {
   if (!isOpen) return null;
 
   const getTypeStyles = () => {
@@ -150,200 +155,83 @@ const EmployerAssessmentPage = () => {
   const [confirmDialog, setConfirmDialog] = useState<any>({ isOpen: false });
   const [customQuestions, setCustomQuestions] = useState<Question[]>([]);
 
-  const postedJobs: Job[] = [
-    { id: 1, title: 'Senior Frontend Developer', applicants: 247, status: 'active' },
-    { id: 2, title: 'Product Manager', applicants: 189, status: 'active' },
-    { id: 3, title: 'UI/UX Designer', applicants: 156, status: 'active' }
-  ];
+  const { data: myJobsData } = useFetchMyJobs();
 
-  const assessmentPools: AssessmentPool[] = [
-    {
-      category: 'Technical Skills',
-      assessments: [
-        {
-          id: 1,
-          name: 'React Advanced',
-          duration: 60,
-          questions: 25,
-          difficulty: 'Hard',
-          type: 'auto',
-          description: 'Comprehensive assessment of advanced React concepts including hooks, context, performance optimization, and modern patterns.',
-          skills: ['Component Architecture', 'State Management', 'Performance Optimization', 'Testing']
-        },
-        {
-          id: 2,
-          name: 'JavaScript Fundamentals',
-          duration: 45,
-          questions: 30,
-          difficulty: 'Medium',
-          type: 'auto',
-          description: 'Tests core JavaScript knowledge including ES6+ features, async programming, closures, and functional programming.',
-          skills: ['ES6+ Syntax', 'Async/Await', 'Closures', 'Array Methods']
-        },
-        {
-          id: 3,
-          name: 'System Design',
-          duration: 90,
-          questions: 5,
-          difficulty: 'Hard',
-          type: 'manual',
-          description: 'Evaluates ability to design scalable systems, data structures, architectural decisions, and problem-solving approach.',
-          skills: ['System Architecture', 'Scalability', 'Data Structures', 'Problem Solving']
-        }
-      ]
-    },
-    {
-      category: 'Soft Skills',
-      assessments: [
-        {
-          id: 4,
-          name: 'Communication Assessment',
-          duration: 30,
-          questions: 15,
-          difficulty: 'Easy',
-          type: 'manual',
-          description: 'Assesses written and verbal communication skills, clarity of thought, and ability to explain technical concepts.',
-          skills: ['Written Communication', 'Technical Explanation', 'Clarity', 'Collaboration']
-        },
-        {
-          id: 5,
-          name: 'Problem Solving',
-          duration: 45,
-          questions: 20,
-          difficulty: 'Medium',
-          type: 'auto',
-          description: 'Tests analytical thinking, logical reasoning, and creative problem-solving abilities.',
-          skills: ['Analytical Thinking', 'Logic', 'Creative Solutions', 'Critical Thinking']
-        }
-      ]
-    },
-    {
-      category: 'Project-Based',
-      assessments: [
-        {
-          id: 6,
-          name: 'Build a Dashboard',
-          duration: 240,
-          questions: 1,
-          difficulty: 'Hard',
-          type: 'manual',
-          description: 'Practical assessment requiring candidates to build a functional dashboard with clean code, proper architecture, and best practices.',
-          skills: ['Clean Code', 'Component Design', 'State Management', 'UI/UX Implementation']
-        },
-        {
-          id: 7,
-          name: 'Code Review Exercise',
-          duration: 60,
-          questions: 3,
-          difficulty: 'Medium',
-          type: 'manual',
-          description: 'Tests ability to identify bugs, suggest improvements, and understand code quality standards.',
-          skills: ['Code Quality', 'Bug Detection', 'Best Practices', 'Refactoring']
-        }
-      ]
-    }
-  ];
+  const [postedJobs, setPostedJobs] = useState<Job[]>([]);
+  const [assessmentPools, setAssessmentPools] = useState<AssessmentPool[]>([]);
+  const [submittedAssessments, setSubmittedAssessments] = useState<SubmittedAssessment[]>([]);
+  const [isLoadingAssessments, setIsLoadingAssessments] = useState(false);
 
-  const mockQuestions: Question[] = [
-    {
-      id: 1,
-      text: 'Explain the concept of closures in JavaScript and provide a practical example.',
-      type: 'essay',
-      maxScore: 25
-    },
-    {
-      id: 2,
-      text: 'Design a scalable architecture for a real-time chat application. Include database choices, caching strategy, and scaling considerations.',
-      type: 'essay',
-      maxScore: 30
-    },
-    {
-      id: 3,
-      text: 'Which React hook would you use to handle side effects?',
-      type: 'multiple_choice',
-      options: ['useState', 'useEffect', 'useContext', 'useReducer'],
-      correctAnswer: 1,
-      maxScore: 10
+  // Load jobs from API on mount
+  useEffect(() => {
+    if (myJobsData?.data) {
+      const jobs: Job[] = myJobsData.data.map((j: any) => ({
+        id: j.id,
+        title: j.title || 'Untitled Job',
+        applicants: j.applicantCount || 0,
+        status: j.status === 'OPEN' ? 'active' as const : 'closed' as const,
+      }));
+      setPostedJobs(jobs);
     }
-  ];
+  }, [myJobsData]);
 
-  const submittedAssessments: SubmittedAssessment[] = [
-    {
-      id: 1,
-      candidate: 'John Doe',
-      candidateId: 101,
-      score: 85,
-      status: 'passed',
-      submittedAt: '2h ago',
-      autoScored: true
-    },
-    {
-      id: 2,
-      candidate: 'Jane Smith',
-      candidateId: 102,
-      score: null,
-      status: 'pending',
-      submittedAt: '5h ago',
-      autoScored: false,
-      assessmentQuestions: mockQuestions,
-      answers: [
-        {
-          questionId: 1,
-          answer: 'A closure is a function that has access to variables in its outer scope, even after the outer function has returned. Example: function outer() { let count = 0; return function inner() { count++; return count; } }'
-        },
-        {
-          questionId: 2,
-          answer: 'For a real-time chat app, I would use: WebSocket for real-time communication, Redis for caching and pub/sub, PostgreSQL for persistent storage, horizontal scaling with load balancers, and CDN for static assets.'
-        },
-        {
-          questionId: 3,
-          answer: 'useEffect'
-        }
-      ]
-    },
-    {
-      id: 3,
-      candidate: 'Mike Johnson',
-      candidateId: 103,
-      score: 92,
-      status: 'passed',
-      submittedAt: '1d ago',
-      autoScored: true
-    },
-    {
-      id: 4,
-      candidate: 'Sarah Williams',
-      candidateId: 104,
-      score: 58,
-      status: 'failed',
-      submittedAt: '1d ago',
-      autoScored: true
-    },
-    {
-      id: 5,
-      candidate: 'Tom Brown',
-      candidateId: 105,
-      score: null,
-      status: 'pending',
-      submittedAt: '2d ago',
-      autoScored: false,
-      assessmentQuestions: mockQuestions,
-      answers: [
-        {
-          questionId: 1,
-          answer: 'Closures allow functions to remember variables from their creation context.'
-        },
-        {
-          questionId: 2,
-          answer: 'Use MongoDB, WebSockets, and deploy on AWS with auto-scaling groups.'
-        },
-        {
-          questionId: 3,
-          answer: 'useState'
-        }
-      ]
+  // Load screening questions when a job is selected
+  const loadAssessmentsForJob = useCallback(async (jobId: number) => {
+    setIsLoadingAssessments(true);
+    try {
+      const response = await fetchScreeningQuestions(jobId);
+      const questions = response?.data || [];
+      if (questions.length > 0) {
+        const pool: AssessmentPool = {
+          category: 'Screening Questions',
+          assessments: questions.map((q: any, idx: number) => ({
+            id: q.id || idx + 1,
+            name: q.question || `Question ${idx + 1}`,
+            duration: 15,
+            questions: 1,
+            difficulty: 'Medium' as const,
+            type: q.type === 'text' ? 'manual' as const : 'auto' as const,
+            description: q.question || '',
+            skills: [],
+          })),
+        };
+        setAssessmentPools([pool]);
+      } else {
+        setAssessmentPools([]);
+      }
+
+      // Load submitted applications for review
+      const appsResponse = await fetchJobApplications(jobId, 1, 50, {
+        search: '', status: '', sortBy: 'createdAt', sortOrder: 'DESC',
+      });
+      const apps = appsResponse?.data || [];
+      const submissions: SubmittedAssessment[] = apps.map((app: any) => ({
+        id: app.id,
+        candidate: app.applicant?.name || `${app.applicant?.firstName || ''} ${app.applicant?.lastName || ''}`.trim() || 'Unknown',
+        candidateId: app.applicant?.id || 0,
+        score: app.status === 'ACCEPTED' ? 85 : app.status === 'REJECTED' ? 45 : null,
+        status: app.status === 'ACCEPTED' ? 'passed' as const
+          : app.status === 'REJECTED' ? 'failed' as const
+            : 'pending' as const,
+        submittedAt: new Date(app.createdAt).toLocaleDateString(),
+        autoScored: false,
+      }));
+      setSubmittedAssessments(submissions);
+    } catch (error) {
+      console.error('Failed to load assessments:', error);
+      setAssessmentPools([]);
+      setSubmittedAssessments([]);
+    } finally {
+      setIsLoadingAssessments(false);
     }
-  ];
+  }, []);
+
+  // Load data when job is selected
+  useEffect(() => {
+    if (selectedJob?.id) {
+      loadAssessmentsForJob(selectedJob.id);
+    }
+  }, [selectedJob, loadAssessmentsForJob]);
 
   const handleAssessmentSelect = (assessment: Assessment) => {
     if (selectedAssessments.find(a => a.id === assessment.id)) {
@@ -360,11 +248,28 @@ const EmployerAssessmentPage = () => {
       flag: { title: 'Candidate Flagged', message: `${submission.candidate} has been flagged for review.` }
     };
 
+    const statusMap: Record<string, string> = {
+      accept: 'ACCEPTED',
+      reject: 'REJECTED',
+      flag: 'SHORTLISTED',
+    };
+
     setConfirmDialog({
       isOpen: true,
       ...messages[action],
       type: action === 'accept' ? 'success' : action === 'reject' ? 'danger' : 'warning',
-      onConfirm: () => {
+      onConfirm: async () => {
+        try {
+          await updateApplicationStatus(submission.id, statusMap[action]);
+          toast.success(messages[action].message);
+          // Refresh data
+          if (selectedJob?.id) {
+            loadAssessmentsForJob(selectedJob.id);
+          }
+        } catch (error) {
+          console.error('Failed to update status:', error);
+          toast.error('Failed to update candidate status');
+        }
         setConfirmDialog({ isOpen: false });
         setShowReviewModal(false);
       },
@@ -481,6 +386,15 @@ const EmployerAssessmentPage = () => {
   const AnalyticsModal = () => {
     if (!showAnalytics) return null;
 
+    const totalCandidates = submittedAssessments.length;
+    const passedCount = submittedAssessments.filter(s => s.status === 'passed').length;
+    const failedCount = submittedAssessments.filter(s => s.status === 'failed').length;
+    const pendingCount = submittedAssessments.filter(s => s.status === 'pending').length;
+    const completionRate = totalCandidates > 0 ? Math.round(((passedCount + failedCount) / totalCandidates) * 100) : 0;
+    const avgScore = submittedAssessments.filter(s => s.score != null).length > 0
+      ? Math.round(submittedAssessments.filter(s => s.score != null).reduce((sum, s) => sum + (s.score || 0), 0) / submittedAssessments.filter(s => s.score != null).length)
+      : 0;
+
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
         <div className="w-full max-w-6xl bg-white rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
@@ -497,44 +411,42 @@ const EmployerAssessmentPage = () => {
             <div className="grid grid-cols-4 gap-4">
               <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-6">
                 <Users className="text-blue-600 mb-2" size={24} />
-                <div className="text-3xl font-bold text-blue-900">247</div>
+                <div className="text-3xl font-bold text-blue-900">{totalCandidates}</div>
                 <div className="text-sm text-blue-700">Total Candidates</div>
               </div>
               <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-6">
                 <TrendingUp className="text-green-600 mb-2" size={24} />
-                <div className="text-3xl font-bold text-green-900">63%</div>
+                <div className="text-3xl font-bold text-green-900">{completionRate}%</div>
                 <div className="text-sm text-green-700">Completion Rate</div>
               </div>
               <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-xl p-6">
                 <Award className="text-purple-600 mb-2" size={24} />
-                <div className="text-3xl font-bold text-purple-900">78%</div>
+                <div className="text-3xl font-bold text-purple-900">{avgScore}%</div>
                 <div className="text-sm text-purple-700">Avg Score</div>
               </div>
               <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-xl p-6">
                 <Clock className="text-orange-600 mb-2" size={24} />
-                <div className="text-3xl font-bold text-orange-900">52m</div>
-                <div className="text-sm text-orange-700">Avg Duration</div>
+                <div className="text-3xl font-bold text-orange-900">{pendingCount}</div>
+                <div className="text-sm text-orange-700">Pending Review</div>
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="border border-gray-200 rounded-xl p-6">
-                <h3 className="font-semibold text-lg mb-4 text-[#222222]">Score Distribution</h3>
+                <h3 className="font-semibold text-lg mb-4 text-[#222222]">Status Breakdown</h3>
                 <div className="space-y-3">
                   {[
-                    { range: '90-100%', count: 45, color: 'bg-green-600' },
-                    { range: '80-89%', count: 62, color: 'bg-blue-600' },
-                    { range: '70-79%', count: 38, color: 'bg-yellow-600' },
-                    { range: '60-69%', count: 21, color: 'bg-orange-600' },
-                    { range: 'Below 60%', count: 14, color: 'bg-red-600' }
+                    { label: 'Passed', count: passedCount, color: 'bg-green-600', pct: totalCandidates > 0 ? (passedCount / totalCandidates) * 100 : 0 },
+                    { label: 'Failed', count: failedCount, color: 'bg-red-600', pct: totalCandidates > 0 ? (failedCount / totalCandidates) * 100 : 0 },
+                    { label: 'Pending', count: pendingCount, color: 'bg-yellow-600', pct: totalCandidates > 0 ? (pendingCount / totalCandidates) * 100 : 0 },
                   ].map(item => (
-                    <div key={item.range}>
+                    <div key={item.label}>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-700">{item.range}</span>
-                        <span className="font-semibold text-[#222222]">{item.count} candidates</span>
+                        <span className="text-gray-700">{item.label}</span>
+                        <span className="font-semibold text-[#222222]">{item.count} candidates ({Math.round(item.pct)}%)</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className={`${item.color} h-2 rounded-full`} style={{ width: `${(item.count / 180) * 100}%` }} />
+                        <div className={`${item.color} h-2 rounded-full`} style={{ width: `${item.pct}%` }} />
                       </div>
                     </div>
                   ))}
@@ -542,51 +454,27 @@ const EmployerAssessmentPage = () => {
               </div>
 
               <div className="border border-gray-200 rounded-xl p-6">
-                <h3 className="font-semibold text-lg mb-4 text-[#222222]">Top Performing Skills</h3>
-                <div className="space-y-4">
-                  {[
-                    { skill: 'React Advanced', avgScore: 85, candidates: 156 },
-                    { skill: 'System Design', avgScore: 78, candidates: 124 },
-                    { skill: 'JavaScript Fundamentals', avgScore: 82, candidates: 143 },
-                    { skill: 'Problem Solving', avgScore: 76, candidates: 118 }
-                  ].map(item => (
-                    <div key={item.skill} className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="font-medium text-[#222222]">{item.skill}</div>
-                        <div className="text-xs text-gray-600">{item.candidates} candidates</div>
+                <h3 className="font-semibold text-lg mb-4 text-[#222222]">Recent Submissions</h3>
+                {submittedAssessments.length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">No submissions yet</p>
+                ) : (
+                  <div className="space-y-3">
+                    {submittedAssessments.slice(0, 5).map(sub => (
+                      <div key={sub.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                          <p className="font-medium text-sm text-[#222222]">{sub.candidate}</p>
+                          <p className="text-xs text-gray-500">{sub.submittedAt}</p>
+                        </div>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${sub.status === 'passed' ? 'bg-green-100 text-green-700'
+                            : sub.status === 'failed' ? 'bg-red-100 text-red-700'
+                              : 'bg-yellow-100 text-yellow-700'
+                          }`}>
+                          {sub.status}
+                        </span>
                       </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-[#6A0DAD]">{item.avgScore}%</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="border border-gray-200 rounded-xl p-6">
-              <h3 className="font-semibold text-lg mb-4 text-[#222222]">Assessment Timeline</h3>
-              <div className="space-y-2">
-                {[
-                  { date: 'Week 1', sent: 100, completed: 65, passed: 48 },
-                  { date: 'Week 2', sent: 85, completed: 58, passed: 42 },
-                  { date: 'Week 3', sent: 62, completed: 45, passed: 35 }
-                ].map(item => (
-                  <div key={item.date} className="flex items-center gap-4">
-                    <div className="w-20 text-sm font-medium text-gray-700">{item.date}</div>
-                    <div className="flex-1 flex gap-2">
-                      <div className="bg-blue-200 rounded px-3 py-1 text-xs font-medium text-blue-900">
-                        {item.sent} sent
-                      </div>
-                      <div className="bg-yellow-200 rounded px-3 py-1 text-xs font-medium text-yellow-900">
-                        {item.completed} completed
-                      </div>
-                      <div className="bg-green-200 rounded px-3 py-1 text-xs font-medium text-green-900">
-                        {item.passed} passed
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>
@@ -599,9 +487,32 @@ const EmployerAssessmentPage = () => {
     if (!showCreateAssessment) return null;
 
     const [newQuestion, setNewQuestion] = useState<Partial<Question>>({
-      type: 'essay',
-      maxScore: 10
+      type: ScreeningQuestionType.SHORT_TEXT,
+      maxScore: 10,
+      options: []
     });
+    const [newOption, setNewOption] = useState('');
+
+    const questionTypeLabels: Record<string, string> = {
+      [ScreeningQuestionType.OPTIONS]: 'Multi-Choice (one or more answers)',
+      [ScreeningQuestionType.YES_NO]: 'Yes / No',
+      'true_false': 'True / False',
+      [ScreeningQuestionType.SHORT_TEXT]: 'Short Text Response',
+      [ScreeningQuestionType.LONG_TEXT]: 'Long Text Response',
+    };
+
+    const handleAddOption = () => {
+      if (newOption.trim() && newQuestion.options) {
+        setNewQuestion({ ...newQuestion, options: [...newQuestion.options, newOption.trim()] });
+        setNewOption('');
+      }
+    };
+
+    const handleRemoveOption = (index: number) => {
+      if (newQuestion.options) {
+        setNewQuestion({ ...newQuestion, options: newQuestion.options.filter((_, i) => i !== index) });
+      }
+    };
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -661,12 +572,16 @@ const EmployerAssessmentPage = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Question Type</label>
                   <select
                     value={newQuestion.type}
-                    onChange={(e) => setNewQuestion({ ...newQuestion, type: e.target.value as any })}
+                    onChange={(e) => {
+                      const val = e.target.value as any;
+                      setNewQuestion({ ...newQuestion, type: val, options: val === ScreeningQuestionType.OPTIONS ? [] : undefined });
+                      setNewOption('');
+                    }}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6A0DAD]"
                   >
-                    <option value="essay">Essay</option>
-                    <option value="multiple_choice">Multiple Choice</option>
-                    <option value="coding">Coding Challenge</option>
+                    {Object.entries(questionTypeLabels).map(([value, label]) => (
+                      <option key={value} value={value}>{label}</option>
+                    ))}
                   </select>
                 </div>
 
@@ -681,6 +596,67 @@ const EmployerAssessmentPage = () => {
                   />
                 </div>
 
+                {/* Options builder for Multi-Choice */}
+                {newQuestion.type === ScreeningQuestionType.OPTIONS && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Answer Options</label>
+                    <div className="space-y-2">
+                      {(newQuestion.options || []).map((opt, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          <span className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm">{opt}</span>
+                          <button
+                            onClick={() => handleRemoveOption(idx)}
+                            className="text-red-500 hover:text-red-700 p-1"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      ))}
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={newOption}
+                          onChange={(e) => setNewOption(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddOption(); } }}
+                          placeholder="Type an option and press Enter or click Add"
+                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6A0DAD] text-sm"
+                        />
+                        <button
+                          onClick={handleAddOption}
+                          className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium"
+                        >
+                          Add
+                        </button>
+                      </div>
+                    </div>
+                    {(newQuestion.options || []).length === 0 && (
+                      <p className="text-xs text-amber-600 mt-1">Add at least 2 options for a multi-choice question</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Preview for Yes/No */}
+                {newQuestion.type === ScreeningQuestionType.YES_NO && (
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 mb-2">Candidates will see:</p>
+                    <div className="flex gap-3">
+                      <span className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm">Yes</span>
+                      <span className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm">No</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Preview for True/False */}
+                {newQuestion.type === 'true_false' && (
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 mb-2">Candidates will see:</p>
+                    <div className="flex gap-3">
+                      <span className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm">True</span>
+                      <span className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm">False</span>
+                    </div>
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Max Score</label>
                   <input
@@ -693,10 +669,17 @@ const EmployerAssessmentPage = () => {
 
                 <button
                   onClick={() => {
-                    if (newQuestion.text && newQuestion.maxScore) {
-                      setCustomQuestions([...customQuestions, { ...newQuestion, id: Date.now() } as Question]);
-                      setNewQuestion({ type: 'essay', maxScore: 10, text: '' });
+                    if (!newQuestion.text || !newQuestion.maxScore) {
+                      toast.warning('Please enter question text and max score');
+                      return;
                     }
+                    if (newQuestion.type === ScreeningQuestionType.OPTIONS && (!newQuestion.options || newQuestion.options.length < 2)) {
+                      toast.warning('Multi-choice questions need at least 2 options');
+                      return;
+                    }
+                    setCustomQuestions([...customQuestions, { ...newQuestion, id: Date.now() } as Question]);
+                    setNewQuestion({ type: ScreeningQuestionType.SHORT_TEXT, maxScore: 10, text: '', options: [] });
+                    setNewOption('');
                   }}
                   className="px-4 py-2 bg-[#6438c2] text-white rounded-lg hover:bg-[#6A0DAD] font-medium flex items-center gap-2"
                 >
@@ -710,14 +693,23 @@ const EmployerAssessmentPage = () => {
                   <h4 className="font-medium text-gray-700">Questions Added ({customQuestions.length})</h4>
                   {customQuestions.map((q, idx) => (
                     <div key={q.id} className="p-4 bg-gray-50 rounded-lg flex justify-between items-start">
-                      <div>
+                      <div className="flex-1">
                         <div className="font-medium text-[#222222]">Question {idx + 1}</div>
                         <div className="text-sm text-gray-600 mt-1">{q.text}</div>
-                        <div className="text-xs text-gray-500 mt-1">{q.type} • {q.maxScore} points</div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {questionTypeLabels[q.type] || q.type} • {q.maxScore} points
+                        </div>
+                        {q.type === ScreeningQuestionType.OPTIONS && q.options && q.options.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {q.options.map((opt, i) => (
+                              <span key={i} className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full">{opt}</span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       <button
                         onClick={() => setCustomQuestions(customQuestions.filter(q2 => q2.id !== q.id))}
-                        className="text-red-600 hover:text-red-700"
+                        className="text-red-600 hover:text-red-700 ml-2"
                       >
                         <X size={18} />
                       </button>
@@ -737,10 +729,14 @@ const EmployerAssessmentPage = () => {
             </button>
             <button
               onClick={() => {
+                if (customQuestions.length === 0) {
+                  toast.warning('Please add at least one question');
+                  return;
+                }
                 setConfirmDialog({
                   isOpen: true,
                   title: 'Assessment Created',
-                  message: 'Your custom assessment has been created successfully!',
+                  message: `Your custom assessment with ${customQuestions.length} question(s) has been created successfully!`,
                   type: 'success',
                   onConfirm: () => {
                     setShowCreateAssessment(false);
@@ -765,9 +761,8 @@ const EmployerAssessmentPage = () => {
       {[1, 2, 3, 4].map((step, idx) => (
         <React.Fragment key={step}>
           <div className="flex flex-col items-center">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
-              currentStep >= step ? 'bg-[#6A0DAD] text-white' : 'bg-gray-200 text-gray-500'
-            }`}>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${currentStep >= step ? 'bg-[#6A0DAD] text-white' : 'bg-gray-200 text-gray-500'
+              }`}>
               {step}
             </div>
             <span className="text-xs mt-2 text-gray-600">
@@ -775,9 +770,8 @@ const EmployerAssessmentPage = () => {
             </span>
           </div>
           {idx < 3 && (
-            <div className={`h-1 w-20 mx-2 transition-all ${
-              currentStep > step ? 'bg-[#6A0DAD]' : 'bg-gray-200'
-            }`} />
+            <div className={`h-1 w-20 mx-2 transition-all ${currentStep > step ? 'bg-[#6A0DAD]' : 'bg-gray-200'
+              }`} />
           )}
         </React.Fragment>
       ))}
@@ -807,11 +801,10 @@ const EmployerAssessmentPage = () => {
           <div
             key={job.id}
             onClick={() => setSelectedJob(job)}
-            className={`p-6 border-2 rounded-xl cursor-pointer transition-all ${
-              selectedJob?.id === job.id
-                ? 'border-[#6A0DAD] bg-purple-50'
-                : 'border-gray-200 hover:border-[#6438c2]'
-            }`}
+            className={`p-6 border-2 rounded-xl cursor-pointer transition-all ${selectedJob?.id === job.id
+              ? 'border-[#6A0DAD] bg-purple-50'
+              : 'border-gray-200 hover:border-[#6438c2]'
+              }`}
           >
             <div className="flex justify-between items-start">
               <div>
@@ -903,26 +896,23 @@ const EmployerAssessmentPage = () => {
                   <div
                     key={assessment.id}
                     onClick={() => handleAssessmentSelect(assessment)}
-                    className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                      selectedAssessments.find(a => a.id === assessment.id)
-                        ? 'border-[#6A0DAD] bg-purple-50'
-                        : 'border-gray-200 hover:border-[#6438c2]'
-                    }`}
+                    className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${selectedAssessments.find(a => a.id === assessment.id)
+                      ? 'border-[#6A0DAD] bg-purple-50'
+                      : 'border-gray-200 hover:border-[#6438c2]'
+                      }`}
                   >
                     <div className="flex justify-between items-start mb-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
                           <h4 className="font-semibold text-[#222222]">{assessment.name}</h4>
-                          <span className={`px-2 py-1 rounded text-xs font-medium ${
-                            assessment.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
-                              assessment.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-                                'bg-red-100 text-red-700'
-                          }`}>
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${assessment.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
+                            assessment.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-red-100 text-red-700'
+                            }`}>
                             {assessment.difficulty}
                           </span>
-                          <span className={`px-2 py-1 rounded text-xs font-medium ${
-                            assessment.type === 'auto' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
-                          }`}>
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${assessment.type === 'auto' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
+                            }`}>
                             {assessment.type === 'auto' ? 'Auto-scored' : 'Manual Review'}
                           </span>
                         </div>
@@ -992,7 +982,7 @@ const EmployerAssessmentPage = () => {
                 <input
                   type="checkbox"
                   checked={assessmentSettings.autoScore}
-                  onChange={(e) => setAssessmentSettings({...assessmentSettings, autoScore: e.target.checked})}
+                  onChange={(e) => setAssessmentSettings({ ...assessmentSettings, autoScore: e.target.checked })}
                   className="mt-1 w-5 h-5 text-[#6A0DAD] rounded focus:ring-[#6A0DAD]"
                 />
                 <div>
@@ -1005,7 +995,7 @@ const EmployerAssessmentPage = () => {
                 <input
                   type="checkbox"
                   checked={assessmentSettings.autoDisqualify}
-                  onChange={(e) => setAssessmentSettings({...assessmentSettings, autoDisqualify: e.target.checked})}
+                  onChange={(e) => setAssessmentSettings({ ...assessmentSettings, autoDisqualify: e.target.checked })}
                   className="mt-1 w-5 h-5 text-[#6A0DAD] rounded focus:ring-[#6A0DAD]"
                 />
                 <div>
@@ -1024,7 +1014,7 @@ const EmployerAssessmentPage = () => {
               <input
                 type="number"
                 value={assessmentSettings.deadline}
-                onChange={(e) => setAssessmentSettings({...assessmentSettings, deadline: parseInt(e.target.value)})}
+                onChange={(e) => setAssessmentSettings({ ...assessmentSettings, deadline: parseInt(e.target.value) })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6A0DAD]"
                 min="1"
                 max="30"
@@ -1115,9 +1105,8 @@ const EmployerAssessmentPage = () => {
                 <div className="font-medium text-[#222222]">{idx + 1}. {assessment.name}</div>
                 <div className="text-xs text-gray-600">{assessment.questions} questions • {assessment.duration} mins</div>
               </div>
-              <span className={`px-2 py-1 rounded text-xs ${
-                assessment.type === 'auto' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
-              }`}>
+              <span className={`px-2 py-1 rounded text-xs ${assessment.type === 'auto' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
+                }`}>
                 {assessment.type === 'auto' ? 'Auto' : 'Manual'}
               </span>
             </div>
@@ -1226,66 +1215,64 @@ const EmployerAssessmentPage = () => {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Candidate</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Score</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Submitted</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Type</th>
-              <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">Actions</th>
-            </tr>
+              <tr>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Candidate</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Score</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Submitted</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Type</th>
+                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">Actions</th>
+              </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-            {submittedAssessments.map(submission => (
-              <tr key={submission.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4">
-                  <div className="font-medium text-[#222222]">{submission.candidate}</div>
-                </td>
-                <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1 ${
-                      submission.status === 'passed' ? 'bg-green-100 text-green-700' :
-                        submission.status === 'failed' ? 'bg-red-100 text-red-700' :
-                          submission.status === 'flagged' ? 'bg-yellow-100 text-yellow-700' :
-                            'bg-blue-100 text-blue-700'
-                    }`}>
+              {submittedAssessments.map(submission => (
+                <tr key={submission.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4">
+                    <div className="font-medium text-[#222222]">{submission.candidate}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1 ${submission.status === 'passed' ? 'bg-green-100 text-green-700' :
+                      submission.status === 'failed' ? 'bg-red-100 text-red-700' :
+                        submission.status === 'flagged' ? 'bg-yellow-100 text-yellow-700' :
+                          'bg-blue-100 text-blue-700'
+                      }`}>
                       {submission.status === 'passed' ? <CheckCircle size={14} /> :
                         submission.status === 'failed' ? <XCircle size={14} /> :
                           submission.status === 'flagged' ? <Flag size={14} /> :
                             <AlertCircle size={14} />}
                       {submission.status}
                     </span>
-                </td>
-                <td className="px-6 py-4">
-                  {submission.score !== null ? (
-                    <span className="font-semibold text-[#222222]">{submission.score}%</span>
-                  ) : (
-                    <span className="text-gray-400">Pending</span>
-                  )}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-600">{submission.submittedAt}</td>
-                <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded text-xs ${
-                      submission.autoScored ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
-                    }`}>
+                  </td>
+                  <td className="px-6 py-4">
+                    {submission.score !== null ? (
+                      <span className="font-semibold text-[#222222]">{submission.score}%</span>
+                    ) : (
+                      <span className="text-gray-400">Pending</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{submission.submittedAt}</td>
+                  <td className="px-6 py-4">
+                    <span className={`px-2 py-1 rounded text-xs ${submission.autoScored ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
+                      }`}>
                       {submission.autoScored ? 'Auto' : 'Manual'}
                     </span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    onClick={() => {
-                      setSelectedSubmission(submission);
-                      if (!submission.autoScored && submission.status === 'pending') {
-                        setShowReviewModal(true);
-                      }
-                    }}
-                    className="text-[#6A0DAD] hover:text-[#6438c2] font-medium text-sm inline-flex items-center gap-1"
-                  >
-                    <Eye size={16} />
-                    {!submission.autoScored && submission.status === 'pending' ? 'Score' : 'Review'}
-                  </button>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <button
+                      onClick={() => {
+                        setSelectedSubmission(submission);
+                        if (!submission.autoScored && submission.status === 'pending') {
+                          setShowReviewModal(true);
+                        }
+                      }}
+                      className="text-[#6A0DAD] hover:text-[#6438c2] font-medium text-sm inline-flex items-center gap-1"
+                    >
+                      <Eye size={16} />
+                      {!submission.autoScored && submission.status === 'pending' ? 'Score' : 'Review'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -1310,21 +1297,19 @@ const EmployerAssessmentPage = () => {
           <div className="flex border-b border-gray-200">
             <button
               onClick={() => setActiveTab('create')}
-              className={`flex-1 px-6 py-4 font-medium transition-colors ${
-                activeTab === 'create'
-                  ? 'text-[#6A0DAD] border-b-2 border-[#6A0DAD] bg-purple-50'
-                  : 'text-gray-600 hover:text-[#6A0DAD] hover:bg-gray-50'
-              }`}
+              className={`flex-1 px-6 py-4 font-medium transition-colors ${activeTab === 'create'
+                ? 'text-[#6A0DAD] border-b-2 border-[#6A0DAD] bg-purple-50'
+                : 'text-gray-600 hover:text-[#6A0DAD] hover:bg-gray-50'
+                }`}
             >
               Create Assessment
             </button>
             <button
               onClick={() => setActiveTab('review')}
-              className={`flex-1 px-6 py-4 font-medium transition-colors ${
-                activeTab === 'review'
-                  ? 'text-[#6A0DAD] border-b-2 border-[#6A0DAD] bg-purple-50'
-                  : 'text-gray-600 hover:text-[#6A0DAD] hover:bg-gray-50'
-              }`}
+              className={`flex-1 px-6 py-4 font-medium transition-colors ${activeTab === 'review'
+                ? 'text-[#6A0DAD] border-b-2 border-[#6A0DAD] bg-purple-50'
+                : 'text-gray-600 hover:text-[#6A0DAD] hover:bg-gray-50'
+                }`}
             >
               Review Submissions
             </button>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Briefcase,
   Users,
@@ -28,6 +28,8 @@ import {
 import { useFetchMyJobs, useSearchJobs } from "../../hooks/useJobQuery.ts";
 import { ApplicantData, JobPostResponse, JobStatus } from "../../utils/types";
 import useModalStore from "../../store/modalStateStores.ts";
+import { fetchJobApplicants as fetchJobApplicantsApi, updateApplicationStatus } from "../../services/api";
+import { toast } from "react-toastify";
 import EmployerJobMultistepForm from "../employer/EmployerJobMultistepForm.tsx";
 
 type Section = "open" | "draft";
@@ -82,11 +84,19 @@ const JobSelection: React.FC = () => {
 
   const [jobs, setJobs] = useState<JobPostResponse[]>([]);
 
-  const fetchJobApplicants = async (
+  const fetchJobApplicants = useCallback(async (
     jobId: number,
     page: number = 1,
     limit: number = 10,
-  ) => {};
+  ) => {
+    try {
+      const response = await fetchJobApplicantsApi(jobId, page, limit);
+      return response?.data || [];
+    } catch (error) {
+      console.error('Failed to fetch job applicants:', error);
+      return [];
+    }
+  }, []);
 
   useEffect(() => {
     if (searchKeyword.trim() !== "") {
@@ -114,14 +124,22 @@ const JobSelection: React.FC = () => {
     }
   };
 
-  const updateApplicantStatus = (applicantId: number, newStatus: string) => {
-    console.log(`Updated applicant ${applicantId} to status: ${newStatus}`);
-    // TODO: Implement actual API call to update applicant status
+  const updateApplicantStatus = async (applicantId: number, newStatus: string) => {
+    try {
+      await updateApplicationStatus(applicantId, newStatus);
+      toast.success(`Applicant status updated to ${newStatus}`);
+    } catch (error) {
+      console.error(`Failed to update applicant ${applicantId}:`, error);
+      toast.error('Failed to update applicant status');
+    }
   };
 
   const downloadResume = (resumeFile: string) => {
-    console.log(`Downloading resume: ${resumeFile}`);
-    // TODO: Implement actual file download logic
+    if (resumeFile) {
+      window.open(resumeFile, '_blank');
+    } else {
+      toast.error('Resume file not available');
+    }
   };
 
   const viewApplicantProfile = (applicant: any) => {
@@ -592,11 +610,10 @@ const JobSelection: React.FC = () => {
                         <button
                           key={pageNumber}
                           onClick={() => setCurrentPage(pageNumber)}
-                          className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${
-                            pageNumber === currentPage
+                          className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${pageNumber === currentPage
                               ? "z-10 border-blue-500 bg-blue-600 text-white"
                               : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
-                          }`}
+                            }`}
                         >
                           {pageNumber}
                         </button>
@@ -1177,11 +1194,10 @@ const JobSelection: React.FC = () => {
                             {job.applicantsCount || 0} applicants
                           </span>
                           <span
-                            className={`rounded-full px-3 py-1 text-sm font-medium ${
-                              job.jobStatus === JobStatus.NEW
+                            className={`rounded-full px-3 py-1 text-sm font-medium ${job.jobStatus === JobStatus.NEW
                                 ? "bg-green-100 text-green-800"
                                 : "bg-yellow-100 text-yellow-800"
-                            }`}
+                              }`}
                           >
                             {job.jobStatus === JobStatus.NEW
                               ? "Active"

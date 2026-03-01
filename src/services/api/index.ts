@@ -928,62 +928,62 @@ export const fetchJobMatchResult = async (
 };
 
 
-export const generate2faQrCodeAndSecret = async(email: string)=>{
+export const generate2faQrCodeAndSecret = async (email: string) => {
   const response = await publicApiClient.post<APIResponse<GenerateQrcodeResponse>>(
     `${API_BASE_URL}/auth/generate?email=${email}`,
   );
   return response.data;
 }
 
-export const enableTwoFactor = async(secret: string, token: string)=>{
+export const enableTwoFactor = async (secret: string, token: string) => {
   const response = await privateApiClient.post<APIResponse<TwoFactorEnabledResponse>>(
-    `${API_BASE_URL}/auth/enable`,{token: token, secret: secret}
+    `${API_BASE_URL}/auth/enable`, { token: token, secret: secret }
   );
   return response.data;
 }
 
-export const disableTwoFactor = async(token: string)=>{
+export const disableTwoFactor = async (token: string) => {
   const response = await privateApiClient.post<APIResponse<void>>(
-    `${API_BASE_URL}/auth/disable`,{token: token}
+    `${API_BASE_URL}/auth/disable`, { token: token }
   );
   return response.data;
 }
 //regenerateBackupCodes
-export const regenerateBackupCodes = async(token: string)=>{
+export const regenerateBackupCodes = async (token: string) => {
   const response = await privateApiClient.post<APIResponse<TwoFactorEnabledResponse>>(
-    `${API_BASE_URL}/auth/regenerate-backup-codes`,{token: token}
+    `${API_BASE_URL}/auth/regenerate-backup-codes`, { token: token }
   );
   return response.data;
 }
 
 
-export const changePassword = async(req: ChangePasswordRequest)=>{
+export const changePassword = async (req: ChangePasswordRequest) => {
   const response = await privateApiClient.put<APIResponse<TwoFactorEnabledResponse>>(
-    `${API_BASE_URL}/auth/change-password`,{
-      currentPassword: req.oldPassword,
-      newPassword: req.newPassword,
-      confirmNewPassword: req.confirmPassword
-    }
+    `${API_BASE_URL}/auth/change-password`, {
+    currentPassword: req.oldPassword,
+    newPassword: req.newPassword,
+    confirmNewPassword: req.confirmPassword
+  }
   );
   return response.data;
 }
 
 
-export const deleteAccount = async()=>{
+export const deleteAccount = async () => {
   const response = await publicApiClient.delete<APIResponse<any>>(
     `${API_BASE_URL}/auth/account/delete`
   );
   return response.data;
 }
 
-export const getUserDeviceLocations = async ()=>{
+export const getUserDeviceLocations = async () => {
   const response = await privateApiClient.get<APIResponse<any>>(
     `${API_BASE_URL}/access-meta/device-locations`
   );
   return response.data;
 }
 
-export const getProfileCompletionDetails = async()=>{
+export const getProfileCompletionDetails = async () => {
   const response = await privateApiClient.get<APIResponse<ProfileCompletionResponse>>(
     `${API_BASE_URL}/users/profile/completion-details`
   );
@@ -991,22 +991,38 @@ export const getProfileCompletionDetails = async()=>{
 }
 
 
-export const fetchScreeningQuestions = async(jobId: number)=>{
+export const fetchScreeningQuestions = async (jobId: number) => {
   const response = await privateApiClient.get<APIResponse<ScreeningQuestion[]>>(
     `${API_BASE_URL}/jobs/${jobId}/screening-questions`
   );
   return response.data;
 }
 
+export const addScreeningQuestions = async (
+  jobId: number,
+  questions: Array<{
+    question: string;
+    type: string;
+    required: boolean;
+    options?: string[];
+  }>
+) => {
+  const response = await privateApiClient.post<APIResponse<ScreeningQuestion[]>>(
+    `${API_BASE_URL}/jobs/${jobId}/screening-questions`,
+    { questions }
+  );
+  return response.data;
+}
 
-export const fetchUser = async(userId: number)=>{
+
+export const fetchUser = async (userId: number) => {
   const response = await privateApiClient.get<APIResponse<ApplicantData | EmployerData>>(
     `${API_BASE_URL}/users/${userId}`,
   );
   return response?.data;
 }
 
-export const submitReview = async(param: {content: string, rating: number, userId: number})=>{
+export const submitReview = async (param: { content: string, rating: number, userId: number }) => {
   const response = await privateApiClient.post<APIResponse<Review>>(
     `${API_BASE_URL}/feedbacks/add-review`, param
   );
@@ -1015,26 +1031,26 @@ export const submitReview = async(param: {content: string, rating: number, userI
 
 export const fetchUserReviews = async (userId: number): Promise<Review[]> => {
   console.log("Fetching...");
-  const res= await privateApiClient.get<APIResponse<Review[]>>(`${API_BASE_URL}/feedbacks/reviews/user/${userId}`);
+  const res = await privateApiClient.get<APIResponse<Review[]>>(`${API_BASE_URL}/feedbacks/reviews/user/${userId}`);
   return res?.data?.data || [];
 };
 
 export const generateCvFromTextOrFileTextInput = async (input: string): Promise<APIResponse<CvResponseDto>> => {
   console.log("Fetching...");
-  const res= await privateApiClient.post<APIResponse<CvResponseDto>>(`${AI_SERVICE_BASE_URL}/cv/generate`,{input});
+  const res = await privateApiClient.post<APIResponse<CvResponseDto>>(`${AI_SERVICE_BASE_URL}/cv/generate`, { input });
   return res?.data;
 };
 
 
 export const submitDemoRequest = async (req: RequestDemo): Promise<APIResponse<void>> => {
   console.log("Submitting demo request...");
-  const res= await publicApiClient.post<APIResponse<void>>(`${API_BASE_URL}/demos`,req);
+  const res = await publicApiClient.post<APIResponse<void>>(`${API_BASE_URL}/demos`, req);
   return res?.data;
 };
 
-export const fetchTutorials = async()=>{
+export const fetchTutorials = async () => {
   console.log("Submitting demo request...");
-  const res= await publicApiClient.get<APIResponse<TutorialResponse[]>>(`${API_BASE_URL}/tutorials`);
+  const res = await publicApiClient.get<APIResponse<TutorialResponse[]>>(`${API_BASE_URL}/tutorials`);
   return res?.data;
 }
 
@@ -1046,10 +1062,10 @@ export const fetchTutorialById = async (id: number) => {
   return res?.data;
 };
 
-export const setInterviewReminder = async(interviewId: number, reminder: string)=>{
+export const setInterviewReminder = async (interviewId: number, reminder: string) => {
   const res = await privateApiClient.patch<APIResponse<any>>(
     `${API_BASE_URL}/interviews/${interviewId}/set-reminder`,
-    {reminderTime: reminder},
+    { reminderTime: reminder },
   );
   return res?.data;
 }

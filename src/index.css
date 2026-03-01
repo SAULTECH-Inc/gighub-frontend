@@ -104,3 +104,35 @@ input[type="range"]::-ms-thumb {
 .bg-testimonial {
   background-image: url("../src/assets/images/testimonial.png");
 }
+
+/* ============================
+   Print Styles — CV/Resume Builder
+   When body has .printing-resume class, hide everything except the CV preview
+============================ */
+@media print {
+  body.printing-resume * {
+    visibility: hidden;
+  }
+
+  body.printing-resume .printable-resume,
+  body.printing-resume .printable-resume * {
+    visibility: visible;
+  }
+
+  body.printing-resume .printable-resume {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+  }
+
+  body.printing-resume .printable-resume .flex.items-center.justify-between.mb-4 {
+    display: none; /* Hide the "Live Preview" header and eye icon */
+  }
+}
+

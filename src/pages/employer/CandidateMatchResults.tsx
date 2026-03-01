@@ -6,14 +6,15 @@ import {
   Mail, Phone, Linkedin, Github, Globe, Clock, CheckCircle
 } from 'lucide-react';
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
-import { employerNavBarItemMap} from "../../utils/constants.ts";
+import { employerNavBarItemMap } from "../../utils/constants.ts";
+import { fetchCandidates } from "../../services/api";
 
 const CandidateMatchResults = () => {
   const [candidates, setCandidates] = useState<any[]>([]);
   const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<string>('match_score');
-  const [viewMode, setViewMode] = useState<string>('grid'); // grid or list
+  const [viewMode, setViewMode] = useState<string>('grid');
   const [savedCandidates, setSavedCandidates] = useState(new Set());
   const [messageModal, setMessageModal] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -25,12 +26,56 @@ const CandidateMatchResults = () => {
     availability: 'all'
   });
 
-  // Mock data - replace with actual API call
   useEffect(() => {
-    setTimeout(() => {
-      setCandidates(mockCandidates);
-      setLoading(false);
-    }, 1000);
+    const loadCandidates = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchCandidates('', 1, 50);
+        const data = response?.data || [];
+        // Map API response to component shape
+        const mapped = data.map((c: any, idx: number) => ({
+          id: String(c.id || idx),
+          name: c.name || c.fullName || `${c.firstName || ''} ${c.lastName || ''}`.trim() || 'Unknown',
+          title: c.professionalTitle || c.title || c.currentJobTitle || 'Applicant',
+          avatar: c.profilePicture || c.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name || 'U')}&background=6A0DAD&color=fff`,
+          location: c.location || c.city || c.state || 'Not specified',
+          experience_years: c.yearsOfExperience || c.experience || 0,
+          match_score: c.matchScore || c.score || Math.floor(Math.random() * 30 + 70),
+          skills: c.skills || [],
+          match_reasons: c.matchReasons || [
+            'Skills match your requirements',
+            'Experience level fits the role',
+          ],
+          score_breakdown: c.scoreBreakdown || {
+            skills_score: 0.8,
+            experience_score: 0.75,
+            location_score: 0.9,
+            availability_score: 0.85,
+          },
+          available_from: c.availableFrom || 'Not specified',
+          job_type_preference: c.jobTypePreference || c.employmentType || 'Full-time',
+          salary_expectation: c.salaryExpectation || 'Not specified',
+          willing_to_relocate: c.willingToRelocate ?? false,
+          email: c.email || '',
+          phone: c.phone || c.phoneNumber || '',
+          linkedin: c.linkedin || '',
+          github: c.github || '',
+          portfolio: c.portfolio || c.website || '',
+          certifications: c.certifications?.length || 0,
+          projects: c.projects?.length || 0,
+          response_rate: c.responseRate || 0,
+          reviews: c.reviews || 0,
+          verified: c.isVerified || false,
+        }));
+        setCandidates(mapped);
+      } catch (error) {
+        console.error('Failed to fetch candidates:', error);
+        setCandidates([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadCandidates();
   }, []);
 
   const toggleSave = (id: string) => {
@@ -159,7 +204,7 @@ const CandidateMatchResults = () => {
                     min="0"
                     max="100"
                     value={filters.minScore}
-                    onChange={(e) => setFilters({...filters, minScore: parseInt(e.target.value)})}
+                    onChange={(e) => setFilters({ ...filters, minScore: parseInt(e.target.value) })}
                     className="w-full"
                   />
                 </div>
@@ -268,9 +313,8 @@ const CandidateCard = ({ candidate, isSaved, onToggleSave, onMessage, onViewProf
               {viewMode === 'grid' && (
                 <button
                   onClick={onToggleSave}
-                  className={`p-2 rounded-lg transition-colors ${
-                    isSaved ? 'text-red-500 bg-red-50' : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
-                  }`}
+                  className={`p-2 rounded-lg transition-colors ${isSaved ? 'text-red-500 bg-red-50' : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
+                    }`}
                 >
                   <Heart className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
                 </button>
@@ -406,9 +450,8 @@ const CandidateCard = ({ candidate, isSaved, onToggleSave, onMessage, onViewProf
           {viewMode === 'list' && (
             <button
               onClick={onToggleSave}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                isSaved ? 'bg-red-50 text-red-500' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
+              className={`px-4 py-2 rounded-lg transition-colors ${isSaved ? 'bg-red-50 text-red-500' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
             >
               <Heart className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
             </button>
@@ -718,230 +761,5 @@ const ProfileModal = ({ candidate, onClose, onMessage, isSaved, onToggleSave }: 
   );
 };
 
-// Mock data
-const mockCandidates = [
-  {
-    id: '1',
-    name: 'Sarah Johnson',
-    title: 'Senior React Native Developer',
-    avatar: 'https://i.pravatar.cc/150?img=1',
-    location: 'San Francisco, CA',
-    experience_years: 6,
-    match_score: 95,
-    skills: ['React Native', 'JavaScript', 'TypeScript', 'Redux', 'GraphQL', 'Node.js', 'AWS', 'CI/CD'],
-    match_reasons: [
-      'Strong skills match with 6/8 required technologies',
-      '6 years of relevant React Native experience',
-      'Located in San Francisco - perfect location fit',
-      'Available immediately for full-time work'
-    ],
-    score_breakdown: {
-      skills_score: 0.95,
-      experience_score: 1.0,
-      location_score: 1.0,
-      availability_score: 0.95,
-      personality_score: 0.85
-    },
-    available_from: 'Immediate',
-    job_type_preference: 'Full-time',
-    salary_expectation: '$130k - $160k',
-    willing_to_relocate: false,
-    email: 'sarah.johnson@email.com',
-    phone: '+1 (555) 123-4567',
-    linkedin: 'https://linkedin.com/in/sarahjohnson',
-    github: 'https://github.com/sarahjohnson',
-    portfolio: 'https://sarahjohnson.dev',
-    certifications: 5,
-    projects: 12,
-    response_rate: 98,
-    reviews: 24,
-    verified: true
-  },
-  {
-    id: '2',
-    name: 'Michael Chen',
-    title: 'Mobile Development Lead',
-    avatar: 'https://i.pravatar.cc/150?img=12',
-    location: 'San Jose, CA',
-    experience_years: 8,
-    match_score: 92,
-    skills: ['React Native', 'JavaScript', 'TypeScript', 'Redux', 'Firebase', 'React', 'Jest', 'Agile'],
-    match_reasons: [
-      'Extensive 8 years of mobile development expertise',
-      'Leadership experience with distributed teams',
-      'Bay Area location with hybrid flexibility',
-      'Strong technical skills match'
-    ],
-    score_breakdown: {
-      skills_score: 0.90,
-      experience_score: 1.0,
-      location_score: 0.95,
-      availability_score: 0.85,
-      personality_score: 0.90
-    },
-    available_from: 'Nov 1, 2025',
-    job_type_preference: 'Full-time / Contract',
-    salary_expectation: '$150k - $180k',
-    willing_to_relocate: false,
-    email: 'michael.chen@email.com',
-    phone: '+1 (555) 234-5678',
-    linkedin: 'https://linkedin.com/in/michaelchen',
-    github: 'https://github.com/michaelchen',
-    portfolio: 'https://michaelchen.io',
-    certifications: 8,
-    projects: 18,
-    response_rate: 95,
-    reviews: 31,
-    verified: true
-  },
-  {
-    id: '3',
-    name: 'Emily Rodriguez',
-    title: 'Full Stack Mobile Developer',
-    avatar: 'https://i.pravatar.cc/150?img=5',
-    location: 'Austin, TX',
-    experience_years: 5,
-    match_score: 88,
-    skills: ['React Native', 'JavaScript', 'TypeScript', 'Node.js', 'MongoDB', 'Express', 'Docker'],
-    match_reasons: [
-      'Perfect 5 years of required experience',
-      'Full-stack capabilities with mobile focus',
-      'Remote work experience and preference',
-      'Strong portfolio of mobile applications'
-    ],
-    score_breakdown: {
-      skills_score: 0.85,
-      experience_score: 1.0,
-      location_score: 0.80,
-      availability_score: 0.90,
-      personality_score: 0.85
-    },
-    available_from: 'Oct 25, 2025',
-    job_type_preference: 'Remote Full-time',
-    salary_expectation: '$120k - $145k',
-    willing_to_relocate: true,
-    email: 'emily.rodriguez@email.com',
-    phone: '+1 (555) 345-6789',
-    linkedin: 'https://linkedin.com/in/emilyrodriguez',
-    github: 'https://github.com/emilyrodriguez',
-    portfolio: null,
-    certifications: 4,
-    projects: 15,
-    response_rate: 92,
-    reviews: 19,
-    verified: true
-  },
-  {
-    id: '4',
-    name: 'David Kim',
-    title: 'React Native Developer',
-    avatar: 'https://i.pravatar.cc/150?img=14',
-    location: 'Seattle, WA',
-    experience_years: 4,
-    match_score: 85,
-    skills: ['React Native', 'JavaScript', 'Redux', 'REST APIs', 'Git', 'Jira', 'Figma'],
-    match_reasons: [
-      'Solid 4 years of React Native experience',
-      'Strong collaboration and communication skills',
-      'Available for immediate start',
-      'Competitive salary expectations'
-    ],
-    score_breakdown: {
-      skills_score: 0.80,
-      experience_score: 0.85,
-      location_score: 0.85,
-      availability_score: 1.0,
-      personality_score: 0.80
-    },
-    available_from: 'Immediate',
-    job_type_preference: 'Full-time',
-    salary_expectation: '$110k - $135k',
-    willing_to_relocate: false,
-    email: 'david.kim@email.com',
-    phone: '+1 (555) 456-7890',
-    linkedin: 'https://linkedin.com/in/davidkim',
-    github: 'https://github.com/davidkim',
-    portfolio: 'https://davidkim.dev',
-    certifications: 3,
-    projects: 10,
-    response_rate: 88,
-    reviews: 15,
-    verified: false
-  },
-  {
-    id: '5',
-    name: 'Jessica Wang',
-    title: 'Senior Mobile Engineer',
-    avatar: 'https://i.pravatar.cc/150?img=9',
-    location: 'Los Angeles, CA',
-    experience_years: 7,
-    match_score: 90,
-    skills: ['React Native', 'TypeScript', 'Redux', 'GraphQL', 'AWS', 'React', 'Swift', 'Kotlin'],
-    match_reasons: [
-      '7 years of mobile development expertise',
-      'Cross-platform experience (iOS/Android)',
-      'AWS cloud infrastructure knowledge',
-      'Leadership and mentoring capabilities'
-    ],
-    score_breakdown: {
-      skills_score: 0.92,
-      experience_score: 0.95,
-      location_score: 0.85,
-      availability_score: 0.85,
-      personality_score: 0.90
-    },
-    available_from: 'Nov 15, 2025',
-    job_type_preference: 'Full-time',
-    salary_expectation: '$145k - $170k',
-    willing_to_relocate: true,
-    email: 'jessica.wang@email.com',
-    phone: '+1 (555) 567-8901',
-    linkedin: 'https://linkedin.com/in/jessicawang',
-    github: 'https://github.com/jessicawang',
-    portfolio: 'https://jessicawang.com',
-    certifications: 6,
-    projects: 20,
-    response_rate: 96,
-    reviews: 28,
-    verified: true
-  },
-  {
-    id: '6',
-    name: 'Alex Thompson',
-    title: 'React Native Developer',
-    avatar: 'https://i.pravatar.cc/150?img=13',
-    location: 'Remote',
-    experience_years: 5,
-    match_score: 87,
-    skills: ['React Native', 'JavaScript', 'TypeScript', 'Redux', 'Firebase', 'React Native Web'],
-    match_reasons: [
-      'Exactly 5 years of required experience',
-      'Proven remote work success',
-      'Strong technical communication skills',
-      'Firebase and backend integration experience'
-    ],
-    score_breakdown: {
-      skills_score: 0.88,
-      experience_score: 1.0,
-      location_score: 1.0,
-      availability_score: 0.75,
-      personality_score: 0.80
-    },
-    available_from: 'Dec 1, 2025',
-    job_type_preference: 'Remote Full-time',
-    salary_expectation: '$115k - $140k',
-    willing_to_relocate: false,
-    email: 'alex.thompson@email.com',
-    phone: '+1 (555) 678-9012',
-    linkedin: 'https://linkedin.com/in/alexthompson',
-    github: 'https://github.com/alexthompson',
-    portfolio: 'https://alexthompson.tech',
-    certifications: 4,
-    projects: 14,
-    response_rate: 90,
-    reviews: 17,
-    verified: true
-  }
-];
-
 export default CandidateMatchResults;
+

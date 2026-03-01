@@ -168,11 +168,10 @@ const Company: React.FC<CompanyCardProps> = ({
           >
             <button
               onClick={onFollow}
-              className={`rounded-lg p-1.5 transition-all ${
-                isFollowing
+              className={`rounded-lg p-1.5 transition-all ${isFollowing
                   ? "bg-blue-100 text-blue-600 hover:bg-blue-200"
                   : "bg-gray-100 text-gray-500 hover:bg-blue-100 hover:text-blue-600"
-              }`}
+                }`}
               title={isFollowing ? "Unfollow company" : "Follow company"}
             >
               {isFollowing ? (
@@ -234,11 +233,10 @@ const Company: React.FC<CompanyCardProps> = ({
             >
               <button
                 onClick={onFollow}
-                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all ${
-                  isFollowing
+                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all ${isFollowing
                     ? "bg-blue-100 text-blue-600 hover:bg-blue-200"
                     : "bg-gray-100 text-gray-600 hover:bg-blue-100 hover:text-blue-600"
-                }`}
+                  }`}
               >
                 {isFollowing ? "Following" : "Follow"}
               </button>
@@ -265,12 +263,14 @@ const Company: React.FC<CompanyCardProps> = ({
                 <p className="text-xs text-yellow-600">Rating</p>
               </div>
             )}
-            <div className="rounded-lg bg-blue-50 p-3 text-center transition-colors hover:bg-blue-100">
-              <p className="text-lg font-bold text-blue-600">
-                {Math.floor(Math.random() * 1000) + 100}
-              </p>
-              <p className="text-xs text-blue-600">Followers</p>
-            </div>
+            {((company.followersCount ?? company.noOfFollowers ?? 0) > 0) && (
+              <div className="rounded-lg bg-blue-50 p-3 text-center transition-colors hover:bg-blue-100">
+                <p className="text-lg font-bold text-blue-600">
+                  {(company.followersCount ?? company.noOfFollowers ?? 0).toLocaleString()}
+                </p>
+                <p className="text-xs text-blue-600">Followers</p>
+              </div>
+            )}
           </div>
 
           <Link
@@ -423,11 +423,10 @@ const Company: React.FC<CompanyCardProps> = ({
                       {[...Array(5)].map((_, i) => (
                         <LuStar
                           key={i}
-                          className={`h-4 w-4 transition-colors ${
-                            i < Math.floor(company.rating!)
+                          className={`h-4 w-4 transition-colors ${i < Math.floor(company.rating!)
                               ? "fill-current text-yellow-400"
                               : "text-gray-300"
-                          }`}
+                            }`}
                         />
                       ))}
                     </div>
@@ -468,11 +467,10 @@ const Company: React.FC<CompanyCardProps> = ({
               <div className="ml-4 flex flex-col items-center space-y-3">
                 <button
                   onClick={onFollow}
-                  className={`flex h-10 w-10 transform items-center justify-center rounded-full border-2 transition-all hover:scale-110 ${
-                    isFollowing
+                  className={`flex h-10 w-10 transform items-center justify-center rounded-full border-2 transition-all hover:scale-110 ${isFollowing
                       ? "border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-100"
                       : "border-gray-200 text-gray-400 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
-                  }`}
+                    }`}
                   title={isFollowing ? "Unfollow company" : "Follow company"}
                 >
                   {isFollowing ? (
@@ -558,11 +556,10 @@ const Company: React.FC<CompanyCardProps> = ({
       {showActions && (
         <button
           onClick={onFollow}
-          className={`absolute top-3 right-3 z-10 flex h-8 w-8 transform items-center justify-center rounded-full border-2 bg-white/90 backdrop-blur transition-all hover:scale-110 ${
-            isFollowing
+          className={`absolute top-3 right-3 z-10 flex h-8 w-8 transform items-center justify-center rounded-full border-2 bg-white/90 backdrop-blur transition-all hover:scale-110 ${isFollowing
               ? "border-blue-200 text-blue-600 hover:bg-blue-50"
               : "border-gray-200 text-gray-400 hover:border-blue-200 hover:text-blue-600"
-          }`}
+            }`}
           title={isFollowing ? "Unfollow company" : "Follow company"}
         >
           {isFollowing ? (
@@ -664,11 +661,10 @@ const Company: React.FC<CompanyCardProps> = ({
                 {[...Array(5)].map((_, i) => (
                   <LuStar
                     key={i}
-                    className={`h-4 w-4 transition-all ${
-                      i < Math.floor(company.rating!)
+                    className={`h-4 w-4 transition-all ${i < Math.floor(company.rating!)
                         ? "fill-current text-yellow-400"
                         : "text-gray-300"
-                    }`}
+                      }`}
                   />
                 ))}
               </div>
@@ -739,7 +735,7 @@ const Company: React.FC<CompanyCardProps> = ({
                 <div className="flex items-center space-x-3">
                   {/* Followers count (simulated) */}
                   {company.noMutualConnections &&
-                  company.noMutualConnections > 0 ? (
+                    company.noMutualConnections > 0 ? (
                     <span className="flex items-center text-purple-600">
                       <LuUsers className="mr-1 h-3 w-3" />
                       {company.noMutualConnections} followers

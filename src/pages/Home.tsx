@@ -87,13 +87,8 @@ const useDataAvailability = () => {
   });
 
   useEffect(() => {
-    // Simulate API calls to check data availability
     const checkDataAvailability = async () => {
       try {
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        // Mock API responses - replace with actual API calls
         const [
           jobsResponse,
           usersResponse,
@@ -104,12 +99,6 @@ const useDataAvailability = () => {
           getUserCount(),
           getAllActiveCompanies(),
           getAllCategories(),
-
-          // Mock responses for demo - replace with actual API calls
-          Promise.resolve({ count: Math.random() > 0.5 ? 0 : 1247 }), // Sometimes 0, sometimes has data
-          Promise.resolve({ count: Math.random() > 0.5 ? 0 : 15420 }),
-          Promise.resolve({ count: Math.random() > 0.5 ? 0 : 284 }),
-          Promise.resolve({ count: Math.random() > 0.5 ? 0 : 8 }),
         ]);
 
         const jobs = jobsResponse?.data || 0;
@@ -117,7 +106,6 @@ const useDataAvailability = () => {
         const companies = companiesResponse.data || 0;
         const categories = categoriesResponse.data || 0;
 
-        // Determine if we have enough content to show the full platform
         const hasContent = jobs > 0 && companies > 0 && categories > 0;
 
         setDataState({
@@ -181,8 +169,8 @@ const FullPlatformHome: React.FC<{
     prefetchCategories().then((r) => r);
   }, []);
 
-  // Mock data for full platform - replace with actual data from props
-  const mockTestimonials = [
+  // Curated testimonials for the landing page
+  const curatedTestimonials = [
     {
       id: 1,
       name: "Adebayo Johnson",
@@ -207,7 +195,7 @@ const FullPlatformHome: React.FC<{
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % mockTestimonials.length);
+      setCurrentTestimonial((prev) => (prev + 1) % curatedTestimonials.length);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -726,18 +714,10 @@ const LaunchStateHome: React.FC<{
   ];
 
   useEffect(() => {
-    if(isSubscribed) {
-        navigate("/login");
+    if (isSubscribed) {
+      navigate("/login");
     }
-  },[isSubscribed]);
-
-  // Simulate growing user count
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setUserCount((prev: number) => prev + Math.floor(Math.random() * 3) + 1);
-    }, 15000);
-    return () => clearInterval(interval);
-  }, []);
+  }, [isSubscribed]);
 
   // Countdown timer
   useEffect(() => {

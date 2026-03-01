@@ -375,7 +375,7 @@ const TopNavBar: FC<TopNavBarProps> = ({
 
       {/* Mobile Sidebar */}
       <div
-        className={`fixed top-0 left-0 z-50 h-full w-80 transform border-r border-gray-200 bg-white transition-transform duration-300 overflow-y-auto ${
+        className={`fixed top-0 left-0 z-100 h-full w-80 transform border-r border-gray-200 bg-white transition-transform duration-300 overflow-y-auto ${
           isMobileNavOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

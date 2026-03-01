@@ -1,6 +1,6 @@
 // EmployerDashboard.tsx - Updated with Analytics Modal and Applications Review Modal
 
-import React, {useMemo, useState} from "react";
+import React, { useMemo, useState } from "react";
 import {
   Activity,
   BarChart3,
@@ -18,20 +18,20 @@ import {
   Zap,
 } from "lucide-react";
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
-import {employerNavBarItemMap,} from "../../utils/constants.ts";
+import { employerNavBarItemMap, } from "../../utils/constants.ts";
 import useModalStore from "../../store/modalStateStores.ts";
 import EmployerJobMultistepForm from "./EmployerJobMultistepForm.tsx";
 import InterviewScheduleMultiStepForm from "./interview/InterviewScheduleMultiStepForm.tsx";
-import {useDashboardData} from "../../hooks/useDashboardData";
-import {DashboardFilters} from "../../utils/types/dashboard.ts";
-import {ErrorDisplay} from "../../components/common/ErrorDisplay.tsx";
-import {ModernMetricCard} from "../../components/features/ModernMetricCard.tsx";
-import {AnalyticsModal} from "../../components/features/AnalyticsModal.tsx";
-import {ApplicationsReviewModal} from "../../components/features/ApplicationsReviewModal.tsx";
-import {CandidateCard} from "../../components/features/CandidateCard.tsx";
-import {InterviewCard} from "../../components/features/InterviewCard.tsx";
-import {JobPostingCard} from "../../components/features/JobPostingCard.tsx";
-import {QuickActionButton} from "../../components/features/QuickActionButton.tsx";
+import { useDashboardData } from "../../hooks/useDashboardData";
+import { DashboardFilters } from "../../utils/types/dashboard.ts";
+import { ErrorDisplay } from "../../components/common/ErrorDisplay.tsx";
+import { ModernMetricCard } from "../../components/features/ModernMetricCard.tsx";
+import { AnalyticsModal } from "../../components/features/AnalyticsModal.tsx";
+import { ApplicationsReviewModal } from "../../components/features/ApplicationsReviewModal.tsx";
+import { CandidateCard } from "../../components/features/CandidateCard.tsx";
+import { InterviewCard } from "../../components/features/InterviewCard.tsx";
+import { JobPostingCard } from "../../components/features/JobPostingCard.tsx";
+import { QuickActionButton } from "../../components/features/QuickActionButton.tsx";
 
 
 // Main Dashboard Component
@@ -75,6 +75,63 @@ const EmployerDashboard: React.FC = () => {
     loadDashboard().then((r) => r);
   };
 
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
+  }, []);
+
+  const handleExportReport = () => {
+    const rows: string[][] = [];
+
+    // Header section
+    rows.push(["Dashboard Report", new Date().toLocaleDateString()]);
+    rows.push([]);
+
+    // Metrics
+    if (transformedMetrics && transformedMetrics.length > 0) {
+      rows.push(["--- Metrics ---"]);
+      rows.push(["Title", "Value", "Change"]);
+      transformedMetrics.forEach((m: any) => {
+        rows.push([m.title || "", String(m.value ?? ""), String(m.change ?? "")]);
+      });
+      rows.push([]);
+    }
+
+    // Top Candidates
+    if (data.topCandidates && data.topCandidates.length > 0) {
+      rows.push(["--- Top Candidates ---"]);
+      rows.push(["Name", "Role", "Match Score"]);
+      data.topCandidates.forEach((c: any) => {
+        rows.push([
+          c.name || `${c.firstName || ""} ${c.lastName || ""}`.trim(),
+          c.role || c.professionalTitle || "",
+          String(c.matchScore ?? c.score ?? ""),
+        ]);
+      });
+      rows.push([]);
+    }
+
+    // Upcoming Interviews
+    if (data.upcomingInterviews && data.upcomingInterviews.length > 0) {
+      rows.push(["--- Upcoming Interviews ---"]);
+      rows.push(["Title", "Date", "Status"]);
+      data.upcomingInterviews.forEach((i: any) => {
+        rows.push([i.title || "", i.date || "", i.status || ""]);
+      });
+    }
+
+    const csvContent = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `dashboard-report-${new Date().toISOString().split("T")[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
       {/* Navigation */}
@@ -108,7 +165,7 @@ const EmployerDashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold text-white sm:text-5xl">
-                Good morning! 👋
+                {greeting}! 👋
               </h1>
               <p className="mt-2 text-xl text-blue-100">
                 {data.upcomingInterviews.length > 0
@@ -128,7 +185,10 @@ const EmployerDashboard: React.FC = () => {
             </div>
 
             <div className="hidden items-center gap-4 lg:flex">
-              <button className="rounded-2xl bg-white/10 px-6 py-3 text-white backdrop-blur-sm transition-colors hover:bg-white/20">
+              <button
+                onClick={handleExportReport}
+                className="rounded-2xl bg-white/10 px-6 py-3 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+              >
                 <div className="flex items-center gap-2">
                   <Download className="h-4 w-4" />
                   <span>Export Report</span>
@@ -396,15 +456,14 @@ const EmployerDashboard: React.FC = () => {
                       className="flex items-start gap-4 rounded-xl p-4 transition-colors hover:bg-gray-50"
                     >
                       <div
-                        className={`rounded-full p-2 ${
-                          activity.type === "hire"
+                        className={`rounded-full p-2 ${activity.type === "hire"
                             ? "bg-green-100"
                             : activity.type === "interview_scheduled"
                               ? "bg-blue-100"
                               : activity.type === "application_received"
                                 ? "bg-purple-100"
                                 : "bg-yellow-100"
-                        }`}
+                          }`}
                       >
                         {activity.type === "hire" && (
                           <UserCheck className="h-4 w-4 text-green-600" />
@@ -641,54 +700,50 @@ const EmployerDashboard: React.FC = () => {
                   data.aiInsights.map((insight) => (
                     <div
                       key={insight.id}
-                      className={`rounded-xl border p-4 ${
-                        insight.type === "optimization"
+                      className={`rounded-xl border p-4 ${insight.type === "optimization"
                           ? "border-blue-100 bg-blue-50"
                           : insight.type === "performance"
                             ? "border-green-100 bg-green-50"
                             : insight.type === "alert"
                               ? "border-red-100 bg-red-50"
                               : "border-purple-100 bg-purple-50"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-start gap-3">
                         <div
-                          className={`mt-1 rounded-full p-1 ${
-                            insight.type === "optimization"
+                          className={`mt-1 rounded-full p-1 ${insight.type === "optimization"
                               ? "bg-blue-500"
                               : insight.type === "performance"
                                 ? "bg-green-500"
                                 : insight.type === "alert"
                                   ? "bg-red-500"
                                   : "bg-purple-500"
-                          }`}
+                            }`}
                         >
                           <Sparkles className="h-3 w-3 text-white" />
                         </div>
                         <div>
                           <p
-                            className={`mb-1 font-medium ${
-                              insight.type === "optimization"
+                            className={`mb-1 font-medium ${insight.type === "optimization"
                                 ? "text-blue-900"
                                 : insight.type === "performance"
                                   ? "text-green-900"
                                   : insight.type === "alert"
                                     ? "text-red-900"
                                     : "text-purple-900"
-                            }`}
+                              }`}
                           >
                             {insight.title}
                           </p>
                           <p
-                            className={`text-sm ${
-                              insight.type === "optimization"
+                            className={`text-sm ${insight.type === "optimization"
                                 ? "text-blue-700"
                                 : insight.type === "performance"
                                   ? "text-green-700"
                                   : insight.type === "alert"
                                     ? "text-red-700"
                                     : "text-purple-700"
-                            }`}
+                              }`}
                           >
                             {insight.description}
                           </p>

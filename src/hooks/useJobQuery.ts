@@ -56,9 +56,14 @@ export const useFetchJobApplications = (
   shouldFetchApplications: boolean,
 ) => {
   return useQuery<APIResponse<ApplicationResponse[]>>({
-    queryKey: ["jobApplications", jobId, page, limit],
+    queryKey: ["jobApplications", jobId, page, limit, params.search, params.status, params.sortBy, params.sortOrder],
     queryFn: () => fetchJobApplications(jobId, page, limit, params),
     staleTime: 5 * 1000,
-    enabled: shouldFetchApplications,
+    enabled: shouldFetchApplications && jobId > 0,
+    retry: (failureCount, error: any) => {
+      // Don't retry on 403 (access denied) — the employer doesn't own this job
+      if (error?.response?.status === 403) return false;
+      return failureCount < 2;
+    },
   });
 };

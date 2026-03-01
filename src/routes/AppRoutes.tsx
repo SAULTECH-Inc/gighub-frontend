@@ -106,7 +106,7 @@ const AppRoutes = () => {
       <Route
         path="/sign/docx"
         element={
-          <SignDocx/>
+          <SignDocx />
         }
       />
       <Route
@@ -261,6 +261,14 @@ const AppRoutes = () => {
         }
       />
       <Route
+        path="/applicant/interview-schedule/:interviewId"
+        element={
+          <PrivateRoute allowedRoles={[UserType.APPLICANT]}>
+            <ScheduledInterviews />
+          </PrivateRoute>
+        }
+      />
+      <Route
         path="/auth/social/signup/callback"
         element={<SocialSignupSuccess />}
       />
@@ -278,7 +286,7 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
       />
-    {/*  CandidateMatchResults*/}
+      {/*  CandidateMatchResults*/}
       <Route
         path="/employer/candidate-match-results/:jobId"
         element={
@@ -290,8 +298,8 @@ const AppRoutes = () => {
 
       <Route
         path="/auth/verify-2fa"
-        element={<TwoFactorAuth/>}
-        />
+        element={<TwoFactorAuth />}
+      />
     </Routes>
   );
 };
