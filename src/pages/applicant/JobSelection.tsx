@@ -1008,9 +1008,8 @@ const JobSelection: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       <TopNavBar
-        navItems={employerNavItems}
-        navItemsMobile={employerNavItemsMobile}
         navbarItemsMap={employerNavBarItemMap}
+        userType="employer"
       />
       <div className="mx-auto max-w-7xl p-4 pt-24 lg:p-8">
         {/* Header */}

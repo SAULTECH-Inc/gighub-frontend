@@ -2,58 +2,58 @@ import { Upload, FileText, User, CheckCircle, Edit3, Download, Shield, Clock, Ey
 import { useState, useRef } from 'react';
 
 const SignDocx = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [currentView, setCurrentView] = useState('landing');
-    const [currentUser, setCurrentUser] = useState<any>(null);
-    const [uploadedDocument, setUploadedDocument] = useState<any>(null);
-    const [userIdentity, setUserIdentity] = useState({ fullName: '', initials: '', signature: null, passport: null, address: '', company: '', role: '' });
-    const [detectedFields, setDetectedFields] = useState<any[]>([]);
-    const [manualFields, setManualFields] = useState([]);
-    const [zoomLevel, setZoomLevel] = useState(1);
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [showAuditTrail, setShowAuditTrail] = useState(false);
-    const [showShareModal, setShowShareModal] = useState(false);
-    const [documents] = useState([
-        { id: 1, name: 'Employment Contract.pdf', status: 'completed', date: '2025-01-05', size: '245 KB', sharedWith: 3 },
-        { id: 2, name: 'NDA Agreement.pdf', status: 'draft', date: '2025-01-04', size: '156 KB', sharedWith: 0 }
-    ]);
-    const [teamMembers] = useState([
-        { id: 1, name: 'Sarah Johnson', email: 'sarah@company.com', role: 'Admin', docsProcessed: 45, status: 'active' },
-        { id: 2, name: 'Michael Chen', email: 'michael@company.com', role: 'Editor', docsProcessed: 32, status: 'active' }
-    ]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentView, setCurrentView] = useState('landing');
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [uploadedDocument, setUploadedDocument] = useState<any>(null);
+  const [userIdentity, setUserIdentity] = useState({ fullName: '', initials: '', signature: null, passport: null, address: '', company: '', role: '' });
+  const [detectedFields, setDetectedFields] = useState<any[]>([]);
+  const [manualFields, setManualFields] = useState([]);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showAuditTrail, setShowAuditTrail] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [documents] = useState([
+    { id: 1, name: 'Employment Contract.pdf', status: 'completed', date: '2025-01-05', size: '245 KB', sharedWith: 3 },
+    { id: 2, name: 'NDA Agreement.pdf', status: 'draft', date: '2025-01-04', size: '156 KB', sharedWith: 0 }
+  ]);
+  const [teamMembers] = useState([
+    { id: 1, name: 'Sarah Johnson', email: 'sarah@company.com', role: 'Admin', docsProcessed: 45, status: 'active' },
+    { id: 2, name: 'Michael Chen', email: 'michael@company.com', role: 'Editor', docsProcessed: 32, status: 'active' }
+  ]);
 
-    const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const handleLogin = (email) => {
-        setCurrentUser({ id: 1, name: 'John Anderson', email, company: 'Tech Solutions Inc.', plan: 'Professional', docsThisMonth: 24, teamSize: 3 });
-        setIsAuthenticated(true);
-        setCurrentView('dashboard');
-    };
+  const handleLogin = (email: string) => {
+    setCurrentUser({ id: 1, name: 'John Anderson', email, company: 'Tech Solutions Inc.', plan: 'Professional', docsThisMonth: 24, teamSize: 3 });
+    setIsAuthenticated(true);
+    setCurrentView('dashboard');
+  };
 
-    const simulateAIDetection = () => {
-        setIsProcessing(true);
-        setTimeout(() => {
-            setDetectedFields([
-                { id: 1, type: 'signature', x: 100, y: 500, width: 200, height: 60, confidence: 0.95, status: 'auto-filled', value: 'Signature' },
-                { id: 2, type: 'name', x: 100, y: 300, width: 250, height: 30, confidence: 0.92, status: 'auto-filled', value: userIdentity.fullName || 'Full Name' }
-            ]);
-            setIsProcessing(false);
-            setCurrentView('review');
-        }, 2000);
-    };
+  const simulateAIDetection = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      setDetectedFields([
+        { id: 1, type: 'signature', x: 100, y: 500, width: 200, height: 60, confidence: 0.95, status: 'auto-filled', value: 'Signature' },
+        { id: 2, type: 'name', x: 100, y: 300, width: 250, height: 30, confidence: 0.92, status: 'auto-filled', value: userIdentity.fullName || 'Full Name' }
+      ]);
+      setIsProcessing(false);
+      setCurrentView('review');
+    }, 2000);
+  };
 
-    const handleFileUpload = (e) => {
-        const file = e.target.files[0];
-        if (file && file.type === 'application/pdf') {
-            setUploadedDocument({ name: file.name, size: (file.size / 1024).toFixed(2) + ' KB', uploadDate: new Date().toISOString() });
-            simulateAIDetection();
-        }
-    };
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type === 'application/pdf') {
+      setUploadedDocument({ name: file.name, size: (file.size / 1024).toFixed(2) + ' KB', uploadDate: new Date().toISOString() });
+      simulateAIDetection();
+    }
+  };
 
-    const shareDocument = (platform) => {
-        const url = window.location.href;
-        const text = `Signed document: ${uploadedDocument?.name}`;
-    const links = {
+  const shareDocument = (platform: string) => {
+    const url = window.location.href;
+    const text = `Signed document: ${uploadedDocument?.name}`;
+    const links: Record<string, string> = {
       email: `mailto:?subject=${encodeURIComponent(uploadedDocument?.name)}&body=${encodeURIComponent(text)}`,
       whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`,
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
@@ -133,7 +133,7 @@ const SignDocx = () => {
                   <input ref={fileInputRef} type="file" accept=".pdf" onChange={handleFileUpload} style={{ display: 'none' }} />
                 </div>
                 <div className="stats">
-                  {[{icon: FileText, label: 'This Month', value: 24}, {icon: CheckCircle, label: 'Completed', value: 2}].map((s, i) => (
+                  {[{ icon: FileText, label: 'This Month', value: 24 }, { icon: CheckCircle, label: 'Completed', value: 2 }].map((s, i) => (
                     <div key={i} className="card"><s.icon size={24} /><div className="value">{s.value}</div><div>{s.label}</div></div>
                   ))}
                 </div>
@@ -233,7 +233,7 @@ const SignDocx = () => {
               <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header"><h3>Share Document</h3><button onClick={() => setShowShareModal(false)}><X /></button></div>
                 <div className="share-grid">
-                  {[{icon: Mail, name: 'Email', key: 'email'}, {icon: MessageCircle, name: 'WhatsApp', key: 'whatsapp'}, {icon: Linkedin, name: 'LinkedIn', key: 'linkedin'}].map(s => (
+                  {[{ icon: Mail, name: 'Email', key: 'email' }, { icon: MessageCircle, name: 'WhatsApp', key: 'whatsapp' }, { icon: Linkedin, name: 'LinkedIn', key: 'linkedin' }].map(s => (
                     <button key={s.key} onClick={() => shareDocument(s.key)}><s.icon size={32} /><span>{s.name}</span></button>
                   ))}
                 </div>
@@ -243,7 +243,7 @@ const SignDocx = () => {
         </>
       )}
 
-      <style jsx>{`
+      <style>{`
         * { margin: 0; padding: 0; box-sizing: border-box; }
         .app { min-height: 100vh; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #e8eaf6; font-family: -apple-system, sans-serif; }
         

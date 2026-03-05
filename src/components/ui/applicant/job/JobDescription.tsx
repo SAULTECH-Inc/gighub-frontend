@@ -70,15 +70,15 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
               </span>
               <span className="text-sm text-gray-500">
                 {jobCurrentlyViewed?.applicantsCount &&
-                jobCurrentlyViewed?.applicantsCount > 1
+                  jobCurrentlyViewed?.applicantsCount > 1
                   ? `${jobCurrentlyViewed?.applicantsCount} people have applied`
                   : "No applicants yet"}
               </span>
             </div>
-            {jobCurrentlyViewed?.noMutualConnections &&
-            jobCurrentlyViewed.noMutualConnections > 0 ? (
+            {(jobCurrentlyViewed as any)?.noMutualConnections &&
+              (jobCurrentlyViewed as any).noMutualConnections > 0 ? (
               <p className="text-sm text-gray-600">
-                {jobCurrentlyViewed.noMutualConnections} people from your
+                {(jobCurrentlyViewed as any).noMutualConnections} people from your
                 network work here,{" "}
                 <a
                   href=""
@@ -105,10 +105,10 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
 
       {/* Mobile network info */}
 
-      {jobCurrentlyViewed?.noMutualConnections &&
-      jobCurrentlyViewed.noMutualConnections > 0 ? (
+      {(jobCurrentlyViewed as any)?.noMutualConnections &&
+        (jobCurrentlyViewed as any).noMutualConnections > 0 ? (
         <p className="mb-6 block text-sm text-gray-600 sm:hidden">
-          {jobCurrentlyViewed.noMutualConnections} people from your network work
+          {(jobCurrentlyViewed as any).noMutualConnections} people from your network work
           here,{" "}
           <a
             href=""
@@ -234,11 +234,10 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
             <button
               onClick={handleApply}
               disabled={jobCurrentlyViewed?.applied || false}
-              className={`flex-1 rounded-xl px-8 py-3 font-medium transition-all duration-200 sm:flex-none ${
-                jobCurrentlyViewed?.applied
+              className={`flex-1 rounded-xl px-8 py-3 font-medium transition-all duration-200 sm:flex-none ${jobCurrentlyViewed?.applied
                   ? "cursor-default bg-green-500 text-white"
                   : "bg-purple-600 text-white shadow-md hover:bg-purple-700 hover:shadow-lg"
-              }`}
+                }`}
             >
               {!jobCurrentlyViewed?.applied ? "Quick Apply" : "Applied ✓"}
             </button>

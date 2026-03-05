@@ -20,6 +20,7 @@ import { applicantNavBarItemMap } from "../../utils/constants.ts";
 import { getMyApplications, fetchScreeningQuestions } from "../../services/api";
 import { toast } from "react-toastify";
 import { ScreeningQuestion } from "../../utils/types";
+import { ScreeningQuestionType } from "../../utils/enums";
 
 interface Assessment {
   id: number;
@@ -608,7 +609,7 @@ const TakeAssessmentModal: React.FC<{
   const progress = questions.length > 0 ? Math.round((answeredCount / questions.length) * 100) : 0;
 
   const handleSubmit = () => {
-    const unanswered = questions.filter(q => q.required && !answers[q.id]?.trim());
+    const unanswered = questions.filter(q => q.required && !answers[q.id!]?.trim());
     if (unanswered.length > 0) {
       toast.warning(`Please answer all required questions (${unanswered.length} remaining)`);
       return;
@@ -691,10 +692,10 @@ const TakeAssessmentModal: React.FC<{
                     key={idx}
                     onClick={() => setCurrentQ(idx)}
                     className={`flex-shrink-0 w-10 h-10 rounded-full font-medium text-sm transition-colors ${idx === currentQ
-                        ? 'bg-[#6A0DAD] text-white'
-                        : answers[questions[idx]?.id]
-                          ? 'bg-green-100 text-green-700 border border-green-300'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      ? 'bg-[#6A0DAD] text-white'
+                      : answers[questions[idx]?.id!]
+                        ? 'bg-green-100 text-green-700 border border-green-300'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
                   >
                     {idx + 1}
@@ -716,48 +717,48 @@ const TakeAssessmentModal: React.FC<{
                   </div>
 
                   {/* Answer input based on type */}
-                  {(questions[currentQ].type === 'YES_NO' || questions[currentQ].type === 'yes_no') ? (
+                  {(questions[currentQ].type === ScreeningQuestionType.YES_NO) ? (
                     <div className="flex gap-4">
                       {['Yes', 'No'].map(opt => (
                         <button
                           key={opt}
-                          onClick={() => setAnswers(prev => ({ ...prev, [questions[currentQ].id]: opt }))}
-                          className={`flex-1 py-3 rounded-lg font-medium border-2 transition-colors ${answers[questions[currentQ].id] === opt
-                              ? 'border-[#6A0DAD] bg-purple-50 text-[#6A0DAD]'
-                              : 'border-gray-200 hover:border-gray-300'
+                          onClick={() => setAnswers(prev => ({ ...prev, [questions[currentQ].id!]: opt }))}
+                          className={`flex-1 py-3 rounded-lg font-medium border-2 transition-colors ${answers[questions[currentQ].id!] === opt
+                            ? 'border-[#6A0DAD] bg-purple-50 text-[#6A0DAD]'
+                            : 'border-gray-200 hover:border-gray-300'
                             }`}
                         >
                           {opt}
                         </button>
                       ))}
                     </div>
-                  ) : (questions[currentQ].type === 'OPTIONS' || questions[currentQ].type === 'DROPDOWN') && questions[currentQ].options?.length ? (
+                  ) : (questions[currentQ].type === ScreeningQuestionType.OPTIONS || questions[currentQ].type === ScreeningQuestionType.DROPDOWN) && questions[currentQ].options?.length ? (
                     <div className="space-y-2">
                       {questions[currentQ].options!.map((opt, idx) => (
                         <button
                           key={idx}
-                          onClick={() => setAnswers(prev => ({ ...prev, [questions[currentQ].id]: opt }))}
-                          className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-colors ${answers[questions[currentQ].id] === opt
-                              ? 'border-[#6A0DAD] bg-purple-50 text-[#6A0DAD]'
-                              : 'border-gray-200 hover:border-gray-300'
+                          onClick={() => setAnswers(prev => ({ ...prev, [questions[currentQ].id!]: opt }))}
+                          className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-colors ${answers[questions[currentQ].id!] === opt
+                            ? 'border-[#6A0DAD] bg-purple-50 text-[#6A0DAD]'
+                            : 'border-gray-200 hover:border-gray-300'
                             }`}
                         >
                           {opt}
                         </button>
                       ))}
                     </div>
-                  ) : questions[currentQ].type === 'LONG_TEXT' || questions[currentQ].type === 'long_text' ? (
+                  ) : questions[currentQ].type === ScreeningQuestionType.LONG_TEXT ? (
                     <textarea
-                      value={answers[questions[currentQ].id] || ''}
-                      onChange={(e) => setAnswers(prev => ({ ...prev, [questions[currentQ].id]: e.target.value }))}
+                      value={answers[questions[currentQ].id!] || ''}
+                      onChange={(e) => setAnswers(prev => ({ ...prev, [questions[currentQ].id!]: e.target.value }))}
                       className="w-full h-32 p-4 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
                       placeholder="Type your answer here..."
                     />
                   ) : (
                     <input
                       type="text"
-                      value={answers[questions[currentQ].id] || ''}
-                      onChange={(e) => setAnswers(prev => ({ ...prev, [questions[currentQ].id]: e.target.value }))}
+                      value={answers[questions[currentQ].id!] || ''}
+                      onChange={(e) => setAnswers(prev => ({ ...prev, [questions[currentQ].id!]: e.target.value }))}
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       placeholder="Type your answer here..."
                     />

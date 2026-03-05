@@ -25,8 +25,8 @@ import { useSubscriptionStore } from "../../store/useSubscriptionStore.ts";
 
 interface ModalProps {
   modalId: string;
-  selectedPlan: SubscriptionResponse;
-  user: any;
+  selectedPlan?: SubscriptionResponse;
+  user?: any;
 }
 
 interface FormValues {
@@ -38,9 +38,12 @@ interface FormValues {
 
 const PaymentModal: React.FC<ModalProps> = ({
   modalId,
-  selectedPlan,
-  user,
+  selectedPlan: selectedPlanProp,
+  user: userProp,
 }) => {
+  // These are always provided when the modal is actually open
+  const selectedPlan = selectedPlanProp!;
+  const user = userProp;
   const { modals, closeModal, openModal } = useModalStore();
   const { subscribe } = useSubscriptionStore();
   const isOpen = modals[modalId];
@@ -149,8 +152,8 @@ const PaymentModal: React.FC<ModalProps> = ({
       if (paymentResponse.statusCode !== 200) {
         throw new Error(
           paymentResponse.message ||
-            paymentResponse.error ||
-            `Payment failed (${paymentResponse.statusCode})`,
+          paymentResponse.error ||
+          `Payment failed (${paymentResponse.statusCode})`,
         );
       }
 
@@ -230,7 +233,7 @@ const PaymentModal: React.FC<ModalProps> = ({
       console.error("Subscription activation error:", error);
       setPaymentError(
         error.message ||
-          "Payment successful but subscription activation failed",
+        "Payment successful but subscription activation failed",
       );
     }
   };
@@ -488,22 +491,20 @@ const PaymentModal: React.FC<ModalProps> = ({
           <div className="flex rounded-xl bg-slate-100 p-1">
             <button
               onClick={() => handleTabChange("card")}
-              className={`flex flex-1 items-center justify-center space-x-2 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
-                activeTab === "card"
-                  ? "bg-white text-indigo-600 shadow-sm"
-                  : "text-slate-600 hover:text-slate-800"
-              }`}
+              className={`flex flex-1 items-center justify-center space-x-2 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${activeTab === "card"
+                ? "bg-white text-indigo-600 shadow-sm"
+                : "text-slate-600 hover:text-slate-800"
+                }`}
             >
               <CreditCard className="h-4 w-4" />
               <span>Card Payment</span>
             </button>
             <button
               onClick={() => handleTabChange("bank")}
-              className={`flex flex-1 items-center justify-center space-x-2 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
-                activeTab === "bank"
-                  ? "bg-white text-indigo-600 shadow-sm"
-                  : "text-slate-600 hover:text-slate-800"
-              }`}
+              className={`flex flex-1 items-center justify-center space-x-2 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${activeTab === "bank"
+                ? "bg-white text-indigo-600 shadow-sm"
+                : "text-slate-600 hover:text-slate-800"
+                }`}
             >
               <Building className="h-4 w-4" />
               <span>Bank Transfer</span>
@@ -801,11 +802,10 @@ const PaymentModal: React.FC<ModalProps> = ({
                       </span>
                       <div className="flex items-center space-x-2">
                         <span
-                          className={`text-sm font-medium ${
-                            item.highlight
-                              ? "text-lg font-bold text-indigo-600"
-                              : "text-slate-900"
-                          }`}
+                          className={`text-sm font-medium ${item.highlight
+                            ? "text-lg font-bold text-indigo-600"
+                            : "text-slate-900"
+                            }`}
                         >
                           {item.value}
                         </span>

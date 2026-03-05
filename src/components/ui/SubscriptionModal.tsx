@@ -5,12 +5,12 @@ import { UserType } from "../../utils/enums.ts";
 
 interface SubscriptionModalProps {
   modalId: string;
-  USER_TYPE: UserType;
+  USER_TYPE?: UserType;
 }
 
 const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   modalId,
-  USER_TYPE,
+  USER_TYPE = UserType.APPLICANT,
 }) => {
   const { modals, openModal, closeModal, isModalOpen } = useModalStore();
   const isOpen = modals[modalId];

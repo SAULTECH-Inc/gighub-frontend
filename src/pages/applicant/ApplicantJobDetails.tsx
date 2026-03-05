@@ -15,12 +15,12 @@ const ApplicantJobDetails = () => {
   return (
     <div>
       <TopNavBar
-                navbarItemsMap={applicantNavBarItemMap}
-                userType="applicant"
+        navbarItemsMap={applicantNavBarItemMap}
+        userType="applicant"
       />
       <div className="hidden sm:block">
         <JobSearchTopBar
-          toggleSidebar={() => {}}
+          toggleSidebar={() => { }}
           setJobs={setJobs}
           setTotalPages={setTotalPages}
         />
@@ -45,10 +45,10 @@ const ApplicantJobDetails = () => {
         <div className="rounded-[16px] bg-white shadow-lg">
           <div className="flex-row items-center justify-center sm:flex sm:items-start">
             <div>
-              <JobDescription />
+              <JobDescription jobCurrentlyViewed={undefined as any} />
             </div>
             <div>
-              <CompanyInfo />
+              <CompanyInfo jobCurrentlyViewed={undefined as any} />
             </div>
           </div>
         </div>

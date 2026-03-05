@@ -16,8 +16,6 @@ import { useAuth } from "../../../store/useAuth";
 import TopNavBar from "../../layouts/TopNavBar";
 import {
   applicantNavBarItemMap,
-  applicantNavItems,
-  applicantNavItemsMobile,
 } from "../../../utils/constants";
 import { FaFacebook, FaTwitter, FaLinkedin, FaGithub } from "react-icons/fa";
 
@@ -71,9 +69,8 @@ const ViewProfile: React.FC = () => {
     <div className="flex w-full flex-col items-center gap-5 bg-[#F7F8FA]">
       <div className="w-full">
         <TopNavBar
-          navItems={applicantNavItems}
-          navItemsMobile={applicantNavItemsMobile}
           navbarItemsMap={applicantNavBarItemMap}
+          userType="applicant"
         />
       </div>
       {isWorksampleAvailable && (
