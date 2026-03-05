@@ -66,7 +66,12 @@ export default defineConfig({
       },
       workbox: {
         // Cache strategy for the app shell
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2}"],
+        // Exclude SVGs from precache — decorative SVGs can be 3MB+ and aren't
+        // worth precaching (they're loaded lazily from assets anyway)
+        globPatterns: ["**/*.{js,css,html,ico,png,woff,woff2}"],
+        // Raise the per-file size limit to 5MB (default is 2MB) so any
+        // remaining large assets don't break the build
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         runtimeCaching: [
           {
             // Network-first for API calls so data is always fresh
