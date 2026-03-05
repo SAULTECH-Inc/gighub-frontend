@@ -58,7 +58,15 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-      # ─── 6. Sync dist/ to server ───────────────────────────────────────────
+      # ─── 6. Prepare server directory ───────────────────────────────────────
+      - name: Prepare server directory
+        run: |
+          ssh -i ~/.ssh/id_rsa \
+            -o StrictHostKeyChecking=no \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+            "sudo mkdir -p /var/www/gighub/dist && sudo chown -R ${{ secrets.SERVER_USER }}:${{ secrets.SERVER_USER }} /var/www/gighub"
+
+      # ─── 7. Sync dist/ to server ───────────────────────────────────────────
       - name: Deploy dist to server
         run: |
           rsync -avz --delete \
@@ -66,7 +74,7 @@ jobs:
             dist/ \
             ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/gighub/dist/
 
-      # ─── 7. Restart PM2 on server ──────────────────────────────────────────
+      # ─── 8. Restart PM2 on server ──────────────────────────────────────────
       - name: Restart PM2
         run: |
           ssh -i ~/.ssh/id_rsa \
@@ -74,7 +82,15 @@ jobs:
             ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
             "pm2 reload gighub --update-env 2>/dev/null || pm2 serve /var/www/gighub/dist 3000 --name gighub --spa && pm2 save"
 
-      # ─── 8. Health check ───────────────────────────────────────────────────
+      # ─── 9. Restore Nginx-friendly permissions ─────────────────────────────
+      - name: Fix Nginx permissions
+        run: |
+          ssh -i ~/.ssh/id_rsa \
+            -o StrictHostKeyChecking=no \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+            "sudo chown -R ${{ secrets.SERVER_USER }}:www-data /var/www/gighub && sudo chmod -R 755 /var/www/gighub"
+
+      # ─── 10. Health check ──────────────────────────────────────────────────
       - name: Verify deployment
         run: |
           ssh -i ~/.ssh/id_rsa \
