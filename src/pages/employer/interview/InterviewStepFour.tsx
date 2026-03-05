@@ -56,6 +56,7 @@ const InterviewStepFour: React.FC = () => {
     prevStep,
     interviewDetails,
     setInterviewDetails,
+    setInterviewId,
     reset,
     selectedCandidates,
     selectedJob,
@@ -237,7 +238,8 @@ const InterviewStepFour: React.FC = () => {
               general: `Failed to upload ${file.name}`,
             }));
           }
-        } catch (error) {
+        } catch (error: any) {
+          console.log("Error: ",error);
           setErrors((prev) => ({
             ...prev,
             general: `Error uploading ${file.name}`,
@@ -300,7 +302,7 @@ const InterviewStepFour: React.FC = () => {
       setDragActive(false);
 
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        handleFileUpload(e.dataTransfer.files);
+        handleFileUpload(e.dataTransfer.files).then(r => r);
       }
     },
     [handleFileUpload],
@@ -316,7 +318,7 @@ const InterviewStepFour: React.FC = () => {
     fileInput.onchange = (event) => {
       const input = event.target as HTMLInputElement;
       if (input.files) {
-        handleFileUpload(input.files);
+        handleFileUpload(input.files).then(r => r);
       }
     };
 
@@ -340,6 +342,7 @@ const InterviewStepFour: React.FC = () => {
       );
 
       if (response.statusCode === 200) {
+        setInterviewId(response?.data?.id);
         reset();
         closeModal("interview-schedule");
         openModal("success-modal");

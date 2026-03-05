@@ -38,8 +38,9 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 import { useDashboardData } from "../../../hooks/useDashboardData";
-import { fetchMetrics } from "../../../services/api";
+import { fetchMetrics, fetchMyJobPosts } from "../../../services/api";
 import { getMyApplications, getRecentApplications } from "../../../services/api";
+import { Link } from "react-router-dom";
 
 // Import our created components (in real implementation, these would be separate files)
 // For this demo, I'll include simplified versions inline
@@ -140,35 +141,40 @@ const ApplicationStats = () => {
 };
 
 const BelowJobStats = () => {
-  const jobs = [
-    {
-      title: "Senior React Developer",
-      department: "Engineering",
-      applications: 45,
-      views: 234,
-      conversionRate: 19.2,
-      status: "active",
-      salary: "$95k - $120k"
-    },
-    {
-      title: "Product Manager",
-      department: "Product",
-      applications: 32,
-      views: 189,
-      conversionRate: 16.9,
-      status: "active",
-      salary: "$110k - $140k"
-    },
-    {
-      title: "UI/UX Designer",
-      department: "Design",
-      applications: 28,
-      views: 156,
-      conversionRate: 17.9,
-      status: "active",
-      salary: "$75k - $95k"
-    }
-  ];
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadJobs = async () => {
+      try {
+        const response = await fetchMyJobPosts({
+          page: 1,
+          limit: 5,
+        });
+
+        const data = response?.data || [];
+        const mappedJobs = data.map((job: any) => ({
+          title: job.title,
+          department: job.location || "Remote",
+          applications: job.metrics?.totalApplications || 0,
+          views: job.metrics?.views || 0,
+          conversionRate: job.metrics?.views > 0
+            ? Math.round((job.metrics.totalApplications / job.metrics.views) * 100)
+            : 0,
+          status: job.status,
+          salary: job.salaryRange || 'Not specified'
+        }));
+
+        setJobs(mappedJobs);
+      } catch (err) {
+        console.error("Failed to load jobs for dashboard", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadJobs();
+  }, []);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -179,44 +185,50 @@ const BelowJobStats = () => {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900">Active Job Postings</h2>
-            <p className="text-sm text-gray-600">18 active positions</p>
+            <p className="text-sm text-gray-600">{jobs.length} open position{jobs.length !== 1 ? 's' : ''}</p>
           </div>
         </div>
-        <button className="text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1">
+        <Link to="/employer/manage-jobs" className="text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1">
           View all
           <ChevronRight className="w-4 h-4" />
-        </button>
+        </Link>
       </div>
 
       <div className="space-y-4">
-        {jobs.map((job, index) => (
-          <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+        {loading ? (
+          <div className="py-4 text-center text-gray-500">Loading jobs...</div>
+        ) : jobs.length === 0 ? (
+          <div className="py-4 text-center text-gray-500">No active job postings found.</div>
+        ) : (
+          jobs.map((job, index) => (
+            <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+              <div className={`w-3 h-3 rounded-full ${job.status?.toLowerCase() === 'closed' ? 'bg-red-500' : 'bg-green-500'}`}></div>
 
-            <div className="flex-1 min-w-0">
-              <h3 className="font-medium text-gray-900">{job.title}</h3>
-              <p className="text-sm text-gray-600 mb-2">{job.department} • {job.salary}</p>
-              <div className="flex items-center gap-4 text-xs text-gray-500">
-                <span className="flex items-center gap-1">
-                  <Users className="w-3 h-3" />
-                  {job.applications} applications
-                </span>
-                <span className="flex items-center gap-1">
-                  <Eye className="w-3 h-3" />
-                  {job.views} views
-                </span>
-                <span className="flex items-center gap-1">
-                  <Target className="w-3 h-3" />
-                  {job.conversionRate}% conversion
-                </span>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium text-gray-900">{job.title}</h3>
+                <p className="text-sm text-gray-600 mb-2">{job.department} • {job.salary}</p>
+                <div className="flex items-center gap-4 text-xs text-gray-500">
+                  <span className="flex items-center gap-1">
+                    <Users className="w-3 h-3" />
+                    {job.applications} applications
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Eye className="w-3 h-3" />
+                    {job.views} views
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Target className="w-3 h-3" />
+                    {job.conversionRate}% conversion
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <button className="p-1 text-gray-400 hover:text-gray-600">
-              <MoreVertical className="w-4 h-4" />
-            </button>
-          </div>
-        ))}
+              <button className="p-1 text-gray-400 hover:text-gray-600">
+                <MoreVertical className="w-4 h-4" />
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
@@ -259,7 +271,7 @@ const ApplicantRecentApplications = () => {
     }
   ];
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'new': return 'bg-blue-100 text-blue-800';
       case 'reviewing': return 'bg-yellow-100 text-yellow-800';

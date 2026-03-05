@@ -6,10 +6,10 @@ import {
   employerNavBarItemMap,
 } from "../../utils/constants.ts";
 import { UserType } from "../../utils/enums.ts";
-import {submitDemoRequest} from "../../services/api";
+import { submitDemoRequest } from "../../services/api";
 import { toast } from "react-toastify";
-import {useGetAllTutorials} from "../../hooks/useTutorials.ts";
-import {TutorialResponse} from "../../utils/types";
+import { useGetAllTutorials } from "../../hooks/useTutorials.ts";
+import { TutorialResponse } from "../../utils/types";
 
 const Priority = {
   LOW: "LOW",
@@ -162,46 +162,46 @@ const HelpAndSupportPage = () => {
       popularity: 88,
     }
   ];
-const tutorialData = [
-  {
-    id: 1,
-    title: "Complete Profile Setup",
-    duration: "5 min",
-    views: "12.5K",
-    thumbnail: "🎯",
-    videoUrl: "#",
-    description: "Learn how to set up your profile for maximum visibility and engagement."
-  },
-  {
-    id: 2,
-    title: "Mastering Auto Apply",
-    duration: "8 min",
-    views: "8.2K",
-    thumbnail: "🤖",
-    videoUrl: "#",
-    description: "Discover how to configure Auto Apply settings for best results."
-  },
-  {
-    id: 3,
-    title: "Networking Like a Pro",
-    duration: "12 min",
-    views: "6.8K",
-    thumbnail: "🤝",
-    videoUrl: "#",
-    description: "Master the art of professional networking on GigHub."
-  },
-  {
-    id: 4,
-    title: "Resume Optimization Tips",
-    duration: "10 min",
-    views: "9.1K",
-    thumbnail: "📄",
-    videoUrl: "#",
-    description: "Optimize your resume to stand out to employers and recruiters."
-  }
-];
-const {data: getTuts} = useGetAllTutorials();
-  const tutorials = (getTuts?.data?.length || 0) > 0 ? getTuts?.data as TutorialResponse[] : tutorialData as TutorialResponse[];
+  const tutorialData = [
+    {
+      id: 1,
+      title: "Complete Profile Setup",
+      duration: "5 min",
+      views: "12.5K",
+      thumbnail: "🎯",
+      videoUrl: "#",
+      description: "Learn how to set up your profile for maximum visibility and engagement."
+    },
+    {
+      id: 2,
+      title: "Mastering Auto Apply",
+      duration: "8 min",
+      views: "8.2K",
+      thumbnail: "🤖",
+      videoUrl: "#",
+      description: "Discover how to configure Auto Apply settings for best results."
+    },
+    {
+      id: 3,
+      title: "Networking Like a Pro",
+      duration: "12 min",
+      views: "6.8K",
+      thumbnail: "🤝",
+      videoUrl: "#",
+      description: "Master the art of professional networking on GigHub."
+    },
+    {
+      id: 4,
+      title: "Resume Optimization Tips",
+      duration: "10 min",
+      views: "9.1K",
+      thumbnail: "📄",
+      videoUrl: "#",
+      description: "Optimize your resume to stand out to employers and recruiters."
+    }
+  ];
+  const { data: getTuts } = useGetAllTutorials();
+  const tutorials = (getTuts?.data?.length || 0) > 0 ? getTuts?.data as TutorialResponse[] : tutorialData as unknown as TutorialResponse[];
 
   const filteredFaqs = faqs.filter((faq) => {
     const matchesCategory = selectedCategory === "all" || faq.category === selectedCategory;
@@ -291,7 +291,7 @@ const {data: getTuts} = useGetAllTutorials();
     }
   };
 
-  const Modal: React.FC<{isOpen: boolean, onClose: ()=>void, title: string, children: ReactNode}> = ({ isOpen, onClose, title, children }) => {
+  const Modal: React.FC<{ isOpen: boolean, onClose: () => void, title: string, children: ReactNode }> = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null;
 
     return (
@@ -401,11 +401,10 @@ const {data: getTuts} = useGetAllTutorials();
                   <div
                     key={category.id}
                     onClick={() => setSelectedCategory(category.id)}
-                    className={`cursor-pointer rounded-lg p-4 transition-all duration-300 ${
-                      selectedCategory === category.id
+                    className={`cursor-pointer rounded-lg p-4 transition-all duration-300 ${selectedCategory === category.id
                         ? "bg-purple-600 text-white shadow-lg"
                         : "bg-white shadow-md hover:bg-gray-50 hover:shadow-lg"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -413,11 +412,10 @@ const {data: getTuts} = useGetAllTutorials();
                         <span className="font-semibold">{category.name}</span>
                       </div>
                       <span
-                        className={`rounded-full px-2 py-1 text-sm ${
-                          selectedCategory === category.id
+                        className={`rounded-full px-2 py-1 text-sm ${selectedCategory === category.id
                             ? "bg-white/20"
                             : "bg-gray-100"
-                        }`}
+                          }`}
                       >
                         {category.count}
                       </span>
@@ -446,9 +444,8 @@ const {data: getTuts} = useGetAllTutorials();
                           {faq.question}
                         </h4>
                         <div
-                          className={`transform transition-transform duration-200 ${
-                            expandedFaq === faq.id ? "rotate-180" : ""
-                          }`}
+                          className={`transform transition-transform duration-200 ${expandedFaq === faq.id ? "rotate-180" : ""
+                            }`}
                         >
                           ⌄
                         </div>
@@ -646,11 +643,10 @@ const {data: getTuts} = useGetAllTutorials();
                 className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-xs rounded-lg px-4 py-2 ${
-                    msg.sender === "user"
+                  className={`max-w-xs rounded-lg px-4 py-2 ${msg.sender === "user"
                       ? "bg-purple-600 text-white"
                       : "bg-white text-gray-800"
-                  }`}
+                    }`}
                 >
                   <p>{msg.text}</p>
                   <p className="mt-1 text-xs opacity-70">

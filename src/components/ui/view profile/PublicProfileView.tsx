@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { ASAbubakar, Bagged, Ellipse115, Ellipse116, Ellipse117 } from "../../../assets/images";
 import { useParams } from "react-router-dom";
 import { handleDownload, NetworkDetails, Review } from "../../../utils/types";
-import { applicantNavBarItemMap, applicantNavItems, applicantNavItemsMobile } from "../../../utils/constants";
+import { applicantNavBarItemMap } from "../../../utils/constants";
 import TopNavBar from "../../layouts/TopNavBar";
 import {
   FaBookmark,
@@ -31,7 +31,8 @@ import DOMPurify from "dompurify";
 import moment from "moment";
 import { useApplicant } from "../../../hooks/useApplicant.ts";
 import { useReviews } from "../../../hooks/useReviews.ts";
-import { connectUser } from "../../../services/api";
+import { connectUser, toggleCandidateBookmark, checkCandidateBookmarkStatus } from "../../../services/api";
+import toast from "react-hot-toast";
 
 interface SkillTagProps {
   skill: string;
@@ -46,9 +47,9 @@ const SkillTag: React.FC<SkillTagProps> = ({ skill, level }) => (
 );
 
 const ExperienceCard: React.FC<{ experience: any; index: number }> = ({
-                                                                        experience,
-                                                                        index,
-                                                                      }) => (
+  experience,
+  index,
+}) => (
   <div
     key={index}
     className="group relative mb-4 rounded-xl border border-gray-100 bg-white p-6 transition-all duration-300 hover:border-purple-200 hover:shadow-lg"
@@ -84,9 +85,9 @@ const ExperienceCard: React.FC<{ experience: any; index: number }> = ({
               <span className="font-medium text-green-600">
                 {experience?.endDate
                   ? moment(experience.endDate).diff(
-                  moment(experience.startDate),
-                  "months"
-                ) + " months"
+                    moment(experience.startDate),
+                    "months"
+                  ) + " months"
                   : "Current"}
               </span>
             </div>
@@ -116,9 +117,9 @@ const ExperienceCard: React.FC<{ experience: any; index: number }> = ({
 );
 
 const EducationCard: React.FC<{ education: any; index: number }> = ({
-                                                                      education,
-                                                                      index,
-                                                                    }) => (
+  education,
+  index,
+}) => (
   <div
     key={index}
     className="group relative mb-4 rounded-xl border border-gray-100 bg-white p-6 transition-all duration-300 hover:border-blue-200 hover:shadow-lg"
@@ -176,9 +177,9 @@ const EducationCard: React.FC<{ education: any; index: number }> = ({
 );
 
 const ReviewCard: React.FC<{ review: Review; index: number }> = ({
-                                                                            review,
-                                                                            index,
-                                                                          }) => {
+  review,
+  index,
+}) => {
   const [liked, setLiked] = useState(review.liked);
   const images = [Ellipse115, Ellipse116, Ellipse117];
 
@@ -230,9 +231,8 @@ const ReviewCard: React.FC<{ review: Review; index: number }> = ({
       <div className="flex items-center justify-between border-t border-gray-100 pt-3">
         <div className="flex items-center gap-4">
           <button
-            className={`flex items-center gap-2 text-xs transition-colors ${
-              liked ? "text-red-500" : "text-gray-500 hover:text-red-500"
-            }`}
+            className={`flex items-center gap-2 text-xs transition-colors ${liked ? "text-red-500" : "text-gray-500 hover:text-red-500"
+              }`}
             onClick={() => setLiked(!liked)}
           >
             <FaHeart className={liked ? "fill-current" : ""} />
@@ -322,11 +322,26 @@ const PublicProfileView: React.FC = () => {
   const [showAllEducations, setShowAllEducations] = useState(false);
   const [showAllSkills, setShowAllSkills] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+
+  React.useEffect(() => {
+    const fetchBookmarkStatus = async () => {
+      if (!numericId) return;
+      try {
+        const res = await checkCandidateBookmarkStatus(numericId);
+        if (res?.data?.isBookmarked != null) {
+          setIsBookmarked(res.data.isBookmarked);
+        }
+      } catch (error) {
+        console.error("Failed to check bookmark status", error);
+      }
+    };
+    fetchBookmarkStatus();
+  }, [numericId]);
   const [viewCount] = useState(847);
   const [connectionsSent, setConnectionsSent] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
-  const {createReview, isCreating,    isCreateSuccess, reviews} = useReviews(numericId);
+  const { createReview, isCreating, isCreateSuccess, reviews } = useReviews(numericId);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [currentRating, setCurrentRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
@@ -354,16 +369,25 @@ const PublicProfileView: React.FC = () => {
     return <EmptyState />;
   }
 
-  const handleConnect = async() => {
+  const handleConnect = async () => {
     const res = await connectUser(applicant?.id || 0);
-    if(res.statusCode === 200){
+    if (res.statusCode === 200) {
       setConnectionsSent(true);
     }
   };
 
-  const handleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
-    // TODO: Make API call to bookmark profile
+  const handleBookmark = async () => {
+    if (!numericId) return;
+    try {
+      const res = await toggleCandidateBookmark(numericId);
+      if (res?.statusCode === 200) {
+        setIsBookmarked(!isBookmarked);
+        toast.success(isBookmarked ? 'Candidate removed from bookmarks' : 'Candidate bookmarked successfully');
+      }
+    } catch (error) {
+      console.error('Failed to toggle bookmark:', error);
+      toast.error('Failed to update bookmark');
+    }
   };
 
   const handleShare = async () => {
@@ -388,7 +412,7 @@ const PublicProfileView: React.FC = () => {
     window.print();
   };
 
-  const handleSubmitReview = async() => {
+  const handleSubmitReview = async () => {
     if (currentRating === 0 || !reviewText.trim()) {
       alert("Please provide a rating and review.");
       return;
@@ -399,8 +423,8 @@ const PublicProfileView: React.FC = () => {
       rating: currentRating,
       userId: applicant.id
     };
-   createReview(newTestimony);
-    if(isCreateSuccess){
+    createReview(newTestimony);
+    if (isCreateSuccess) {
       setShowReviewModal(false);
       setCurrentRating(0);
       setReviewText("");
@@ -429,8 +453,8 @@ const PublicProfileView: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <TopNavBar
-                navbarItemsMap={applicantNavBarItemMap}
-                userType="applicant"
+        navbarItemsMap={applicantNavBarItemMap}
+        userType="applicant"
       />
 
       <div className="container mx-auto max-w-6xl px-4 py-8">
@@ -446,11 +470,10 @@ const PublicProfileView: React.FC = () => {
               <div className="absolute top-4 right-4 flex gap-3">
                 <button
                   onClick={handleBookmark}
-                  className={`rounded-full p-3 backdrop-blur-sm transition-all ${
-                    isBookmarked
-                      ? "bg-yellow-500 text-white shadow-lg"
-                      : "bg-white/20 text-white hover:bg-white/30"
-                  }`}
+                  className={`rounded-full p-3 backdrop-blur-sm transition-all ${isBookmarked
+                    ? "bg-yellow-500 text-white shadow-lg"
+                    : "bg-white/20 text-white hover:bg-white/30"
+                    }`}
                   aria-label={isBookmarked ? "Remove bookmark" : "Bookmark profile"}
                 >
                   <FaBookmark />
@@ -491,11 +514,10 @@ const PublicProfileView: React.FC = () => {
                 <button
                   onClick={handleConnect}
                   disabled={connectionsSent}
-                  className={`rounded-full px-6 py-3 font-semibold transition-all ${
-                    connectionsSent
-                      ? "cursor-not-allowed bg-gray-100 text-gray-500"
-                      : "border-2 border-purple-600 bg-white text-purple-600 hover:bg-purple-50"
-                  }`}
+                  className={`rounded-full px-6 py-3 font-semibold transition-all ${connectionsSent
+                    ? "cursor-not-allowed bg-gray-100 text-gray-500"
+                    : "border-2 border-purple-600 bg-white text-purple-600 hover:bg-purple-50"
+                    }`}
                 >
                   {connectionsSent ? "Request Sent" : "Connect"}
                 </button>
@@ -604,11 +626,10 @@ const PublicProfileView: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 border-b-2 px-6 py-4 font-medium transition-colors ${
-                    activeTab === tab.id
-                      ? "border-purple-600 text-purple-600"
-                      : "border-transparent text-gray-600 hover:text-gray-900"
-                  }`}
+                  className={`flex items-center gap-2 border-b-2 px-6 py-4 font-medium transition-colors ${activeTab === tab.id
+                    ? "border-purple-600 text-purple-600"
+                    : "border-transparent text-gray-600 hover:text-gray-900"
+                    }`}
                 >
                   {tab.label}
                   {tab.count !== null && (
@@ -721,8 +742,8 @@ const PublicProfileView: React.FC = () => {
 
                     <div className="flex flex-wrap gap-3">
                       {(showAllSkills
-                          ? applicant.cv.skills
-                          : applicant.cv.skills.slice(0, 8)
+                        ? applicant.cv.skills
+                        : applicant.cv.skills.slice(0, 8)
                       )?.map((skill: any, idx: number) => (
                         <SkillTag
                           key={idx}
@@ -795,8 +816,8 @@ const PublicProfileView: React.FC = () => {
 
                 <div className="space-y-4">
                   {(showAllExperiences
-                      ? applicant?.cv?.experiences
-                      : applicant?.cv?.experiences?.slice(0, 2)
+                    ? applicant?.cv?.experiences
+                    : applicant?.cv?.experiences?.slice(0, 2)
                   )?.map((experience, idx) => (
                     <ExperienceCard
                       key={idx}
@@ -846,8 +867,8 @@ const PublicProfileView: React.FC = () => {
 
                 <div className="space-y-4">
                   {(showAllEducations
-                      ? applicant?.cv?.educations
-                      : applicant?.cv?.educations?.slice(0, 2)
+                    ? applicant?.cv?.educations
+                    : applicant?.cv?.educations?.slice(0, 2)
                   )?.map((education, idx) => (
                     <EducationCard
                       key={idx}
@@ -1079,11 +1100,10 @@ const PublicProfileView: React.FC = () => {
                     <FaStar
                       key={i}
                       size={24}
-                      className={`cursor-pointer transition-colors ${
-                        i < currentRating
-                          ? "text-yellow-400 fill-current"
-                          : "text-gray-300"
-                      } hover:text-yellow-400`}
+                      className={`cursor-pointer transition-colors ${i < currentRating
+                        ? "text-yellow-400 fill-current"
+                        : "text-gray-300"
+                        } hover:text-yellow-400`}
                       onClick={() => setCurrentRating(i + 1)}
                     />
                   ))}
@@ -1120,7 +1140,7 @@ const PublicProfileView: React.FC = () => {
                   isCreateSuccess && "Submitted"
                 }
                 {
-                  !isCreating && !isCreateSuccess &&  "Submit"
+                  !isCreating && !isCreateSuccess && "Submit"
                 }
               </button>
             </div>

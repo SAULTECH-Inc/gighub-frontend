@@ -5,11 +5,7 @@ import { fetchJobById } from "../services/api";
 import TopNavBar from "../components/layouts/TopNavBar.tsx";
 import {
   applicantNavBarItemMap,
-  applicantNavItems,
-  applicantNavItemsMobile,
   employerNavBarItemMap,
-  employerNavItems,
-  employerNavItemsMobile,
 } from "../utils/constants.ts";
 import JobDetailsTop from "./jobDetails/JobDetailsTop.tsx";
 import JobDetailsBody from "./jobDetails/JobDetailsBody.tsx";
@@ -55,9 +51,9 @@ const JobDetailPage: FC = () => {
     fetchJob();
   }, [jobId]);
 
-  const handleEditJob = async () => {};
+  const handleEditJob = async () => { };
 
-  const handleBookmark = async () => {};
+  const handleBookmark = async () => { };
 
   const handleRefer = async (applicantEmails: string[]) => {
     if (applicantEmails.length && applicantEmails.length < 1) return;
@@ -79,15 +75,13 @@ const JobDetailPage: FC = () => {
       <div className="min-h-screen bg-slate-50">
         {USER_TYPE === UserType.EMPLOYER ? (
           <TopNavBar
-            navItems={employerNavItems}
-            navItemsMobile={employerNavItemsMobile}
             navbarItemsMap={employerNavBarItemMap}
+            userType="employer"
           />
         ) : (
           <TopNavBar
-            navItems={applicantNavItems}
-            navItemsMobile={applicantNavItemsMobile}
             navbarItemsMap={applicantNavBarItemMap}
+            userType="applicant"
           />
         )}
         <div className="flex min-h-[60vh] items-center justify-center">
@@ -105,15 +99,13 @@ const JobDetailPage: FC = () => {
       <div className="min-h-screen bg-slate-50">
         {USER_TYPE === UserType.EMPLOYER ? (
           <TopNavBar
-            navItems={employerNavItems}
-            navItemsMobile={employerNavItemsMobile}
             navbarItemsMap={employerNavBarItemMap}
+            userType="employer"
           />
         ) : (
           <TopNavBar
-            navItems={applicantNavItems}
-            navItemsMobile={applicantNavItemsMobile}
             navbarItemsMap={applicantNavBarItemMap}
+            userType="applicant"
           />
         )}
         <div className="flex min-h-[60vh] items-center justify-center">
@@ -147,15 +139,13 @@ const JobDetailPage: FC = () => {
       <div className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
         {USER_TYPE === UserType.EMPLOYER ? (
           <TopNavBar
-            navItems={employerNavItems}
-            navItemsMobile={employerNavItemsMobile}
             navbarItemsMap={employerNavBarItemMap}
+            userType="employer"
           />
         ) : (
           <TopNavBar
-            navItems={applicantNavItems}
-            navItemsMobile={applicantNavItemsMobile}
             navbarItemsMap={applicantNavBarItemMap}
+            userType="applicant"
           />
         )}
       </div>

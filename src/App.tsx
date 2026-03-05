@@ -8,25 +8,12 @@ import { useEffect } from "react";
 import { useAuth } from "./store/useAuth.ts";
 import NotificationSocketHandler from "./chat-module/handler/NotificationSocketHandler.tsx";
 import GigHubAIAssistant from "./components/features/GigHubAIAssistant.tsx";
+
 function App() {
   const { email } = useAuth();
   const { sender, recipient, messages, setUnreadCount } = useChatStore();
 
-  useEffect(() => {
-    fetch("https://api.ipify.org?format=json")
-      .then((res) => res.json())
-      .then((data) => {
-        const ip = data.ip;
-        const ua = navigator.userAgent;
-        if (ip) localStorage.setItem("current_ip", ip);
-        if (ua) localStorage.setItem("current_ua", ua);
-      })
-      .catch((err) => {
-        console.error("Failed to store client session info:", err);
-      });
-  }, []);
-
-
+  // Sync unread message count
   useEffect(() => {
     if (messages) {
       setUnreadCount(

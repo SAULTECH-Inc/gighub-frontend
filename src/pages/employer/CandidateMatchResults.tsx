@@ -5,9 +5,10 @@ import {
   Check, X, ChevronDown, ChevronUp, Users, Zap, Target,
   Mail, Phone, Linkedin, Github, Globe, Clock, CheckCircle
 } from 'lucide-react';
-import TopNavBar from "../../components/layouts/TopNavBar.tsx";
-import { employerNavBarItemMap } from "../../utils/constants.ts";
-import { fetchCandidates } from "../../services/api";
+import TopNavBar from "../../components/layouts/TopNavBar";
+import { employerNavBarItemMap } from "../../utils/constants";
+import { fetchCandidates, toggleCandidateBookmark } from "../../services/api";
+import { toast } from 'react-hot-toast';
 
 const CandidateMatchResults = () => {
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -78,26 +79,45 @@ const CandidateMatchResults = () => {
     loadCandidates();
   }, []);
 
-  const toggleSave = (id: string) => {
-    setSavedCandidates(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
+  const toggleSave = async (id: string) => {
+    try {
+      const numericId = parseInt(id, 10);
+      if (isNaN(numericId)) return;
+
+      const res = await toggleCandidateBookmark(numericId);
+      if (res?.statusCode === 200) {
+        setSavedCandidates(prev => {
+          const newSet = new Set(prev);
+          if (newSet.has(id)) {
+            newSet.delete(id);
+            toast.success('Candidate removed from saved list');
+          } else {
+            newSet.add(id);
+            toast.success('Candidate saved successfully');
+          }
+          return newSet;
+        });
       }
-      return newSet;
-    });
+    } catch (error) {
+      console.error('Failed to toggle save:', error);
+      toast.error('Failed to save candidate');
+    }
   };
 
   const openMessage = (candidate: any) => {
     setMessageModal(candidate);
   };
 
-  const sendMessage = (candidateId: number, message: string) => {
-    console.log('Sending message to:', candidateId, message);
-    setMessageModal(null);
-    // API call here
+  const handleSendMessage = async (candidateId: number, message: string) => {
+    try {
+      console.log('Sending message to:', candidateId, message);
+      // await sendDirectMessage(message...); // TODO: Add real endpoint
+      toast.success('Message sent successfully!');
+      setMessageModal(null);
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      toast.error('Failed to send message');
+    }
   };
 
   const filteredCandidates = candidates
@@ -262,7 +282,7 @@ const CandidateMatchResults = () => {
         <MessageModal
           candidate={messageModal}
           onClose={() => setMessageModal(null)}
-          onSend={sendMessage}
+          onSend={handleSendMessage}
         />
       )}
 
@@ -376,7 +396,7 @@ const CandidateCard = ({ candidate, isSaved, onToggleSave, onMessage, onViewProf
                 <span className="text-sm font-semibold text-[#222222]">Why they're a great match:</span>
               </div>
               <ul className="space-y-1">
-                {candidate.match_reasons.map((reason, idx) => (
+                {candidate.match_reasons.map((reason: string, idx: number) => (
                   <li key={idx} className="text-sm text-gray-700 flex items-start gap-2">
                     <CheckCircle className="w-4 h-4 text-[#FE691E] mt-0.5 flex-shrink-0" />
                     {reason}
@@ -389,7 +409,7 @@ const CandidateCard = ({ candidate, isSaved, onToggleSave, onMessage, onViewProf
             {expanded && (
               <div className="mb-4 p-3 bg-gray-50 rounded-lg space-y-2">
                 <h4 className="text-sm font-semibold text-[#222222] mb-3">Detailed Match Breakdown</h4>
-                {Object.entries(candidate.score_breakdown).map(([key, value]) => {
+                {Object.entries(candidate.score_breakdown).map(([key, value]: [string, any]) => {
                   if (key === 'total') return null;
                   return (
                     <div key={key}>
@@ -606,7 +626,7 @@ const ProfileModal = ({ candidate, onClose, onMessage, isSaved, onToggleSave }: 
                 <p className="text-gray-600">This candidate is an excellent fit for your position</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                {Object.entries(candidate.score_breakdown).slice(0, 4).map(([key, value]) => (
+                {Object.entries(candidate.score_breakdown).slice(0, 4).map(([key, value]: [string, any]) => (
                   <div key={key} className="text-center">
                     <div className="text-2xl font-bold text-[#222222]">{Math.round(value * 100)}%</div>
                     <div className="text-xs text-gray-600 capitalize">{key.replace('_', ' ')}</div>
@@ -623,7 +643,7 @@ const ProfileModal = ({ candidate, onClose, onMessage, isSaved, onToggleSave }: 
               <div>
                 <h3 className="text-lg font-semibold text-[#222222] mb-3">Skills & Expertise</h3>
                 <div className="flex flex-wrap gap-2">
-                  {candidate.skills.map((skil: string, idx: number) => (
+                  {candidate.skills.map((skill: string, idx: number) => (
                     <span key={idx} className="px-3 py-1 bg-[#6A0DAD]/5 text-[#6A0DAD] rounded-full text-sm font-medium">
                       {skill}
                     </span>

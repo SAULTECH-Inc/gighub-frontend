@@ -1069,3 +1069,25 @@ export const setInterviewReminder = async (interviewId: number, reminder: string
   );
   return res?.data;
 }
+
+// == CANDIDATE BOOKMARKING BY EMPLOYERS ==
+
+export const toggleCandidateBookmark = async (
+  applicantId: number,
+  jobId?: number,
+): Promise<APIResponse<any>> => {
+  const response = await privateApiClient.post<APIResponse<any>>(
+    `${API_BASE_URL}/bookmarks/candidates/toggle`,
+    { applicantId, jobId },
+  );
+  return response?.data;
+};
+
+export const checkCandidateBookmarkStatus = async (
+  applicantId: number,
+): Promise<APIResponse<{ isBookmarked: boolean }>> => {
+  const response = await privateApiClient.get<APIResponse<{ isBookmarked: boolean }>>(
+    `${API_BASE_URL}/bookmarks/candidates/check/${applicantId}`,
+  );
+  return response?.data;
+};

@@ -22,8 +22,6 @@ import {
 import TopNavBar from "../../components/layouts/TopNavBar.tsx";
 import {
   employerNavBarItemMap,
-  employerNavItems,
-  employerNavItemsMobile,
 } from "../../utils/constants.ts";
 import { useFetchMyJobs, useSearchJobs } from "../../hooks/useJobQuery.ts";
 import { ApplicantData, JobPostResponse, JobStatus } from "../../utils/types";
@@ -52,7 +50,7 @@ const JobSelection: React.FC = () => {
   const [jobSortBy, setJobSortBy] = useState("posted");
   const [jobSortOrder, setJobSortOrder] = useState<"asc" | "desc">("desc");
   const [jobStatusFilter, setJobStatusFilter] = useState("all");
-  const [applicants, setApplicants] = useState<ApplicantData[]>([]);
+  const [applicants, setApplicants] = useState<any[]>([]);
 
   // Modal states
   const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
@@ -184,11 +182,11 @@ const JobSelection: React.FC = () => {
     }
   };
 
-  const filteredApplicants = applicants.filter((applicant) => {
+  const filteredApplicants = applicants.filter((applicant: any) => {
     const matchesSearch =
-      applicant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      applicant.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      applicant.skills.some((skill) =>
+      (applicant.name || applicant.firstName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (applicant.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (applicant.skills || []).some((skill: string) =>
         skill.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     const matchesStatus =
@@ -275,9 +273,8 @@ const JobSelection: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
         <TopNavBar
-          navItems={employerNavItems}
-          navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
+          userType="employer"
         />
         <div className="mt-20 flex min-h-64 items-center justify-center">
           <div className="text-center">
@@ -302,9 +299,8 @@ const JobSelection: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
         <TopNavBar
-          navItems={employerNavItems}
-          navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
+          userType="employer"
         />
         <div className="mx-auto max-w-7xl p-4 pt-24 lg:p-8">
           {/* Header */}
@@ -611,8 +607,8 @@ const JobSelection: React.FC = () => {
                           key={pageNumber}
                           onClick={() => setCurrentPage(pageNumber)}
                           className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${pageNumber === currentPage
-                              ? "z-10 border-blue-500 bg-blue-600 text-white"
-                              : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
+                            ? "z-10 border-blue-500 bg-blue-600 text-white"
+                            : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
                             }`}
                         >
                           {pageNumber}
@@ -1195,8 +1191,8 @@ const JobSelection: React.FC = () => {
                           </span>
                           <span
                             className={`rounded-full px-3 py-1 text-sm font-medium ${job.jobStatus === JobStatus.NEW
-                                ? "bg-green-100 text-green-800"
-                                : "bg-yellow-100 text-yellow-800"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-yellow-100 text-yellow-800"
                               }`}
                           >
                             {job.jobStatus === JobStatus.NEW

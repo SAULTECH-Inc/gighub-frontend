@@ -28,9 +28,7 @@ const UserCard: React.FC<NetworkCardProps> = ({
   const handleConnect = async () => {
     try {
       const response = await connectUser(
-        userDetails?.applicant?.id
-          ? userDetails?.applicant?.id.toString()
-          : "0",
+        userDetails?.applicant?.id ?? 0,
       );
       if (response?.statusCode === 200) {
         console.log("Connection request sent successfully");
@@ -148,11 +146,10 @@ const UserCard: React.FC<NetworkCardProps> = ({
           <button
             onClick={handleConnect}
             disabled={isConnectionDisabled}
-            className={`flex-1 rounded-lg px-4 py-2.5 text-center text-sm font-medium transition-colors ${
-              isConnectionDisabled
+            className={`flex-1 rounded-lg px-4 py-2.5 text-center text-sm font-medium transition-colors ${isConnectionDisabled
                 ? "cursor-not-allowed bg-gray-100 text-gray-500"
                 : "bg-purple-600 text-white hover:bg-purple-700"
-            }`}
+              }`}
           >
             {userDetails?.connectionStatus === ConnectionStatus.PENDING && (
               <Clock size={14} className="mr-1 inline" />

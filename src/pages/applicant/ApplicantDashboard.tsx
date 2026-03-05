@@ -14,6 +14,7 @@ import MainFooter from "../../components/layouts/MainFooter.tsx";
 import { Briefcase, TrendingUp } from "lucide-react";
 import ApplicantDashboardSchedules from "../../components/ui/ApplicantDashboardSchedules.tsx";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../store/useAuth.ts";
 export const SHADOWS = {
   sm: "shadow-sm",
   md: "shadow-md shadow-slate-200/50",
@@ -34,6 +35,7 @@ export const LAYOUT = {
 } as const;
 
 export const ApplicantDashboard = () => {
+  const { applicant } = useAuth();
   const { setMetrics } = useMetrics();
 
   useEffect(() => {
@@ -92,7 +94,7 @@ export const ApplicantDashboard = () => {
                   <div className="rounded-lg bg-white/20 p-2 backdrop-blur-sm">
                     <Briefcase className="h-6 w-6 text-white" />
                   </div>
-                  <h1 className="text-3xl font-bold">Welcome back, Alex! 👋</h1>
+                  <h1 className="text-3xl font-bold">Welcome back, {applicant?.firstName}! 👋</h1>
                 </div>
                 <p className="max-w-2xl text-lg text-indigo-100">
                   Ready to take your career to the next level? You have new

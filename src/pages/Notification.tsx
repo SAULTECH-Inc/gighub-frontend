@@ -5,11 +5,7 @@ import { UserType } from "../utils/enums.ts";
 import TopNavBar from "../components/layouts/TopNavBar.tsx";
 import {
   applicantNavBarItemMap,
-  applicantNavItems,
-  applicantNavItemsMobile,
   employerNavBarItemMap,
-  employerNavItems,
-  employerNavItemsMobile,
 } from "../utils/constants.ts";
 import { USER_TYPE } from "../utils/helpers.ts";
 import { useNotificationStore } from "../store/useNotificationStore.ts";
@@ -131,15 +127,13 @@ const Notification: React.FC = () => {
     <div>
       {USER_TYPE === UserType.EMPLOYER ? (
         <TopNavBar
-          navItems={employerNavItems}
-          navItemsMobile={employerNavItemsMobile}
           navbarItemsMap={employerNavBarItemMap}
+          userType="employer"
         />
       ) : (
         <TopNavBar
-          navItems={applicantNavItems}
-          navItemsMobile={applicantNavItemsMobile}
           navbarItemsMap={applicantNavBarItemMap}
+          userType="applicant"
         />
       )}
 

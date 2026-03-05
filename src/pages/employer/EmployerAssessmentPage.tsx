@@ -155,7 +155,7 @@ const EmployerAssessmentPage = () => {
   const [confirmDialog, setConfirmDialog] = useState<any>({ isOpen: false });
   const [customQuestions, setCustomQuestions] = useState<Question[]>([]);
 
-  const { data: myJobsData } = useFetchMyJobs();
+  const { data: myJobsData } = useFetchMyJobs({ page: 1, limit: 100 });
 
   const [postedJobs, setPostedJobs] = useState<Job[]>([]);
   const [assessmentPools, setAssessmentPools] = useState<AssessmentPool[]>([]);
@@ -466,8 +466,8 @@ const EmployerAssessmentPage = () => {
                           <p className="text-xs text-gray-500">{sub.submittedAt}</p>
                         </div>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${sub.status === 'passed' ? 'bg-green-100 text-green-700'
-                            : sub.status === 'failed' ? 'bg-red-100 text-red-700'
-                              : 'bg-yellow-100 text-yellow-700'
+                          : sub.status === 'failed' ? 'bg-red-100 text-red-700'
+                            : 'bg-yellow-100 text-yellow-700'
                           }`}>
                           {sub.status}
                         </span>
