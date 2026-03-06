@@ -139,69 +139,10 @@ export default defineConfig({
     chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
-        // Manually split large vendors into separate chunks for better caching
-        manualChunks: (id) => {
-          if (id.includes("node_modules")) {
-            // React core + Ant Design MUST be in the same chunk.
-            // AntD reads React.version and React internals at module init,
-            // so splitting them causes "Cannot read properties of undefined
-            // (reading 'version')" crash when antd chunk loads before react.
-            if (
-              id.includes("/react/") ||
-              id.includes("/react-dom/") ||
-              id.includes("/react-router-dom/") ||
-              id.includes("/react-router/") ||
-              id.includes("/scheduler/") ||
-              id.includes("/antd/") ||
-              id.includes("/rc-") ||
-              id.includes("/@ant-design/")
-            ) {
-              return "vendor-react";
-            }
-            // Redux / state
-            if (
-              id.includes("/@reduxjs/") ||
-              id.includes("/react-redux/") ||
-              id.includes("/zustand/") ||
-              id.includes("/immer/")
-            ) {
-              return "vendor-state";
-            }
-            // Framer Motion
-            if (id.includes("/framer-motion/")) {
-              return "vendor-motion";
-            }
-            // UI libraries
-            if (
-              id.includes("/@headlessui/") ||
-              id.includes("/@heroicons/") ||
-              id.includes("/lucide-react/") ||
-              id.includes("/react-icons/")
-            ) {
-              return "vendor-ui";
-            }
-            // Utilities
-            if (
-              id.includes("/lodash") ||
-              id.includes("/date-fns/") ||
-              id.includes("/axios/") ||
-              id.includes("/zod/") ||
-              id.includes("/numeral/")
-            ) {
-              return "vendor-utils";
-            }
-            // Tanstack Query
-            if (id.includes("/@tanstack/")) {
-              return "vendor-query";
-            }
-            // Socket.io
-            if (id.includes("/socket.io")) {
-              return "vendor-socket";
-            }
-            // All other node_modules
-            return "vendor";
-          }
-        },
+        // Let Vite handle chunk splitting automatically.
+        // Manual chunks that separate React from its dependents cause
+        // "Cannot read properties of undefined (reading 'useLayoutEffect')"
+        // crashes because async chunk load order is not guaranteed.
       },
     },
   },
