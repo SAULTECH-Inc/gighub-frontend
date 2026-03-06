@@ -142,13 +142,19 @@ export default defineConfig({
         // Manually split large vendors into separate chunks for better caching
         manualChunks: (id) => {
           if (id.includes("node_modules")) {
-            // React core
+            // React core + Ant Design MUST be in the same chunk.
+            // AntD reads React.version and React internals at module init,
+            // so splitting them causes "Cannot read properties of undefined
+            // (reading 'version')" crash when antd chunk loads before react.
             if (
               id.includes("/react/") ||
               id.includes("/react-dom/") ||
               id.includes("/react-router-dom/") ||
               id.includes("/react-router/") ||
-              id.includes("/scheduler/")
+              id.includes("/scheduler/") ||
+              id.includes("/antd/") ||
+              id.includes("/rc-") ||
+              id.includes("/@ant-design/")
             ) {
               return "vendor-react";
             }
@@ -160,10 +166,6 @@ export default defineConfig({
               id.includes("/immer/")
             ) {
               return "vendor-state";
-            }
-            // Ant Design (huge)
-            if (id.includes("/antd/") || id.includes("/rc-")) {
-              return "vendor-antd";
             }
             // Framer Motion
             if (id.includes("/framer-motion/")) {
