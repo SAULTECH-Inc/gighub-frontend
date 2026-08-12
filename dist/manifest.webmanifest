@@ -1,0 +1,10 @@
+{
+  "name": "Gighub",
+  "short_name": "Gighub",
+  "description": "AI-powered job matching platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1117",
+  "theme_color": "#7c3aed",
+  "icons": []
+}
