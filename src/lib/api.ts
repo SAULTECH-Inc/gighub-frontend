@@ -124,6 +124,8 @@ export const jobsApi = {
   submitScreeningAnswers:   (appId: string, data: any)  => api.post(`/jobs/applications/${appId}/screening-answers`, data),
   withdrawApplication:      (jobId: string)             => api.patch(`/jobs/my/applications/withdraw/${jobId}`),
   getApplicationById:       (appId: string)             => api.get(`/jobs/my/application-by/${appId}`),
+  getMatchDetails:          (applicantId: string, jobId: string) =>
+    api.get('/jobs/job-match/applicant', { params: { applicantId, jobId } }),
 };
 
 // ─── CVs ──────────────────────────────────────────────────────────────────────

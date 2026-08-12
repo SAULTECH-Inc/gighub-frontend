@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import DatePicker from '@/components/ui/date-picker';
 import TimePicker from '@/components/ui/time-picker';
 import { TopBar } from '@/components/common/TopBar';
+import { MatchDetailsModal } from '@/components/features/MatchDetailsModal';
 import { jobsApi, chatApi } from '@/lib/api';
 import { cn, APPLICATION_STATUS_COLOR, APPLICATION_STATUS_LABEL, timeAgo, getInitials, getMatchScoreBadge } from '@/lib/utils';
 import type { Application } from '@/types';
@@ -372,6 +373,7 @@ function CandidateDetail({ app, onStatusChange, onClose }: {
 }) {
   const [showMessage, setShowMessage] = useState(false);
   const [showSchedule, setShowSchedule] = useState(false);
+  const [showMatchDetails, setShowMatchDetails] = useState(false);
   const [activeTab, setActiveTab] = useState<DetailTab>('overview');
 
   const applicantName = app.applicant
@@ -408,10 +410,15 @@ function CandidateDetail({ app, onStatusChange, onClose }: {
         {(() => {
           const { score, style, labelText } = getMatchScoreBadge(app.aiMatchScore);
           return (
-            <div className={cn('text-center px-3.5 py-2 rounded-2xl border shadow-sm shrink-0', style)}>
+            <button
+              onClick={() => setShowMatchDetails(true)}
+              className={cn('text-center px-3.5 py-2 rounded-2xl border shadow-sm shrink-0 transition-transform hover:scale-105 cursor-pointer', style)}
+              title="Click to view full AI Match Breakdown"
+            >
               <p className="text-xl font-extrabold font-['Outfit',sans-serif] leading-tight">{score}%</p>
               <p className="text-[10px] font-semibold opacity-90">{labelText}</p>
-            </div>
+              <span className="text-[9px] underline block mt-0.5 opacity-80">View Details</span>
+            </button>
           );
         })()}
       </div>
@@ -572,6 +579,13 @@ function CandidateDetail({ app, onStatusChange, onClose }: {
         app={app}
         applicantName={applicantName}
         onScheduled={() => onStatusChange('interview_scheduled')}
+      />
+      <MatchDetailsModal
+        isOpen={showMatchDetails}
+        onClose={() => setShowMatchDetails(false)}
+        applicantId={(app.applicant as any)?.id ?? (app as any).applicantId ?? ''}
+        jobId={app.jobId ?? (app as any).job?.id ?? ''}
+        applicantName={applicantName}
       />
     </div>
   );
