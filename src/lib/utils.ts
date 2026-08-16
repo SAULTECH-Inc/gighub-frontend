@@ -6,6 +6,25 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Normalises any list-ish API payload into a plain array.
+ * Handles `[...]`, `{ items }`, `{ data }`, `{ results }`, `{ content }`
+ * and one extra level of nesting (e.g. `{ data: { items } }`).
+ */
+export function toList<T = any>(payload: any): T[] {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== 'object') return [];
+  for (const key of ['items', 'data', 'results', 'content'] as const) {
+    const value = payload[key];
+    if (Array.isArray(value)) return value;
+    if (value && typeof value === 'object') {
+      const nested = toList<T>(value);
+      if (nested.length) return nested;
+    }
+  }
+  return [];
+}
+
 export function timeAgo(date?: string | Date | null) {
   if (!date) return 'Recently';
   const d = new Date(date);

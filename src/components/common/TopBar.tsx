@@ -1,9 +1,13 @@
 import { Bell, Sun, Moon, Search, Command, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { useUiStore } from '@/store/ui.store';
 import { useAuthStore } from '@/store/auth.store';
+import { notificationsApi } from '@/lib/api';
+import { toList } from '@/lib/utils';
+import type { Notification } from '@/types';
 import { NotificationPanel } from './NotificationPanel';
 
 interface TopBarProps {
@@ -42,6 +46,14 @@ export function TopBar({ title, actions }: TopBarProps) {
   const { user } = useAuthStore();
   const location = useLocation();
   const [notifOpen, setNotifOpen] = useState(false);
+
+  const { data: notifData } = useQuery({
+    queryKey: ['notifications'],
+    queryFn: () => notificationsApi.list({ limit: 30 }).then(r => r.data),
+    refetchInterval: 60_000,
+    staleTime: 30_000,
+  });
+  const unreadCount = toList<Notification>(notifData).filter(n => !n.isRead).length;
 
   const displayTitle = title || PAGE_NAMES[location.pathname] || 'Dashboard';
 
@@ -105,7 +117,9 @@ export function TopBar({ title, actions }: TopBarProps) {
           title="Notifications"
         >
           <Bell className="h-4 w-4" />
-          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_hsl(262_83%_58%/0.8)]" />
+          {unreadCount > 0 && (
+            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_hsl(262_83%_58%/0.8)]" />
+          )}
         </Button>
 
         {/* Theme Toggle */}

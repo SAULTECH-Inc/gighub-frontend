@@ -4,9 +4,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetBody } from '@/compo
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { notificationsApi } from '@/lib/api';
-import { timeAgo } from '@/lib/utils';
+import { cn, timeAgo, toList } from '@/lib/utils';
 import type { Notification } from '@/types';
-import { cn } from '@/lib/utils';
 
 interface Props { open: boolean; onClose: () => void; }
 
@@ -15,7 +14,7 @@ export function NotificationPanel({ open, onClose }: Props) {
 
   const { data, isLoading } = useQuery({
     queryKey: ['notifications'],
-    queryFn: () => notificationsApi.list({ limit: 30 }).then(r => r.data.data),
+    queryFn: () => notificationsApi.list({ limit: 30 }).then(r => r.data),
     enabled: open,
     refetchInterval: open ? 30_000 : false,
   });
@@ -30,7 +29,7 @@ export function NotificationPanel({ open, onClose }: Props) {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['notifications'] }),
   });
 
-  const notifications: Notification[] = data?.data ?? data ?? [];
+  const notifications = toList<Notification>(data);
   const unread = notifications.filter(n => !n.isRead).length;
 
   return (

@@ -9,17 +9,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { notificationsApi } from '@/lib/api';
-import { cn, timeAgo } from '@/lib/utils';
+import { cn, timeAgo, toList } from '@/lib/utils';
+import type { Notification } from '@/types';
 import toast from 'react-hot-toast';
-
-interface Notification {
-  id: string;
-  title: string;
-  content: string;
-  type?: string;
-  read: boolean;
-  createdAt: string;
-}
 
 type SortOrder = 'newest' | 'oldest';
 type FilterType = 'all' | 'unread' | string;
@@ -50,22 +42,19 @@ export default function NotificationsPage() {
 
   const { data: raw, isLoading } = useQuery({
     queryKey: ['notifications-page'],
-    queryFn: () => notificationsApi.list({ limit: 100 }).then(r => r.data.data ?? r.data),
+    queryFn: () => notificationsApi.list({ limit: 100 }).then(r => r.data),
     retry: false,
   });
 
-  const notifications: Notification[] = useMemo(() => {
-    const list: Notification[] = Array.isArray(raw) ? raw : (raw as any)?.data ?? [];
-    return list;
-  }, [raw]);
+  const notifications = useMemo(() => toList<Notification>(raw), [raw]);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     return [...notifications]
       .filter(n => {
-        if (typeFilter === 'unread' && n.read) return false;
+        if (typeFilter === 'unread' && n.isRead) return false;
         if (typeFilter !== 'all' && typeFilter !== 'unread' && n.type !== typeFilter) return false;
-        if (q && !n.title.toLowerCase().includes(q) && !n.content.toLowerCase().includes(q)) return false;
+        if (q && !(n.title ?? '').toLowerCase().includes(q) && !(n.body ?? '').toLowerCase().includes(q)) return false;
         return true;
       })
       .sort((a, b) => {
@@ -75,16 +64,24 @@ export default function NotificationsPage() {
       });
   }, [notifications, search, sortOrder, typeFilter]);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  // Rewrites the cached list in place, whatever envelope the API wrapped it in.
+  const patchCache = (fn: (list: Notification[]) => Notification[]) => {
+    qc.setQueryData(['notifications-page'], (old: any) => {
+      const updated = fn(toList<Notification>(old));
+      if (!old || Array.isArray(old)) return updated;
+      if (Array.isArray(old.data?.items)) return { ...old, data: { ...old.data, items: updated } };
+      if (Array.isArray(old.items))       return { ...old, items: updated };
+      if (Array.isArray(old.data))        return { ...old, data: updated };
+      return updated;
+    });
+  };
 
   const markRead = useMutation({
     mutationFn: (id: string) => notificationsApi.markRead(id),
     onSuccess: (_, id) => {
-      qc.setQueryData(['notifications-page'], (old: any) => {
-        const list: Notification[] = Array.isArray(old) ? old : old?.data ?? [];
-        const updated = list.map(n => n.id === id ? { ...n, read: true } : n);
-        return Array.isArray(old) ? updated : { ...old, data: updated };
-      });
+      patchCache(list => list.map(n => n.id === id ? { ...n, isRead: true } : n));
       qc.invalidateQueries({ queryKey: ['notifications'] });
     },
   });
@@ -92,11 +89,7 @@ export default function NotificationsPage() {
   const markAllRead = useMutation({
     mutationFn: () => notificationsApi.markAllRead(),
     onSuccess: () => {
-      qc.setQueryData(['notifications-page'], (old: any) => {
-        const list: Notification[] = Array.isArray(old) ? old : old?.data ?? [];
-        const updated = list.map(n => ({ ...n, read: true }));
-        return Array.isArray(old) ? updated : { ...old, data: updated };
-      });
+      patchCache(list => list.map(n => ({ ...n, isRead: true })));
       qc.invalidateQueries({ queryKey: ['notifications'] });
       toast.success('All notifications marked as read');
     },
@@ -105,11 +98,7 @@ export default function NotificationsPage() {
   const deleteNotif = useMutation({
     mutationFn: (id: string) => notificationsApi.delete(id),
     onSuccess: (_, id) => {
-      qc.setQueryData(['notifications-page'], (old: any) => {
-        const list: Notification[] = Array.isArray(old) ? old : old?.data ?? [];
-        const updated = list.filter(n => n.id !== id);
-        return Array.isArray(old) ? updated : { ...old, data: updated };
-      });
+      patchCache(list => list.filter(n => n.id !== id));
       qc.invalidateQueries({ queryKey: ['notifications'] });
     },
   });
@@ -240,11 +229,11 @@ export default function NotificationsPage() {
                         key={n.id}
                         className={cn(
                           'flex items-start gap-3.5 px-4 py-4 transition-all duration-150 group relative',
-                          !n.read ? 'bg-primary/5 hover:bg-primary/8' : 'hover:bg-surface-raised/60',
+                          !n.isRead ? 'bg-primary/5 hover:bg-primary/8' : 'hover:bg-surface-raised/60',
                         )}
                       >
                         {/* Unread indicator bar */}
-                        {!n.read && (
+                        {!n.isRead && (
                           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-gradient-to-b from-primary to-accent" />
                         )}
 
@@ -256,12 +245,12 @@ export default function NotificationsPage() {
                         {/* Content */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
-                            <p className={cn('text-sm', !n.read ? 'font-bold text-foreground' : 'font-medium text-foreground/90')}>
+                            <p className={cn('text-sm', !n.isRead ? 'font-bold text-foreground' : 'font-medium text-foreground/90')}>
                               {n.title}
                             </p>
                             <span className="text-[11px] text-muted-foreground shrink-0 mt-0.5">{timeAgo(n.createdAt)}</span>
                           </div>
-                          <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{n.content}</p>
+                          <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{n.body}</p>
                           {n.type && (
                             <Badge variant="outline" className="text-[10px] mt-2 px-2 py-0.5 capitalize border-border/60">
                               {n.type}
@@ -271,7 +260,7 @@ export default function NotificationsPage() {
 
                         {/* Actions */}
                         <div className="flex flex-col items-center gap-1.5 shrink-0 self-center">
-                          {!n.read && (
+                          {!n.isRead && (
                             <button
                               title="Mark as read"
                               onClick={() => markRead.mutate(n.id)}
